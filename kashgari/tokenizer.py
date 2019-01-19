@@ -41,20 +41,21 @@ class Tokenizer(object):
         self.embedding = embedding
 
         self.kwargs = kwargs
+        self.w2v = None
 
     def build(self, **kwargs):
         self.load_word2vec(**kwargs)
 
     def get_embedding_matrix(self, **kwargs) -> np.array:
-        w2v: Word2Vec = Word2Vec(self.embedding, **kwargs)
-        return w2v.get_embedding_matrix()
+        # w2v: Word2Vec = Word2Vec(self.embedding, **kwargs)
+        return self.w2v.get_embedding_matrix()
 
     def load_word2vec(self, **kwargs):
         """
         load word2vec embedding with gensim
         """
         w2v: Word2Vec = Word2Vec(self.embedding, **kwargs)
-        self.data['w2v'] = w2v
+        self.w2v = w2v
         for word in w2v.keyed_vector.index2entity:
             self.word2idx[word] = len(self.word2idx)
 

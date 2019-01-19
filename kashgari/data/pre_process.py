@@ -12,6 +12,7 @@
 """
 import jieba
 import pandas as pd
+from kashgari.utils import k
 
 
 def pre_process_df(data_frame: pd.DataFrame,
@@ -22,9 +23,11 @@ def pre_process_df(data_frame: pd.DataFrame,
     df['class'] = data_frame[class_column_label]
     return df
 
+def prepare_h5_file(x_data, y_data)
+
 
 if __name__ == "__main__":
-    df = pd.read_csv('/Users/brikerman/Downloads/simplifyweibo_4_moods.csv')
+    df = pd.read_csv('/Users/brikerman/Downloads/simplifyweibo_4_moods/simplifyweibo_4_moods.csv')
     df = df[:100]
     df = pre_process_df(df)
     df.to_csv('dataset.csv')

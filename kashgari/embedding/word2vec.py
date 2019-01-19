@@ -49,7 +49,7 @@ class Word2Vec(object):
             with open(file, 'w', encoding='utf-8') as f:
                 f.write(json.dumps([list(item) for item in base_matrix]))
 
-        matrix_list = base_matrix + list(w.keyed_vector.vectors)
+        matrix_list = base_matrix + list(self.keyed_vector.vectors)
         return np.array(matrix_list)
 
 
