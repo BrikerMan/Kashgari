@@ -10,10 +10,12 @@
 @time: 2019-01-19 09:57
 
 """
-import numpy as np
 from typing import List, Union
+
+import numpy as np
+
 from kashgari.embedding.word2vec import Word2Vec
-from kashgari.utils.macros import PAD, BOS, EOS, UNK, NO_TAG
+from kashgari.macros import PAD, BOS, EOS, UNK, NO_TAG
 from kashgari.utils import k
 
 
@@ -33,7 +35,7 @@ class Tokenizer(object):
         self.label2idx = {}
         self.idx2label = {}
 
-        self.sequence_length = 20
+        self.sequence_length = 30
         self.embedding_size = 100
 
         self.data = {}
@@ -42,8 +44,9 @@ class Tokenizer(object):
 
         self.kwargs = kwargs
         self.w2v = None
+        self._build_(limit=10000)
 
-    def build(self, **kwargs):
+    def _build_(self, **kwargs):
         self.load_word2vec(**kwargs)
 
     def get_embedding_matrix(self, **kwargs) -> np.array:
@@ -108,7 +111,6 @@ if __name__ == '__main__':
     init_logger()
     path = '/Users/brikerman/Downloads/sgns.weibo.bigram'
     t = Tokenizer(k.Word2VecModels.sgns_weibo_bigram, limit=10000)
-    t.build()
     t_tokens = t.word_to_token(['风格', '不', '一样', '嘛', '，', '都', '喜欢', '！', '最', '喜欢', '哪张', '？'], add_prefix_suffix=True)
     print(t_tokens)
     t_words = t.token_to_word(t_tokens)

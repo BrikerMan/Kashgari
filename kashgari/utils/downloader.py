@@ -10,14 +10,15 @@
 @time: 2019-01-19 10:30
 
 """
-import os
 import bz2
-import download
+import os
 from typing import Union
-from kashgari.utils.macros import DATA_PATH
-from kashgari.utils.macros import STORAGE_HOST
-from kashgari.utils.macros import Word2VecModels
 
+import download
+
+from kashgari.macros import DATA_PATH
+from kashgari.macros import STORAGE_HOST
+from kashgari.macros import Word2VecModels
 
 URL_MAP = {
     Word2VecModels.sgns_weibo_bigram: 'embedding/word2vev/sgns.weibo.bigram.bz2'
@@ -30,13 +31,17 @@ def download_file(file: str):
     download.download(url, target_path)
 
 
-def download_if_not_existed(file: Union[Word2VecModels, str]):
+def download_if_not_existed(file: Union[Word2VecModels, str]) -> str:
     file_path = URL_MAP.get(file, file)
     target_path = os.path.join(DATA_PATH, file_path)
     if not os.path.exists(target_path[:-4]):
         download_file(file_path)
-        with open(target_path, 'rb') as source, open(target_path[:-4], 'wb') as dest:
-            dest.write(bz2.decompress(source.read()))
+        if target_path.endswith('.bz2'):
+            with open(target_path, 'rb') as source, open(target_path[:-4], 'wb') as dest:
+                dest.write(bz2.decompress(source.read()))
+            return target_path[:-4]
+        else:
+            return target_path
 
 
 if __name__ == "__main__":

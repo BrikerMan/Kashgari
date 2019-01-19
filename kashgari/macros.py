@@ -10,12 +10,13 @@
 @time: 2019-01-19 09:58
 
 """
-import os
 import bz2
-import download
-from typing import Union
-from pathlib import Path
+import os
 from enum import Enum
+from pathlib import Path
+from typing import Union
+
+import download
 
 PAD = "#PAD"
 BOS = "#BOS"
@@ -37,6 +38,16 @@ class Word2VecModels(Enum):
     provided pre trained word2vec from https://github.com/Embedding/Chinese-Word-Vectors
     """
     sgns_weibo_bigram = 'sgns.weibo.bigram.bz2'
+
+
+class Task(Enum):
+    classification = 'classification'
+    tagging = 'tagging'
+
+
+class Segmenter(Enum):
+    space = 'space'
+    jieba = 'jieba'
 
 
 URL_MAP = {

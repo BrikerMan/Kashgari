@@ -10,8 +10,10 @@
 @time: 2019-01-19 09:57
 
 """
-from . import macros as k
 
+from typing import List, Tuple
+
+ClassificationData = Tuple[List[List[str]], List[str]]
 
 if __name__ == "__main__":
     print("Hello world")

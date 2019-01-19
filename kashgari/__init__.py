@@ -10,6 +10,7 @@
 @time: 2019-01-19 13:42
 
 """
+import kashgari.macros as k
 
 if __name__ == "__main__":
     print("Hello world")
