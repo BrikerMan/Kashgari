@@ -13,8 +13,8 @@
 import numpy as np
 from typing import List, Union
 from kashgari.embedding.word2vec import Word2Vec
-from utils.macros import PAD, BOS, EOS, UNK, NO_TAG
-from utils import k
+from kashgari.utils.macros import PAD, BOS, EOS, UNK, NO_TAG
+from kashgari.utils import k
 
 
 class Tokenizer(object):
@@ -103,7 +103,7 @@ class Tokenizer(object):
 
 
 if __name__ == '__main__':
-    from utils.logger import init_logger
+    from kashgari.utils.logger import init_logger
     init_logger()
     path = '/Users/brikerman/Downloads/sgns.weibo.bigram'
     t = Tokenizer(k.Word2VecModels.sgns_weibo_bigram, limit=10000)

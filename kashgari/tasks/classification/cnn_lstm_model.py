@@ -10,14 +10,14 @@
 @time: 2019-01-19 11:52
 
 """
-from utils import k
+from kashgari.utils import k
 from kashgari.tokenizer import Tokenizer
 import keras.layers as layers
 
 from keras.models import Model, Sequential
-from keras.layers import Input, Dense, TimeDistributed, Dropout, Activation
+from keras.layers import Dense
 from keras.layers.embeddings import Embedding
-from keras.layers.recurrent import SimpleRNN, GRU, LSTM
+from keras.layers.recurrent import LSTM
 
 
 class CNN_LSTM_Model(object):

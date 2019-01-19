@@ -16,7 +16,7 @@ import logging
 import numpy as np
 from typing import Union
 from gensim.models import KeyedVectors
-from utils import k
+from kashgari.utils import k
 
 
 class Word2Vec(object):
@@ -54,7 +54,7 @@ class Word2Vec(object):
 
 
 if __name__ == "__main__":
-    from utils.logger import init_logger
+    from kashgari.utils.logger import init_logger
     init_logger()
     w = Word2Vec(k.Word2VecModels.sgns_weibo_bigram, limit=100)
     logging.info(w.get_embedding_matrix()[0])
