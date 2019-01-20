@@ -44,6 +44,12 @@ def download_if_not_existed(file: Union[Word2VecModels, str]) -> str:
             return target_path
 
 
+def get_cached_data_path(file: Union[Word2VecModels, str]) -> str:
+    file_path = URL_MAP.get(file, file)
+    target_path = os.path.join(DATA_PATH, 'pre_processed', file_path)
+    return target_path
+
+
 if __name__ == "__main__":
     from kashgari.utils.logger import init_logger
     init_logger()

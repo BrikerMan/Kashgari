@@ -25,11 +25,15 @@ import tqdm
 from kashgari import macros as k
 from kashgari.tokenizer import Tokenizer
 
+class PreProcessor(object):
+    def __init__(self):
+        pass
+
 
 def prepare_h5_file(tokenizer: Tokenizer,
                     x_data: List[List[str]],
                     y_data: Union[List[List[str]], List[int], List[str]],
-                    task: k.Task = k.Task.classification,
+                    task: k.TaskType = k.TaskType.classification,
                     step: int = 500,
                     shuffle: bool = False) -> Tuple[str, Tokenizer]:
     assert len(x_data) == len(y_data)
@@ -68,7 +72,7 @@ def prepare_h5_file(tokenizer: Tokenizer,
             h5['x'].resize((new_count, tokenizer.sequence_length))
         h5['x'][start_index:new_count] = x_padded
 
-    if task == k.Task.classification:
+    if task == k.TaskType.classification:
         padding_y = [tokenizer.label2idx[y] for y in y_data]
         padding_y = np.array(padding_y)
         h5.create_dataset('y', data=padding_y)

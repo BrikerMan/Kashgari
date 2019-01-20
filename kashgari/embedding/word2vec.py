@@ -16,7 +16,7 @@ import logging
 import numpy as np
 from typing import Union
 from gensim.models import KeyedVectors
-from kashgari.utils import k
+from kashgari import k
 
 
 class Word2Vec(object):

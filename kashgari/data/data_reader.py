@@ -15,13 +15,14 @@ from typing import List
 import pandas as pd
 import tqdm
 
-from kashgari import k, ClassificationData
+from kashgari import k
+from kashgari.utils import ClassificationData
 
 
 def load_data_from_csv_for_classifier(csv_path: str,
                                       text_column_label: str = 'review',
                                       class_column_label: str = 'label',
-                                      token_method: k.Segmenter = k.Segmenter.space) -> ClassificationData:
+                                      token_method: k.SegmenterType = k.SegmenterType.space) -> ClassificationData:
     df = pd.read_csv(csv_path)
     data_x: List[List[str]] = []
     for text in tqdm.tqdm(df[text_column_label], desc="preparing data with {} segmenter".format(token_method.value)):
@@ -31,8 +32,8 @@ def load_data_from_csv_for_classifier(csv_path: str,
 
 
 def tokenize_func(text: str,
-                  method: k.Segmenter = k.Segmenter.space):
-    if method == k.Segmenter.jieba:
+                  method: k.SegmenterType = k.SegmenterType.space):
+    if method == k.SegmenterType.jieba:
         import jieba
         return list(jieba.cut(text.strip()))
     else:

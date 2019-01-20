@@ -14,6 +14,8 @@ import random
 
 import h5py
 import numpy as np
+from typing import List
+from keras.preprocessing import sequence
 from keras.utils import to_categorical
 
 
@@ -39,6 +41,33 @@ def h5f_generator(h5path: str,
                                num_classes=num_classes,
                                dtype=np.int)
             yield (x, y)
+
+
+def classification_list_generator(x_data: List,
+                                  y_data: List,
+                                  sequence_lenght: int,
+                                  num_classes: int,
+                                  batch_size: int = 128):
+    assert len(x_data) == len(y_data)
+    while True:
+        page_list = list(range(len(x_data) // batch_size + 1))
+        random.shuffle(page_list)
+        for page in page_list:
+            x = x_data[page: (page + 1) * batch_size]
+            x = sequence.pad_sequences(x,
+                                       maxlen=sequence_lenght)
+            y = to_categorical(y_data[page: (page + 1) * batch_size],
+                               num_classes=num_classes,
+                               dtype=np.int)
+            yield (x, y)
+
+
+def unison_shuffled_copies(a, b):
+    assert len(a) == len(b)
+    c = list(zip(a, b))
+    random.shuffle(c)
+    a, b = zip(*c)
+    return a, b
 
 
 if __name__ == "__main__":

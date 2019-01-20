@@ -23,8 +23,10 @@ def init_logger():
 
 def change_log_level(log_level):
     print('----------------------')
-    color_format = "%(log_color)s[%(asctime)s] %(levelname)-7s  " \
-                   "%(name)s:%(filename)s:%(lineno)d - %(message)s"
+    # color_format = "%(log_color)s[%(asctime)s] %(levelname)-7s  " \
+    #                "%(name)s:%(filename)s:%(lineno)d - %(message)s"
+    color_format = "%(log_color)s[%(asctime)s] %(levelname)-5s " \
+                   "- %(message)s"
 
     color_formatter = ColoredFormatter(color_format,
                                        datefmt=None,

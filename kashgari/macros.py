@@ -12,6 +12,7 @@
 """
 import bz2
 import os
+import pathlib
 from enum import Enum
 from pathlib import Path
 from typing import Union
@@ -31,6 +32,9 @@ home = str(Path.home())
 
 DATA_PATH = os.path.join(home, '.kashgari')
 STORAGE_HOST = 'https://storage.eliyar.biz/'
+PROCESSED_CORPUS_PATH = os.path.join(DATA_PATH, 'pre_processed')
+
+pathlib.Path(PROCESSED_CORPUS_PATH).mkdir(parents=True, exist_ok=True)
 
 
 class Word2VecModels(Enum):
@@ -40,14 +44,21 @@ class Word2VecModels(Enum):
     sgns_weibo_bigram = 'sgns.weibo.bigram.bz2'
 
 
-class Task(Enum):
+class TaskType(Enum):
     classification = 'classification'
     tagging = 'tagging'
 
 
-class Segmenter(Enum):
+class DataSetType(Enum):
+    train = 'train'
+    test = 'test'
+    validate = 'validate'
+
+
+class SegmenterType(Enum):
     space = 'space'
     jieba = 'jieba'
+    char = 'char'
 
 
 URL_MAP = {
