@@ -11,11 +11,15 @@
 
 """
 import random
-import numpy as np
 from typing import List, Union
-from kashgari.data.corpus import Corpus
-from keras.utils import to_categorical
+
+import numpy as np
+from keras.layers.embeddings import Embedding
 from keras.preprocessing import sequence
+from keras.utils import to_categorical
+
+from kashgari.data.corpus import Corpus
+from kashgari.embedding import CustomEmbedding
 from kashgari.tokenizer import Tokenizer
 
 ClassificationXType = Union[List[List[str]], List[str]]
@@ -27,6 +31,19 @@ class ClassificationModel(object):
         self.tokenizer = None
         self.embedding_name = None
         self.model = None
+
+    def prepare_embedding_layer(self):
+        embedding = self.tokenizer.embedding
+        if isinstance(embedding, CustomEmbedding):
+            return Embedding(self.tokenizer.word_num,
+                             embedding.embedding_size,
+                             input_length=self.tokenizer.sequence_length)
+        else:
+            return Embedding(len(self.tokenizer.word2idx),
+                             self.tokenizer.embedding.embedding_size,
+                             input_length=self.tokenizer.sequence_length,
+                             weights=[self.tokenizer.get_embedding_matrix()],
+                             trainable=False)
 
     def build_model(self):
         """

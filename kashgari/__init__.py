@@ -11,6 +11,9 @@
 
 """
 import kashgari.macros as k
+from kashgari import embedding
 from kashgari import tasks
+from kashgari.tokenizer import Tokenizer
+
 if __name__ == "__main__":
     print("Hello world")

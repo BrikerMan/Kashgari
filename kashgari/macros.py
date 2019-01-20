@@ -44,6 +44,11 @@ class Word2VecModels(Enum):
     sgns_weibo_bigram = 'sgns.weibo.bigram.bz2'
 
 
+class CustomEmbedding(object):
+    def __init__(self, embedding_size=100):
+        self.embedding_size = embedding_size
+
+
 class TaskType(Enum):
     classification = 'classification'
     tagging = 'tagging'

@@ -11,26 +11,24 @@
 
 """
 import logging
-import numpy as np
 from typing import List, Union, Dict
 
-from kashgari.embedding.word2vec import Word2Vec
-from kashgari.macros import PAD, BOS, EOS, UNK
 from kashgari import k
+from kashgari.embedding import EmbeddingModel, CustomEmbedding
+from kashgari.macros import PAD, BOS, EOS, UNK
 
 
 class Tokenizer(object):
     def __init__(self,
-                 embedding_name: Union[k.Word2VecModels, str],
+                 embedding: EmbeddingModel = None,
                  sequence_length: int = None,
-                 segmenter: k.SegmenterType = k.SegmenterType.space,
+                 segmenter: k.SegmenterType = k.SegmenterType.jieba,
                  **kwargs):
-        self.word2idx = {
-            PAD: 0,
-            BOS: 1,
-            EOS: 2,
-            UNK: 3
-        }
+        self.embedding = embedding
+
+        self.word2idx = {}
+        self.idx2word = {}
+
         self.idx2word = {
             PAD: 0
         }
@@ -39,16 +37,12 @@ class Tokenizer(object):
         self.idx2label = {}
 
         self.sequence_length = sequence_length
-        self.embedding_name = embedding_name
-        self.embedding_size = 0
-        self.embedding_limit = kwargs.get('embedding_limit', 10000)
 
         self.segmenter = segmenter
         self.kwargs = kwargs
-
-        self.embedding = None
-
-        self.load_word2vec(limit=self.embedding_limit, **kwargs)
+        if embedding is None:
+            embedding = CustomEmbedding(embedding_size=100)
+        self.embedding = embedding
 
     @classmethod
     def get_recommend_tokenizer(cls):
@@ -60,10 +54,40 @@ class Tokenizer(object):
     def class_num(self) -> int:
         return len(self.label2idx)
 
+    @property
+    def word_num(self) -> int:
+        return len(self.word2idx)
+
     def build_with_corpus(self,
                           x_data: Union[List[List[str]], List[str]],
                           y_data: Union[List[List[str]], List[str]],
                           **kwargs):
+        if isinstance(self.embedding, CustomEmbedding):
+            word_set: Dict[str, int] = {}
+            for x_item in x_data:
+                if isinstance(x_item, list):
+                    for y in x_item:
+                        for word in self.segment(y):
+                            word_set[word] = word_set.get(word, 0) + 1
+                else:
+                    for word in self.segment(x_item):
+                        word_set[word] = word_set.get(word, 0) + 1
+
+            word2idx_list = sorted(word_set.items(), key=lambda kv: -kv[1])
+
+            word2idx = CustomEmbedding.base_dict
+            for word, count in word2idx_list:
+                if count >= 2:
+                    word2idx[word] = len(word2idx)
+
+            # word2idx = dict([(key, value) for (key, value) in word2idx_dict.items()])
+            idx2word = dict([(value, key) for (key, value) in word2idx.items()])
+            self.word2idx = word2idx
+            self.idx2word = idx2word
+        else:
+            self.word2idx = self.embedding.get_word2idx_dict()
+            self.idx2word = dict([(value, key) for (key, value) in self.idx2word.items()])
+
         label_set: Dict[str, int] = {}
         for y_item in y_data:
             if isinstance(y_item, list):
@@ -85,25 +109,6 @@ class Tokenizer(object):
             logging.info('{:10}: {} items'.format(label, count))
         logging.info('{:10}: {}'.format('label2idx', self.label2idx))
         logging.info('-------------------------------------------')
-
-    def get_embedding_matrix(self, **kwargs) -> np.array:
-        # w2v: Word2Vec = Word2Vec(self.embedding, **kwargs)
-        return self.embedding.get_embedding_matrix()
-
-    def load_word2vec(self, **kwargs):
-        """
-        load word2vec embedding with gensim
-        """
-        embedding: Word2Vec = Word2Vec(self.embedding_name, **kwargs)
-        self.embedding = embedding
-        for word in embedding.keyed_vector.index2entity:
-            self.word2idx[word] = len(self.word2idx)
-
-        self.embedding_size = embedding.embedding_size
-        self.__create_reversed_dict__()
-
-    def __create_reversed_dict__(self):
-        self.idx2word = dict([(value, key) for (key, value) in self.word2idx.items()])
 
     def word_to_token(self,
                       sentence: Union[List[str], str],
@@ -159,7 +164,7 @@ class Tokenizer(object):
 if __name__ == '__main__':
     from kashgari.utils.logger import init_logger
     init_logger()
-    t = Tokenizer(k.Word2VecModels.sgns_weibo_bigram)
+    t = Tokenizer()
     t.segmenter = k.SegmenterType.char
     t_tokens = t.word_to_token('今天天气不错')
     print(t_tokens)

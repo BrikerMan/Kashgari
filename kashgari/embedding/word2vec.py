@@ -10,12 +10,14 @@
 @time: 2019-01-19 11:13
 
 """
-import os
 import json
 import logging
-import numpy as np
+import os
 from typing import Union
+
+import numpy as np
 from gensim.models import KeyedVectors
+
 from kashgari import k
 
 

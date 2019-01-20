@@ -11,7 +11,6 @@
 
 """
 from keras.layers import Dense, Conv1D, MaxPooling1D
-from keras.layers.embeddings import Embedding
 from keras.layers.recurrent import LSTM
 from keras.models import Sequential
 
@@ -22,11 +21,7 @@ class CNN_LSTM_Model(ClassificationModel):
 
     def build_model(self):
         model = Sequential()
-        embedding = Embedding(len(self.tokenizer.word2idx),
-                              self.tokenizer.embedding_size,
-                              input_length=self.tokenizer.sequence_length,
-                              weights=[self.tokenizer.get_embedding_matrix()],
-                              trainable=False)
+        embedding = self.prepare_embedding_layer()
         model.add(embedding)
         model.add(Conv1D(filters=32, kernel_size=3, padding='same', activation='relu'))
         model.add(MaxPooling1D(pool_size=2))
@@ -42,15 +37,14 @@ class CNN_LSTM_Model(ClassificationModel):
 
 if __name__ == "__main__":
     from kashgari.utils.logger import init_logger
-    import pandas as pd
-    from kashgari.utils import helper
-    df = pd.read_csv('/Users/brikerman/.kashgari/corpus/simplify_weibo_4_moods.csv')
-    x_data = df['review']
-    y_data = df['label']
-    x_data, y_data = helper.unison_shuffled_copies(x_data, y_data)
 
-    x_data = x_data[:1000]
-    y_data = y_data[:1000]
+    # df = pd.read_csv('/Users/brikerman/.kashgari/corpus/simplify_weibo_4_moods.csv')
+    # x_data = df['review']
+    # y_data = df['label']
+    # x_data, y_data = helper.unison_shuffled_copies(x_data, y_data)
+    #
+    # x_data = x_data[:1000]
+    # y_data = y_data[:1000]
     init_logger()
 
     x_data = ['奇怪，端午节了，怎么没看到超市里有月饼卖啊？@ 王子26', '"哥，你闷骚！年轻不知精珍贵',
@@ -65,5 +59,4 @@ if __name__ == "__main__":
     y_data = ['低落', '喜悦', '喜悦', '喜悦', '愤怒', '喜悦', '喜悦', '喜悦', '愤怒', '愤怒']
 
     classifier = CNN_LSTM_Model()
-
     classifier.fit(x_data, y_data, batch_size=2)
