@@ -25,6 +25,7 @@ import tqdm
 from kashgari import macros as k
 from kashgari.tokenizer import Tokenizer
 
+
 class PreProcessor(object):
     def __init__(self):
         pass

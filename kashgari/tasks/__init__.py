@@ -10,6 +10,7 @@
 @time: 2019-01-19 09:57
 
 """
+from . import classification
 
 if __name__ == "__main__":
     print("Hello world")

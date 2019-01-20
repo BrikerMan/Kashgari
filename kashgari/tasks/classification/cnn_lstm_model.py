@@ -15,20 +15,18 @@ from keras.layers.embeddings import Embedding
 from keras.layers.recurrent import LSTM
 from keras.models import Sequential
 
-from kashgari.tokenizer import Tokenizer
-from kashgari.utils import helper
-from kashgari.data.corpus import Corpus, SimplifyWeibo4MoodsCorpus
+from kashgari.tasks.classification.base_model import ClassificationModel
 
 
-class CNN_LSTM_Model(object):
-    def __init__(self):
-        self.tokenizer = None
-        self.embedding_name = None
-        self.model = None
+class CNN_LSTM_Model(ClassificationModel):
 
-    def _build_model_(self):
+    def build_model(self):
         model = Sequential()
-        embedding = self._build_embedding_layer_()
+        embedding = Embedding(len(self.tokenizer.word2idx),
+                              self.tokenizer.embedding_size,
+                              input_length=self.tokenizer.sequence_length,
+                              weights=[self.tokenizer.get_embedding_matrix()],
+                              trainable=False)
         model.add(embedding)
         model.add(Conv1D(filters=32, kernel_size=3, padding='same', activation='relu'))
         model.add(MaxPooling1D(pool_size=2))
@@ -41,96 +39,31 @@ class CNN_LSTM_Model(object):
         self.model = model
         self.model.summary()
 
-    def _build_embedding_layer_(self) -> Embedding:
-        return Embedding(len(self.tokenizer.word2idx),
-                         self.tokenizer.embedding_size,
-                         input_length=self.tokenizer.sequence_length,
-                         weights=[self.tokenizer.get_embedding_matrix()],
-                         trainable=False)
-
-    # def fit(self, x_train, y_train, batch_size: int = 64, epochs: int = 5, **kwargs):
-    #     """
-    #
-    #     :param x_train:
-    #     :param y_train:
-    #     :param batch_size:
-    #     :param epochs:
-    #     :param kwargs:
-    #     :return:
-    #     """
-    #     data_path, self.tokenizer = prepare_h5_file(tokenizer=self.tokenizer,
-    #                                                 x_data=x_train,
-    #                                                 y_data=y_train,
-    #                                                 task=k.TaskType.classification)
-    #     if not self.model:
-    #         self._build_model_()
-    #
-    #     h5_path = os.path.join(data_path, 'dataset.h5')
-    #     h5_file = h5py.File(h5_path, 'r')
-    #     data_count = len(h5_file['x'])
-    #     train_idx, test_idx = train_test_split(range(data_count), test_size=0.15)
-    #
-    #     samples = random.sample(list(range(100)), 10)
-    #     for index in samples:
-    #         x = h5_file['x'][index]
-    #         y = h5_file['y'][index]
-    #         words = self.tokenizer.token_to_word(x)
-    #         labels = self.tokenizer.label_to_token(y)
-    #         logging.info('----------- sample {}--------------'.format(index))
-    #         logging.info('{} -> {}'.format(words, labels))
-    #         logging.info('{} -> {}'.format(x, y))
-    #     train_generator = helper.h5f_generator(h5path=h5_path,
-    #                                            # indices=train_idx,
-    #                                            num_classes=len(self.tokenizer.label2idx),
-    #                                            batch_size=batch_size)
-    #
-    #     test_generator = helper.h5f_generator(h5path=h5_path,
-    #                                           # indices=test_idx,
-    #                                           num_classes=len(self.tokenizer.label2idx),
-    #                                           batch_size=batch_size)
-    #
-    #     self.model.fit_generator(train_generator,
-    #                              steps_per_epoch=len(train_idx) // batch_size,
-    #                              epochs=epochs,
-    #                              verbose=1,
-    #                              callbacks=[],
-    #                              validation_data=test_generator,
-    #                              validation_steps=len(test_idx) // batch_size)
-
-    def fit_corpus(self,
-                   corpus: Corpus,
-                   batch_size: int = 128,
-                   epochs: int = 10,
-                   callbacks=None):
-        train_generator = corpus.fit_generator()
-        self.tokenizer = corpus.tokenizer
-        self._build_model_()
-        self.model.fit_generator(train_generator,
-                                 steps_per_epoch=corpus.data_count // batch_size,
-                                 epochs=epochs,
-                                 verbose=1,
-                                 callbacks=callbacks)
-
-    def train(self):
-        pass
-
 
 if __name__ == "__main__":
     from kashgari.utils.logger import init_logger
-    import keras
+    import pandas as pd
+    from kashgari.utils import helper
+    df = pd.read_csv('/Users/brikerman/.kashgari/corpus/simplify_weibo_4_moods.csv')
+    x_data = df['review']
+    y_data = df['label']
+    x_data, y_data = helper.unison_shuffled_copies(x_data, y_data)
+
+    x_data = x_data[:1000]
+    y_data = y_data[:1000]
     init_logger()
-    tokenizer_conf = SimplifyWeibo4MoodsCorpus.get_recommend_tokenizer_config()
-    tokenizer = Tokenizer(**tokenizer_conf)
-    corpus = SimplifyWeibo4MoodsCorpus(tokenizer=tokenizer,
-                                       data_count_limit=1280)
+
+    x_data = ['奇怪，端午节了，怎么没看到超市里有月饼卖啊？@ 王子26', '"哥，你闷骚！年轻不知精珍贵',
+              '中美之间的汇率大战之中最阴险的就是美国在各国运作，给中国压力希望人民币升值，而我们不能升值的结果就是让步。其实，我们应该学习德国治理马克的经验，马克兑美元由4马克兑1美升到1.5马克对1美元，他们的经济依然平稳过渡，这就是水平，而水平决定一切。',
+              '可惜我没听到呀，遗憾我就知道每次看完包子脑子都是一片空白，不过它会慢慢浮现的....好久没有这么近距离的听包子唱歌了，包子还是这么帅，歌声还是这么天籁~ 又看见了一些久未见面的亲们，和一些新的亲们，很开心。星星们今天赞一个，等到这么晚都还在坚持，这就是她们!明天就要去送包子机了，很舍不得....',
+              '无【围观三亚人类史上最庞大、最浪费惊人的拆违大会战】上千万平方米的小区楼盘盖起来，再拆掉，再盖起来，三亚的gdp 估计会全国之一。有网友称，三亚此役将记入中国历史，和当年百团大战齐名。',
+              '有个国外的视频，就是在这种卫生间里恶搞的，又尴尬又开心“万一门锁故障不能断电，岂非让人看光光！”还真不好说。',
+              '回复这样的校长和老师教出来的学生肯定都信佛的无奇不有呀！大新闻，第一次听说大新闻，第一次听说武汉市新洲一所初中学校日前组织30余名九年级老师参加敬香祈福，希望九年级的孩子们考出好成绩。一位副校长表示，每年都会组织毕业年级班主任敬香，这已是常规工作。---“考前抱佛脚”于事无补、不要放大对考试的焦虑、老师的压力需要一个出口、关键要扭转应试倾向。',
+              '回复我擦。。好吧。。我宝宝我才不让给你呢。你想的美。。就是这个博主啊……我大姐到底是谁啊。。我还没搞清楚。。文艺神马的。。。人身處 在幽靜 單 純 的城市。心也會 慢慢安靜 下來 。',
+              '这世道！这国家迟早…维权网唐奇虎报道拆迁公司的流氓有恃无恐一直骚扰纠缠到第二天凌晨2：30左右，还在不停地谩骂，最后终于大出大手，四十余人一起下手，对陈刚拳脚相加，并用条凳砸陈刚的脑颅。陈刚被打得血流满面，白色衬衫全被鲜血染红，陈刚被逼无奈，拿起菜刀进陈刚正在南通市附属医院接受抢救治疗。',
+              '每个人都有许多小秘密，我把它藏进梦里……']
+    y_data = ['低落', '喜悦', '喜悦', '喜悦', '愤怒', '喜悦', '喜悦', '喜悦', '愤怒', '愤怒']
+
     classifier = CNN_LSTM_Model()
 
-    save_call_back = keras.callbacks.ModelCheckpoint('./model.model',
-                                                     monitor='acc',
-                                                     verbose=0,
-                                                     save_best_only=True,
-                                                     save_weights_only=False,
-                                                     mode='auto',
-                                                     period=1)
-    classifier.fit_corpus(corpus, callbacks=[save_call_back])
-
+    classifier.fit(x_data, y_data, batch_size=2)

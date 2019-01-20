@@ -10,9 +10,9 @@
 @time: 2019-01-19 09:57
 
 """
-from typing import List, Union
-
+import logging
 import numpy as np
+from typing import List, Union, Dict
 
 from kashgari.embedding.word2vec import Word2Vec
 from kashgari.macros import PAD, BOS, EOS, UNK
@@ -48,14 +48,43 @@ class Tokenizer(object):
 
         self.embedding = None
 
-        self._build_(**kwargs)
+        self.load_word2vec(limit=self.embedding_limit, **kwargs)
+
+    @classmethod
+    def get_recommend_tokenizer(cls):
+        return Tokenizer(embedding_name=k.Word2VecModels.sgns_weibo_bigram,
+                         sequence_length=80,
+                         segmenter=k.SegmenterType.jieba)
 
     @property
     def class_num(self) -> int:
         return len(self.label2idx)
 
-    def _build_(self, **kwargs):
-        self.load_word2vec(limit=self.embedding_limit, **kwargs)
+    def build_with_corpus(self,
+                          x_data: Union[List[List[str]], List[str]],
+                          y_data: Union[List[List[str]], List[str]],
+                          **kwargs):
+        label_set: Dict[str, int] = {}
+        for y_item in y_data:
+            if isinstance(y_item, list):
+                for y in y_item:
+                    label_set[y] = label_set.get(y, 0) + 1
+            else:
+                label_set[y_item] = label_set.get(y_item, 0) + 1
+
+        label2idx = {}
+        for label in label_set.keys():
+            label2idx[label] = len(label2idx)
+        idx2label = dict([(value, key) for (key, value) in label2idx.items()])
+
+        self.label2idx = label2idx
+        self.idx2label = idx2label
+
+        logging.info('----- build label2index map finished ------')
+        for label, count in label_set.items():
+            logging.info('{:10}: {} items'.format(label, count))
+        logging.info('{:10}: {}'.format('label2idx', self.label2idx))
+        logging.info('-------------------------------------------')
 
     def get_embedding_matrix(self, **kwargs) -> np.array:
         # w2v: Word2Vec = Word2Vec(self.embedding, **kwargs)

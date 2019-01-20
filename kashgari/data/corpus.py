@@ -10,7 +10,6 @@
 @time: 2019-01-20
 
 """
-import tqdm
 import random
 import logging
 import numpy as np
@@ -26,6 +25,8 @@ from keras.utils import to_categorical
 
 
 class Corpus(object):
+    __corpus_name__ = ''
+    __corpus_desc__ = ''
     __file_name__ = ''
     __task_list__ = k.TaskType.classification
 
@@ -58,14 +59,35 @@ class Corpus(object):
 
     def build(self):
         self.x_data, self.y_data = self.read_original_data()
+        all_data_count = len(self.x_data)
         self.x_data, self.y_data = helper.unison_shuffled_copies(self.x_data, self.y_data)
+        if self.data_count_limit:
+            self.x_data = self.x_data[:self.data_count_limit]
+            self.y_data = self.y_data[:self.data_count_limit]
 
         self.tokenizer.idx2label = self.__class_map__
         self.tokenizer.label2idx = dict([(value, key) for key, value in self.__class_map__.items()])
 
+        assert len(self.x_data) == len(self.y_data)
+        logging.info('------------- corpus load finished -----------------')
+        logging.info('corpus name : {}'.format(self.__corpus_name__))
+        logging.info('corpus desc : {}'.format(self.__corpus_desc__))
+        logging.info('total data  : {}'.format(all_data_count))
+        logging.info('loaded data : {}'.format(len(self.x_data)))
+        self.calculate_class_info()
+
     @classmethod
     def get_recommend_tokenizer_config(cls):
         return {}
+
+    def pre_process_and_cache(self):
+        pass
+
+    def calculate_class_info(self):
+        label2count = {}
+        for y in self.y_data:
+            label2count[y] = label2count.get(y, 0) + 1
+        logging.info('class count : {}'.format(label2count))
 
     def read_original_data(self):
         file_path = downloader.download_if_not_existed('corpus/' + self.__file_name__)
@@ -76,31 +98,6 @@ class Corpus(object):
                              x_data,
                              y_data):
         raise NotImplementedError
-
-    # def tokenize_samples(self):
-    #     sample_index = random.sample(list(range(len(x_data))), 3)
-    #
-    #     logging.info('------------ Tokenizer pre-process completed -----------')
-    #     for index in sample_index:
-    #         logging.info('sample {:5} raw       : {} -> {}'.format(index,
-    #                                                                x_data[index],
-    #                                                                y_data[index]))
-    #         logging.info('sample {:5} tokenized : {} -> {}'.format(index,
-    #                                                                tokenized_x_data[index],
-    #                                                                tokenized_y_data[index]))
-
-    # def load(self,
-    #          shuffle: bool = True):
-    #     x_data, y_data = self.read_original_data()
-    #
-    #     if shuffle:
-    #         x_data, y_data = helper.unison_shuffled_copies(x_data, y_data)
-    #     if self.data_count_limit != 0:
-    #         x_data = x_data[:self.data_count_limit]
-    #         y_data = y_data[:self.data_count_limit]
-    #
-    #     x_data, y_data = self.preprocess(x_data, y_data)
-    #     return x_data, y_data
 
     def fit_generator(self,
                       batch_size: int = 128,
@@ -131,6 +128,9 @@ class Corpus(object):
 
 
 class SimplifyWeibo4MoodsCorpus(Corpus):
+    __corpus_name__ = 'Simplify Weibo 4 Moods Corpus'
+    __corpus_desc__ = 'Weibo corpus with 4 simple mood class'
+
     __file_name__ = 'simplify_weibo_4_moods.csv'
     __task_list__ = k.TaskType.classification
 
@@ -148,7 +148,7 @@ class SimplifyWeibo4MoodsCorpus(Corpus):
         return {
             'embedding_name': k.Word2VecModels.sgns_weibo_bigram,
             'sequence_length': 50,
-            'segmenter': k.SegmenterType.jieba.value
+            'segmenter': cls.__segmenter__
         }
 
     def read_original_data(self):
@@ -160,11 +160,11 @@ class SimplifyWeibo4MoodsCorpus(Corpus):
                              x_data,
                              y_data):
         tokenized_x_data = []
-        for x_item in tqdm.tqdm(x_data, desc='Tokenizer tokenizing x_data'):
+        for x_item in x_data:
             tokenized_x_data.append(self.tokenizer.word_to_token(x_item))
 
         tokenized_y_data = []
-        for y_item in tqdm.tqdm(y_data, desc='Tokenizer tokenizing y_data'):
+        for y_item in y_data:
             tokenized_y_data.append(self.tokenizer.label_to_token(y_item))
         return tokenized_x_data, tokenized_y_data
 
@@ -175,7 +175,10 @@ if __name__ == '__main__':
     tokenizer_obj = Tokenizer(k.Word2VecModels.sgns_weibo_bigram)
     corpus = SimplifyWeibo4MoodsCorpus(data_count_limit=1000,
                                        tokenizer=tokenizer_obj)
-    x, y = corpus.fit_generator()
-    logging.info(x[:3])
-    logging.info(y[:3])
-    print("hello, world")
+    print(corpus.x_data[:10])
+    print(corpus.y_data[:10])
+    generator = corpus.fit_generator()
+    logging.info(next(generator))
+    logging.info(next(generator))
+    logging.info(next(generator))
+
