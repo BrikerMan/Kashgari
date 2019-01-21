@@ -67,7 +67,7 @@ model = ks.tasks.classification.CNNLSTMModel(tokenizer=tokenizer)
 model.fit(x_data, y_data)
 ```
 
-## Run with bert embedded word2vec
+## Run with bert embedded
 
 ```python
 import kashgari as ks
