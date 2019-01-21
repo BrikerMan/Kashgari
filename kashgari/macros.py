@@ -37,13 +37,6 @@ PROCESSED_CORPUS_PATH = os.path.join(DATA_PATH, 'pre_processed')
 pathlib.Path(PROCESSED_CORPUS_PATH).mkdir(parents=True, exist_ok=True)
 
 
-class Word2VecModels(Enum):
-    """
-    provided pre trained word2vec from https://github.com/Embedding/Chinese-Word-Vectors
-    """
-    sgns_weibo_bigram = 'sgns.weibo.bigram.bz2'
-
-
 class CustomEmbedding(object):
     def __init__(self, embedding_size=100):
         self.embedding_size = embedding_size
@@ -86,7 +79,7 @@ def download_if_not_existed(file_path: str) -> str:
     return target_path[:-4]
 
 
-def get_model_path(file: Union[Word2VecModels, str]) -> str:
+def get_model_path(file: str) -> str:
     file_path = URL_MAP.get(file, file)
     return download_if_not_existed(file_path)
 

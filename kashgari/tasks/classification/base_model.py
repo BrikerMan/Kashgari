@@ -21,7 +21,7 @@ from keras.preprocessing import sequence
 from keras.utils import to_categorical
 
 from kashgari.utils import helper
-from kashgari.data.corpus import Corpus
+from corpus import Corpus
 from kashgari.tokenizer import Tokenizer
 from kashgari.type_hints import *
 from kashgari.embedding import CustomEmbedding, BERTEmbedding
@@ -30,8 +30,8 @@ from sklearn.metrics import classification_report
 
 
 class ClassificationModel(object):
-    def __init__(self):
-        self.tokenizer = None
+    def __init__(self, tokenizer: Tokenizer = None):
+        self.tokenizer = tokenizer
         self.model: Model = None
 
     def prepare_embedding_layer(self) -> Tuple[Layer, List[Layer]]:
@@ -69,23 +69,18 @@ class ClassificationModel(object):
     def prepare_tokenizer_if_needs(self,
                                    x_train: ClassificationXType,
                                    y_train: ClassificationYType,
-                                   tokenizer: Tokenizer = None,
                                    x_validate: ClassificationXType = None,
                                    y_validate: ClassificationYType = None,):
         if self.tokenizer is None:
-            if tokenizer is None:
-                tokenizer = Tokenizer.get_recommend_tokenizer()
+            tokenizer = Tokenizer.get_recommend_tokenizer()
             self.tokenizer = tokenizer
-        else:
-            if tokenizer is not None:
-                logging.warning("model already has been set tokenizer, this might cause unexpected result")
 
         x_data = x_train
         y_data = y_train
         if x_validate:
             x_data += x_validate
             y_data += y_validate
-        tokenizer.build_with_corpus(x_data, y_data)
+        self.tokenizer.build_with_corpus(x_data, y_data)
 
     def get_data_generator(self,
                            x_data: Union[List[List[str]], List[str]],
@@ -122,7 +117,6 @@ class ClassificationModel(object):
     def fit(self,
             x_train: ClassificationXType,
             y_train: ClassificationYType,
-            tokenizer: Tokenizer = None,
             batch_size: int = 64,
             epochs: int = 5,
             x_validate: ClassificationXType = None,
@@ -133,7 +127,6 @@ class ClassificationModel(object):
 
         :param x_train: list of training data.
         :param y_train: list of training target label data.
-        :param tokenizer: custom tokenizer
         :param batch_size: batch size for trainer model
         :param epochs: Number of epochs to train the model.
         :param x_validate: list of validation data.
@@ -142,7 +135,7 @@ class ClassificationModel(object):
         :return:
         """
         assert len(x_train) == len(y_train)
-        self.prepare_tokenizer_if_needs(x_train, y_train, tokenizer, x_validate, y_validate)
+        self.prepare_tokenizer_if_needs(x_train, y_train, x_validate, y_validate)
 
         if len(x_train) < batch_size:
             batch_size = len(x_train) // 2

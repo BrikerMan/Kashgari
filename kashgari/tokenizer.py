@@ -50,7 +50,7 @@ class Tokenizer(object):
 
     @classmethod
     def get_recommend_tokenizer(cls):
-        return Tokenizer(embedding_name=k.Word2VecModels.sgns_weibo_bigram,
+        return Tokenizer(embedding_name=CustomEmbedding(),
                          sequence_length=80,
                          segmenter=k.SegmenterType.jieba)
 

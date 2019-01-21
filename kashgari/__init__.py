@@ -15,5 +15,7 @@ from kashgari import embedding
 from kashgari import tasks
 from .tokenizer import Tokenizer
 from .macros import *
+from . import corpus
+
 if __name__ == "__main__":
     print("Hello world")

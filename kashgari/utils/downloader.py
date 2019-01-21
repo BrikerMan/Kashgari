@@ -18,7 +18,6 @@ import download
 
 from kashgari.macros import DATA_PATH
 from kashgari.macros import STORAGE_HOST
-from kashgari.macros import Word2VecModels
 
 URL_MAP = {
     'sgns.weibo.bigram': 'embedding/word2vev/sgns.weibo.bigram.bz2'
@@ -46,7 +45,7 @@ def download_if_not_existed(path_or_name: str, zip_file_name: str) -> str:
         return os.path.join(DATA_PATH, path_or_name)
 
 
-def get_cached_data_path(file: Union[Word2VecModels, str]) -> str:
+def get_cached_data_path(file: str) -> str:
     file_path = URL_MAP.get(file, file)
     target_path = os.path.join(DATA_PATH, 'pre_processed', file_path)
     return target_path
@@ -55,5 +54,4 @@ def get_cached_data_path(file: Union[Word2VecModels, str]) -> str:
 if __name__ == "__main__":
     from kashgari.utils.logger import init_logger
     init_logger()
-    download_if_not_existed(Word2VecModels.sgns_weibo_bigram)
     print("Hello world")

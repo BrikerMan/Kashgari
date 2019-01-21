@@ -25,7 +25,7 @@ y_data = ['低落', '喜悦', '喜悦', '喜悦', '愤怒', '喜悦', '喜悦', 
 
 
 def run_word2vec_embedding_model():
-    from kashgari.data.corpus import TencentDingdangSLUCorpus
+    from corpus import TencentDingdangSLUCorpus
     embedding = ks.embedding.Word2VecEmbedding(name_or_path='sgns.weibo.bigram', limit=1000)
     tokenizer = ks.tokenizer.Tokenizer(embedding=embedding,
                                        sequence_length=30,
@@ -50,7 +50,7 @@ def run_bert_embedding_model():
 
 
 def run_bert_embedding_model_with_corpus():
-    from kashgari.data.corpus import TencentDingdangSLUCorpus
+    from corpus import TencentDingdangSLUCorpus
     from kashgari.utils import helper
 
     bert_path = '/Users/brikerman/Desktop/corpus/bert/chinese_L-12_H-768_A-12'
@@ -62,14 +62,18 @@ def run_bert_embedding_model_with_corpus():
     x, y = TencentDingdangSLUCorpus.get_classification_data(is_test=True)
     x, y = helper.unison_shuffled_copies(x, y)
 
-    model = ks.tasks.classification.CNNModel()
-    model.fit(x, y, tokenizer)
+    model = ks.tasks.classification.CNNModel(tokenizer=tokenizer)
+    model.fit(x, y)
     return model
 
 
 if __name__ == "__main__":
-    from kashgari.data.corpus import TencentDingdangSLUCorpus
-    # run_word2vec_embedding_model(x_data, y_data)
-    model = run_bert_embedding_model()
-    x_t, y_t = TencentDingdangSLUCorpus.get_classification_data(is_test=True)
-    model.evaluate(x_t, y_t)
+    # from kashgari.data.corpus import TencentDingdangSLUCorpus
+    # # run_word2vec_embedding_model(x_data, y_data)
+    # model = run_bert_embedding_model()
+    # x_t, y_t = TencentDingdangSLUCorpus.get_classification_data(is_test=True)
+    # model.evaluate(x_t, y_t)
+
+    x_train, y_train = ks.corpus.TencentDingdangSLUCorpus.get_classification_data()
+    m = ks.tasks.classification.CNNModel()
+    m.fit(x_train, y_train)
