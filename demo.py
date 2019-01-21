@@ -25,13 +25,18 @@ y_data = ['低落', '喜悦', '喜悦', '喜悦', '愤怒', '喜悦', '喜悦', 
 
 
 def run_word2vec_embedding_model():
+    from kashgari.data.corpus import TencentDingdangSLUCorpus
+    from kashgari.utils import helper
     embedding = ks.embedding.Word2VecEmbedding(name_or_path='sgns.weibo.bigram', limit=1000)
     tokenizer = ks.tokenizer.Tokenizer(embedding=embedding,
                                        sequence_length=30,
                                        segmenter=ks.k.SegmenterType.jieba)
 
+    x, y = TencentDingdangSLUCorpus.get_classification_data()
+    x, y = helper.unison_shuffled_copies(x, y)
+
     model = ks.tasks.classification.CNN_LSTM_Model()
-    model.fit(x_data, y_data, tokenizer)
+    model.fit(x, y, tokenizer, epochs=5)
     return model
 
 
@@ -48,20 +53,17 @@ def run_bert_embedding_model():
 
 
 def run_bert_embedding_model_with_corpus():
-    from kashgari.data.corpus import SimplifyWeibo4MoodsCorpus
+    from kashgari.data.corpus import TencentDingdangSLUCorpus
     from kashgari.utils import helper
 
-    bert_path = '/disk/corpus/bert/chinese_L-12_H-768_A-12/'
+    bert_path = '/Users/brikerman/Desktop/corpus/bert/chinese_L-12_H-768_A-12'
     embedding = ks.embedding.BERTEmbedding(bert_path)
     tokenizer = ks.tokenizer.Tokenizer(embedding=embedding,
                                        sequence_length=30,
                                        segmenter=ks.k.SegmenterType.jieba)
 
-    corpus = SimplifyWeibo4MoodsCorpus(data_count_limit=5000, tokenizer=tokenizer)
-    x, y = corpus.read_original_data()
+    x, y = TencentDingdangSLUCorpus.get_classification_data(test=True)
     x, y = helper.unison_shuffled_copies(x, y)
-    x = x[:1000]
-    y = y[:1000]
 
     model = ks.tasks.classification.CNN_LSTM_Model()
     model.fit(x, y, tokenizer)
@@ -69,7 +71,8 @@ def run_bert_embedding_model_with_corpus():
 
 
 if __name__ == "__main__":
+    from kashgari.data.corpus import TencentDingdangSLUCorpus
     # run_word2vec_embedding_model(x_data, y_data)
-    model = run_bert_embedding_model_with_corpus()
-    text = '我靠靠靠扩扩啊萨达所大所'
-    print('{} -> {}'.format(text, model.predict(text)))
+    model = run_word2vec_embedding_model()
+    x_t, y_t = TencentDingdangSLUCorpus.get_classification_data(test=True)
+    model.evaluate(x_t, y_t)

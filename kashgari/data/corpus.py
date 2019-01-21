@@ -10,10 +10,13 @@
 @time: 2019-01-20
 
 """
+import os
 import random
 import logging
 import numpy as np
 import pandas as pd
+
+from typing import Tuple, List
 
 from kashgari import k
 from kashgari.tokenizer import Tokenizer
@@ -171,16 +174,25 @@ class SimplifyWeibo4MoodsCorpus(Corpus):
         return tokenized_x_data, tokenized_y_data
 
 
+class TencentDingdangSLUCorpus(object):
+
+    __file_name__ = 'task-slu-tencent.dingdang-v1.1'
+
+    @classmethod
+    def get_classification_data(cls, test=False) -> Tuple[List[str], List[str]]:
+        folder_path = downloader.download_if_not_existed('corpus/' + cls.__file_name__)
+        if test:
+            file_path = os.path.join(folder_path, 'test.csv')
+        else:
+            file_path = os.path.join(folder_path, 'train.csv')
+        df = pd.read_csv(file_path)
+        return df['text'].values, df['domain'].values
+
+
 if __name__ == '__main__':
     from kashgari.utils.logger import init_logger
     init_logger()
-    tokenizer_obj = Tokenizer(k.Word2VecModels.sgns_weibo_bigram)
-    corpus = SimplifyWeibo4MoodsCorpus(data_count_limit=1000,
-                                       tokenizer=tokenizer_obj)
-    print(corpus.x_data[:10])
-    print(corpus.y_data[:10])
-    generator = corpus.fit_generator()
-    logging.info(next(generator))
-    logging.info(next(generator))
-    logging.info(next(generator))
+    TencentDingdangSLUCorpus.get_classification_data()
+    print(TencentDingdangSLUCorpus.get_classification_data(test=True))
+
 

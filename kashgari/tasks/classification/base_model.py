@@ -24,6 +24,8 @@ from kashgari.embedding import CustomEmbedding
 from kashgari.tokenizer import Tokenizer
 from kashgari.type_hints import *
 
+from sklearn.metrics import classification_report
+
 
 class ClassificationModel(object):
     def __init__(self):
@@ -51,11 +53,32 @@ class ClassificationModel(object):
         """
         raise NotImplementedError()
 
-    def data_generator(self,
-                       x_data: Union[List[List[str]], List[str]],
-                       y_data: List[str],
-                       batch_size: int = 64,
-                       is_bert: bool = False):
+    def prepare_tokenizer_if_needs(self,
+                                   x_train: ClassificationXType,
+                                   y_train: ClassificationYType,
+                                   tokenizer: Tokenizer = None,
+                                   x_validate: ClassificationXType = None,
+                                   y_validate: ClassificationYType = None,):
+        if self.tokenizer is None:
+            if tokenizer is None:
+                tokenizer = Tokenizer.get_recommend_tokenizer()
+            self.tokenizer = tokenizer
+        else:
+            if tokenizer is not None:
+                logging.warning("model already has been set tokenizer, this might cause unexpected result")
+
+        x_data = x_train
+        y_data = y_train
+        if x_validate:
+            x_data += x_validate
+            y_data += y_validate
+        tokenizer.build_with_corpus(x_data, y_data)
+
+    def get_data_generator(self,
+                           x_data: Union[List[List[str]], List[str]],
+                           y_data: List[str],
+                           batch_size: int = 64,
+                           is_bert: bool = False):
         while True:
             page_list = list(range(len(x_data) // batch_size + 1))
             random.shuffle(page_list)
@@ -83,6 +106,27 @@ class ClassificationModel(object):
                                                   dtype=np.int)
                 yield (tokenized_x_data, tokenized_y_data)
 
+    # def get_evaluate_generator(self,
+    #                            x_data: Union[List[List[str]], List[str]], batch_size: int = 64,
+    #                            is_bert: bool = False):
+    #     while True:
+    #         page_list = list(range(len(x_data) // batch_size + 1))
+    #         random.shuffle(page_list)
+    #         for page in page_list:
+    #             target_x = x_data[page: (page + 1) * batch_size]
+    #             tokenized_x = []
+    #             for x_item in target_x:
+    #                 tokenized_x.append(self.tokenizer.word_to_token(x_item))
+    #
+    #             tokenized_x = sequence.pad_sequences(tokenized_x,
+    #                                                  maxlen=self.tokenizer.sequence_length)
+    #             if is_bert:
+    #                 tokenized_x_seg = np.zeros(shape=(len(tokenized_x), self.tokenizer.sequence_length))
+    #                 tokenized_x_data = [tokenized_x, tokenized_x_seg]
+    #             else:
+    #                 tokenized_x_data = tokenized_x
+    #             yield tokenized_x_data
+
     def fit(self,
             x_train: ClassificationXType,
             y_train: ClassificationYType,
@@ -91,6 +135,7 @@ class ClassificationModel(object):
             epochs: int = 5,
             x_validate: ClassificationXType = None,
             y_validate: ClassificationYType = None,
+            class_weight: bool = False,
             **kwargs):
         """
 
@@ -105,21 +150,7 @@ class ClassificationModel(object):
         :return:
         """
         assert len(x_train) == len(y_train)
-
-        if self.tokenizer is None:
-            if tokenizer is None:
-                tokenizer = Tokenizer.get_recommend_tokenizer()
-            self.tokenizer = tokenizer
-        else:
-            if tokenizer is not None:
-                logging.warning("model already has been set tokenizer, this might cause unexpected result")
-
-        x_data = x_train
-        y_data = y_train
-        if x_validate:
-            x_data += x_validate
-            y_data += y_validate
-        tokenizer.build_with_corpus(x_data, y_data)
+        self.prepare_tokenizer_if_needs(x_train, y_train, tokenizer, x_validate, y_validate)
 
         if len(x_train) < batch_size:
             batch_size = len(x_train) // 2
@@ -127,15 +158,15 @@ class ClassificationModel(object):
         if not self.model:
             self.build_model()
 
-        train_generator = self.data_generator(x_train,
-                                              y_train,
-                                              batch_size,
-                                              is_bert=self.tokenizer.is_bert)
+        train_generator = self.get_data_generator(x_train,
+                                                  y_train,
+                                                  batch_size,
+                                                  is_bert=self.tokenizer.is_bert)
         if x_validate:
-            validation_generator = self.data_generator(x_validate,
-                                                       y_validate,
-                                                       batch_size,
-                                                       is_bert=self.tokenizer.is_bert)
+            validation_generator = self.get_data_generator(x_validate,
+                                                           y_validate,
+                                                           batch_size,
+                                                           is_bert=self.tokenizer.is_bert)
             kwargs['validation_data'] = validation_generator
             kwargs['validation_steps'] = len(x_validate) // batch_size
 
@@ -167,6 +198,27 @@ class ClassificationModel(object):
             x = padded_tokens
         predict_result = self.model.predict(x)[0]
         return self.tokenizer.idx2label[predict_result.argmax(0)]
+
+    def evaluate(self, x_data, y_data, batch_size: int = 128):
+        y_test = np.array([self.tokenizer.label2idx[y] for y in y_data])
+
+        tokenized_x = []
+        for x_item in x_data:
+            tokenized_x.append(self.tokenizer.word_to_token(x_item))
+
+        tokenized_x = sequence.pad_sequences(tokenized_x,
+                                             maxlen=self.tokenizer.sequence_length)
+        if self.tokenizer.is_bert:
+            tokenized_x_seg = np.zeros(shape=(len(tokenized_x), self.tokenizer.sequence_length))
+            tokenized_x_data = [tokenized_x, tokenized_x_seg]
+        else:
+            tokenized_x_data = tokenized_x
+
+        y_pred = self.model.predict(tokenized_x_data, batch_size=128)
+
+        y_pred = y_pred.argmax(1)
+        target_names = list(self.tokenizer.idx2label.values())
+        print(classification_report(y_test, y_pred, target_names))
 
 
 if __name__ == "__main__":

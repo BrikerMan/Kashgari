@@ -27,21 +27,20 @@ URL_MAP = {
 
 def download_file(file: str):
     url = STORAGE_HOST + file
-    target_path = os.path.join(DATA_PATH, file)
-    download.download(url, target_path)
+    file_path = os.path.join(DATA_PATH, file)
+    download.download(url, os.path.dirname(file_path), kind='tar.gz', replace=True)
+    # download.download(url, file_path)
 
 
-def download_if_not_existed(file: Union[Word2VecModels, str]) -> str:
-    file_path = URL_MAP.get(file, file)
-    target_path = os.path.join(DATA_PATH, file_path)
-    if not os.path.exists(target_path[:-4]):
+def download_if_not_existed(path_or_name: str) -> str:
+    if os.path.exists(path_or_name):
+        return path_or_name
+    elif os.path.exists(os.path.join(DATA_PATH, path_or_name)):
+        return os.path.join(DATA_PATH, path_or_name)
+    else:
+        file_path = URL_MAP.get(path_or_name, path_or_name)
         download_file(file_path)
-        if target_path.endswith('.bz2'):
-            with open(target_path, 'rb') as source, open(target_path[:-4], 'wb') as dest:
-                dest.write(bz2.decompress(source.read()))
-            return target_path[:-4]
-        else:
-            return target_path
+        return file_path
 
 
 def get_cached_data_path(file: Union[Word2VecModels, str]) -> str:
