@@ -13,9 +13,12 @@
 import kashgari.macros as k
 from kashgari import embedding
 from kashgari import tasks
-from .tokenizer import Tokenizer
-from .macros import *
+from kashgari.utils.logger import init_logger
 from . import corpus
+from .macros import *
+from .tokenizer import Tokenizer
+
+init_logger()
 
 if __name__ == "__main__":
     print("Hello world")

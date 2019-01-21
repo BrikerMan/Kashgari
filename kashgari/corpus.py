@@ -10,13 +10,15 @@
 @time: 2019-01-20
 
 """
-import os
 import logging
+import os
+import re
+from typing import Tuple, List
+
 import pandas as pd
 
-from typing import Tuple, List
-from kashgari.utils import helper
 from kashgari.utils import downloader
+from kashgari.utils import helper
 
 
 class Corpus(object):
@@ -96,12 +98,57 @@ class TencentDingdangSLUCorpus(Corpus):
             y_data = y_data[:max_count]
         return x_data, y_data
 
+    @staticmethod
+    def parse_ner_str(text: str) -> Tuple[str, str]:
+        pattern = '<(?P<entity>\\w*)>(?P<value>[^<>]*)<\\/\\w*>'
+        x_list = []
+        tag_list = []
+        last_index = 0
+        for m in re.finditer(pattern, text):
+            x_list += text[last_index:m.start()]
+            tag_list += ['O'] * (m.start() - last_index)
+            last_index = m.end()
+            dic = m.groupdict()
+            value = dic['value'].split('||')[0]
+            entity = dic['entity']
+            x_list += list(value)
+            tag_list += ['P-' + entity] + ['I-' + entity] * (len(value) - 1)
+        if last_index < len(text):
+            x_list += list(text[last_index:])
+            tag_list += len(text[last_index:]) * ['O']
+        return ' '.join(x_list), ' '.join(tag_list)
+
+    @classmethod
+    def get_sequence_tagging_data(cls,
+                                  is_test: bool = False,
+                                  shuffle: bool = True,
+                                  max_count: int = 0) -> Tuple[List[str], List[str]]:
+        folder_path = downloader.download_if_not_existed('corpus/' + cls.__corpus_name__,
+                                                         'corpus/' + cls.__zip_file__name, )
+
+        if is_test:
+            file_path = os.path.join(folder_path, 'test.csv')
+        else:
+            file_path = os.path.join(folder_path, 'train.csv')
+
+        df = pd.read_csv(file_path)
+        x_data = []
+        y_data = []
+
+        for tagging_text in df['tagging']:
+            x_item, y_item = cls.parse_ner_str(tagging_text)
+            x_data.append(x_item)
+            y_data.append(y_item)
+        if shuffle:
+            x_data, y_data = helper.unison_shuffled_copies(x_data, y_data)
+        if max_count != 0:
+            x_data = x_data[:max_count]
+            y_data = y_data[:max_count]
+        return x_data, y_data
+
 
 if __name__ == '__main__':
-    from kashgari.utils.logger import init_logger
-    init_logger()
-    TencentDingdangSLUCorpus.get_info()
-    # TencentDingdangSLUCorpus.get_classification_data()
-    # print(TencentDingdangSLUCorpus.get_classification_data(is_test=True))
-
-
+    # init_logger()
+    x, y = TencentDingdangSLUCorpus.get_sequence_tagging_data()
+    for i in range(len(x)):
+        print('{} -> {}'.format(x[i], y[i]))
