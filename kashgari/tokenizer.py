@@ -44,6 +44,10 @@ class Tokenizer(object):
             embedding = CustomEmbedding(embedding_size=100)
         self.embedding = embedding
 
+        if not isinstance(self.embedding, CustomEmbedding):
+            self.word2idx = self.embedding.get_word2idx_dict()
+            self.idx2word = dict([(value, key) for (key, value) in self.idx2word.items()])
+
     @classmethod
     def get_recommend_tokenizer(cls):
         return Tokenizer(embedding_name=k.Word2VecModels.sgns_weibo_bigram,
@@ -61,6 +65,7 @@ class Tokenizer(object):
     def build_with_corpus(self,
                           x_data: Union[List[List[str]], List[str]],
                           y_data: Union[List[List[str]], List[str]],
+                          only_if_needs: bool = True,
                           **kwargs):
         if isinstance(self.embedding, CustomEmbedding):
             word_set: Dict[str, int] = {}

@@ -21,7 +21,7 @@ from kashgari.macros import STORAGE_HOST
 from kashgari.macros import Word2VecModels
 
 URL_MAP = {
-    Word2VecModels.sgns_weibo_bigram: 'embedding/word2vev/sgns.weibo.bigram.bz2'
+    'sgns.weibo.bigram': 'embedding/word2vev/sgns.weibo.bigram.bz2'
 }
 
 

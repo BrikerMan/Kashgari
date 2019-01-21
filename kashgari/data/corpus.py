@@ -124,6 +124,8 @@ class Corpus(object):
                 y = to_categorical(y,
                                    num_classes=self.tokenizer.class_num,
                                    dtype=np.int)
+                print(x.shape)
+                print(y.shape)
                 yield (x, y)
 
 

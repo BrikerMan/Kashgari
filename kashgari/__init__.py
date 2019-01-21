@@ -13,7 +13,7 @@
 import kashgari.macros as k
 from kashgari import embedding
 from kashgari import tasks
-from kashgari.tokenizer import Tokenizer
-
+from .tokenizer import Tokenizer
+from .macros import *
 if __name__ == "__main__":
     print("Hello world")

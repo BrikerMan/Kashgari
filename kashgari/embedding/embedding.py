@@ -80,7 +80,7 @@ class Word2Vec(EmbeddingModel):
         return np.array(matrix_list)
 
     def get_word2idx_dict(self):
-        word2idx = self.base_dict
+        word2idx = self.base_dict.copy()
         for word in self.keyed_vector.index2entity:
             word2idx[word] = len(word2idx)
         return word2idx

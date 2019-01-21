@@ -67,7 +67,7 @@ class SegmenterType(Enum):
 
 
 URL_MAP = {
-    Word2VecModels.sgns_weibo_bigram: 'embedding/word2vev/sgns.weibo.bigram.bz2'
+    'w2v.sgns.weibo.bigram': 'embedding/word2vev/sgns.weibo.bigram.bz2'
 }
 
 

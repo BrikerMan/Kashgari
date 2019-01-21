@@ -12,8 +12,9 @@
 """
 import random
 from typing import List, Union
-
+import logging
 import numpy as np
+from keras.models import Model
 from keras.layers.embeddings import Embedding
 from keras.preprocessing import sequence
 from keras.utils import to_categorical
@@ -30,7 +31,7 @@ class ClassificationModel(object):
     def __init__(self):
         self.tokenizer = None
         self.embedding_name = None
-        self.model = None
+        self.model: Model = None
 
     def prepare_embedding_layer(self):
         embedding = self.tokenizer.embedding
@@ -42,7 +43,7 @@ class ClassificationModel(object):
             return Embedding(len(self.tokenizer.word2idx),
                              self.tokenizer.embedding.embedding_size,
                              input_length=self.tokenizer.sequence_length,
-                             weights=[self.tokenizer.get_embedding_matrix()],
+                             weights=[self.tokenizer.embedding.get_embedding_matrix()],
                              trainable=False)
 
     def build_model(self):
@@ -101,19 +102,24 @@ class ClassificationModel(object):
         """
         assert len(x_train) == len(y_train)
 
-        if tokenizer is None:
-            x_data = x_train
-            y_data = y_train
-            if x_validate:
-                x_data += x_validate
-                y_data += y_validate
-            tokenizer = Tokenizer.get_recommend_tokenizer()
-            tokenizer.build_with_corpus(x_data, y_data)
+        if self.tokenizer is None:
+            if tokenizer is None:
+                tokenizer = Tokenizer.get_recommend_tokenizer()
+            self.tokenizer = tokenizer
+        else:
+            if tokenizer is not None:
+                logging.warning("model already has been set tokenizer, this might cause unexpected result")
+
+        x_data = x_train
+        y_data = y_train
+        if x_validate:
+            x_data += x_validate
+            y_data += y_validate
+        tokenizer.build_with_corpus(x_data, y_data)
 
         if len(x_train) < batch_size:
             batch_size = len(x_train) // 2
 
-        self.tokenizer = tokenizer
         if not self.model:
             self.build_model()
 
@@ -141,6 +147,12 @@ class ClassificationModel(object):
                                  epochs=epochs,
                                  verbose=1,
                                  callbacks=callbacks)
+
+    def predict(self, sentence: str):
+        tokens = self.tokenizer.word_to_token(sentence)
+        padded_tokens = sequence.pad_sequences([tokens], maxlen=self.tokenizer.sequence_length)
+        predict_result = self.model.predict(padded_tokens)[0]
+        return self.tokenizer.idx2label[predict_result.argmax(0)]
 
 
 if __name__ == "__main__":
