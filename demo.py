@@ -70,4 +70,6 @@ def run_bert_embedding_model_with_corpus():
 
 if __name__ == "__main__":
     # run_word2vec_embedding_model(x_data, y_data)
-    run_bert_embedding_model_with_corpus()
+    model = run_bert_embedding_model_with_corpus()
+    text = '我靠靠靠扩扩啊萨达所大所'
+    print('{} -> {}'.format(text, model.predict(text)))

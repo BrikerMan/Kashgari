@@ -32,7 +32,6 @@ class CNN_LSTM_Model(ClassificationModel):
 
         elif isinstance(embedding, BERTEmbedding):
             base_model = embedding.get_base_model(self.tokenizer.sequence_length)
-            base_model.summary()
             input_layers = base_model.inputs
             current = base_model.output
             current = helper.NonMaskingLayer()(current)
@@ -59,27 +58,6 @@ class CNN_LSTM_Model(ClassificationModel):
                       metrics=['accuracy'])
         self.model = model
         self.model.summary()
-
-    # def fit(self,
-    #         x_train: ClassificationXType,
-    #         y_train: ClassificationYType,
-    #         tokenizer: Tokenizer = None,
-    #         batch_size: int = 64,
-    #         epochs: int = 5,
-    #         x_validate: ClassificationXType = None,
-    #         y_validate: ClassificationYType = None,
-    #         **kwargs):
-    #     if isinstance(self.tokenizer.embedding, BERTEmbedding):
-    #
-    #     else:
-    #         super(CNN_LSTM_Model, self).fit(x_train,
-    #                                         y_train,
-    #                                         tokenizer,
-    #                                         batch_size,
-    #                                         epochs,
-    #                                         x_validate,
-    #                                         y_validate,
-    #                                         **kwargs)
 
 
 if __name__ == "__main__":

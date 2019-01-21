@@ -161,7 +161,11 @@ class ClassificationModel(object):
     def predict(self, sentence: str):
         tokens = self.tokenizer.word_to_token(sentence)
         padded_tokens = sequence.pad_sequences([tokens], maxlen=self.tokenizer.sequence_length)
-        predict_result = self.model.predict(padded_tokens)[0]
+        if self.tokenizer.is_bert:
+            x = [padded_tokens, np.zeros(shape=(1, self.tokenizer.sequence_length))]
+        else:
+            x = padded_tokens
+        predict_result = self.model.predict(x)[0]
         return self.tokenizer.idx2label[predict_result.argmax(0)]
 
 
