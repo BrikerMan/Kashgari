@@ -10,24 +10,41 @@
 @time: 2019-01-19 11:52
 
 """
-from keras.layers import Dense, Conv1D, MaxPooling1D
+from keras.layers import Dense, Conv1D, MaxPooling1D, Embedding, Input
 from keras.layers.recurrent import LSTM
-from keras.models import Sequential
+from keras.models import Sequential, Model
 
 from kashgari.tasks.classification.base_model import ClassificationModel
+from kashgari.embedding import CustomEmbedding
 
 
 class CNN_LSTM_Model(ClassificationModel):
 
     def build_model(self):
-        model = Sequential()
-        embedding = self.prepare_embedding_layer()
-        model.add(embedding)
-        model.add(Conv1D(filters=32, kernel_size=3, padding='same', activation='relu'))
-        model.add(MaxPooling1D(pool_size=2))
-        model.add(LSTM(100))
-        model.add(Dense(len(self.tokenizer.label2idx),
-                        activation='sigmoid'))
+        model = Model()
+        embedding = self.tokenizer.embedding
+
+        if isinstance(embedding, CustomEmbedding):
+            input_layer = Input(shape=(self.tokenizer.sequence_length,), dtype='int32')
+            embedding_layer = Embedding(self.tokenizer.word_num,
+                                        embedding.embedding_size)(input_layer)
+            input_layers = [input_layer]
+        else:
+            input_layer = Input(shape=(self.tokenizer.sequence_length,), dtype='int32')
+            embedding_layer = Embedding(len(self.tokenizer.word2idx),
+                                        self.tokenizer.embedding.embedding_size,
+                                        input_length=self.tokenizer.sequence_length,
+                                        weights=[self.tokenizer.embedding.get_embedding_matrix()],
+                                        trainable=False)(input_layer)
+            input_layers = [input_layer]
+
+        conv_layer = Conv1D(filters=32, kernel_size=3, padding='same', activation='relu')(embedding_layer)
+        max_pool_layer = MaxPooling1D(pool_size=2)(conv_layer)
+        lstm_layer = LSTM(100)(max_pool_layer)
+        dense_layer = Dense(len(self.tokenizer.label2idx), activation='sigmoid')(lstm_layer)
+        output_layers = [dense_layer]
+
+        model = Model(input_layers, output_layers)
         model.compile(loss='categorical_crossentropy',
                       optimizer='adam',
                       metrics=['accuracy'])
@@ -37,14 +54,6 @@ class CNN_LSTM_Model(ClassificationModel):
 
 if __name__ == "__main__":
     from kashgari.utils.logger import init_logger
-
-    # df = pd.read_csv('/Users/brikerman/.kashgari/corpus/simplify_weibo_4_moods.csv')
-    # x_data = df['review']
-    # y_data = df['label']
-    # x_data, y_data = helper.unison_shuffled_copies(x_data, y_data)
-    #
-    # x_data = x_data[:1000]
-    # y_data = y_data[:1000]
     init_logger()
 
     x_data = ['奇怪，端午节了，怎么没看到超市里有月饼卖啊？@ 王子26', '"哥，你闷骚！年轻不知精珍贵',

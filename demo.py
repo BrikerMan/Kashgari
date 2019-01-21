@@ -10,7 +10,7 @@
 @time: 2019-01-19 16:37
 
 """
-import kashgari
+import kashgari as ks
 
 
 if __name__ == "__main__":
@@ -24,6 +24,14 @@ if __name__ == "__main__":
               '这世道！这国家迟早…维权网唐奇虎报道拆迁公司的流氓有恃无恐一直骚扰纠缠到第二天凌晨2：30左右，还在不停地谩骂，最后终于大出大手，四十余人一起下手，对陈刚拳脚相加，并用条凳砸陈刚的脑颅。陈刚被打得血流满面，白色衬衫全被鲜血染红，陈刚被逼无奈，拿起菜刀进陈刚正在南通市附属医院接受抢救治疗。',
               '每个人都有许多小秘密，我把它藏进梦里……']
     y_data = ['低落', '喜悦', '喜悦', '喜悦', '愤怒', '喜悦', '喜悦', '喜悦', '愤怒', '愤怒']
-    tokernizer = kashgari.Tokenizer()
-    tokernizer.build_with_corpus(x_data, y_data)
-    print(tokernizer.word2idx)
+
+    embedding = ks.embedding.Word2Vec(name_or_path='sgns.weibo.bigram', limit=1000)
+    tokenizer = ks.tokenizer.Tokenizer(embedding=embedding,
+                                       sequence_length=30,
+                                       segmenter=ks.k.SegmenterType.jieba)
+
+    model = ks.tasks.classification.CNN_LSTM_Model()
+    model.fit(x_data, y_data, tokenizer)
+
+    print(model.predict('这个模型好傻呀'))
+
