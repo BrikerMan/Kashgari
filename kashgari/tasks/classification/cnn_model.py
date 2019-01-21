@@ -55,5 +55,4 @@ if __name__ == "__main__":
     x_data, y_data = TencentDingdangSLUCorpus.get_classification_data()
 
     classifier = CNNModel()
-    print(classifier.hyper_parameters)
     classifier.fit(x_data, y_data, batch_size=2)

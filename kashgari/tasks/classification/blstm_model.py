@@ -21,7 +21,7 @@ class BLSTMModel(ClassificationModel):
     __base_hyper_parameters__ = {
         'lstm_layer': {
             'units': 256,
-            'return_sequence':  False
+            'return_sequences': False
         }
     }
 
@@ -48,4 +48,4 @@ if __name__ == "__main__":
     x_data, y_data = TencentDingdangSLUCorpus.get_classification_data()
 
     classifier = BLSTMModel()
-    classifier.fit(x_data, y_data, batch_size=2)
+    classifier.fit(x_data, y_data, batch_size=2, class_weight=True)

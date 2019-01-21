@@ -11,7 +11,6 @@
 
 """
 import random
-
 import numpy as np
 from typing import Tuple, Dict
 from keras.layers import Embedding, Input, Layer
@@ -20,18 +19,16 @@ from keras.preprocessing import sequence
 from keras.utils import to_categorical
 
 from kashgari.utils import helper
-from corpus import Corpus
 from kashgari.tokenizer import Tokenizer
 from kashgari.type_hints import *
 from kashgari.embedding import CustomEmbedding, BERTEmbedding
 
 from sklearn.metrics import classification_report
+from sklearn.utils import class_weight as class_weight_calculte
 
 
 class ClassificationModel(object):
-    __base_hyper_parameters__ = {
-
-    }
+    __base_hyper_parameters__ = {}
 
     @property
     def hyper_parameters(self):
@@ -132,6 +129,7 @@ class ClassificationModel(object):
             x_validate: ClassificationXType = None,
             y_validate: ClassificationYType = None,
             class_weight: bool = False,
+            fit_kwargs: Dict = None,
             **kwargs):
         """
 
@@ -141,7 +139,11 @@ class ClassificationModel(object):
         :param epochs: Number of epochs to train the model.
         :param x_validate: list of validation data.
         :param y_validate: list of validation target label data.
-        :param kwargs:
+        :param y_validate: list of validation target label data.
+        :param y_validate: list of validation target label data.
+        :param class_weight: set class weights for imbalanced classes
+        :param fit_kwargs: additional kwargs to be passed to
+        :func:`~keras.models.Model.fit`
         :return:
         """
         assert len(x_train) == len(y_train)
@@ -165,24 +167,22 @@ class ClassificationModel(object):
             kwargs['validation_data'] = validation_generator
             kwargs['validation_steps'] = len(x_validate) // batch_size
 
+        if fit_kwargs is None:
+            fit_kwargs = {}
+
+        if class_weight:
+            y_list = [self.tokenizer.label2idx[y] for y in y_train]
+            class_weights = class_weight_calculte.compute_class_weight('balanced',
+                                                                       np.unique(y_list),
+                                                                       y_list)
+        else:
+            class_weights = None
+
         self.model.fit_generator(train_generator,
                                  steps_per_epoch=len(x_train) // batch_size,
                                  epochs=epochs,
-                                 **kwargs)
-
-    def fit_corpus(self,
-                   corpus: Corpus,
-                   batch_size: int = 128,
-                   epochs: int = 10,
-                   callbacks=None):
-        train_generator = corpus.fit_generator()
-        self.tokenizer = corpus.tokenizer
-        self.build_model()
-        self.model.fit_generator(train_generator,
-                                 steps_per_epoch=corpus.data_count // batch_size,
-                                 epochs=epochs,
-                                 verbose=1,
-                                 callbacks=callbacks)
+                                 class_weight=class_weights,
+                                 **fit_kwargs)
 
     def predict(self, sentence: str):
         tokens = self.tokenizer.word_to_token(sentence)
