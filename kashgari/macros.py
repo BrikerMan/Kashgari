@@ -19,10 +19,10 @@ from typing import Union
 
 import download
 
-PAD = "#PAD"
-BOS = "#BOS"
-EOS = "#EOS"
-UNK = "#UNK"
+PAD = "[PAD]"
+BOS = "[BOS]"
+EOS = "[EOS]"
+UNK = "[UNK]"
 
 MARKED_KEYS = [PAD, BOS, EOS, UNK]
 

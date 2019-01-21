@@ -10,21 +10,19 @@
 @time: 2019-01-19 11:50
 
 """
-import random
-from typing import List, Union
 import logging
+import random
+
 import numpy as np
-from keras.models import Model
 from keras.layers.embeddings import Embedding
+from keras.models import Model
 from keras.preprocessing import sequence
 from keras.utils import to_categorical
 
 from kashgari.data.corpus import Corpus
 from kashgari.embedding import CustomEmbedding
 from kashgari.tokenizer import Tokenizer
-
-ClassificationXType = Union[List[List[str]], List[str]]
-ClassificationYType = List[str]
+from kashgari.type_hints import *
 
 
 class ClassificationModel(object):
@@ -56,7 +54,8 @@ class ClassificationModel(object):
     def data_generator(self,
                        x_data: Union[List[List[str]], List[str]],
                        y_data: List[str],
-                       batch_size: int = 64):
+                       batch_size: int = 64,
+                       is_bert: bool = False):
         while True:
             page_list = list(range(len(x_data) // batch_size + 1))
             random.shuffle(page_list)
@@ -64,16 +63,21 @@ class ClassificationModel(object):
                 target_x = x_data[page: (page + 1) * batch_size]
                 target_y = y_data[page: (page + 1) * batch_size]
 
-                tokenized_x_data = []
+                tokenized_x = []
                 for x_item in target_x:
-                    tokenized_x_data.append(self.tokenizer.word_to_token(x_item))
+                    tokenized_x.append(self.tokenizer.word_to_token(x_item))
 
                 tokenized_y_data = []
                 for y_item in target_y:
                     tokenized_y_data.append(self.tokenizer.label_to_token(y_item))
 
-                tokenized_x_data = sequence.pad_sequences(tokenized_x_data,
-                                                          maxlen=self.tokenizer.sequence_length)
+                tokenized_x = sequence.pad_sequences(tokenized_x,
+                                                     maxlen=self.tokenizer.sequence_length)
+                if is_bert:
+                    tokenized_x_seg = np.zeros(shape=(len(tokenized_x), self.tokenizer.sequence_length))
+                    tokenized_x_data = [tokenized_x, tokenized_x_seg]
+                else:
+                    tokenized_x_data = tokenized_x
                 tokenized_y_data = to_categorical(tokenized_y_data,
                                                   num_classes=self.tokenizer.class_num,
                                                   dtype=np.int)
@@ -123,9 +127,15 @@ class ClassificationModel(object):
         if not self.model:
             self.build_model()
 
-        train_generator = self.data_generator(x_train, y_train, batch_size)
+        train_generator = self.data_generator(x_train,
+                                              y_train,
+                                              batch_size,
+                                              is_bert=self.tokenizer.is_bert)
         if x_validate:
-            validation_generator = self.data_generator(x_validate, y_validate, batch_size)
+            validation_generator = self.data_generator(x_validate,
+                                                       y_validate,
+                                                       batch_size,
+                                                       is_bert=self.tokenizer.is_bert)
             kwargs['validation_data'] = validation_generator
             kwargs['validation_steps'] = len(x_validate) // batch_size
 

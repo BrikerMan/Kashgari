@@ -11,10 +11,10 @@
 
 """
 from . import embedding
-from .embedding import BERT
+from .embedding import BERTEmbedding
 from .embedding import CustomEmbedding
 from .embedding import EmbeddingModel
-from .embedding import Word2Vec
+from .embedding import Word2VecEmbedding
 from .embedding import get_embedding_by_conf
 
 if __name__ == "__main__":

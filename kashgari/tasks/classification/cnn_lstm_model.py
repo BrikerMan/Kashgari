@@ -12,33 +12,42 @@
 """
 from keras.layers import Dense, Conv1D, MaxPooling1D, Embedding, Input
 from keras.layers.recurrent import LSTM
-from keras.models import Sequential, Model
+from keras.models import Model
 
+from kashgari.embedding import CustomEmbedding, BERTEmbedding
 from kashgari.tasks.classification.base_model import ClassificationModel
-from kashgari.embedding import CustomEmbedding
+from kashgari.utils import helper
 
 
 class CNN_LSTM_Model(ClassificationModel):
 
     def build_model(self):
-        model = Model()
         embedding = self.tokenizer.embedding
 
         if isinstance(embedding, CustomEmbedding):
-            input_layer = Input(shape=(self.tokenizer.sequence_length,), dtype='int32')
-            embedding_layer = Embedding(self.tokenizer.word_num,
-                                        embedding.embedding_size)(input_layer)
-            input_layers = [input_layer]
-        else:
-            input_layer = Input(shape=(self.tokenizer.sequence_length,), dtype='int32')
-            embedding_layer = Embedding(len(self.tokenizer.word2idx),
-                                        self.tokenizer.embedding.embedding_size,
-                                        input_length=self.tokenizer.sequence_length,
-                                        weights=[self.tokenizer.embedding.get_embedding_matrix()],
-                                        trainable=False)(input_layer)
-            input_layers = [input_layer]
+            input_x = Input(shape=(self.tokenizer.sequence_length,), dtype='int32')
+            current = Embedding(self.tokenizer.word_num,
+                                embedding.embedding_size)(input_x)
+            input_layers = [input_x]
 
-        conv_layer = Conv1D(filters=32, kernel_size=3, padding='same', activation='relu')(embedding_layer)
+        elif isinstance(embedding, BERTEmbedding):
+            base_model = embedding.get_base_model(self.tokenizer.sequence_length)
+            base_model.summary()
+            input_layers = base_model.inputs
+            current = base_model.output
+            current = helper.NonMaskingLayer()(current)
+
+        else:
+            input_x = Input(shape=(self.tokenizer.sequence_length,), dtype='int32')
+            current = Embedding(len(self.tokenizer.word2idx),
+                                self.tokenizer.embedding.embedding_size,
+                                input_length=self.tokenizer.sequence_length,
+                                weights=[self.tokenizer.embedding.get_embedding_matrix()],
+                                trainable=False)(input_x)
+
+            input_layers = [input_x]
+
+        conv_layer = Conv1D(filters=32, kernel_size=3, padding='same', activation='relu')(current)
         max_pool_layer = MaxPooling1D(pool_size=2)(conv_layer)
         lstm_layer = LSTM(100)(max_pool_layer)
         dense_layer = Dense(len(self.tokenizer.label2idx), activation='sigmoid')(lstm_layer)
@@ -50,6 +59,27 @@ class CNN_LSTM_Model(ClassificationModel):
                       metrics=['accuracy'])
         self.model = model
         self.model.summary()
+
+    # def fit(self,
+    #         x_train: ClassificationXType,
+    #         y_train: ClassificationYType,
+    #         tokenizer: Tokenizer = None,
+    #         batch_size: int = 64,
+    #         epochs: int = 5,
+    #         x_validate: ClassificationXType = None,
+    #         y_validate: ClassificationYType = None,
+    #         **kwargs):
+    #     if isinstance(self.tokenizer.embedding, BERTEmbedding):
+    #
+    #     else:
+    #         super(CNN_LSTM_Model, self).fit(x_train,
+    #                                         y_train,
+    #                                         tokenizer,
+    #                                         batch_size,
+    #                                         epochs,
+    #                                         x_validate,
+    #                                         y_validate,
+    #                                         **kwargs)
 
 
 if __name__ == "__main__":

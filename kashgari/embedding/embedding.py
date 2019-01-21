@@ -15,6 +15,8 @@ import logging
 import os
 from typing import Dict, Type
 
+import keras
+import keras_bert
 import numpy as np
 from gensim.models import KeyedVectors
 
@@ -23,6 +25,13 @@ from kashgari import k
 
 class EmbeddingModel(object):
     base_dict = {}
+
+    special_tokens = {
+        k.PAD: k.PAD,
+        k.UNK: k.BOS,
+        k.BOS: k.EOS,
+        k.EOS: k.UNK,
+    }
 
     def __init__(self,
                  name_or_path: str,
@@ -36,7 +45,7 @@ class EmbeddingModel(object):
         return self.base_dict
 
 
-class Word2Vec(EmbeddingModel):
+class Word2VecEmbedding(EmbeddingModel):
     base_dict = {
         k.PAD: 0,
         k.BOS: 1,
@@ -48,7 +57,7 @@ class Word2Vec(EmbeddingModel):
                  name_or_path: str,
                  embedding_size: int = None,
                  **kwargs):
-        super(Word2Vec, self).__init__(name_or_path, embedding_size, **kwargs)
+        super(Word2VecEmbedding, self).__init__(name_or_path, embedding_size, **kwargs)
         self.model_path = k.get_model_path('w2v.{}'.format(name_or_path))
         self.keyed_vector: KeyedVectors = KeyedVectors.load_word2vec_format(self.model_path, **kwargs)
         self.embedding_size = self.keyed_vector.vector_size
@@ -89,24 +98,40 @@ class Word2Vec(EmbeddingModel):
         return 'word2vec:{}'.format(self.name)
 
 
-class BERT(EmbeddingModel):
+class BERTEmbedding(EmbeddingModel):
     base_dict = {}
+    special_tokens = {
+        k.PAD: '[PAD]',
+        k.UNK: '[UNK]',
+        k.BOS: '[CLS]',
+        k.EOS: '[SEP]',
+    }
 
     def __init__(self,
                  name_or_path: str,
                  embedding_size: int = None,
                  **kwargs):
-        super(BERT, self).__init__(name_or_path, embedding_size, **kwargs)
+        super(BERTEmbedding, self).__init__(name_or_path, embedding_size, **kwargs)
         self.model_path = name_or_path
 
     def get_word2idx_dict(self):
         dict_path = os.path.join(self.model_path, 'vocab.txt')
         word2idx = {}
-        with open(dict_path, 'r') as f:
+        with open(dict_path, 'r', encoding='utf-8') as f:
             words = f.read().splitlines()
             for word in words:
                 word2idx[word] = len(word2idx)
+        for key, value in self.special_tokens.items():
+            word2idx[key] = word2idx[value]
         return word2idx
+
+    def get_base_model(self, seq_len: int) -> keras.models.Model:
+        config_path = os.path.join(self.model_path, 'bert_config.json')
+        check_point_path = os.path.join(self.model_path, 'bert_model.ckpt')
+        model: keras.models.Model = keras_bert.load_trained_model_from_checkpoint(config_path,
+                                                                                  check_point_path,
+                                                                                  seq_len=seq_len)
+        return model
 
     def __repr__(self):
         return 'bert:{}'.format(self.name)
@@ -133,12 +158,17 @@ class CustomEmbedding(EmbeddingModel):
 
 def get_embedding_by_conf(name: str, **kwargs) -> EmbeddingModel:
     embedding_class: Dict[str, Type[EmbeddingModel]] = {
-        'word2vec': Word2Vec,
-        'bert': BERT,
+        'word2vec': Word2VecEmbedding,
+        'bert': BERTEmbedding,
         'custom': CustomEmbedding
     }
     return embedding_class[name](**kwargs)
 
 
 if __name__ == '__main__':
+    bert_path = '/Users/brikerman/Desktop/corpus/bert/chinese_L-12_H-768_A-12'
+    bert_embedding = BERTEmbedding(bert_path)
+    print(bert_embedding.get_word2idx_dict())
+    model = bert_embedding.get_base_model(12)
+    model.summary()
     print("hello, world")

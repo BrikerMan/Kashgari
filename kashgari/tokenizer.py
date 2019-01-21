@@ -14,7 +14,7 @@ import logging
 from typing import List, Union, Dict
 
 from kashgari import k
-from kashgari.embedding import EmbeddingModel, CustomEmbedding
+from kashgari.embedding import EmbeddingModel, CustomEmbedding, BERTEmbedding
 from kashgari.macros import PAD, BOS, EOS, UNK
 
 
@@ -62,6 +62,13 @@ class Tokenizer(object):
     def word_num(self) -> int:
         return len(self.word2idx)
 
+    @property
+    def is_bert(self) -> bool:
+        if self.embedding is None:
+            raise NotImplementedError('please set embedding for tokenize')
+        return isinstance(self.embedding, BERTEmbedding)
+
+    # noinspection PyTypeChecker,PyTypeChecker
     def build_with_corpus(self,
                           x_data: Union[List[List[str]], List[str]],
                           y_data: Union[List[List[str]], List[str]],
@@ -74,7 +81,7 @@ class Tokenizer(object):
                     for y in x_item:
                         for word in self.segment(y):
                             word_set[word] = word_set.get(word, 0) + 1
-                else:
+                elif isinstance(x_item, str):
                     for word in self.segment(x_item):
                         word_set[word] = word_set.get(word, 0) + 1
 
@@ -90,7 +97,7 @@ class Tokenizer(object):
             self.word2idx = word2idx
             self.idx2word = idx2word
         else:
-            self.word2idx = self.embedding.get_word2idx_dict()
+            self.word2idx: Dict = self.embedding.get_word2idx_dict()
             self.idx2word = dict([(value, key) for (key, value) in self.idx2word.items()])
 
         label_set: Dict[str, int] = {}
