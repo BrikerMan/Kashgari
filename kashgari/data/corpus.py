@@ -22,6 +22,8 @@ class Corpus(object):
     __file_name__ = ''
     __zip_file__name = ''
 
+    __desc__ = ''
+
     @classmethod
     def get_classification_data(cls,
                                 is_test: bool = False,
@@ -34,6 +36,30 @@ class TencentDingdangSLUCorpus(Corpus):
 
     __file_name__ = 'task-slu-tencent.dingdang-v1.1'
     __zip_file__name = 'task-slu-tencent.dingdang-v1.1.tar.gz'
+
+    __desc__ = """
+    Download from NLPCC 2018 Task4 dataset
+    details: http://tcci.ccf.org.cn/conference/2018/taskdata.php
+    The dataset adopted by this task is a sample of the real query log from a commercial
+    task-oriented dialog system. The data is all in Chinese. The evaluation includes three
+    domains, namely music, navigation and phone call. Within the dataset, an additional
+    domain label ‘OTHERS’ is used to annotate the data not covered by the three domains. To
+    simplify the task, we keep only the intents and the slots of high-frequency while ignoring
+    others although they appear in the original data. The entire data can be seen as a stream
+    of user queries ordered by time stamp. The stream is further split into a series of segments
+    according to the gaps of time stamps between queries and each segment is denoted as a
+    ‘session’. The contexts within a session are taken into consideration when a query within
+    the session was annotated. Below are two example sessions with annotations.
+    
+    1 打电话 phone_call.make_a_phone_call 打电话
+    1 我想听美观 music.play 我想听<song>美观</song>
+    1 我想听什话 music.play 我想听<song>什话||神话</song>
+    1 神话 music.play <song>神话</song>
+    
+    2 播放调频广播 OTHERS 播放调频广播
+    2 给我唱一首一晃就老了 music.play 给我唱一首<song>一晃就老了</song>
+    
+    """
 
     @classmethod
     def get_classification_data(cls,
@@ -61,6 +87,6 @@ if __name__ == '__main__':
     from kashgari.utils.logger import init_logger
     init_logger()
     TencentDingdangSLUCorpus.get_classification_data()
-    print(TencentDingdangSLUCorpus.get_classification_data(test=True))
+    print(TencentDingdangSLUCorpus.get_classification_data(is_test=True))
 
 

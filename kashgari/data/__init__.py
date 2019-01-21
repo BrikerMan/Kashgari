@@ -11,7 +11,7 @@
 
 """
 
-from kashgari.data.corpus import SimplifyWeibo4MoodsCorpus
+from kashgari.data.corpus import TencentDingdangSLUCorpus
 
 if __name__ == "__main__":
     print("Hello world")

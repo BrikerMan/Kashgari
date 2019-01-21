@@ -6,24 +6,25 @@
 
 @version: 1.0
 @license: Apache Licence
-@file: cnn_lstm_model.py
-@time: 2019-01-19 11:52
+@file: blstm_model.py
+@time: 2019-01-21 17:37
 
 """
-from keras.layers import Dense, Conv1D, MaxPooling1D, Embedding, Input
+from keras.layers import Dense, Conv1D, MaxPooling1D, Embedding, Input, Bidirectional
 from keras.layers.recurrent import LSTM
 from keras.models import Model
 
+from kashgari.embedding import CustomEmbedding, BERTEmbedding
 from kashgari.tasks.classification.base_model import ClassificationModel
+from kashgari.utils import helper
 
 
-class CNNLSTMModel(ClassificationModel):
+class BLSTMModel(ClassificationModel):
 
     def build_model(self):
         current, input_layers = self.prepare_embedding_layer()
-        conv_layer = Conv1D(filters=32, kernel_size=3, padding='same', activation='relu')(current)
-        max_pool_layer = MaxPooling1D(pool_size=2)(conv_layer)
-        lstm_layer = LSTM(100)(max_pool_layer)
+
+        lstm_layer = Bidirectional(LSTM(256, return_sequences=False))(current)
         dense_layer = Dense(len(self.tokenizer.label2idx), activation='sigmoid')(lstm_layer)
         output_layers = [dense_layer]
 
@@ -50,5 +51,5 @@ if __name__ == "__main__":
               '每个人都有许多小秘密，我把它藏进梦里……']
     y_data = ['低落', '喜悦', '喜悦', '喜悦', '愤怒', '喜悦', '喜悦', '喜悦', '愤怒', '愤怒']
 
-    classifier = CNNLSTMModel()
+    classifier = BLSTMModel()
     classifier.fit(x_data, y_data, batch_size=2)

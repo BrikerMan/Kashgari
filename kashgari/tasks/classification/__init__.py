@@ -10,7 +10,9 @@
 @time: 2019-01-19 11:49
 
 """
-from kashgari.tasks.classification.cnn_lstm_model import CNN_LSTM_Model
+from .blstm_model import BLSTMModel
+from .cnn_lstm_model import CNNLSTMModel
+from .cnn_model import CNNModel
 
 if __name__ == "__main__":
     print("Hello world")

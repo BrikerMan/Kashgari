@@ -32,7 +32,7 @@ def run_word2vec_embedding_model():
                                        segmenter=ks.k.SegmenterType.jieba)
 
     x, y = TencentDingdangSLUCorpus.get_classification_data()
-    model = ks.tasks.classification.CNN_LSTM_Model()
+    model = ks.tasks.classification.CNNModel()
     model.fit(x, y, tokenizer, epochs=1)
     return model
 
@@ -44,7 +44,7 @@ def run_bert_embedding_model():
                                        sequence_length=30,
                                        segmenter=ks.k.SegmenterType.jieba)
 
-    model = ks.tasks.classification.CNN_LSTM_Model()
+    model = ks.tasks.classification.CNNModel()
     model.fit(x_data, y_data, tokenizer)
     return model
 
@@ -59,10 +59,10 @@ def run_bert_embedding_model_with_corpus():
                                        sequence_length=30,
                                        segmenter=ks.k.SegmenterType.jieba)
 
-    x, y = TencentDingdangSLUCorpus.get_classification_data(test=True)
+    x, y = TencentDingdangSLUCorpus.get_classification_data(is_test=True)
     x, y = helper.unison_shuffled_copies(x, y)
 
-    model = ks.tasks.classification.CNN_LSTM_Model()
+    model = ks.tasks.classification.CNNModel()
     model.fit(x, y, tokenizer)
     return model
 
@@ -70,6 +70,6 @@ def run_bert_embedding_model_with_corpus():
 if __name__ == "__main__":
     from kashgari.data.corpus import TencentDingdangSLUCorpus
     # run_word2vec_embedding_model(x_data, y_data)
-    model = run_word2vec_embedding_model()
-    x_t, y_t = TencentDingdangSLUCorpus.get_classification_data(test=True)
+    model = run_bert_embedding_model()
+    x_t, y_t = TencentDingdangSLUCorpus.get_classification_data(is_test=True)
     model.evaluate(x_t, y_t)

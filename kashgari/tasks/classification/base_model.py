@@ -14,15 +14,17 @@ import logging
 import random
 
 import numpy as np
-from keras.layers.embeddings import Embedding
+from typing import Tuple
+from keras.layers import Embedding, Input, Layer
 from keras.models import Model
 from keras.preprocessing import sequence
 from keras.utils import to_categorical
 
+from kashgari.utils import helper
 from kashgari.data.corpus import Corpus
-from kashgari.embedding import CustomEmbedding
 from kashgari.tokenizer import Tokenizer
 from kashgari.type_hints import *
+from kashgari.embedding import CustomEmbedding, BERTEmbedding
 
 from sklearn.metrics import classification_report
 
@@ -30,21 +32,32 @@ from sklearn.metrics import classification_report
 class ClassificationModel(object):
     def __init__(self):
         self.tokenizer = None
-        self.embedding_name = None
         self.model: Model = None
 
-    def prepare_embedding_layer(self):
+    def prepare_embedding_layer(self) -> Tuple[Layer, List[Layer]]:
         embedding = self.tokenizer.embedding
         if isinstance(embedding, CustomEmbedding):
-            return Embedding(self.tokenizer.word_num,
-                             embedding.embedding_size,
-                             input_length=self.tokenizer.sequence_length)
+            input_x = Input(shape=(self.tokenizer.sequence_length,), dtype='int32')
+            current = Embedding(self.tokenizer.word_num,
+                                embedding.embedding_size)(input_x)
+            input_layers = [input_x]
+
+        elif isinstance(embedding, BERTEmbedding):
+            base_model = embedding.get_base_model(self.tokenizer.sequence_length)
+            input_layers = base_model.inputs
+            current = base_model.output
+            current = helper.NonMaskingLayer()(current)
+
         else:
-            return Embedding(len(self.tokenizer.word2idx),
-                             self.tokenizer.embedding.embedding_size,
-                             input_length=self.tokenizer.sequence_length,
-                             weights=[self.tokenizer.embedding.get_embedding_matrix()],
-                             trainable=False)
+            input_x = Input(shape=(self.tokenizer.sequence_length,), dtype='int32')
+            current = Embedding(len(self.tokenizer.word2idx),
+                                self.tokenizer.embedding.embedding_size,
+                                input_length=self.tokenizer.sequence_length,
+                                weights=[self.tokenizer.embedding.get_embedding_matrix()],
+                                trainable=False)(input_x)
+
+            input_layers = [input_x]
+        return current, input_layers
 
     def build_model(self):
         """

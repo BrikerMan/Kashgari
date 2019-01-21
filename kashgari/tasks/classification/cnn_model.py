@@ -6,28 +6,27 @@
 
 @version: 1.0
 @license: Apache Licence
-@file: cnn_lstm_model.py
-@time: 2019-01-19 11:52
+@file: cnn_model.py
+@time: 2019-01-21 17:49
 
 """
-from keras.layers import Dense, Conv1D, MaxPooling1D, Embedding, Input
+from keras.layers import Dense, Conv1D, GlobalMaxPooling1D, Embedding, Input
 from keras.layers.recurrent import LSTM
 from keras.models import Model
 
 from kashgari.tasks.classification.base_model import ClassificationModel
 
 
-class CNNLSTMModel(ClassificationModel):
+class CNNModel(ClassificationModel):
 
     def build_model(self):
         current, input_layers = self.prepare_embedding_layer()
-        conv_layer = Conv1D(filters=32, kernel_size=3, padding='same', activation='relu')(current)
-        max_pool_layer = MaxPooling1D(pool_size=2)(conv_layer)
-        lstm_layer = LSTM(100)(max_pool_layer)
-        dense_layer = Dense(len(self.tokenizer.label2idx), activation='sigmoid')(lstm_layer)
-        output_layers = [dense_layer]
+        conv1d = Conv1D(128, 5, activation='relu')(current)
+        max_pool = GlobalMaxPooling1D()(conv1d)
+        dense_1 = Dense(64, activation='relu')(max_pool)
+        dense_2 = Dense(len(self.tokenizer.label2idx), activation='sigmoid')(dense_1)
 
-        model = Model(input_layers, output_layers)
+        model = Model(input_layers, dense_2)
         model.compile(loss='categorical_crossentropy',
                       optimizer='adam',
                       metrics=['accuracy'])
@@ -37,6 +36,7 @@ class CNNLSTMModel(ClassificationModel):
 
 if __name__ == "__main__":
     from kashgari.utils.logger import init_logger
+
     init_logger()
 
     x_data = ['奇怪，端午节了，怎么没看到超市里有月饼卖啊？@ 王子26', '"哥，你闷骚！年轻不知精珍贵',
@@ -50,5 +50,5 @@ if __name__ == "__main__":
               '每个人都有许多小秘密，我把它藏进梦里……']
     y_data = ['低落', '喜悦', '喜悦', '喜悦', '愤怒', '喜悦', '喜悦', '喜悦', '愤怒', '愤怒']
 
-    classifier = CNNLSTMModel()
+    classifier = CNNModel()
     classifier.fit(x_data, y_data, batch_size=2)
