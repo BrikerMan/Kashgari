@@ -25,7 +25,8 @@ lets run a text classification with CNN model over [Tencent Dingdang SLU Corpus]
 '导航结束'
 >>> y_data[0]
 'navigation.cancel_navigation'
-# provided CNN, CNN_LSTM, BLSTM classifiers
+
+# provided classification models `CNNModel`, `BLSTMModel`, `CNNLSTMModel` 
 >>> classifier = ks.tasks.classification.CNNModel()
 >>> classifier.fit(x_data, y_data)
 _________________________________________________________________
