@@ -28,8 +28,8 @@ class BLSTMModel(ClassificationModel):
     def build_model(self):
         current, input_layers = self.prepare_embedding_layer()
 
-        lstm_layer = Bidirectional(LSTM(**self.hyper_parameters['lstm_layer']))(current)
-        dense_layer = Dense(len(self.tokenizer.label2idx), activation='sigmoid')(lstm_layer)
+        blstm_layer = Bidirectional(LSTM(**self.hyper_parameters['lstm_layer']))(current)
+        dense_layer = Dense(len(self.tokenizer.label2idx), activation='sigmoid')(blstm_layer)
         output_layers = [dense_layer]
 
         model = Model(input_layers, output_layers)

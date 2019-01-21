@@ -22,7 +22,7 @@ class Tokenizer(object):
     def __init__(self,
                  embedding: EmbeddingModel = None,
                  sequence_length: int = None,
-                 segmenter: k.SegmenterType = k.SegmenterType.jieba,
+                 segmenter: k.SegmenterType = k.SegmenterType.space,
                  **kwargs):
         self.embedding = embedding
 
@@ -72,6 +72,7 @@ class Tokenizer(object):
     def build_with_corpus(self,
                           x_data: Union[List[List[str]], List[str]],
                           y_data: Union[List[List[str]], List[str]],
+                          task: k.TaskType = k.TaskType.classification,
                           only_if_needs: bool = True,
                           **kwargs):
         if isinstance(self.embedding, CustomEmbedding):
@@ -106,7 +107,11 @@ class Tokenizer(object):
                 for y in y_item:
                     label_set[y] = label_set.get(y, 0) + 1
             else:
-                label_set[y_item] = label_set.get(y_item, 0) + 1
+                if task == k.TaskType.tagging:
+                    for y in y_item.split(' '):
+                        label_set[y] = label_set.get(y, 0) + 1
+                else:
+                    label_set[y_item] = label_set.get(y_item, 0) + 1
 
         label2idx = {}
         for label in label_set.keys():
@@ -156,11 +161,17 @@ class Tokenizer(object):
             words = words[:sequence_length]
         return words
 
-    def label_to_token(self, label: str) -> int:
-        return self.label2idx[label]
+    def label_to_token(self, label: Union[List[str], str]) -> Union[List[int], int]:
+        if isinstance(label, list):
+            return [self.label2idx[l_item] for l_item in label]
+        else:
+            return self.label2idx[label]
 
-    def token_to_label(self, token: int) -> str:
-        return self.idx2label[token]
+    def token_to_label(self, token: Union[List[int], int]) -> Union[List[str], str]:
+        if isinstance(token, list):
+            return [self.idx2label[t_item] for t_item in token]
+        else:
+            return self.idx2label[token]
 
     def segment(self, text: str) -> List[str]:
         text = text.strip()

@@ -25,7 +25,7 @@ y_data = ['低落', '喜悦', '喜悦', '喜悦', '愤怒', '喜悦', '喜悦', 
 
 
 def run_word2vec_embedding_model():
-    from corpus import TencentDingdangSLUCorpus
+    from kashgari.corpus import TencentDingdangSLUCorpus
     embedding = ks.embedding.Word2VecEmbedding(name_or_path='sgns.weibo.bigram', limit=1000)
     tokenizer = ks.tokenizer.Tokenizer(embedding=embedding,
                                        sequence_length=30,
