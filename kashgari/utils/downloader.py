@@ -25,22 +25,25 @@ URL_MAP = {
 }
 
 
-def download_file(file: str):
+def download_file(file_path: str, file: str):
     url = STORAGE_HOST + file
-    file_path = os.path.join(DATA_PATH, file)
+    file_path = os.path.join(DATA_PATH, file_path)
     download.download(url, os.path.dirname(file_path), kind='tar.gz', replace=True)
     # download.download(url, file_path)
 
 
-def download_if_not_existed(path_or_name: str) -> str:
+def download_if_not_existed(path_or_name: str, zip_file_name: str) -> str:
+    if not zip_file_name:
+        zip_file_name = path_or_name
+
     if os.path.exists(path_or_name):
         return path_or_name
     elif os.path.exists(os.path.join(DATA_PATH, path_or_name)):
         return os.path.join(DATA_PATH, path_or_name)
     else:
         file_path = URL_MAP.get(path_or_name, path_or_name)
-        download_file(file_path)
-        return file_path
+        download_file(file_path, zip_file_name)
+        return os.path.join(DATA_PATH, path_or_name)
 
 
 def get_cached_data_path(file: Union[Word2VecModels, str]) -> str:

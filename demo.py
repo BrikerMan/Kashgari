@@ -26,17 +26,14 @@ y_data = ['低落', '喜悦', '喜悦', '喜悦', '愤怒', '喜悦', '喜悦', 
 
 def run_word2vec_embedding_model():
     from kashgari.data.corpus import TencentDingdangSLUCorpus
-    from kashgari.utils import helper
     embedding = ks.embedding.Word2VecEmbedding(name_or_path='sgns.weibo.bigram', limit=1000)
     tokenizer = ks.tokenizer.Tokenizer(embedding=embedding,
                                        sequence_length=30,
                                        segmenter=ks.k.SegmenterType.jieba)
 
     x, y = TencentDingdangSLUCorpus.get_classification_data()
-    x, y = helper.unison_shuffled_copies(x, y)
-
     model = ks.tasks.classification.CNN_LSTM_Model()
-    model.fit(x, y, tokenizer, epochs=5)
+    model.fit(x, y, tokenizer, epochs=1)
     return model
 
 

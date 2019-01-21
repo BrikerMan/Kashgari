@@ -106,27 +106,6 @@ class ClassificationModel(object):
                                                   dtype=np.int)
                 yield (tokenized_x_data, tokenized_y_data)
 
-    # def get_evaluate_generator(self,
-    #                            x_data: Union[List[List[str]], List[str]], batch_size: int = 64,
-    #                            is_bert: bool = False):
-    #     while True:
-    #         page_list = list(range(len(x_data) // batch_size + 1))
-    #         random.shuffle(page_list)
-    #         for page in page_list:
-    #             target_x = x_data[page: (page + 1) * batch_size]
-    #             tokenized_x = []
-    #             for x_item in target_x:
-    #                 tokenized_x.append(self.tokenizer.word_to_token(x_item))
-    #
-    #             tokenized_x = sequence.pad_sequences(tokenized_x,
-    #                                                  maxlen=self.tokenizer.sequence_length)
-    #             if is_bert:
-    #                 tokenized_x_seg = np.zeros(shape=(len(tokenized_x), self.tokenizer.sequence_length))
-    #                 tokenized_x_data = [tokenized_x, tokenized_x_seg]
-    #             else:
-    #                 tokenized_x_data = tokenized_x
-    #             yield tokenized_x_data
-
     def fit(self,
             x_train: ClassificationXType,
             y_train: ClassificationYType,
@@ -200,7 +179,7 @@ class ClassificationModel(object):
         return self.tokenizer.idx2label[predict_result.argmax(0)]
 
     def evaluate(self, x_data, y_data, batch_size: int = 128):
-        y_test = np.array([self.tokenizer.label2idx[y] for y in y_data])
+        y_true = np.array([self.tokenizer.label2idx[y] for y in y_data])
 
         tokenized_x = []
         for x_item in x_data:
@@ -217,8 +196,12 @@ class ClassificationModel(object):
         y_pred = self.model.predict(tokenized_x_data, batch_size=128)
 
         y_pred = y_pred.argmax(1)
+
         target_names = list(self.tokenizer.idx2label.values())
-        print(classification_report(y_test, y_pred, target_names))
+        print((classification_report(y_true,
+                                     y_pred,
+                                     target_names=target_names,
+                                     labels=range(len(self.tokenizer.label2idx)))))
 
 
 if __name__ == "__main__":
