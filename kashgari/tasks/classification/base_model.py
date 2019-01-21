@@ -10,11 +10,10 @@
 @time: 2019-01-19 11:50
 
 """
-import logging
 import random
 
 import numpy as np
-from typing import Tuple
+from typing import Tuple, Dict
 from keras.layers import Embedding, Input, Layer
 from keras.models import Model
 from keras.preprocessing import sequence
@@ -30,9 +29,20 @@ from sklearn.metrics import classification_report
 
 
 class ClassificationModel(object):
-    def __init__(self, tokenizer: Tokenizer = None):
+    __base_hyper_parameters__ = {
+
+    }
+
+    @property
+    def hyper_parameters(self):
+        return self._hyper_parameters_
+
+    def __init__(self, tokenizer: Tokenizer = None, hyper_parameters: Dict = None):
         self.tokenizer = tokenizer
         self.model: Model = None
+        self._hyper_parameters_ = self.__base_hyper_parameters__.copy()
+        if hyper_parameters:
+            self._hyper_parameters_.update(hyper_parameters)
 
     def prepare_embedding_layer(self) -> Tuple[Layer, List[Layer]]:
         embedding = self.tokenizer.embedding
