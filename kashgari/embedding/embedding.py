@@ -21,6 +21,7 @@ import numpy as np
 from gensim.models import KeyedVectors
 
 from kashgari import k
+from kashgari.utils import helper
 
 
 EMBEDDINGS_PATH = os.path.join(k.DATA_PATH, 'embedding')
@@ -56,12 +57,20 @@ class Word2VecEmbedding(EmbeddingModel):
         k.UNK: 3
     }
 
+    pre_trained_models = {
+        'sgns.weibo.bigram': 'embedding/word2vev/sgns.weibo.bigram.bz2'
+    }
+
     def __init__(self,
                  name_or_path: str,
                  embedding_size: int = None,
                  **kwargs):
         super(Word2VecEmbedding, self).__init__(name_or_path, embedding_size, **kwargs)
-        self.model_path = k.get_model_path('w2v.{}'.format(name_or_path))
+        self.model_name = name_or_path
+        self.model_path = helper.check_should_download(file=name_or_path,
+                                                       download_url=self.pre_trained_models.get(name_or_path),
+                                                       sub_folders=['embedding', 'w2v'])
+
         self.keyed_vector: KeyedVectors = KeyedVectors.load_word2vec_format(self.model_path, **kwargs)
         self.embedding_size = self.keyed_vector.vector_size
         logging.debug('------------------------------------------------')
@@ -112,19 +121,32 @@ class BERTEmbedding(EmbeddingModel):
     
     pre_trained_models = {
         # BERT-Base, Uncased: 12-layer, 768-hidden, 12-heads, 110M parameters
-        'uncased_L-12_H-768_A-12': 'https://storage.googleapis.com/bert_models/2018_10_18/uncased_L-12_H-768_A-12.zip',
-        # BERT-Large, Uncased: 24-layer, 1024-hidden, 16-heads, 340M parameters
-        'uncased_L-24_H-1024_A-16': 'https://storage.googleapis.com/bert_models/2018_10_18/uncased_L-24_H-1024_A-16.zip',
-        # BERT-Base, Cased: 12-layer, 768-hidden, 12-heads , 110M parameters
-        'cased_L-12_H-768_A-12': 'https://storage.googleapis.com/bert_models/2018_10_18/cased_L-12_H-768_A-12.zip',
-        # BERT-Large, Cased: 24-layer, 1024-hidden, 16-heads, 340M parameters
-        'cased_L-24_H-1024_A-16': 'https://storage.googleapis.com/bert_models/2018_10_18/cased_L-24_H-1024_A-16.zip',
-        # BERT-Base, Multilingual Cased (New, recommended): 104 languages, 12-layer, 768-hidden, 12-heads, 110M parameters 
-        'multi_cased_L-12_H-768_A-12': 'https://storage.googleapis.com/bert_models/2018_11_23/multi_cased_L-12_H-768_A-12.zip',
-        # BERT-Base, Multilingual Uncased (Orig, not recommended): 12-layer, 768-hidden, 12-heads, 110M parameters
-        'multilingual_L-12_H-768_A-12': 'https://storage.googleapis.com/bert_models/2018_11_03/multilingual_L-12_H-768_A-12.zip',
-        # BERT-Base, Chinese: Chinese Simplified and Traditional, 12-layer, 768-hidden, 12-heads, 110M
-        'chinese_L-12_H-768_A-12': 'https://storage.googleapis.com/bert_models/2018_11_03/chinese_L-12_H-768_A-12.zip',
+        'uncased_L-12_H-768_A-12': 'https://storage.googleapis.com/bert_models/2018_10_18/'
+                                   'uncased_L-12_H-768_A-12.zip',
+        # BERT-Large, Uncased
+        # 24-layer, 1024-hidden, 16-heads, 340M parameters
+        'uncased_L-24_H-1024_A-16': 'https://storage.googleapis.com/bert_models/2018_10_18/'
+                                    'uncased_L-24_H-1024_A-16.zip',
+        # BERT-Base, Cased
+        # 12-layer, 768-hidden, 12-heads , 110M parameters
+        'cased_L-12_H-768_A-12': 'https://storage.googleapis.com/bert_models/2018_10_18/'
+                                 'cased_L-12_H-768_A-12.zip',
+        # BERT-Large, Cased
+        # 24-layer, 1024-hidden, 16-heads, 340M parameters
+        'cased_L-24_H-1024_A-16': 'https://storage.googleapis.com/bert_models/2018_10_18/'
+                                  'cased_L-24_H-1024_A-16.zip',
+        # BERT-Base, Multilingual Cased (New, recommended)
+        # 104 languages, 12-layer, 768-hidden, 12-heads, 110M parameters
+        'multi_cased_L-12_H-768_A-12': 'https://storage.googleapis.com/bert_models/2018_11_23/'
+                                       'multi_cased_L-12_H-768_A-12.zip',
+        # BERT-Base, Multilingual Uncased (Orig, not recommended)
+        # 12-layer, 768-hidden, 12-heads, 110M parameters
+        'multilingual_L-12_H-768_A-12': 'https://storage.googleapis.com/bert_models/2018_11_03/'
+                                        'multilingual_L-12_H-768_A-12.zip',
+        # BERT-Base, Chinese
+        # Chinese Simplified and Traditional, 12-layer, 768-hidden, 12-heads, 110M
+        'chinese_L-12_H-768_A-12': 'https://storage.googleapis.com/bert_models/2018_11_03/'
+                                   'chinese_L-12_H-768_A-12.zip',
     }
 
     def __init__(self,
@@ -133,7 +155,9 @@ class BERTEmbedding(EmbeddingModel):
                  **kwargs):
         super(BERTEmbedding, self).__init__(name_or_path, embedding_size, **kwargs)
         self.model_name = name_or_path
-        self.model_path = os.path.join(EMBEDDINGS_PATH, 'bert', name_or_path)
+        self.model_path = helper.check_should_download(file=name_or_path,
+                                                       download_url=self.pre_trained_models.get(name_or_path),
+                                                       sub_folders=['embedding', 'bert'])
 
     def get_word2idx_dict(self):
         dict_path = os.path.join(self.model_path, 'vocab.txt')
@@ -195,9 +219,8 @@ def get_embedding_by_conf(name: str, **kwargs) -> EmbeddingModel:
 
 
 if __name__ == '__main__':
-    bert_path = '/Users/brikerman/Desktop/corpus/bert/chinese_L-12_H-768_A-12'
-    bert_embedding = BERTEmbedding(bert_path)
+    bert_embedding = BERTEmbedding('cased_L-24_H-1024_A-16')
     print(bert_embedding.get_word2idx_dict())
-    model = bert_embedding.get_base_model(12)
-    model.summary()
-    print("hello, world")
+    print(bert_embedding.model_path)
+
+

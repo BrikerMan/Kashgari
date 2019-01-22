@@ -10,15 +10,20 @@
 @time: 2019-01-19 16:25
 
 """
-import random
-from typing import List
-
+import os
 import h5py
+import random
+import logging
+import download
 import numpy as np
+from typing import List, Optional
 from keras.layers import Layer
 from keras import backend as K
 from keras.preprocessing import sequence
 from keras.utils import to_categorical
+
+from kashgari.macros import DATA_PATH
+from kashgari.macros import STORAGE_HOST
 
 
 def h5f_generator(h5path: str,
@@ -122,6 +127,50 @@ def weighted_categorical_crossentropy(weights):
         return loss
 
     return loss
+
+
+def check_should_download(file: str,
+                          download_url: Optional[str],
+                          sub_folders: List[str] = None,
+                          unzip: bool = True):
+    """
+    check should download the file, if exist return file url, if not download and unzip
+    :param file:
+    :param sub_folders:
+    :param download_url:
+    :param unzip:
+    :return:
+    """
+    if sub_folders is None:
+        sub_folders = []
+
+    if os.path.exists(file):
+        return file
+
+    folders = [DATA_PATH] + sub_folders + [file]
+    target_path = os.path.join(*folders)
+
+    if os.path.exists(target_path):
+        return target_path
+
+    if not download_url:
+        raise ValueError("need to provide valid model name or path")
+
+    if download_url.startswith('http'):
+        url = download_url
+    else:
+        url = STORAGE_HOST + download_url
+    kind = 'file'
+    if url.endswith('zip'):
+        kind = 'zip'
+    elif url.endswith('tar.gz'):
+        kind = 'tar.gz'
+
+    logging.info('start model file, if it takes too long, you could download with other downloader\n'
+                 'url  : {}\n'
+                 'path : {}'.format(url,
+                                    os.path.dirname(target_path)))
+    download.download(url, os.path.dirname(target_path), kind=kind, replace=True)
 
 
 if __name__ == "__main__":

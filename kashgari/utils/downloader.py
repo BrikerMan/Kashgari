@@ -10,9 +10,9 @@
 @time: 2019-01-19 10:30
 
 """
-import bz2
 import os
-from typing import Union, Optional
+import logging
+from typing import Optional
 
 import download
 
@@ -44,18 +44,14 @@ def download_if_not_existed(path_or_name: str, zip_file_name: str) -> str:
         download_file(file_path, zip_file_name)
         return os.path.join(DATA_PATH, path_or_name)
 
+
 def check_should_download(file: str, download_url: Optional[str], unzip: bool = True):
-    """check should download the file, if exist return file url, if not download and unzip
-    
-    Arguments:
-        file {str} -- [description]
-        download_url {Optional[str]} -- [description]
-    
-    Keyword Arguments:
-        unzip {bool} -- [description] (default: {True})
-    
-    Returns:
-        [type] -- [description]
+    """
+    check should download the file, if exist return file url, if not download and unzip
+    :param file:
+    :param download_url:
+    :param unzip:
+    :return:
     """
 
     if os.path.exists(file):
@@ -68,12 +64,16 @@ def check_should_download(file: str, download_url: Optional[str], unzip: bool = 
     if download_url.startswith('http'):
         url = download_url
     else:
-        url = STORAGE_HOST + url
+        url = STORAGE_HOST + download_url
     kind = 'file'
     if url.endswith('zip'):
         kind = 'zip'
     elif url.endswith('tar.gz'):
         kind = 'tar.gz'
+
+    logging.info('start downloading {} to {}, '
+                 'if it takes too long, you could download with other downloader'.format(url,
+                                                                                         os.path.dirname(target_path)))
     download.download(url, os.path.dirname(target_path), kind=kind, replace=True)
 
 
@@ -86,4 +86,6 @@ def get_cached_data_path(file: str) -> str:
 if __name__ == "__main__":
     from kashgari.utils.logger import init_logger
     init_logger()
-    check_should_download(file='uncased_L-12_H-768_A-12', download_url='https://storage.googleapis.com/bert_models/2018_10_18/uncased_L-12_H-768_A-12.zip')
+    check_should_download(file='uncased_L-12_H-768_A-12',
+                          download_url='https://storage.googleapis.com/bert_models/2018_10_18/'
+                                       'uncased_L-12_H-768_A-12.zip')
