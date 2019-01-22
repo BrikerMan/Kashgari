@@ -12,7 +12,7 @@
 """
 import bz2
 import os
-from typing import Union
+from typing import Union, Optional
 
 import download
 
@@ -44,6 +44,38 @@ def download_if_not_existed(path_or_name: str, zip_file_name: str) -> str:
         download_file(file_path, zip_file_name)
         return os.path.join(DATA_PATH, path_or_name)
 
+def check_should_download(file: str, download_url: Optional[str], unzip: bool = True):
+    """check should download the file, if exist return file url, if not download and unzip
+    
+    Arguments:
+        file {str} -- [description]
+        download_url {Optional[str]} -- [description]
+    
+    Keyword Arguments:
+        unzip {bool} -- [description] (default: {True})
+    
+    Returns:
+        [type] -- [description]
+    """
+
+    if os.path.exists(file):
+        return file
+    target_path = os.path.join(DATA_PATH, file)
+    
+    if os.path.exists(target_path):
+        return target_path
+    
+    if download_url.startswith('http'):
+        url = download_url
+    else:
+        url = STORAGE_HOST + url
+    kind = 'file'
+    if url.endswith('zip'):
+        kind = 'zip'
+    elif url.endswith('tar.gz'):
+        kind = 'tar.gz'
+    download.download(url, os.path.dirname(target_path), kind=kind, replace=True)
+
 
 def get_cached_data_path(file: str) -> str:
     file_path = URL_MAP.get(file, file)
@@ -54,4 +86,4 @@ def get_cached_data_path(file: str) -> str:
 if __name__ == "__main__":
     from kashgari.utils.logger import init_logger
     init_logger()
-    print("Hello world")
+    check_should_download(file='uncased_L-12_H-768_A-12', download_url='https://storage.googleapis.com/bert_models/2018_10_18/uncased_L-12_H-768_A-12.zip')

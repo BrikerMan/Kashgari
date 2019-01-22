@@ -109,13 +109,30 @@ class BERTEmbedding(EmbeddingModel):
         k.BOS: '[CLS]',
         k.EOS: '[SEP]',
     }
+    
+    pre_trained_models = {
+        # BERT-Base, Uncased: 12-layer, 768-hidden, 12-heads, 110M parameters
+        'uncased_L-12_H-768_A-12': 'https://storage.googleapis.com/bert_models/2018_10_18/uncased_L-12_H-768_A-12.zip',
+        # BERT-Large, Uncased: 24-layer, 1024-hidden, 16-heads, 340M parameters
+        'uncased_L-24_H-1024_A-16': 'https://storage.googleapis.com/bert_models/2018_10_18/uncased_L-24_H-1024_A-16.zip',
+        # BERT-Base, Cased: 12-layer, 768-hidden, 12-heads , 110M parameters
+        'cased_L-12_H-768_A-12': 'https://storage.googleapis.com/bert_models/2018_10_18/cased_L-12_H-768_A-12.zip',
+        # BERT-Large, Cased: 24-layer, 1024-hidden, 16-heads, 340M parameters
+        'cased_L-24_H-1024_A-16': 'https://storage.googleapis.com/bert_models/2018_10_18/cased_L-24_H-1024_A-16.zip',
+        # BERT-Base, Multilingual Cased (New, recommended): 104 languages, 12-layer, 768-hidden, 12-heads, 110M parameters 
+        'multi_cased_L-12_H-768_A-12': 'https://storage.googleapis.com/bert_models/2018_11_23/multi_cased_L-12_H-768_A-12.zip',
+        # BERT-Base, Multilingual Uncased (Orig, not recommended): 12-layer, 768-hidden, 12-heads, 110M parameters
+        'multilingual_L-12_H-768_A-12': 'https://storage.googleapis.com/bert_models/2018_11_03/multilingual_L-12_H-768_A-12.zip',
+        # BERT-Base, Chinese: Chinese Simplified and Traditional, 12-layer, 768-hidden, 12-heads, 110M
+        'chinese_L-12_H-768_A-12': 'https://storage.googleapis.com/bert_models/2018_11_03/chinese_L-12_H-768_A-12.zip',
+    }
 
     def __init__(self,
                  name_or_path: str,
                  embedding_size: int = None,
                  **kwargs):
         super(BERTEmbedding, self).__init__(name_or_path, embedding_size, **kwargs)
-        self.model_path = name_or_path
+        self.model_name = name_or_path
         self.model_path = os.path.join(EMBEDDINGS_PATH, 'bert', name_or_path)
 
     def get_word2idx_dict(self):
@@ -130,6 +147,14 @@ class BERTEmbedding(EmbeddingModel):
         return word2idx
 
     def get_base_model(self, seq_len: int) -> keras.models.Model:
+        """get base bert model for fine tune
+        
+        Arguments:
+            seq_len {int} -- [length of the input sequence]
+
+        Returns:
+            keras.models.Model -- [keras base model]
+        """
         config_path = os.path.join(self.model_path, 'bert_config.json')
         check_point_path = os.path.join(self.model_path, 'bert_model.ckpt')
         model: keras.models.Model = keras_bert.load_trained_model_from_checkpoint(config_path,
