@@ -21,6 +21,11 @@ from kashgari.utils import downloader
 from kashgari.utils import helper
 
 
+DATA_TRAIN = 'train'
+DATA_VALIDATE = 'validate'
+DATA_TEST = 'test'
+
+
 class Corpus(object):
     __corpus_name__ = ''
     __zip_file__name = ''
@@ -83,7 +88,7 @@ class TencentDingdangSLUCorpus(Corpus):
                                 shuffle: bool = True,
                                 max_count: int = 0) -> Tuple[List[str], List[str]]:
         folder_path = downloader.download_if_not_existed('corpus/' + cls.__corpus_name__,
-                                                         'corpus/' + cls.__zip_file__name, )
+                                                         'corpus/' + cls.__zip_file__name)
         if is_test:
             file_path = os.path.join(folder_path, 'test.csv')
         else:
@@ -147,8 +152,49 @@ class TencentDingdangSLUCorpus(Corpus):
         return x_data, y_data
 
 
+class ChinaPeoplesDailyNerCorpus(object):
+    __corpus_name__ = 'china-people-daily-ner-corpus'
+    __zip_file__name = 'china-people-daily-ner-corpus.tar.gz'
+
+    __desc__ = """    Download from NLPCC 2018 Task4 dataset
+        """
+
+    @classmethod
+    def get_sequence_tagging_data(cls,
+                                  data_type: str = DATA_TRAIN,
+                                  shuffle: bool = True,
+                                  max_count: int = 0) -> Tuple[List[str], List[str]]:
+        folder_path = downloader.download_if_not_existed('corpus/' + cls.__corpus_name__,
+                                                         'corpus/' + cls.__zip_file__name)
+
+        if data_type == DATA_TRAIN:
+            file_path = os.path.join(folder_path, 'example.train')
+        elif data_type == DATA_TEST:
+            file_path = os.path.join(folder_path, 'example.test')
+        else:
+            file_path = os.path.join(folder_path, 'example.dev')
+
+        data_x, data_y = [], []
+
+        with open(file_path, 'r', encoding='utf-8') as f:
+            lines = f.read().splitlines()
+            x, y = [], []
+            for line in lines:
+                rows = line.split(' ')
+                if len(rows) == 1:
+                    data_x.append(x)
+                    data_y.append(y)
+                    x = []
+                    y = []
+                else:
+                    x.append(rows[0])
+                    y.append(rows[1])
+        return data_x, data_y
+
+
 if __name__ == '__main__':
+
     # init_logger()
-    x, y = TencentDingdangSLUCorpus.get_sequence_tagging_data()
-    for i in range(len(x)):
+    x, y = ChinaPeoplesDailyNerCorpus.get_sequence_tagging_data()
+    for i in range(5):
         print('{} -> {}'.format(x[i], y[i]))
