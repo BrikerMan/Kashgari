@@ -15,5 +15,12 @@ from typing import Union, List
 ClassificationXType = Union[List[List[str]], List[str]]
 ClassificationYType = List[str]
 
+TextSeqType = List[str]
+TokenSeqType = List[int]
+
+TextSeqInputType = Union[List[TextSeqType], TextSeqType]
+TokenSeqInputType = Union[List[TokenSeqType], TokenSeqType]
+
+
 if __name__ == "__main__":
     print("Hello world")

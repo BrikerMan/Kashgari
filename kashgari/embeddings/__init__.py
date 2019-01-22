@@ -10,12 +10,11 @@
 @time: 2019-01-19 09:57
 
 """
-from . import embedding
-from .embedding import BERTEmbedding
-from .embedding import CustomEmbedding
-from .embedding import EmbeddingModel
-from .embedding import Word2VecEmbedding
-from .embedding import get_embedding_by_conf
+from .embeddings import BERTEmbedding
+from .embeddings import BaseEmbedding
+from .embeddings import CustomEmbedding
+from .embeddings import WordEmbeddings
+from .embeddings import get_embedding_by_conf
 
 if __name__ == "__main__":
     print("Hello world")
