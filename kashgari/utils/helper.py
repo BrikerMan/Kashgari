@@ -16,6 +16,7 @@ from typing import List
 import h5py
 import numpy as np
 from keras.layers import Layer
+from keras import backend as K
 from keras.preprocessing import sequence
 from keras.utils import to_categorical
 
@@ -68,7 +69,7 @@ def unison_shuffled_copies(a, b):
     c = list(zip(a, b))
     random.shuffle(c)
     a, b = zip(*c)
-    return a, b
+    return list(a), list(b)
 
 
 class NonMaskingLayer(Layer):
@@ -93,6 +94,35 @@ class NonMaskingLayer(Layer):
 
     def get_output_shape_for(self, input_shape):
         return input_shape
+
+
+def weighted_categorical_crossentropy(weights):
+    """
+    A weighted version of keras.objectives.categorical_crossentropy
+
+    Variables:
+        weights: numpy array of shape (C,) where C is the number of classes
+
+    Usage:
+        weights = np.array([0.5,2,10]) # Class one at 0.5, class 2 twice the normal weights, class 3 10x.
+        loss = weighted_categorical_crossentropy(weights)
+        model.compile(loss=loss,optimizer='adam')
+    """
+
+    weights = K.variable(weights)
+
+    def loss(y_true, y_pred):
+        # scale predictions so that the class probas of each sample sum to 1
+        y_pred /= K.sum(y_pred, axis=-1, keepdims=True)
+        # clip to prevent NaN's and Inf's
+        y_pred = K.clip(y_pred, K.epsilon(), 1 - K.epsilon())
+        # calc
+        loss = y_true * K.log(y_pred) * weights
+        loss = -K.sum(loss, -1)
+        return loss
+
+    return loss
+
 
 if __name__ == "__main__":
     print("Hello world")

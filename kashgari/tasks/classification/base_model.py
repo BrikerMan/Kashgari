@@ -143,7 +143,7 @@ class ClassificationModel(object):
         :param y_validate: list of validation target label data.
         :param class_weight: set class weights for imbalanced classes
         :param fit_kwargs: additional kwargs to be passed to
-        :func:`~keras.models.Model.fit`
+               :func:`~keras.models.Model.fit`
         :return:
         """
         assert len(x_train) == len(y_train)

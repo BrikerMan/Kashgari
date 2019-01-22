@@ -36,6 +36,8 @@ class Tokenizer(object):
         self.label2idx = {}
         self.idx2label = {}
 
+        self.task_type = k.TaskType.classification
+
         self.sequence_length = sequence_length
 
         self.segmenter = segmenter
@@ -113,9 +115,10 @@ class Tokenizer(object):
                 else:
                     label_set[y_item] = label_set.get(y_item, 0) + 1
 
-        label2idx = {}
+        label2idx = {'O': 0, BOS: 1, EOS: 2}
         for label in label_set.keys():
-            label2idx[label] = len(label2idx)
+            if label not in label2idx:
+                label2idx[label] = len(label2idx)
         idx2label = dict([(value, key) for (key, value) in label2idx.items()])
 
         self.label2idx = label2idx
@@ -129,19 +132,19 @@ class Tokenizer(object):
 
     def word_to_token(self,
                       sentence: Union[List[str], str],
-                      add_prefix_suffix: bool = True,
+                      add_bos_eos: bool = True,
                       **kwargs) -> List[int]:
         """
         convert sentence to tokens
         :param sentence: sentence ['我', '想', '你'] or '我 想 你'
-        :param add_prefix_suffix: 是否添加前后缀
+        :param add_bos_eos: 是否添加前后缀
         :param kwargs:
         :return:
         """
         if isinstance(sentence, str):
             sentence = self.segment(sentence)
         tokens = [self.word2idx.get(word, self.word2idx[UNK]) for word in sentence]
-        if add_prefix_suffix:
+        if add_bos_eos:
             tokens = [self.word2idx[BOS]] + tokens + [self.word2idx[EOS]]
         return tokens
 
@@ -161,17 +164,33 @@ class Tokenizer(object):
             words = words[:sequence_length]
         return words
 
-    def label_to_token(self, label: Union[List[str], str]) -> Union[List[int], int]:
-        if isinstance(label, list):
-            return [self.label2idx[l_item] for l_item in label]
-        else:
+    def label_to_token(self,
+                       label: Union[List[str], str],
+                       add_bos_eos: bool = True,
+                       ) -> Union[List[int], int]:
+        if self.task_type == k.TaskType.classification:
             return self.label2idx[label]
-
-    def token_to_label(self, token: Union[List[int], int]) -> Union[List[str], str]:
-        if isinstance(token, list):
-            return [self.idx2label[t_item] for t_item in token]
         else:
+            if isinstance(label, str):
+                label = label.split(' ')
+            tokens = [self.label2idx[l_item] for l_item in label]
+            if add_bos_eos:
+                tokens = [1] + tokens + [2]
+            return tokens
+
+    def token_to_label(self,
+                       token: Union[List[int], int],
+                       remove_bos_eos: bool = True) -> Union[List[str], str]:
+        if self.task_type == k.TaskType.classification:
             return self.idx2label[token]
+        else:
+            labels = [self.idx2label[t_item] for t_item in token]
+            if remove_bos_eos:
+                if labels[0] == BOS:
+                    labels = labels[1:]
+                if labels[-1] == EOS:
+                    labels = labels[:-1]
+            return labels
 
     def segment(self, text: str) -> List[str]:
         text = text.strip()

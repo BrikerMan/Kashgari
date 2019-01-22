@@ -10,6 +10,9 @@
 @time: 2019-01-21
 
 """
+
+import logging
+
 from keras.layers import Bidirectional, LSTM
 from keras.layers import Dense, Dropout, TimeDistributed, Activation
 from keras.models import Model
@@ -40,7 +43,7 @@ class BLSTMModel(SequenceLabelingModel):
         activation = Activation('softmax')(time_distributed_layer)
 
         model = Model(input_layers, activation)
-        model.compile(loss='categorical_crossentropy',
+        model.compile(loss=self.get_weighted_categorical_crossentropy(),
                       optimizer='adam',
                       metrics=['accuracy'])
         self.model = model
@@ -48,4 +51,33 @@ class BLSTMModel(SequenceLabelingModel):
 
 
 if __name__ == '__main__':
-    print("hello, world")
+    import kashgari as ks
+    from keras.callbacks import ModelCheckpoint
+    from kashgari.corpus import ChinaPeoplesDailyNerCorpus
+
+    # embedding = ks.embedding.Word2VecEmbedding('sgns.weibo.bigram', limit=1000)
+    embedding = ks.embedding.BERTEmbedding('/disk/corpus/bert/chinese_L-12_H-768_A-12/', limit=1000)
+    tokenizer = ks.tokenizer.Tokenizer(embedding=embedding,
+                                       sequence_length=128)
+
+    x_train, y_train = ChinaPeoplesDailyNerCorpus.get_sequence_tagging_data()
+    x_validate, y_validate = ChinaPeoplesDailyNerCorpus.get_sequence_tagging_data(data_type='validate')
+    x_test, y_test = ChinaPeoplesDailyNerCorpus.get_sequence_tagging_data(data_type='test')
+
+    m = BLSTMModel(tokenizer=tokenizer)
+
+    check = ModelCheckpoint('./model.model',
+                            monitor='acc',
+                            verbose=1,
+                            save_best_only=False,
+                            save_weights_only=False,
+                            mode='auto',
+                            period=1)
+    m.fit(x_train,
+          y_train,
+          epochs=1,
+          x_validate=x_test,
+          y_validate=y_test,
+          fit_kwargs={'callbacks': [check]})
+
+    m.evaluate(x_test, y_test)

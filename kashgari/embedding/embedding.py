@@ -23,6 +23,9 @@ from gensim.models import KeyedVectors
 from kashgari import k
 
 
+EMBEDDINGS_PATH = os.path.join(k.DATA_PATH, 'embedding')
+
+
 class EmbeddingModel(object):
     base_dict = {}
 
@@ -113,6 +116,7 @@ class BERTEmbedding(EmbeddingModel):
                  **kwargs):
         super(BERTEmbedding, self).__init__(name_or_path, embedding_size, **kwargs)
         self.model_path = name_or_path
+        self.model_path = os.path.join(EMBEDDINGS_PATH, 'bert', name_or_path)
 
     def get_word2idx_dict(self):
         dict_path = os.path.join(self.model_path, 'vocab.txt')

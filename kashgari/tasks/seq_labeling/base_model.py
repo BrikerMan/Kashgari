@@ -11,6 +11,7 @@
 
 """
 import random
+import logging
 from typing import Tuple, Dict
 
 import numpy as np
@@ -18,7 +19,8 @@ from keras.layers import Embedding, Input, Layer
 from keras.models import Model
 from keras.preprocessing import sequence
 from keras.utils import to_categorical
-from sklearn.metrics import classification_report
+
+from seqeval.metrics import classification_report
 
 from kashgari import k
 from kashgari.embedding import CustomEmbedding, BERTEmbedding
@@ -39,6 +41,7 @@ class SequenceLabelingModel(object):
     def __init__(self, tokenizer: Tokenizer = None, hyper_parameters: Dict = None):
         self.tokenizer = tokenizer
         self.model: Model = None
+        self.tokenizer.task_type = self.__task_type__
         self._hyper_parameters_ = self.__base_hyper_parameters__.copy()
         if hyper_parameters:
             self._hyper_parameters_.update(hyper_parameters)
@@ -49,6 +52,13 @@ class SequenceLabelingModel(object):
         :return:
         """
         raise NotImplementedError()
+
+    def get_weighted_categorical_crossentropy(self):
+        weights = [5] * len(self.tokenizer.label2idx)
+        weights[0] = 1
+        weights = np.array(weights)
+        loss_f = helper.weighted_categorical_crossentropy(weights)
+        return loss_f
 
     def prepare_embedding_layer(self) -> Tuple[Layer, List[Layer]]:
         embedding = self.tokenizer.embedding
@@ -95,6 +105,10 @@ class SequenceLabelingModel(object):
 
         self.tokenizer.build_with_corpus(x_data, y_data, task=k.TaskType.tagging)
 
+        for i in range(5):
+            logging.info('sample x {} : {} -> {}'.format(i, x_train[i], self.tokenizer.word_to_token(x_train[i])))
+            logging.info('sample y {} : {} -> {}'.format(i, y_train[i], self.tokenizer.label_to_token(y_train[i])))
+
     def get_data_generator(self,
                            x_data: Union[List[List[str]], List[str]],
                            y_data: List[str],
@@ -104,8 +118,11 @@ class SequenceLabelingModel(object):
             page_list = list(range(len(x_data) // batch_size + 1))
             random.shuffle(page_list)
             for page in page_list:
-                target_x = x_data[page: (page + 1) * batch_size]
-                target_y = y_data[page: (page + 1) * batch_size]
+                start_index = page * batch_size
+                end_index = start_index + batch_size
+
+                target_x = x_data[start_index: end_index]
+                target_y = y_data[start_index: end_index]
 
                 tokenized_x = []
                 for x_item in target_x:
@@ -118,14 +135,16 @@ class SequenceLabelingModel(object):
                     tokenized_y_data.append(self.tokenizer.label_to_token(y_item))
 
                 tokenized_x = sequence.pad_sequences(tokenized_x,
-                                                     maxlen=self.tokenizer.sequence_length)
+                                                     maxlen=self.tokenizer.sequence_length,
+                                                     padding='post')
                 if is_bert:
                     tokenized_x_seg = np.zeros(shape=(len(tokenized_x), self.tokenizer.sequence_length))
                     tokenized_x_data = [tokenized_x, tokenized_x_seg]
                 else:
                     tokenized_x_data = tokenized_x
                 tokenized_y_data = sequence.pad_sequences(tokenized_y_data,
-                                                          maxlen=self.tokenizer.sequence_length)
+                                                          maxlen=self.tokenizer.sequence_length,
+                                                          padding='post')
                 tokenized_y_data = to_categorical(tokenized_y_data,
                                                   num_classes=self.tokenizer.class_num,
                                                   dtype=np.int)
@@ -154,6 +173,9 @@ class SequenceLabelingModel(object):
         :func:`~keras.models.Model.fit`
         :return:
         """
+        if fit_kwargs is None:
+            fit_kwargs = {}
+
         assert len(x_train) == len(y_train)
         self.prepare_tokenizer_if_needs(x_train, y_train, x_validate, y_validate)
 
@@ -172,11 +194,8 @@ class SequenceLabelingModel(object):
                                                            y_validate,
                                                            batch_size,
                                                            is_bert=self.tokenizer.is_bert)
-            kwargs['validation_data'] = validation_generator
-            kwargs['validation_steps'] = len(x_validate) // batch_size
-
-        if fit_kwargs is None:
-            fit_kwargs = {}
+            fit_kwargs['validation_data'] = validation_generator
+            fit_kwargs['validation_steps'] = len(x_validate) // batch_size
 
         self.model.fit_generator(train_generator,
                                  steps_per_epoch=len(x_train) // batch_size,
@@ -185,52 +204,41 @@ class SequenceLabelingModel(object):
 
     def predict(self, sentence: str):
         tokens = self.tokenizer.word_to_token(sentence)
-        padded_tokens = sequence.pad_sequences([tokens], maxlen=self.tokenizer.sequence_length)
+        padded_tokens = sequence.pad_sequences([tokens],
+                                               maxlen=self.tokenizer.sequence_length,
+                                               padding='post')
         if self.tokenizer.is_bert:
             x = [padded_tokens, np.zeros(shape=(1, self.tokenizer.sequence_length))]
         else:
             x = padded_tokens
-        predict_result = self.model.predict(x)[0]
-        return self.tokenizer.idx2label[predict_result.argmax(0)]
+        predict_result = self.model.predict(x)
+        predict_tokens = predict_result.argmax(-1)[0][:len(tokens)-2]
+        return self.tokenizer.token_to_label(list(predict_tokens))
 
     def evaluate(self, x_data, y_data, batch_size: int = 128):
-        y_true = np.array([self.tokenizer.label2idx[y] for y in y_data])
-
         tokenized_x = []
+        sequence_length = []
         for x_item in x_data:
-            tokenized_x.append(self.tokenizer.word_to_token(x_item))
+            tokens = self.tokenizer.word_to_token(x_item)
+            tokenized_x.append(tokens)
+            sequence_length.append(len(tokens) - 2)
 
-        tokenized_x = sequence.pad_sequences(tokenized_x,
-                                             maxlen=self.tokenizer.sequence_length)
+        tokenized_x_padding = sequence.pad_sequences(tokenized_x,
+                                                     maxlen=self.tokenizer.sequence_length,
+                                                     padding='post')
         if self.tokenizer.is_bert:
-            tokenized_x_seg = np.zeros(shape=(len(tokenized_x), self.tokenizer.sequence_length))
-            tokenized_x_data = [tokenized_x, tokenized_x_seg]
+            tokenized_x_seg = np.zeros(shape=(len(tokenized_x_padding), self.tokenizer.sequence_length))
+            tokenized_x_data = [tokenized_x_padding, tokenized_x_seg]
         else:
-            tokenized_x_data = tokenized_x
+            tokenized_x_data = tokenized_x_padding
 
-        y_pred = self.model.predict(tokenized_x_data, batch_size=128)
+        y_pred_array = self.model.predict(tokenized_x_data, batch_size=128).argmax(-1)
+        y_true = []
+        for index, item in enumerate(y_pred_array):
+            y_true.append(self.tokenizer.token_to_label(list(item)[: len(tokenized_x[index])]))
 
-        y_pred = y_pred.argmax(1)
+        logging.info('\n{}'.format(classification_report(y_true,
+                                                         y_data)))
 
-        target_names = list(self.tokenizer.idx2label.values())
-        print((classification_report(y_true,
-                                     y_pred,
-                                     target_names=target_names,
-                                     labels=range(len(self.tokenizer.label2idx)))))
-
-
-if __name__ == '__main__':
-    import kashgari as ks
-    from kashgari.corpus import TencentDingdangSLUCorpus
-
-    bert_path = '/Users/brikerman/Desktop/corpus/bert/chinese_L-12_H-768_A-12'
-    embedding = ks.embedding.BERTEmbedding(bert_path)
-    tokenizer = ks.tokenizer.Tokenizer(embedding=embedding,
-                                       sequence_length=30,
-                                       segmenter=ks.k.SegmenterType.jieba)
-
-    x_train, y_train = TencentDingdangSLUCorpus.get_sequence_tagging_data(is_test=True)
-    m = SequenceLabelingModel(tokenizer=tokenizer)
-    m.fit(x_train, y_train)
-    print(m.tokenizer.word2idx)
-    print(m.tokenizer.label2idx)
+        if __name__ == '__main__':
+            pass
