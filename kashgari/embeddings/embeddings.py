@@ -49,6 +49,13 @@ class BaseEmbedding(object):
                  sequence_length: int,
                  embedding_size: int = None,
                  **kwargs):
+        """
+        init a WordEmbedding
+        :param name_or_path: model name as `sgns.weibo.bigram` or model path like '/home/brikerman/w2v.model
+        :param sequence_length: length of max sequence, all embedding is shaped as (sequence_length, embedding_size)
+        :param embedding_size: embedding vector size, only need to set when using a CustomEmbedding
+        :param kwargs: kwargs to pass to the method, func: `BaseEmbedding.build`
+        """
         self.name = name_or_path
         self.embedding_size = embedding_size
         self.sequence_length = sequence_length
@@ -82,7 +89,7 @@ class BaseEmbedding(object):
     def build(self, **kwargs):
         raise NotImplementedError()
 
-    def build_word2idx(self, x_data: List[TextSeqType], min_count: int = 5):
+    def build_token2idx_dict(self, x_data: List[TextSeqType], min_count: int = 5):
         raise NotImplementedError()
 
     def tokenize(self,
@@ -125,14 +132,6 @@ class WordEmbeddings(BaseEmbedding):
         k.EOS: 2,
         k.UNK: 3
     }
-
-    def __init__(self,
-                 name_or_path: str,
-                 sequence_length: int,
-                 embedding_size: int = None,
-                 **kwargs):
-        self.keyed_vector: KeyedVectors = None
-        super(WordEmbeddings, self).__init__(name_or_path, sequence_length, embedding_size, **kwargs)
 
     def get_embedding_matrix(self) -> np.array:
         base_matrix = []
@@ -186,7 +185,7 @@ class WordEmbeddings(BaseEmbedding):
         logging.debug('Top 50 word  : {}'.format(self.keyed_vector.index2entity[:50]))
         logging.debug('------------------------------------------------')
 
-    def build_word2idx(self, x_data: List[TextSeqType], min_count: int = 5):
+    def build_token2idx_dict(self, x_data: List[TextSeqType], min_count: int = 5):
         logging.warning("word2vec embedding no need to build token2idx with corpus")
 
     def __repr__(self):
@@ -200,6 +199,15 @@ class BERTEmbedding(BaseEmbedding):
         k.UNK: '[UNK]',
         k.BOS: '[CLS]',
         k.EOS: '[SEP]',
+    }
+
+    model_key_map = {
+        'bert-base-uncased': 'uncased_L-12_H-768_A-12',
+        'bert-large-uncased': 'uncased_L-24_H-1024_A-16',
+        'bert-base-cased': 'cased_L-12_H-768_A-12',
+        'bert-large-cased': 'cased_L-24_H-1024_A-16',
+        'bert-base-multilingual-cased': 'multi_cased_L-12_H-768_A-12',
+        'bert-base-chinese': 'chinese_L-12_H-768_A-12'
     }
 
     pre_trained_models = {
@@ -233,8 +241,9 @@ class BERTEmbedding(BaseEmbedding):
     }
 
     def build(self):
+        url = self.pre_trained_models.get(self.model_key_map.get(self.name, self.name))
         self.model_path = helper.check_should_download(file=self.name,
-                                                       download_url=self.pre_trained_models.get(self.name),
+                                                       download_url=url,
                                                        sub_folders=['embedding', 'bert'])
 
         config_path = os.path.join(self.model_path, 'bert_config.json')
@@ -254,7 +263,7 @@ class BERTEmbedding(BaseEmbedding):
 
         self.token2idx = word2idx
 
-    def build_word2idx(self, x_data: List[TextSeqType], min_count: int = 5):
+    def build_token2idx_dict(self, x_data: List[TextSeqType], min_count: int = 5):
         logging.warning("bert embedding no need to build token2idx with corpus")
 
     def prepare_model_input(self, input_x: np.array, **kwargs) -> np.array:
@@ -276,7 +285,7 @@ class CustomEmbedding(BaseEmbedding):
                                 self.embedding_size)(input_x)
             self.model = Model(input_x, current)
 
-    def build_word2idx(self, x_data: List[TextSeqType], min_count: int = 5):
+    def build_token2idx_dict(self, x_data: List[TextSeqType], min_count: int = 5):
         word_set: Dict[str, int] = {}
         for x_item in x_data:
             for word in x_item:

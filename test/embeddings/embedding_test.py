@@ -14,7 +14,7 @@
 import logging
 import unittest
 
-import kashgari as ks
+from kashgari import k
 from kashgari.embeddings import WordEmbeddings, BERTEmbedding, CustomEmbedding
 
 SEQUENCE_LENGTH = 30
@@ -29,10 +29,10 @@ class WordEmbeddingsTest(unittest.TestCase):
 
     def test_build(self):
         self.assertEqual(self.embedding.token_count, 1004)
-        self.assertEqual(self.embedding.idx2token[0], ks.PAD)
-        self.assertEqual(self.embedding.idx2token[1], ks.BOS)
-        self.assertEqual(self.embedding.idx2token[2], ks.EOS)
-        self.assertEqual(self.embedding.idx2token[3], ks.UNK)
+        self.assertEqual(self.embedding.idx2token[0], k.PAD)
+        self.assertEqual(self.embedding.idx2token[1], k.BOS)
+        self.assertEqual(self.embedding.idx2token[2], k.EOS)
+        self.assertEqual(self.embedding.idx2token[3], k.UNK)
 
     def test_tokenize(self):
         sentence = ['我', '想', '看', '电影', '%%##!$#%']
@@ -63,10 +63,10 @@ class BertEmbeddingsTest(unittest.TestCase):
 
     def test_build(self):
         self.assertGreater(self.embedding.embedding_size, 0)
-        self.assertEqual(self.embedding.token2idx[ks.PAD], 0)
-        self.assertGreater(self.embedding.token2idx[ks.BOS], 0)
-        self.assertGreater(self.embedding.token2idx[ks.EOS], 0)
-        self.assertGreater(self.embedding.token2idx[ks.UNK], 0)
+        self.assertEqual(self.embedding.token2idx[k.PAD], 0)
+        self.assertGreater(self.embedding.token2idx[k.BOS], 0)
+        self.assertGreater(self.embedding.token2idx[k.EOS], 0)
+        self.assertGreater(self.embedding.token2idx[k.UNK], 0)
 
     def test_tokenize(self):
         sentence = ['我', '想', '看', '电影', '%%##!$#%']
@@ -113,17 +113,17 @@ class CustomEmbeddingsTest(unittest.TestCase):
                    '春', '机', '荣', '欣', '，', '从', '诗',
                    '人', '句', '中', '得', '之', '，', '而',
                    '入', '画', '中', '，', '观', '之', '令', '人', '心', '驰', '。', '我']]
-        self.embedding.build_word2idx(x_data=corpus, min_count=2)
+        self.embedding.build_token2idx_dict(x_data=corpus, min_count=2)
 
     def test_build(self):
         self.test_build_word2idx()
         self.assertEqual(self.embedding.token_count, 33)
         self.assertTrue(all(isinstance(x, str) for x in self.embedding.token2idx.keys()))
         self.assertTrue(all(isinstance(x, int) for x in self.embedding.token2idx.values()))
-        self.assertEqual(self.embedding.idx2token[0], ks.PAD)
-        self.assertEqual(self.embedding.idx2token[1], ks.BOS)
-        self.assertEqual(self.embedding.idx2token[2], ks.EOS)
-        self.assertEqual(self.embedding.idx2token[3], ks.UNK)
+        self.assertEqual(self.embedding.idx2token[0], k.PAD)
+        self.assertEqual(self.embedding.idx2token[1], k.BOS)
+        self.assertEqual(self.embedding.idx2token[2], k.EOS)
+        self.assertEqual(self.embedding.idx2token[3], k.UNK)
 
     def test_tokenize(self):
         self.test_build_word2idx()

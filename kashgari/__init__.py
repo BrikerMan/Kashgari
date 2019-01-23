@@ -11,12 +11,9 @@
 
 """
 import kashgari.macros as k
-from kashgari import embedding
-from kashgari import tasks
+import kashgari.embeddings
+import kashgari.corpus
 from kashgari.utils.logger import init_logger
-from . import corpus
-from .macros import *
-from .tokenizer import Tokenizer
 
 init_logger()
 

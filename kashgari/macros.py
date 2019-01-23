@@ -15,7 +15,6 @@ import os
 import pathlib
 from enum import Enum
 from pathlib import Path
-from typing import Union
 
 import download
 
