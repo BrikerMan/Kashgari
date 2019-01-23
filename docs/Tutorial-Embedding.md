@@ -16,15 +16,17 @@ Classic word embeddings are static and word-level, meaning that each distinct wo
 Simply instantiate the WordEmbeddings class and pass a string identifier or file path of the embedding you wish to load.
 
 ```python
-from kashgari.embeddings import WordEmbeddings
+>>> from kashgari.embeddings import WordEmbeddings
 
-# init embedding
-embedding = WordEmbeddings('sgns.renmin.bigram', sequence_length=30)
+# init embedding by id
+>>> embedding = WordEmbeddings('sgns.renmin.bigram', sequence_length=30)
+# or init embedding by embedding file path
+>>> w = WordEmbeddings('/Users/brikerman/Downloads/sgns.weibo.bigram-char', 30, limit=1000)
 
 # if the word2vec embedding is too big, you cloud add a limit arg to limit the size of vectors
 # this will give you only the first 1000 vector
 
-embedding_1000 = WordEmbeddings('sgns.renmin.bigram', sequence_length=30, limit=1000)
+>>> embedding_1000 = WordEmbeddings('sgns.renmin.bigram', sequence_length=30, limit=1000)
 ```
 
 Now, create an example sentence and call the embedding's `embed()` method. You can also pass a list of sentences to this method since some embedding types make use of batching to increase speed.
