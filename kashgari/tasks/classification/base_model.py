@@ -11,20 +11,18 @@
 
 """
 import random
-import numpy as np
 from typing import Tuple, Dict
-from keras.layers import Embedding, Input, Layer
+
+import numpy as np
 from keras.models import Model
 from keras.preprocessing import sequence
 from keras.utils import to_categorical
-
-from kashgari import k
-from kashgari.utils import helper
-from kashgari.type_hints import *
-from kashgari.embeddings import CustomEmbedding, BERTEmbedding, BaseEmbedding
-
 from sklearn import metrics
 from sklearn.utils import class_weight as class_weight_calculte
+
+from kashgari import k
+from kashgari.embeddings import CustomEmbedding, BaseEmbedding
+from kashgari.type_hints import *
 
 
 class ClassificationModel(object):
@@ -107,8 +105,10 @@ class ClassificationModel(object):
             page_list = list(range(len(x_data) // batch_size + 1))
             random.shuffle(page_list)
             for page in page_list:
-                target_x = x_data[page: (page + 1) * batch_size]
-                target_y = y_data[page: (page + 1) * batch_size]
+                start_index = page * batch_size
+                end_index = start_index + batch_size
+                target_x = x_data[start_index: end_index]
+                target_y = y_data[start_index: end_index]
                 if len(target_x) == 0:
                     target_x = x_data[0: batch_size]
                     target_y = y_data[0: batch_size]
@@ -117,7 +117,8 @@ class ClassificationModel(object):
                 tokenized_y = self.label_to_token(target_y)
 
                 padded_x = sequence.pad_sequences(tokenized_x,
-                                                  maxlen=self.embedding.sequence_length)
+                                                  maxlen=self.embedding.sequence_length,
+                                                  padding='post')
                 padded_y = to_categorical(tokenized_y,
                                           num_classes=len(self.label2idx),
                                           dtype=np.int)
@@ -166,16 +167,17 @@ class ClassificationModel(object):
                                                   y_train,
                                                   batch_size,
                                                   is_bert=self.embedding.is_bert)
+
+        if fit_kwargs is None:
+            fit_kwargs = {}
+
         if x_validate:
             validation_generator = self.get_data_generator(x_validate,
                                                            y_validate,
                                                            batch_size,
                                                            is_bert=self.embedding.is_bert)
-            kwargs['validation_data'] = validation_generator
-            kwargs['validation_steps'] = len(x_validate) // batch_size
-
-        if fit_kwargs is None:
-            fit_kwargs = {}
+            fit_kwargs['validation_data'] = validation_generator
+            fit_kwargs['validation_steps'] = len(x_validate) // batch_size
 
         if class_weight:
             y_list = self.label_to_token(y_train)
@@ -195,12 +197,15 @@ class ClassificationModel(object):
         tokens = self.embedding.tokenize(sentence)
         is_list = not isinstance(sentence[0], str)
         if is_list:
-            padded_tokens = sequence.pad_sequences(tokens, maxlen=self.embedding.sequence_length)
+            padded_tokens = sequence.pad_sequences(tokens,
+                                                   maxlen=self.embedding.sequence_length,
+                                                   padding='post')
         else:
-            padded_tokens = sequence.pad_sequences([tokens], maxlen=self.embedding.sequence_length)
-
+            padded_tokens = sequence.pad_sequences([tokens],
+                                                   maxlen=self.embedding.sequence_length,
+                                                   padding='post')
         if self.embedding.is_bert:
-            x = [padded_tokens, np.zeros(shape=(1, self.embedding.sequence_length))]
+            x = [padded_tokens, np.zeros(shape=(len(padded_tokens), self.embedding.sequence_length))]
         else:
             x = padded_tokens
         predict_result = self.model.predict(x, batch_size=batch_size).argmax(-1)
