@@ -20,7 +20,6 @@ import pandas as pd
 from kashgari.utils import downloader
 from kashgari.utils import helper
 
-
 DATA_TRAIN = 'train'
 DATA_VALIDATE = 'validate'
 DATA_TEST = 'test'
@@ -84,23 +83,48 @@ class TencentDingdangSLUCorpus(Corpus):
 
     @classmethod
     def get_classification_data(cls,
-                                is_test: bool = False,
+                                data_type: str = DATA_TRAIN,
                                 shuffle: bool = True,
-                                max_count: int = 0) -> Tuple[List[str], List[str]]:
+                                cutter: str = 'char',
+                                max_count: int = 0) -> Tuple[List[List[str]], List[List[str]]]:
+        """
+
+        :param data_type: {train, validate, test}
+        :param shuffle: shuffle or not
+        :param cutter:
+        :param max_count:
+        :return:
+        """
         folder_path = downloader.download_if_not_existed('corpus/' + cls.__corpus_name__,
                                                          'corpus/' + cls.__zip_file__name)
-        if is_test:
-            file_path = os.path.join(folder_path, 'test.csv')
-        else:
-            file_path = os.path.join(folder_path, 'train.csv')
+        if data_type not in [DATA_TRAIN, DATA_VALIDATE, DATA_TEST]:
+            raise ValueError('data_type error, please use one onf the {}'.format([DATA_TRAIN,
+                                                                                  DATA_VALIDATE,
+                                                                                  DATA_TEST]))
+        if cutter not in ['char', 'jieba', 'none']:
+            raise ValueError('data_type error, please use one onf the {}'.format([DATA_TRAIN,
+                                                                                  DATA_VALIDATE,
+                                                                                  DATA_TEST]))
+
+        file_path = os.path.join(folder_path, '{}.csv'.format(data_type))
         df = pd.read_csv(file_path)
         x_data = df['text'].values
         y_data = df['domain'].values
         if shuffle:
             x_data, y_data = helper.unison_shuffled_copies(x_data, y_data)
+
         if max_count != 0:
             x_data = x_data[:max_count]
             y_data = y_data[:max_count]
+
+        if cutter == 'jieba':
+            try:
+                import jieba
+            except ModuleNotFoundError:
+                raise ModuleNotFoundError("please install jieba, `$ pip install jieba`")
+            x_data = [list(jieba.cut(item)) for item in x_data]
+        elif 'char':
+            x_data = [list(item) for item in x_data]
         return x_data, y_data
 
     @staticmethod
@@ -163,7 +187,7 @@ class ChinaPeoplesDailyNerCorpus(object):
     def get_sequence_tagging_data(cls,
                                   data_type: str = DATA_TRAIN,
                                   shuffle: bool = True,
-                                  max_count: int = 0) -> Tuple[List[str], List[str]]:
+                                  max_count: int = 0) -> Tuple[List[List[str]], List[List[str]]]:
         folder_path = downloader.download_if_not_existed('corpus/' + cls.__corpus_name__,
                                                          'corpus/' + cls.__zip_file__name)
 
@@ -192,9 +216,64 @@ class ChinaPeoplesDailyNerCorpus(object):
         return data_x, data_y
 
 
+class SMP2017ECDTClassificationData(Corpus):
+    __corpus_name__ = 'smp2017ecdt-data-task1'
+    __zip_file__name = 'smp2017ecdt-data-task1.tar.gz'
+
+    __desc__ = """
+    http://ir.hit.edu.cn/smp2017ecdt-data
+    """
+
+    @classmethod
+    def get_classification_data(cls,
+                                data_type: str = DATA_TRAIN,
+                                shuffle: bool = True,
+                                cutter: str = 'char',
+                                max_count: int = 0) -> Tuple[List[List[str]], List[List[str]]]:
+        """
+
+        :param data_type: {train, validate, test}
+        :param shuffle: shuffle or not
+        :param cutter:
+        :param max_count:
+        :return:
+        """
+        folder_path = downloader.download_if_not_existed('corpus/' + cls.__corpus_name__,
+                                                         'corpus/' + cls.__zip_file__name)
+        if data_type not in [DATA_TRAIN, DATA_VALIDATE, DATA_TEST]:
+            raise ValueError('data_type error, please use one onf the {}'.format([DATA_TRAIN,
+                                                                                  DATA_VALIDATE,
+                                                                                  DATA_TEST]))
+        if cutter not in ['char', 'jieba', 'none']:
+            raise ValueError('data_type error, please use one onf the {}'.format([DATA_TRAIN,
+                                                                                  DATA_VALIDATE,
+                                                                                  DATA_TEST]))
+
+        file_path = os.path.join(folder_path, '{}.csv'.format(data_type))
+        df = pd.read_csv(file_path)
+        x_data = df['text'].values
+        y_data = df['domain'].values
+        if shuffle:
+            x_data, y_data = helper.unison_shuffled_copies(x_data, y_data)
+
+        if max_count != 0:
+            x_data = x_data[:max_count]
+            y_data = y_data[:max_count]
+
+        if cutter == 'jieba':
+            try:
+                import jieba
+            except ModuleNotFoundError:
+                raise ModuleNotFoundError("please install jieba, `$ pip install jieba`")
+            x_data = [list(jieba.cut(item)) for item in x_data]
+        elif 'char':
+            x_data = [list(item) for item in x_data]
+        return x_data, y_data
+
+
 if __name__ == '__main__':
 
     # init_logger()
-    x, y = ChinaPeoplesDailyNerCorpus.get_sequence_tagging_data()
+    x, y = SMP2017ECDTClassificationData.get_classification_data()
     for i in range(5):
         print('{} -> {}'.format(x[i], y[i]))
