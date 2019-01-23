@@ -4,8 +4,10 @@ Yet another state-of-the-art NLP framework with pre-trained embeddings and model
 Kashgare is:
 
 # TODO
-* **Powerful and simple NLP library**. Kashgare allows you to apply state-of-the-art natural language processing (NLP) models to your text, such as named entity recognition (NER), part-of-speech tagging (PoS), sense disambiguation and classification.
-
+* **Powerful and simple NLP library**. Kashgare allows you to apply state-of-the-art natural language processing (NLP) models to your text, such as named entity recognition (NER), part-of-speech tagging (PoS) and classification.
+* **A Keras NLP framework**. Kashgare builds directly on Keras, making it easy to train your own models and experiment with new approaches using different embeddings and model structure.
+* **Human-friendly framework**. Kashgare's code is very simple, well documented and tested, which makes it very easy to understand and modify.
+ 
 ## Quick start
 ```bash
 pip install kashgari
