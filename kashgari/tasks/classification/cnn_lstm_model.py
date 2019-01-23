@@ -10,7 +10,7 @@
 @time: 2019-01-19 11:52
 
 """
-from keras.layers import Dense, Conv1D, MaxPooling1D, Embedding, Input
+from keras.layers import Dense, Conv1D, MaxPooling1D, Embedding
 from keras.layers.recurrent import LSTM
 from keras.models import Model
 
@@ -34,14 +34,14 @@ class CNNLSTMModel(ClassificationModel):
     }
 
     def build_model(self):
-        current, input_layers = self.prepare_embedding_layer()
-        conv_layer = Conv1D(**self.hyper_parameters['conv_layer'])(current)
+        base_model = self.embedding.model
+        conv_layer = Conv1D(**self.hyper_parameters['conv_layer'])(base_model.output)
         max_pool_layer = MaxPooling1D(**self.hyper_parameters['max_pool_layer'])(conv_layer)
         lstm_layer = LSTM(**self.hyper_parameters['lstm_layer'])(max_pool_layer)
-        dense_layer = Dense(len(self.tokenizer.label2idx), activation='sigmoid')(lstm_layer)
+        dense_layer = Dense(len(self.label2idx), activation='sigmoid')(lstm_layer)
         output_layers = [dense_layer]
 
-        model = Model(input_layers, output_layers)
+        model = Model(base_model.inputs, output_layers)
         model.compile(loss='categorical_crossentropy',
                       optimizer='adam',
                       metrics=['accuracy'])
@@ -52,10 +52,11 @@ class CNNLSTMModel(ClassificationModel):
 if __name__ == "__main__":
     from kashgari.utils.logger import init_logger
     from kashgari.corpus import TencentDingdangSLUCorpus
+    import jieba
 
     init_logger()
 
     x_data, y_data = TencentDingdangSLUCorpus.get_classification_data()
-
+    x_data = [list(jieba.cut(x)) for x in x_data]
     classifier = CNNLSTMModel()
-    classifier.fit(x_data, y_data, batch_size=2)
+    classifier.fit(x_data, y_data, epochs=1)

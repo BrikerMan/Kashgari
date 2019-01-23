@@ -62,7 +62,7 @@ class BaseEmbedding(object):
         self.model_path = ''
         self._token2idx: Dict[str, int] = None
         self._idx2token: Dict[int, str] = None
-        self.model: Model = None
+        self._model: Model = None
         self.build(**kwargs)
 
     @property
@@ -70,12 +70,16 @@ class BaseEmbedding(object):
         return len(self._token2idx)
 
     @property
-    def embed_model(self):
-        return self.model
+    def model(self) -> Model:
+        return self._model
 
     @property
     def token2idx(self):
         return self._token2idx
+
+    @property
+    def is_bert(self):
+        return False
 
     @token2idx.setter
     def token2idx(self, value):
@@ -93,11 +97,15 @@ class BaseEmbedding(object):
         raise NotImplementedError()
 
     def tokenize(self,
-                 sentence: TextSeqInputType) -> TokenSeqInputType:
+                 sentence: TextSeqInputType,
+                 add_bos_eos: bool = True) -> TokenSeqInputType:
         is_list = isinstance(sentence[0], list)
 
         def tokenize_sentence(text: TextSeqType) -> TokenSeqType:
-            return [self.token2idx.get(token, self.token2idx[k.UNK]) for token in text]
+            tokens = [self.token2idx.get(token, self.token2idx[k.UNK]) for token in text]
+            if add_bos_eos:
+                tokens = [self.token2idx[k.BOS]] + tokens + [self.token2idx[k.BOS]]
+            return tokens
 
         if is_list:
             return [tokenize_sentence(sen) for sen in sentence]
@@ -115,7 +123,7 @@ class BaseEmbedding(object):
 
         embed_input = self.prepare_model_input(embed_input)
 
-        embed_pred = self.embed_model.predict(embed_input)
+        embed_pred = self.model.predict(embed_input)
         if is_list:
             return embed_pred
         else:
@@ -177,7 +185,7 @@ class WordEmbeddings(BaseEmbedding):
                             input_length=self.sequence_length,
                             weights=[embedding_matrix],
                             trainable=False)(input_layer)
-        self.model = Model(input_layer, current)
+        self._model = Model(input_layer, current)
         logging.debug('------------------------------------------------')
         logging.debug('Loaded gensim word2vec model')
         logging.debug('model        : {}'.format(self.model_path))
@@ -240,17 +248,24 @@ class BERTEmbedding(BaseEmbedding):
                                    'chinese_L-12_H-768_A-12.zip',
     }
 
+    @property
+    def is_bert(self):
+        return True
+
     def build(self):
         url = self.pre_trained_models.get(self.model_key_map.get(self.name, self.name))
-        self.model_path = helper.check_should_download(file=self.name,
+        self.model_path = helper.check_should_download(file=self.model_key_map.get(self.name, self.name),
                                                        download_url=url,
                                                        sub_folders=['embedding', 'bert'])
 
         config_path = os.path.join(self.model_path, 'bert_config.json')
         check_point_path = os.path.join(self.model_path, 'bert_model.ckpt')
-        self.model = keras_bert.load_trained_model_from_checkpoint(config_path,
-                                                                   check_point_path,
-                                                                   seq_len=self.sequence_length)
+        model = keras_bert.load_trained_model_from_checkpoint(config_path,
+                                                              check_point_path,
+                                                              seq_len=self.sequence_length)
+        output_layer = helper.NonMaskingLayer()(model.output)
+        self._model = Model(model.inputs, output_layer)
+
         self.embedding_size = self.model.output_shape[-1]
         dict_path = os.path.join(self.model_path, 'vocab.txt')
         word2idx = {}
@@ -283,7 +298,7 @@ class CustomEmbedding(BaseEmbedding):
             input_x = Input(shape=(self.sequence_length,), dtype='int32')
             current = Embedding(self.token_count,
                                 self.embedding_size)(input_x)
-            self.model = Model(input_x, current)
+            self._model = Model(input_x, current)
 
     def build_token2idx_dict(self, x_data: List[TextSeqType], min_count: int = 5):
         word_set: Dict[str, int] = {}
