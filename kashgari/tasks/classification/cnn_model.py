@@ -10,8 +10,7 @@
 @time: 2019-01-21 17:49
 
 """
-from keras.layers import Dense, Conv1D, GlobalMaxPooling1D, Embedding, Input
-from keras.layers.recurrent import LSTM
+from keras.layers import Dense, Conv1D, GlobalMaxPooling1D
 from keras.models import Model
 
 from kashgari.tasks.classification.base_model import ClassificationModel
