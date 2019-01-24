@@ -78,30 +78,44 @@ Epoch 1/5
  1/35 [..............................] - ETA: 32s - loss: 3.4652 - acc: 0.0469
 
 ... 
+
+>>> x_eval, y_eval = SMP2017ECDTClassificationData.get_classification_data('validate')
+>>> classifier.evaluate(x_eval, y_eval)
+              precision    recall  f1-score   support
+         
+        calc       0.75      0.75      0.75         8
+        chat       0.83      0.86      0.85       154
+    contacts       0.54      0.70      0.61        10
+    cookbook       0.97      0.94      0.95        89
+    datetime       0.67      0.67      0.67         6
+       email       1.00      0.88      0.93         8
+         epg       0.61      0.56      0.58        36
+      flight       1.00      0.90      0.95        21
+...
 ```
 
 ## Run with Bert Embedding
 
 ```python
->>> from kashgari.embeddings import BERTEmbedding
->>> from kashgari.tasks.classification import CNNLSTMModel
->>> from kashgari.corpus import SMP2017ECDTClassificationData
+from kashgari.embeddings import BERTEmbedding
+from kashgari.tasks.classification import CNNLSTMModel
+from kashgari.corpus import SMP2017ECDTClassificationData
 
->>> bert_embedding = BERTEmbedding('bert-base-chinese', sequence_length=30)                                   
->>> model = CNNLSTMModel(bert_embedding)
->>> train_x, train_y = SMP2017ECDTClassificationData.get_classification_data()
->>> model.fit(train_x, train_y)
+bert_embedding = BERTEmbedding('bert-base-chinese', sequence_length=30)                                   
+model = CNNLSTMModel(bert_embedding)
+train_x, train_y = SMP2017ECDTClassificationData.get_classification_data()
+model.fit(train_x, train_y)
 ```
 
 ## Run with Word2vec embedded
 
 ```python
->>> from kashgari.embeddings import WordEmbeddings
->>> from kashgari.tasks.classification import CNNLSTMModel
->>> from kashgari.corpus import SMP2017ECDTClassificationData
+from kashgari.embeddings import WordEmbeddings
+from kashgari.tasks.classification import CNNLSTMModel
+from kashgari.corpus import SMP2017ECDTClassificationData
 
->>> bert_embedding = WordEmbeddings('sgns.weibo.bigram', sequence_length=30)                                  
->>> model = CNNLSTMModel(bert_embedding)
->>> train_x, train_y = SMP2017ECDTClassificationData.get_classification_data()
->>> model.fit(train_x, train_y)
+bert_embedding = WordEmbeddings('sgns.weibo.bigram', sequence_length=30)                                  
+model = CNNLSTMModel(bert_embedding)
+train_x, train_y = SMP2017ECDTClassificationData.get_classification_data()
+model.fit(train_x, train_y)
 ```

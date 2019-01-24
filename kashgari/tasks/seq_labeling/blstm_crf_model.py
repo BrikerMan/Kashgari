@@ -60,3 +60,5 @@ if __name__ == "__main__":
 
     classifier = BLSTMCRFModel()
     classifier.fit(x_train, y_train, epochs=2)
+    classifier.evaluate(x_validate, y_validate)
+    classifier.evaluate(x_test, y_train)
