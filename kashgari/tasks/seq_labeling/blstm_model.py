@@ -30,41 +30,44 @@ class BLSTMModel(SequenceLabelingModel):
         }
     }
 
-    def build_model(self):
+    def build_model(self, loss_f=None, optimizer=None, metrics=None, **kwargs):
         """
         build model function
         :return:
         """
-        current, input_layers = self.prepare_embedding_layer()
+        if not loss_f:
+            loss_f = 'categorical_crossentropy'
+        if not optimizer:
+            optimizer = 'adam'
+        if not metrics:
+            metrics = ['accuracy']
+        embed_model = self.embedding.model
 
-        blstm_layer = Bidirectional(LSTM(**self.hyper_parameters['lstm_layer']))(current)
+        blstm_layer = Bidirectional(LSTM(**self.hyper_parameters['lstm_layer']))(embed_model.output)
         dropout_layer = Dropout(**self.hyper_parameters['dropout_layer'])(blstm_layer)
-        time_distributed_layer = TimeDistributed(Dense(self.tokenizer.class_num))(dropout_layer)
+        time_distributed_layer = TimeDistributed(Dense(len(self.label2idx)))(dropout_layer)
         activation = Activation('softmax')(time_distributed_layer)
 
-        model = Model(input_layers, activation)
-        model.compile(loss=self.get_weighted_categorical_crossentropy(),
-                      optimizer='adam',
-                      metrics=['accuracy'])
+        model = Model(embed_model.inputs, activation)
+        model.compile(loss=loss_f,
+                      optimizer=optimizer,
+                      metrics=metrics)
         self.model = model
         self.model.summary()
 
 
 if __name__ == '__main__':
-    import kashgari as ks
+    import random
     from keras.callbacks import ModelCheckpoint
+    from kashgari.embeddings import WordEmbeddings
     from kashgari.corpus import ChinaPeoplesDailyNerCorpus
-
-    # embedding = ks.embedding.Word2VecEmbedding('sgns.weibo.bigram', limit=1000)
-    embedding = ks.embedding.BERTEmbedding('/disk/corpus/bert/chinese_L-12_H-768_A-12/', limit=1000)
-    tokenizer = ks.tokenizer.Tokenizer(embedding=embedding,
-                                       sequence_length=128)
 
     x_train, y_train = ChinaPeoplesDailyNerCorpus.get_sequence_tagging_data()
     x_validate, y_validate = ChinaPeoplesDailyNerCorpus.get_sequence_tagging_data(data_type='validate')
     x_test, y_test = ChinaPeoplesDailyNerCorpus.get_sequence_tagging_data(data_type='test')
 
-    m = BLSTMModel(tokenizer=tokenizer)
+    embedding = WordEmbeddings('sgns.weibo.bigram', sequence_length=100)
+    m = BLSTMModel(embedding)
 
     check = ModelCheckpoint('./model.model',
                             monitor='acc',
@@ -75,9 +78,15 @@ if __name__ == '__main__':
                             period=1)
     m.fit(x_train,
           y_train,
-          epochs=1,
-          x_validate=x_test,
-          y_validate=y_test,
-          fit_kwargs={'callbacks': [check]})
+          class_weight=True,
+          epochs=1, y_validate=y_validate, x_validate=x_validate)
+
+    sample_queries = random.sample(list(range(len(x_train))), 10)
+    for i in sample_queries:
+        text = x_train[i]
+        logging.info('-------- sample {} --------'.format(i))
+        logging.info('x: {}'.format(text))
+        logging.info('y_true: {}'.format(y_train[i]))
+        logging.info('y_pred: {}'.format(m.predict(text)))
 
     m.evaluate(x_test, y_test)

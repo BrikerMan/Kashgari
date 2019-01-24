@@ -13,7 +13,7 @@
 import logging
 import unittest
 
-from kashgari.tasks.classification import
+from kashgari.tasks.classification import BLSTMModel
 from kashgari.embeddings import WordEmbeddings, BERTEmbedding
 
 

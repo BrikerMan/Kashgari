@@ -86,7 +86,7 @@ class TencentDingdangSLUCorpus(Corpus):
                                 data_type: str = DATA_TRAIN,
                                 shuffle: bool = True,
                                 cutter: str = 'char',
-                                max_count: int = 0) -> Tuple[List[List[str]], List[List[str]]]:
+                                max_count: int = 0) -> Tuple[List[List[str]], List[str]]:
         """
 
         :param data_type: {train, validate, test}

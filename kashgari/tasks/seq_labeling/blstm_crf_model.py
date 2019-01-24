@@ -16,10 +16,10 @@ from keras.models import Model
 
 from kashgari.utils.crf import CRF, crf_loss
 
-from kashgari.tasks.classification.base_model import ClassificationModel
+from kashgari.tasks.seq_labeling.base_model import SequenceLabelingModel
 
 
-class BLSTMCRFModel(ClassificationModel):
+class BLSTMCRFModel(SequenceLabelingModel):
     __base_hyper_parameters__ = {
         'lstm_layer': {
             'units': 256,
@@ -37,10 +37,8 @@ class BLSTMCRFModel(ClassificationModel):
         dense_layer = Dense(128, activation='tanh')(blstm_layer)
         crf = CRF(len(self.label2idx), sparse_target=True)
         crf_layer = crf(dense_layer)
-        flat_layer = Flatten()(crf_layer)
-        output_layer = Dense()
 
-        model = Model(base_model.inputs, output_layer)
+        model = Model(base_model.inputs, crf_layer)
         model.compile(loss=crf_loss,
                       optimizer='adam',
                       metrics=[crf.accuracy])
@@ -51,12 +49,14 @@ class BLSTMCRFModel(ClassificationModel):
 if __name__ == "__main__":
     print("Hello world")
     from kashgari.utils.logger import init_logger
-    from kashgari.corpus import TencentDingdangSLUCorpus
+    from kashgari.corpus import ChinaPeoplesDailyNerCorpus
     import jieba
 
     init_logger()
 
-    x_data, y_data = TencentDingdangSLUCorpus.get_classification_data()
-    x_data = [list(jieba.cut(x)) for x in x_data]
+    x_train, y_train = ChinaPeoplesDailyNerCorpus.get_sequence_tagging_data()
+    x_validate, y_validate = ChinaPeoplesDailyNerCorpus.get_sequence_tagging_data(data_type='validate')
+    x_test, y_test = ChinaPeoplesDailyNerCorpus.get_sequence_tagging_data(data_type='test')
+
     classifier = BLSTMCRFModel()
-    classifier.fit(x_data, y_data, epochs=2)
+    classifier.fit(x_train, y_train, epochs=2)

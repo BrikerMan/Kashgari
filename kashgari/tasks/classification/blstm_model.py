@@ -10,6 +10,7 @@
 @time: 2019-01-21 17:37
 
 """
+import logging
 from keras.layers import Dense, Bidirectional
 from keras.layers.recurrent import LSTM
 from keras.models import Model
@@ -41,27 +42,14 @@ class BLSTMModel(ClassificationModel):
 
 if __name__ == "__main__":
     from kashgari.utils.logger import init_logger
-    from kashgari.embeddings import BERTEmbedding
     from kashgari.corpus import TencentDingdangSLUCorpus
-    import jieba
 
     init_logger()
 
-    x_data, y_data = TencentDingdangSLUCorpus.get_classification_data(max_count=50)
-    x_data = [list(jieba.cut(x)) for x in x_data]
-    embedding = BERTEmbedding('bert-base-chinese', sequence_length=10)
-    classifier = BLSTMModel(embedding)
+    x_data, y_data = TencentDingdangSLUCorpus.get_classification_data()
+    classifier = BLSTMModel()
     classifier.fit(x_data, y_data, epochs=1)
-    sentence = list('语言学包含了几种分支领域。')
-    print(classifier.predict(sentence))
+    classifier.save('./classifier_saved2')
 
-    import logging
-    from kashgari.embeddings import WordEmbeddings
-    embedding = WordEmbeddings('sgns.weibo.bigram', sequence_length=30, limit=5000)
-    model = BLSTMModel(embedding=embedding)
-    model.fit(x_data, y_data)
-    sentence = list('语言学包含了几种分支领域。')
-    logging.info(model.embedding.tokenize(sentence))
-    logging.info(model.predict(sentence))
-    self.assertTrue(isinstance(self.model.predict(sentence), str))
-    self.assertTrue(isinstance(self.model.predict([sentence]), list))
+    model = ClassificationModel.load_model('./classifier_saved2')
+    logging.info(model.predict('我要听音乐'))

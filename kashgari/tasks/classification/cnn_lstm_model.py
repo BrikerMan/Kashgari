@@ -10,7 +10,9 @@
 @time: 2019-01-19 11:52
 
 """
-from keras.layers import Dense, Conv1D, MaxPooling1D, Embedding
+import logging
+
+from keras.layers import Dense, Conv1D, MaxPooling1D
 from keras.layers.recurrent import LSTM
 from keras.models import Model
 
@@ -52,11 +54,13 @@ class CNNLSTMModel(ClassificationModel):
 if __name__ == "__main__":
     from kashgari.utils.logger import init_logger
     from kashgari.corpus import TencentDingdangSLUCorpus
-    import jieba
 
     init_logger()
 
     x_data, y_data = TencentDingdangSLUCorpus.get_classification_data()
-    x_data = [list(jieba.cut(x)) for x in x_data]
     classifier = CNNLSTMModel()
     classifier.fit(x_data, y_data, epochs=1)
+    classifier.save('./classifier_saved2')
+
+    model = ClassificationModel.load_model('./classifier_saved2')
+    logging.info(model.predict('我要听音乐'))

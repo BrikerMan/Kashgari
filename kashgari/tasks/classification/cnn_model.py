@@ -10,6 +10,7 @@
 @time: 2019-01-21 17:49
 
 """
+import logging
 from keras.layers import Dense, Conv1D, GlobalMaxPooling1D
 from keras.models import Model
 
@@ -48,10 +49,13 @@ class CNNModel(ClassificationModel):
 if __name__ == "__main__":
     from kashgari.utils.logger import init_logger
     from kashgari.corpus import TencentDingdangSLUCorpus
-    import jieba
+
     init_logger()
 
     x_data, y_data = TencentDingdangSLUCorpus.get_classification_data()
-    x_data = [list(jieba.cut(x)) for x in x_data]
     classifier = CNNModel()
     classifier.fit(x_data, y_data, epochs=1)
+    classifier.save('./classifier_saved2')
+
+    model = ClassificationModel.load_model('./classifier_saved2')
+    logging.info(model.predict('我要听音乐'))
