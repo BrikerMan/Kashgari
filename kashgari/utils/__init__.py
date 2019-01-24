@@ -11,9 +11,6 @@
 
 """
 
-from typing import List, Tuple
-
-ClassificationData = Tuple[List[List[str]], List[str]]
 
 if __name__ == "__main__":
     print("Hello world")

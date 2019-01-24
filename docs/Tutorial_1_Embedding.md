@@ -16,6 +16,8 @@ Classic word embeddings are static and word-level, meaning that each distinct wo
 Simply instantiate the WordEmbeddings class and pass a string identifier or file path of the embedding you wish to load.
 
 ```python
+>>> from kashgari.utils.logger import init_logger
+>>> init_logger()
 >>> from kashgari.embeddings import WordEmbeddings
 
 # init embedding by id

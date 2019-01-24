@@ -17,7 +17,6 @@ from typing import Tuple, List
 
 import pandas as pd
 
-from kashgari.utils import downloader
 from kashgari.utils import helper
 
 DATA_TRAIN = 'train'
@@ -75,8 +74,8 @@ class TencentDingdangSLUCorpus(Corpus):
 
     @classmethod
     def get_info(cls):
-        folder_path = downloader.download_if_not_existed('corpus/' + cls.__corpus_name__,
-                                                         'corpus/' + cls.__zip_file__name, )
+        folder_path = helper.check_should_download('corpus/' + cls.__corpus_name__,
+                                                   'corpus/' + cls.__zip_file__name, )
         logging.info("""{} info\n    dataset path: {}\n{}""".format(cls.__corpus_name__,
                                                                     folder_path,
                                                                     cls.__desc__))
@@ -95,8 +94,8 @@ class TencentDingdangSLUCorpus(Corpus):
         :param max_count:
         :return:
         """
-        folder_path = downloader.download_if_not_existed('corpus/' + cls.__corpus_name__,
-                                                         'corpus/' + cls.__zip_file__name)
+        folder_path = helper.check_should_download('corpus/' + cls.__corpus_name__,
+                                                   'corpus/' + cls.__zip_file__name)
         if data_type not in [DATA_TRAIN, DATA_VALIDATE, DATA_TEST]:
             raise ValueError('data_type error, please use one onf the {}'.format([DATA_TRAIN,
                                                                                   DATA_VALIDATE,
@@ -152,8 +151,8 @@ class TencentDingdangSLUCorpus(Corpus):
                                   is_test: bool = False,
                                   shuffle: bool = True,
                                   max_count: int = 0) -> Tuple[List[str], List[str]]:
-        folder_path = downloader.check_should_download('corpus/' + cls.__corpus_name__,
-                                                       'corpus/' + cls.__zip_file__name, )
+        folder_path = helper.check_should_download('corpus/' + cls.__corpus_name__,
+                                                   'corpus/' + cls.__zip_file__name, )
 
         if is_test:
             file_path = os.path.join(folder_path, 'test.csv')
@@ -188,8 +187,8 @@ class ChinaPeoplesDailyNerCorpus(object):
                                   data_type: str = DATA_TRAIN,
                                   shuffle: bool = True,
                                   max_count: int = 0) -> Tuple[List[List[str]], List[List[str]]]:
-        folder_path = downloader.check_should_download('corpus/' + cls.__corpus_name__,
-                                                       'corpus/' + cls.__zip_file__name)
+        folder_path = helper.check_should_download('corpus/' + cls.__corpus_name__,
+                                                   'corpus/' + cls.__zip_file__name)
 
         if data_type == DATA_TRAIN:
             file_path = os.path.join(folder_path, 'example.train')
@@ -226,8 +225,8 @@ class CoNLL2003Corpus(Corpus):
                                   task_name: str = 'ner',
                                   shuffle: bool = True,
                                   max_count: int = 0) -> Tuple[List[List[str]], List[List[str]]]:
-        folder_path = downloader.download_if_not_existed('corpus/' + cls.__corpus_name__,
-                                                         'corpus/' + cls.__zip_file__name)
+        folder_path = helper.check_should_download('corpus/' + cls.__corpus_name__,
+                                                   'corpus/' + cls.__zip_file__name)
 
         if data_type not in [DATA_TRAIN, DATA_VALIDATE, DATA_TEST]:
             raise ValueError('data_type error, please use one onf the {}'.format([DATA_TRAIN,
@@ -277,8 +276,8 @@ class SMP2017ECDTClassificationCorpus(Corpus):
         :param max_count:
         :return:
         """
-        folder_path = downloader.download_if_not_existed('corpus/' + cls.__corpus_name__,
-                                                         'corpus/' + cls.__zip_file__name)
+        folder_path = helper.check_should_download('corpus/' + cls.__corpus_name__,
+                                                   'corpus/' + cls.__zip_file__name)
         if data_type not in [DATA_TRAIN, DATA_VALIDATE, DATA_TEST]:
             raise ValueError('data_type error, please use one onf the {}'.format([DATA_TRAIN,
                                                                                   DATA_VALIDATE,

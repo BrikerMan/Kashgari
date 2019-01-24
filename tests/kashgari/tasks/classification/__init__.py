@@ -7,13 +7,12 @@
 @version: 1.0
 @license: Apache Licence
 @file: __init__.py
-@time: 2019-01-21
+@time: 2019-01-24
 
 """
-
-from .blstm_model import BLSTMModel
-from .blstm_crf_model import BLSTMCRFModel
-from .cnn_lstm_model import CNNLSTMModel
+from .cnn_lstm_model_test import CNNBLSTMModelTest
+from .blstm_model_test import BLSTMModelTest
+from .cnn_model_test import CNNModelTest
 
 if __name__ == '__main__':
     print("hello, world")

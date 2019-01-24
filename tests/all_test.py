@@ -6,7 +6,12 @@
 
 @version: 1.0
 @license: Apache Licence
-@file: __init__.py
-@time: 2019-01-22
+@file: test_all
+@time: 2019-01-24
 
 """
+import unittest
+from tests.kashgari.tasks import *
+
+if __name__ == '__main__':
+    unittest.main()

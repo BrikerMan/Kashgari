@@ -13,9 +13,7 @@
 import kashgari.macros as k
 import kashgari.embeddings
 import kashgari.corpus
-from kashgari.utils.logger import init_logger
 
-init_logger()
 
 if __name__ == "__main__":
     print("Hello world")

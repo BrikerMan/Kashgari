@@ -7,6 +7,9 @@ Also it is very easy to customize your own model by using the ClassificationMode
 Here is a real life example of how to train and save on your own corpus.
 
 ```python
+from kashgari.utils.logger import init_logger
+init_logger()
+
 from kashgari.tasks.classification import CNNLSTMModel
 
 # prepare corpus
