@@ -58,7 +58,7 @@ class BaseEmbedding(object):
         """
         self.name = name_or_path
         self.embedding_size = embedding_size
-        self.sequence_length = sequence_length
+        self._sequence_length = sequence_length
         self.model_path = ''
         self._token2idx: Dict[str, int] = None
         self._idx2token: Dict[int, str] = None
@@ -69,6 +69,15 @@ class BaseEmbedding(object):
     @property
     def token_count(self):
         return len(self._token2idx)
+
+    @property
+    def sequence_length(self):
+        return self._sequence_length
+
+    @sequence_length.setter
+    def sequence_length(self, val):
+        self._sequence_length = val
+        self.build(**self._kwargs)
 
     @property
     def model(self) -> Model:

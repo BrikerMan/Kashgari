@@ -14,6 +14,7 @@ import os
 import random
 import json
 import pathlib
+import logging
 from typing import Tuple, Dict
 
 import numpy as np
@@ -38,7 +39,7 @@ class SequenceLabelingModel(object):
 
     def __init__(self, embedding: BaseEmbedding = None, hyper_parameters: Dict = None):
         if embedding is None:
-            self.embedding = CustomEmbedding('custom', sequence_length=10, embedding_size=100)
+            self.embedding = CustomEmbedding('custom', sequence_length=0, embedding_size=100)
         else:
             self.embedding = embedding
         self.model: Model = None
@@ -47,6 +48,7 @@ class SequenceLabelingModel(object):
         self._idx2label = {}
         if hyper_parameters:
             self._hyper_parameters_.update(hyper_parameters)
+        self.model_info = {}
 
     @property
     def label2idx(self) -> Dict[str, int]:
@@ -174,11 +176,12 @@ class SequenceLabelingModel(object):
     def fit(self,
             x_train: List[List[str]],
             y_train: List[List[str]],
-            batch_size: int = 64,
-            epochs: int = 5,
             x_validate: List[List[str]] = None,
             y_validate: List[List[str]] = None,
-            class_weight: bool = False,
+            batch_size: int = 64,
+            epochs: int = 5,
+            labels_weight: bool = None,
+            default_labels_weight: float = 50.0,
             fit_kwargs: Dict = None,
             **kwargs):
         """
@@ -191,7 +194,8 @@ class SequenceLabelingModel(object):
         :param y_validate: list of validation target label data.
         :param y_validate: list of validation target label data.
         :param y_validate: list of validation target label data.
-        :param class_weight: set class weights for imbalanced classes
+        :param labels_weight: set class weights for imbalanced classes
+        :param default_labels_weight: default weight for labels not in labels_weight dict
         :param fit_kwargs: additional kwargs to be passed to
                :func:`~keras.models.Model.fit`
         :return:
@@ -203,19 +207,27 @@ class SequenceLabelingModel(object):
             batch_size = len(x_train) // 2
 
         if not self.model:
-            if class_weight:
+            if self.embedding.sequence_length == 0:
+                self.embedding.sequence_length = sorted([len(y) for y in y_train])[int(0.95*len(y_train))]
+                logging.info('sequence length set to {}'.format(self.embedding.sequence_length))
+
+            if labels_weight:
+                weights = []
                 initial_weights = {
                     k.PAD: 1,
-                    'O': 1,
-                    k.EOS: 2,
-                    k.BOS: 2
+                    k.BOS: 1,
+                    k.EOS: 1,
+                    'O': 1
                 }
-                weights = []
                 for label in self.label2idx.keys():
-                    weights.append(initial_weights.get(label, 5))
+                    weights.append(initial_weights.get(label, default_labels_weight))
                 loss_f = helper.weighted_categorical_crossentropy(np.array(weights))
+                self.model_info['loss'] = {
+                    'func': 'weighted_categorical_crossentropy',
+                    'weights': weights
+                }
 
-                self.build_model(loss_f=loss_f)
+                self.build_model(loss_f=loss_f, metrics=['categorical_accuracy', 'acc'])
             else:
                 self.build_model()
 
@@ -268,8 +280,9 @@ class SequenceLabelingModel(object):
 
     def evaluate(self, x_data, y_data, batch_size=None) -> Tuple[float, float, Dict]:
         y_pred = self.predict(x_data, batch_size=batch_size)
-        weighted_f1 = f1_score(y_data, y_pred, average='weighted')
-        weighted_recall = recall_score(y_data, y_pred, average='weighted')
+
+        weighted_f1 = f1_score(y_data, y_pred)
+        weighted_recall = recall_score(y_data, y_pred)
         report = classification_report(y_data, y_pred)
         print(classification_report(y_data, y_pred))
         return weighted_f1, weighted_recall, report
@@ -283,7 +296,11 @@ class SequenceLabelingModel(object):
         with open(os.path.join(model_path, 'words.json'), 'w', encoding='utf-8') as f:
             f.write(json.dumps(self.embedding.token2idx, indent=2, ensure_ascii=False))
 
+        with open(os.path.join(model_path, 'model.json'), 'w', encoding='utf-8') as f:
+            f.write(json.dumps(self.model_info, indent=2, ensure_ascii=False))
+
         self.model.save(os.path.join(model_path, 'model.model'))
+        logging.info('model saved to {}'.format(os.path.abspath(model_path)))
 
     @staticmethod
     def load_model(model_path: str):
@@ -293,8 +310,18 @@ class SequenceLabelingModel(object):
         with open(os.path.join(model_path, 'words.json'), 'r', encoding='utf-8') as f:
             token2idx = json.load(f)
 
+        with open(os.path.join(model_path, 'model.json'), 'r', encoding='utf-8') as f:
+            model_info = json.load(f)
+
         agent = SequenceLabelingModel()
-        agent.model = keras.models.load_model(os.path.join(model_path, 'model.model'))
+
+        loss = model_info.get('loss')
+        custom_objects = {}
+        if loss and loss['name'] == 'weighted_categorical_crossentropy':
+            loss_f = helper.weighted_categorical_crossentropy(np.array(loss['weights']))
+            custom_objects['loss'] = loss_f
+        agent.model = keras.models.load_model(os.path.join(model_path, 'model.model'),
+                                              custom_objects=custom_objects)
         agent.model.summary()
         agent.label2idx = label2idx
         agent.embedding.token2idx = token2idx

@@ -36,11 +36,11 @@ class Corpus(object):
                                 is_test: bool = False,
                                 shuffle: bool = True,
                                 max_count: int = 0) -> Tuple[List[str], List[str]]:
-        raise NotImplementedError()
+        pass
 
-    @classmethod
-    def get_info(cls):
-        raise NotImplementedError()
+    # @classmethod
+    # def get_info(cls):
+    #     raise NotImplementedError()
 
 
 class TencentDingdangSLUCorpus(Corpus):
@@ -216,7 +216,46 @@ class ChinaPeoplesDailyNerCorpus(object):
         return data_x, data_y
 
 
-class SMP2017ECDTClassificationData(Corpus):
+class CoNLL2003Corpus(Corpus):
+    __corpus_name__ = 'conll2003'
+    __zip_file__name = 'conll2003.tar.gz'
+
+    @classmethod
+    def get_sequence_tagging_data(cls,
+                                  data_type: str = DATA_TRAIN,
+                                  task_name: str = 'ner',
+                                  shuffle: bool = True,
+                                  max_count: int = 0) -> Tuple[List[List[str]], List[List[str]]]:
+        folder_path = downloader.download_if_not_existed('corpus/' + cls.__corpus_name__,
+                                                         'corpus/' + cls.__zip_file__name)
+
+        if data_type not in [DATA_TRAIN, DATA_VALIDATE, DATA_TEST]:
+            raise ValueError('data_type error, please use one onf the {}'.format([DATA_TRAIN,
+                                                                                  DATA_VALIDATE,
+                                                                                  DATA_TEST]))
+        if task_name not in ['ner', 'pos', 'chunking']:
+            raise ValueError('data_type error, please use one onf the {}'.format(['ner', 'pos', 'chunking']))
+        folder_path = os.path.join(folder_path, task_name)
+        if data_type == DATA_TRAIN:
+            file_path = os.path.join(folder_path, 'train.txt')
+        elif data_type == DATA_TEST:
+            file_path = os.path.join(folder_path, 'test.txt')
+        else:
+            file_path = os.path.join(folder_path, 'valid.txt')
+        x_list, y_list = _load_data_and_labels(file_path)
+        if shuffle:
+            x_list, y_list = helper.unison_shuffled_copies(x_list, y_list)
+        if max_count:
+            x_list = x_list[:max_count]
+            y_list = y_list[:max_count]
+        return x_list, y_list
+
+    __desc__ = """
+        http://ir.hit.edu.cn/smp2017ecdt-data
+        """
+
+
+class SMP2017ECDTClassificationCorpus(Corpus):
     __corpus_name__ = 'smp2017ecdt-data-task1'
     __zip_file__name = 'smp2017ecdt-data-task1.tar.gz'
 
@@ -271,9 +310,54 @@ class SMP2017ECDTClassificationData(Corpus):
         return x_data, y_data
 
 
+def _load_data_and_labels(filename, encoding='utf-8'):
+    """Loads data and label from a file.
+    Args:
+        filename (str): path to the file.
+        encoding (str): file encoding format.
+        The file format is tab-separated values.
+        A blank line is required at the end of a sentence.
+        For example:
+        ```
+        EU	B-ORG
+        rejects	O
+        German	B-MISC
+        call	O
+        to	O
+        boycott	O
+        British	B-MISC
+        lamb	O
+        .	O
+        Peter	B-PER
+        Blackburn	I-PER
+        ...
+        ```
+    Returns:
+        tuple(numpy array, numpy array): data and labels.
+    Example:
+        >>> filename = 'conll2003/en/ner/train.txt'
+        >>> data, labels = load_data_and_labels(filename)
+    """
+    sents, labels = [], []
+    words, tags = [], []
+    with open(filename, encoding=encoding) as f:
+        for line in f:
+            line = line.rstrip()
+            if line:
+                word, tag = line.split('\t')
+                words.append(word)
+                tags.append(tag)
+            else:
+                sents.append(words)
+                labels.append(tags)
+                words, tags = [], []
+
+    return sents, labels
+
+
 if __name__ == '__main__':
 
     # init_logger()
-    x, y = SMP2017ECDTClassificationData.get_classification_data()
+    x, y = CoNLL2003Corpus.get_sequence_tagging_data()
     for i in range(5):
         print('{} -> {}'.format(x[i], y[i]))

@@ -50,7 +50,6 @@ if __name__ == "__main__":
     print("Hello world")
     from kashgari.utils.logger import init_logger
     from kashgari.corpus import ChinaPeoplesDailyNerCorpus
-    import jieba
 
     init_logger()
 

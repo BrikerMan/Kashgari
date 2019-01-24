@@ -53,11 +53,11 @@ class CNNModelTest(unittest.TestCase):
 
     def test_label_token_convert(self):
         self.test_fit()
-        self.assertTrue(isinstance(self.model.label_to_token('a'), int))
-        self.assertTrue(isinstance(self.model.token_to_label(1), str))
+        self.assertTrue(isinstance(self.model.convert_label_to_idx('a'), int))
+        self.assertTrue(isinstance(self.model.convert_idx_to_label(1), str))
 
-        self.assertTrue(all(isinstance(i, int) for i in self.model.label_to_token(['a'])))
-        self.assertTrue(all(isinstance(i, str) for i in self.model.token_to_label([1, 2])))
+        self.assertTrue(all(isinstance(i, int) for i in self.model.convert_label_to_idx(['a'])))
+        self.assertTrue(all(isinstance(i, str) for i in self.model.convert_idx_to_label([1, 2])))
         sentence = list('在语言结构（语法）研究与意义（语义与语用）研究之间存在一个重要的主题划分')
         tokens = self.model.embedding.tokenize(sentence)
         self.assertEqual(len(sentence)+2, len(tokens))

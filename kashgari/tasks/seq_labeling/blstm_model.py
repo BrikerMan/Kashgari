@@ -66,8 +66,8 @@ if __name__ == '__main__':
     x_validate, y_validate = ChinaPeoplesDailyNerCorpus.get_sequence_tagging_data(data_type='validate')
     x_test, y_test = ChinaPeoplesDailyNerCorpus.get_sequence_tagging_data(data_type='test')
 
-    embedding = WordEmbeddings('sgns.weibo.bigram', sequence_length=100)
-    m = BLSTMModel(embedding)
+    # embedding = WordEmbeddings('sgns.weibo.bigram', sequence_length=100)
+    m = BLSTMModel()
 
     check = ModelCheckpoint('./model.model',
                             monitor='acc',
@@ -79,7 +79,7 @@ if __name__ == '__main__':
     m.fit(x_train,
           y_train,
           class_weight=True,
-          epochs=1, y_validate=y_validate, x_validate=x_validate)
+          epochs=1, y_validate=y_validate, x_validate=x_validate, labels_weight=True)
 
     sample_queries = random.sample(list(range(len(x_train))), 10)
     for i in sample_queries:

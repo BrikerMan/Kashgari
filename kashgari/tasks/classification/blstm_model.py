@@ -19,7 +19,7 @@ from kashgari.tasks.classification.base_model import ClassificationModel
 
 
 class BLSTMModel(ClassificationModel):
-    __base_hyper_parameters__ = {
+    base_hyper_parameters = {
         'lstm_layer': {
             'units': 256,
             'return_sequences': False

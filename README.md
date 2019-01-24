@@ -11,7 +11,7 @@ Kashgare is:
 ## Feature List 
 
 * Embedding support
-    * classic word2vec embedding
+    * Classic word2vec embedding
     * BERT embedding
 * Text Classification Models
     * CNN Classification Model
@@ -21,9 +21,11 @@ Kashgare is:
     * Bidirectional LSTM Labeling Model
     * Bidirectional LSTM CRF Labeling Model
     * CNN LSTM Labeling Model
+    * CNN Labeling Model
 * Model Training
 * Model Evaluate
 * GPU Support
+* Customize Model
 
 ## Roadmap
 * ELMo Embedding
@@ -31,9 +33,9 @@ Kashgare is:
 * More model structure
 
 ## Tutorial
-[Tutorial 1: Word Embeddings][docs/Tutorial-Embedding.md]
-[Tutorial 2: Classification Model][docs/Tutorial-Classification.md]
-[Tutorial 3: Sequence labeling Model][docs/Tutorial-Classification.md]
+[Tutorial 1: Word Embeddings](docs/Tutorial_1_Embedding.md)
+[Tutorial 2: Classification Model](docs/Tutorial_2_Classification.md)
+[Tutorial 3: Sequence labeling Model](docs/Tutorial_3_Sequence_Labeling.md)
 
 ## Quick start
 ```bash
@@ -43,10 +45,10 @@ pip install kashgari
 lets run a text classification with CNN model over [SMP 2017 ECDT Task1](http://ir.hit.edu.cn/smp2017ecdt-data).
 
 ```python
->>> from kashgari.corpus import SMP2017ECDTClassificationData
+>>> from kashgari.corpus import SMP2017ECDTClassificationCorpus
 >>> from kashgari.tasks.classification import CNNLSTMModel
 
->>> x_data, y_data = SMP2017ECDTClassificationData.get_classification_data()
+>>> x_data, y_data = SMP2017ECDTClassificationCorpus.get_classification_data()
 >>> x_data[0]
 ['你', '知', '道', '我', '几', '岁']
 >>> y_data[0]

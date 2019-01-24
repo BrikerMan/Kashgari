@@ -12,6 +12,9 @@
 """
 
 from .blstm_model import BLSTMModel
+from .blstm_crf_model import BLSTMCRFModel
+from .cnn_model import CNNModel
+from .cnn_lstm_model import CNNLSTMModel
 
 if __name__ == '__main__':
     print("hello, world")

@@ -31,11 +31,7 @@ from kashgari.type_hints import *
 
 
 class ClassificationModel(object):
-    __base_hyper_parameters__ = {}
-
-    @property
-    def hyper_parameters(self):
-        return self._hyper_parameters_
+    base_hyper_parameters = {}
 
     def __init__(self, embedding: BaseEmbedding = None, hyper_parameters: Dict = None):
         if embedding is None:
@@ -43,11 +39,11 @@ class ClassificationModel(object):
         else:
             self.embedding = embedding
         self.model: Model = None
-        self._hyper_parameters_ = self.__base_hyper_parameters__.copy()
+        self.hyper_parameters_ = self.base_hyper_parameters.copy()
         self._label2idx = {}
         self._idx2label = {}
         if hyper_parameters:
-            self._hyper_parameters_.update(hyper_parameters)
+            self.hyper_parameters_.update(hyper_parameters)
 
     @property
     def label2idx(self) -> Dict[str, int]:
@@ -87,15 +83,16 @@ class ClassificationModel(object):
         }
         for label in label_set:
             label2idx[label] = len(label2idx)
-        self.label2idx = label2idx
+        self._label2idx = label2idx
+        self._idx2label = dict([(val, key) for (key, val) in label2idx.items()])
 
-    def label_to_token(self, label: Union[List[str], str]) -> Union[List[int], int]:
+    def convert_label_to_idx(self, label: Union[List[str], str]) -> Union[List[int], int]:
         if isinstance(label, str):
             return self.label2idx[label]
         else:
             return [self.label2idx[l] for l in label]
 
-    def token_to_label(self, token: Union[List[int], int]) -> Union[List[str], str]:
+    def convert_idx_to_label(self, token: Union[List[int], int]) -> Union[List[str], str]:
         if isinstance(token, int):
             return self._idx2label[token]
         else:
@@ -119,7 +116,7 @@ class ClassificationModel(object):
                     target_y = y_data[0: batch_size]
 
                 tokenized_x = self.embedding.tokenize(target_x)
-                tokenized_y = self.label_to_token(target_y)
+                tokenized_y = self.convert_label_to_idx(target_y)
 
                 padded_x = sequence.pad_sequences(tokenized_x,
                                                   maxlen=self.embedding.sequence_length,
@@ -185,7 +182,7 @@ class ClassificationModel(object):
             fit_kwargs['validation_steps'] = len(x_validate) // batch_size
 
         if class_weight:
-            y_list = self.label_to_token(y_train)
+            y_list = self.convert_label_to_idx(y_train)
             class_weights = class_weight_calculte.compute_class_weight('balanced',
                                                                        np.unique(y_list),
                                                                        y_list)
@@ -214,7 +211,7 @@ class ClassificationModel(object):
         else:
             x = padded_tokens
         predict_result = self.model.predict(x, batch_size=batch_size).argmax(-1)
-        labels = self.token_to_label(predict_result)
+        labels = self.convert_idx_to_label(predict_result)
         if is_list:
             return labels
         else:

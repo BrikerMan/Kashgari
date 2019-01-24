@@ -12,8 +12,8 @@
 """
 from typing import Union, List
 
-ClassificationXType = Union[List[List[str]], List[str]]
-ClassificationYType = List[str]
+# ClassificationXType = Union[List[List[str]], List[str]]
+# ClassificationYType = List[str]
 
 TextSeqType = List[str]
 TokenSeqType = List[int]
