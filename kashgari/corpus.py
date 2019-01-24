@@ -152,8 +152,8 @@ class TencentDingdangSLUCorpus(Corpus):
                                   is_test: bool = False,
                                   shuffle: bool = True,
                                   max_count: int = 0) -> Tuple[List[str], List[str]]:
-        folder_path = downloader.download_if_not_existed('corpus/' + cls.__corpus_name__,
-                                                         'corpus/' + cls.__zip_file__name, )
+        folder_path = downloader.check_should_download('corpus/' + cls.__corpus_name__,
+                                                       'corpus/' + cls.__zip_file__name, )
 
         if is_test:
             file_path = os.path.join(folder_path, 'test.csv')
@@ -188,8 +188,8 @@ class ChinaPeoplesDailyNerCorpus(object):
                                   data_type: str = DATA_TRAIN,
                                   shuffle: bool = True,
                                   max_count: int = 0) -> Tuple[List[List[str]], List[List[str]]]:
-        folder_path = downloader.download_if_not_existed('corpus/' + cls.__corpus_name__,
-                                                         'corpus/' + cls.__zip_file__name)
+        folder_path = downloader.check_should_download('corpus/' + cls.__corpus_name__,
+                                                       'corpus/' + cls.__zip_file__name)
 
         if data_type == DATA_TRAIN:
             file_path = os.path.join(folder_path, 'example.train')

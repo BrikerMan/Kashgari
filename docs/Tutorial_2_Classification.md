@@ -80,3 +80,7 @@ model.save('./my_own_model')
 
 loaded_model = MyOwnModel.load_model('./my_own_model')
 ```
+
+## Use pre-embedding embedding layer
+
+see [Tutorial 1: Word Embeddings](Tutorial_1_Embedding.md) for detail. All models, include the customized one support using word2vec or BERT embedding as the embedding layer. 

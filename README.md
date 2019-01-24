@@ -32,10 +32,11 @@ Kashgare is:
 * Pre-trained models
 * More model structure
 
-## Tutorial
-[Tutorial 1: Word Embeddings](docs/Tutorial_1_Embedding.md)
-[Tutorial 2: Classification Model](docs/Tutorial_2_Classification.md)
-[Tutorial 3: Sequence labeling Model](docs/Tutorial_3_Sequence_Labeling.md)
+## Tutorials
+
+* [Tutorial 1: Word Embeddings](docs/Tutorial_1_Embedding.md)
+* [Tutorial 2: Classification Model](docs/Tutorial_2_Classification.md)
+* [Tutorial 3: Sequence labeling Model](docs/Tutorial_3_Sequence_Labeling.md)
 
 ## Quick start
 ```bash
@@ -81,8 +82,8 @@ Epoch 1/5
 
 ... 
 
->>> x_eval, y_eval = SMP2017ECDTClassificationData.get_classification_data('validate')
->>> classifier.evaluate(x_eval, y_eval)
+>>> x_test, y_test = SMP2017ECDTClassificationCorpus.get_classification_data('test')
+>>> classifier.evaluate(x_test, y_test)
               precision    recall  f1-score   support
          
         calc       0.75      0.75      0.75         8
@@ -101,11 +102,12 @@ Epoch 1/5
 ```python
 from kashgari.embeddings import BERTEmbedding
 from kashgari.tasks.classification import CNNLSTMModel
-from kashgari.corpus import SMP2017ECDTClassificationData
+from kashgari.corpus import SMP2017ECDTClassificationCorpus
 
 bert_embedding = BERTEmbedding('bert-base-chinese', sequence_length=30)                                   
 model = CNNLSTMModel(bert_embedding)
-train_x, train_y = SMP2017ECDTClassificationData.get_classification_data()
+
+train_x, train_y = SMP2017ECDTClassificationCorpus.get_classification_data()
 model.fit(train_x, train_y)
 ```
 
@@ -114,10 +116,10 @@ model.fit(train_x, train_y)
 ```python
 from kashgari.embeddings import WordEmbeddings
 from kashgari.tasks.classification import CNNLSTMModel
-from kashgari.corpus import SMP2017ECDTClassificationData
+from kashgari.corpus import SMP2017ECDTClassificationCorpus
 
 bert_embedding = WordEmbeddings('sgns.weibo.bigram', sequence_length=30)                                  
 model = CNNLSTMModel(bert_embedding)
-train_x, train_y = SMP2017ECDTClassificationData.get_classification_data()
+train_x, train_y = SMP2017ECDTClassificationCorpus.get_classification_data()
 model.fit(train_x, train_y)
 ```

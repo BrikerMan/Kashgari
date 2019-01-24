@@ -39,11 +39,11 @@ class ClassificationModel(object):
         else:
             self.embedding = embedding
         self.model: Model = None
-        self.hyper_parameters_ = self.base_hyper_parameters.copy()
+        self.hyper_parameters = self.base_hyper_parameters.copy()
         self._label2idx = {}
         self._idx2label = {}
         if hyper_parameters:
-            self.hyper_parameters_.update(hyper_parameters)
+            self.hyper_parameters.update(hyper_parameters)
 
     @property
     def label2idx(self) -> Dict[str, int]:
