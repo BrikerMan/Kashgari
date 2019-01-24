@@ -123,3 +123,10 @@ model = CNNLSTMModel(bert_embedding)
 train_x, train_y = SMP2017ECDTClassificationCorpus.get_classification_data()
 model.fit(train_x, train_y)
 ```
+
+
+## Reference
+This library is inspired by following framework and papers.
+
+* [flair - A very simple framework for state-of-the-art Natural Language Processing (NLP)](https://github.com/zalandoresearch/flair)
+* [anago - Bidirectional LSTM-CRF and ELMo for Named-Entity Recognition, Part-of-Speech Tagging](https://github.com/Hironsan/anago)
