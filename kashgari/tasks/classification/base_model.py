@@ -10,13 +10,18 @@
 @time: 2019-01-19 11:50
 
 """
+import os
+import json
 import random
+import pathlib
 from typing import Tuple, Dict
-
 import numpy as np
+
+import keras
 from keras.models import Model
 from keras.preprocessing import sequence
 from keras.utils import to_categorical
+
 from sklearn import metrics
 from sklearn.utils import class_weight as class_weight_calculte
 
@@ -223,6 +228,33 @@ class ClassificationModel(object):
         print(metrics.classification_report(y_data, y_pred))
         return weighted_f1, weighted_recall, report
 
+    def save(self, model_path: str):
+        pathlib.Path(model_path).mkdir(exist_ok=True, parents=True)
+
+        with open(os.path.join(model_path, 'labels.json'), 'w', encoding='utf-8') as f:
+            f.write(json.dumps(self.label2idx, indent=2, ensure_ascii=False))
+
+        with open(os.path.join(model_path, 'words.json'), 'w', encoding='utf-8') as f:
+            f.write(json.dumps(self.embedding.token2idx, indent=2, ensure_ascii=False))
+
+        self.model.save(os.path.join(model_path, 'model.model'))
+
+    @staticmethod
+    def load_model(model_path: str):
+        with open(os.path.join(model_path, 'labels.json'), 'r', encoding='utf-8') as f:
+            label2idx = json.load(f)
+
+        with open(os.path.join(model_path, 'words.json'), 'r', encoding='utf-8') as f:
+            token2idx = json.load(f)
+
+        agent = ClassificationModel()
+        agent.model = keras.models.load_model(os.path.join(model_path, 'model.model'))
+        agent.model.summary()
+        agent.label2idx = label2idx
+        agent.embedding.token2idx = token2idx
+        return agent
+
 
 if __name__ == "__main__":
+    ClassificationModel.load_model('./classifier_saved2')
     print("Hello world")

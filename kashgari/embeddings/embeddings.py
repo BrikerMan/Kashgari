@@ -13,7 +13,7 @@
 import json
 import logging
 import os
-from typing import Dict, Type
+from typing import Dict, Type, Tuple, Optional
 
 import keras_bert
 import numpy as np
@@ -63,6 +63,7 @@ class BaseEmbedding(object):
         self._token2idx: Dict[str, int] = None
         self._idx2token: Dict[int, str] = None
         self._model: Model = None
+        self._kwargs = kwargs
         self.build(**kwargs)
 
     @property
