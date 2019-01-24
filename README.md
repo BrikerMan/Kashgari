@@ -1,84 +1,107 @@
 # Kashgari
-Yet another state-of-the-art NLP framework with pre-trained embeddings and models.
+State-of-the-art NLP framework for human.
 
 Kashgare is:
 
-# TODO
+* **Human-friendly framework**. Kashgare's code is very simple, well documented and tested, which makes it very easy to understand and modify.
 * **Powerful and simple NLP library**. Kashgare allows you to apply state-of-the-art natural language processing (NLP) models to your text, such as named entity recognition (NER), part-of-speech tagging (PoS) and classification.
 * **A Keras NLP framework**. Kashgare builds directly on Keras, making it easy to train your own models and experiment with new approaches using different embeddings and model structure.
-* **Human-friendly framework**. Kashgare's code is very simple, well documented and tested, which makes it very easy to understand and modify.
+
  
+## Feature List 
+
+* Embedding support
+    * classic word2vec embedding
+    * BERT embedding
+* Text Classification Models
+    * CNN Classification Model
+    * CNN LSTM Classification Model
+    * Bidirectional LSTM Classification Model
+* Text Labeling Models (NER, PoS)
+    * Bidirectional LSTM Labeling Model
+    * Bidirectional LSTM CRF Labeling Model
+    * CNN LSTM Labeling Model
+* Model Training
+* Model Evaluate
+* GPU Support
+
+## Roadmap
+* ELMo Embedding
+* Pre-trained models
+* More model structure
+
+## Tutorial
+[Tutorial 1: Word Embeddings][docs/Tutorial-Embedding.md]
+[Tutorial 2: Classification Model][docs/Tutorial-Classification.md]
+[Tutorial 3: Sequence labeling Model][docs/Tutorial-Classification.md]
+
 ## Quick start
 ```bash
 pip install kashgari
 ```
 
-## Example Usage
-
-lets run a text classification with CNN model over [Tencent Dingdang SLU Corpus](http://tcci.ccf.org.cn/conference/2018/taskdata.php).
-
-### run classification
+lets run a text classification with CNN model over [SMP 2017 ECDT Task1](http://ir.hit.edu.cn/smp2017ecdt-data).
 
 ```python
->>> import kashgari as ks
+>>> from kashgari.corpus import SMP2017ECDTClassificationData
+>>> from kashgari.tasks.classification import CNNLSTMModel
 
->>> x_data, y_data = ks.corpus.TencentDingdangSLUCorpus.get_classification_data()
+>>> x_data, y_data = SMP2017ECDTClassificationData.get_classification_data()
 >>> x_data[0]
-'导航结束'
+['你', '知', '道', '我', '几', '岁']
 >>> y_data[0]
-'navigation.cancel_navigation'
+'chat'
 
 # provided classification models `CNNModel`, `BLSTMModel`, `CNNLSTMModel` 
->>> classifier = ks.tasks.classification.CNNModel()
+>>> classifier = CNNLSTMModel()
 >>> classifier.fit(x_data, y_data)
 _________________________________________________________________
 Layer (type)                 Output Shape              Param #   
 =================================================================
-input_1 (InputLayer)         (None, 80)                0         
+input_1 (InputLayer)         (None, 10)                0         
 _________________________________________________________________
-embedding_1 (Embedding)      (None, 80, 100)           400300    
+embedding_1 (Embedding)      (None, 10, 100)           87500     
 _________________________________________________________________
-conv1d_1 (Conv1D)            (None, 76, 128)           64128     
+conv1d_1 (Conv1D)            (None, 10, 32)            9632      
 _________________________________________________________________
-global_max_pooling1d_1 (Glob (None, 128)               0         
+max_pooling1d_1 (MaxPooling1 (None, 5, 32)             0         
 _________________________________________________________________
-dense_1 (Dense)              (None, 64)                8256      
+lstm_1 (LSTM)                (None, 100)               53200     
 _________________________________________________________________
-dense_2 (Dense)              (None, 11)                715       
+dense_1 (Dense)              (None, 32)                3232      
 =================================================================
-Total params: 473,399
-Trainable params: 473,399
+Total params: 153,564
+Trainable params: 153,564
 Non-trainable params: 0
 _________________________________________________________________
 Epoch 1/5
+ 1/35 [..............................] - ETA: 32s - loss: 3.4652 - acc: 0.0469
 
 ... 
 ```
 
-## Run with pre-embedded word2vec
+## Run with Bert Embedding
 
 ```python
-import kashgari as ks
+>>> from kashgari.embeddings import BERTEmbedding
+>>> from kashgari.tasks.classification import CNNLSTMModel
+>>> from kashgari.corpus import SMP2017ECDTClassificationData
 
-embedding = ks.embedding.Word2VecEmbedding(name_or_path='sgns.weibo.bigram')
-tokenizer = ks.tokenizer.Tokenizer(embedding=embedding,
-                                   sequence_length=30,
-                                   segmenter=ks.k.SegmenterType.jieba)
-                                   
-model = ks.tasks.classification.CNNLSTMModel(tokenizer=tokenizer)
-model.fit(x_data, y_data)
+>>> bert_embedding = BERTEmbedding('bert-base-chinese', sequence_length=30)                                   
+>>> model = CNNLSTMModel(bert_embedding)
+>>> train_x, train_y = SMP2017ECDTClassificationData.get_classification_data()
+>>> model.fit(train_x, train_y)
 ```
 
-## Run with bert embedded
+## Run with Word2vec embedded
 
 ```python
-import kashgari as ks
+>>> from kashgari.embeddings import WordEmbeddings
+>>> from kashgari.tasks.classification import CNNLSTMModel
+>>> from kashgari.corpus import SMP2017ECDTClassificationData
 
-embedding = ks.embedding.BERTEmbedding('/Users/brikerman/Desktop/corpus/bert/chinese_L-12_H-768_A-12')
-tokenizer = ks.tokenizer.Tokenizer(embedding=embedding,
-                                   sequence_length=30,
-                                   segmenter=ks.k.SegmenterType.jieba)
-                                   
-model = ks.tasks.classification.CNNLSTMModel(tokenizer=tokenizer)
-model.fit(x_data, y_data)
+>>> bert_embedding = WordEmbeddings('sgns.weibo.bigram', sequence_length=30)                                  
+>>> model = CNNLSTMModel(bert_embedding)
+>>> train_x, train_y = SMP2017ECDTClassificationData.get_classification_data()
+>>> model.fit(train_x, train_y)
 ```

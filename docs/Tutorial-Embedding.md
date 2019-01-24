@@ -1,4 +1,4 @@
-# Tutorial 3: Word Embeddings
+# Tutorial 1: Word Embeddings
 
 Kashgari provide classic Word2vec embedding and BERT embedding to embed the words in sentences.
 
