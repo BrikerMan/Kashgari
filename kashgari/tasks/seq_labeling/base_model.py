@@ -11,40 +11,51 @@
 
 """
 import random
-import logging
 from typing import Tuple, Dict
 
 import numpy as np
-from keras.layers import Embedding, Input, Layer
 from keras.models import Model
 from keras.preprocessing import sequence
 from keras.utils import to_categorical
-
-from seqeval.metrics import classification_report
+from sklearn import metrics
+from sklearn.utils import class_weight as class_weight_calculte
 
 from kashgari import k
-from kashgari.embedding import CustomEmbedding, BERTEmbedding
-from kashgari.tokenizer import Tokenizer
+from kashgari.embeddings import CustomEmbedding, BaseEmbedding
 from kashgari.type_hints import *
-from kashgari.utils import helper
 
 
 class SequenceLabelingModel(object):
     __base_hyper_parameters__ = {}
 
-    __task_type__ = k.TaskType.tagging
-
     @property
     def hyper_parameters(self):
         return self._hyper_parameters_
 
-    def __init__(self, tokenizer: Tokenizer = None, hyper_parameters: Dict = None):
-        self.tokenizer = tokenizer
+    def __init__(self, embedding: BaseEmbedding = None, hyper_parameters: Dict = None):
+        if embedding is None:
+            self.embedding = CustomEmbedding('custom', sequence_length=10, embedding_size=100)
+        else:
+            self.embedding = embedding
         self.model: Model = None
-        self.tokenizer.task_type = self.__task_type__
         self._hyper_parameters_ = self.__base_hyper_parameters__.copy()
+        self._label2idx = {}
+        self._idx2label = {}
         if hyper_parameters:
             self._hyper_parameters_.update(hyper_parameters)
+
+    @property
+    def label2idx(self) -> Dict[str, int]:
+        return self._label2idx
+
+    @property
+    def token2idx(self) -> Dict[str, int]:
+        return self.embedding.token2idx
+
+    @label2idx.setter
+    def label2idx(self, value):
+        self._label2idx = value
+        self._idx2label = dict([(val, key) for (key, val) in value.items()])
 
     def build_model(self):
         """
@@ -53,64 +64,57 @@ class SequenceLabelingModel(object):
         """
         raise NotImplementedError()
 
-    def get_weighted_categorical_crossentropy(self):
-        weights = [5] * len(self.tokenizer.label2idx)
-        weights[0] = 1
-        weights = np.array(weights)
-        loss_f = helper.weighted_categorical_crossentropy(weights)
-        return loss_f
-
-    def prepare_embedding_layer(self) -> Tuple[Layer, List[Layer]]:
-        embedding = self.tokenizer.embedding
-        if isinstance(embedding, CustomEmbedding):
-            # input_x = Input(shape=(self.tokenizer.sequence_length, ), dtype='int32')
-            # current = Embedding(self.tokenizer.word_num,
-            #                     50,
-            #                     input_length=self.tokenizer.sequence_length)(input_x)
-            input_x = Input(shape=(self.tokenizer.sequence_length,), dtype='int32')
-            current = Embedding(self.tokenizer.word_num,
-                                embedding.embedding_size)(input_x)
-            input_layers = [input_x]
-
-        elif isinstance(embedding, BERTEmbedding):
-            base_model = embedding.get_base_model(self.tokenizer.sequence_length)
-            input_layers = base_model.inputs
-            current = base_model.output
-            current = helper.NonMaskingLayer()(current)
-
-        else:
-            input_x = Input(shape=(self.tokenizer.sequence_length,), dtype='int32')
-            current = Embedding(len(self.tokenizer.word2idx),
-                                self.tokenizer.embedding.embedding_size,
-                                input_length=self.tokenizer.sequence_length,
-                                weights=[self.tokenizer.embedding.get_embedding_matrix()],
-                                trainable=False)(input_x)
-
-            input_layers = [input_x]
-        return current, input_layers
-
-    def prepare_tokenizer_if_needs(self,
-                                   x_train: ClassificationXType,
-                                   y_train: ClassificationYType,
-                                   x_validate: ClassificationXType = None,
-                                   y_validate: ClassificationYType = None):
-        if self.tokenizer is None:
-            self.tokenizer = Tokenizer.get_recommend_tokenizer()
-
+    def build_token2id_label2id_dict(self,
+                                     x_train: List[List[str]],
+                                     y_train: List[str],
+                                     x_validate: List[List[str]] = None,
+                                     y_validate: List[str] = None):
         x_data = x_train
         y_data = y_train
         if x_validate:
             x_data += x_validate
             y_data += y_validate
+        self.embedding.build_token2idx_dict(x_data, 3)
 
-        self.tokenizer.build_with_corpus(x_data, y_data, task=k.TaskType.tagging)
+        label_set = set(y_data)
+        label2idx = {
+            k.PAD: 0,
+            k.BOS: 1,
+            k.EOS: 2
+        }
+        label_set = [i for i in label_set if i not in label2idx]
+        for label in label_set:
+            label2idx[label] = len(label2idx)
 
-        for i in range(5):
-            logging.info('sample x {} : {} -> {}'.format(i, x_train[i], self.tokenizer.word_to_token(x_train[i])))
-            logging.info('sample y {} : {} -> {}'.format(i, y_train[i], self.tokenizer.label_to_token(y_train[i])))
+        self.label2idx = label2idx
+
+    def labels_to_tokens(self,
+                         label: Union[List[str], str],
+                         add_eos_bos: bool = True) -> Union[List[int], int]:
+
+        def tokenize_tokens(seq: List[str]):
+            tokens = [self.label2idx[i] for i in seq]
+            if add_eos_bos:
+                tokens = [self.label2idx[k.BOS]] + tokens + [self.label2idx[k.EOS]]
+            return tokens
+
+        if isinstance(label[0], str):
+            return tokenize_tokens(label)
+        else:
+            return [tokenize_tokens(l) for l in label]
+
+    def tokens_to_labels(self,
+                         token: Union[List[List[int]], List[int]],
+                         tokens_length: Union[List[int], int],
+                         remove_eos_bos: bool = True) -> Union[List[str], str]:
+        def tokenize_tokens(seq: List[int]):
+            if isinstance(token, int):
+                return self._idx2label[token]
+            else:
+                return [self._idx2label[l] for l in token]
 
     def get_data_generator(self,
-                           x_data: Union[List[List[str]], List[str]],
+                           x_data: List[List[str]],
                            y_data: List[str],
                            batch_size: int = 64,
                            is_bert: bool = False):
@@ -120,43 +124,36 @@ class SequenceLabelingModel(object):
             for page in page_list:
                 start_index = page * batch_size
                 end_index = start_index + batch_size
-
                 target_x = x_data[start_index: end_index]
                 target_y = y_data[start_index: end_index]
+                if len(target_x) == 0:
+                    target_x = x_data[0: batch_size]
+                    target_y = y_data[0: batch_size]
 
-                tokenized_x = []
-                for x_item in target_x:
-                    tokenized_x.append(self.tokenizer.word_to_token(x_item))
+                tokenized_x = self.embedding.tokenize(target_x)
+                tokenized_y = self.label_to_token(target_y)
 
-                tokenized_y_data = []
-                for y_item in target_y:
-                    if isinstance(y_item, str):
-                        y_item = y_item.split(' ')
-                    tokenized_y_data.append(self.tokenizer.label_to_token(y_item))
-
-                tokenized_x = sequence.pad_sequences(tokenized_x,
-                                                     maxlen=self.tokenizer.sequence_length,
-                                                     padding='post')
+                padded_x = sequence.pad_sequences(tokenized_x,
+                                                  maxlen=self.embedding.sequence_length,
+                                                  padding='post')
+                padded_y = to_categorical(tokenized_y,
+                                          num_classes=len(self.label2idx),
+                                          dtype=np.int)
                 if is_bert:
-                    tokenized_x_seg = np.zeros(shape=(len(tokenized_x), self.tokenizer.sequence_length))
-                    tokenized_x_data = [tokenized_x, tokenized_x_seg]
+                    padded_x_seg = np.zeros(shape=(len(padded_x), self.embedding.sequence_length))
+                    x_input_data = [padded_x, padded_x_seg]
                 else:
-                    tokenized_x_data = tokenized_x
-                tokenized_y_data = sequence.pad_sequences(tokenized_y_data,
-                                                          maxlen=self.tokenizer.sequence_length,
-                                                          padding='post')
-                tokenized_y_data = to_categorical(tokenized_y_data,
-                                                  num_classes=self.tokenizer.class_num,
-                                                  dtype=np.int)
-                yield (tokenized_x_data, tokenized_y_data)
+                    x_input_data = padded_x
+                yield (x_input_data, padded_y)
 
     def fit(self,
-            x_train: ClassificationXType,
-            y_train: ClassificationYType,
+            x_train: List[List[str]],
+            y_train: List[str],
             batch_size: int = 64,
             epochs: int = 5,
-            x_validate: ClassificationXType = None,
-            y_validate: ClassificationYType = None,
+            x_validate: List[List[str]] = None,
+            y_validate: List[str] = None,
+            class_weight: bool = False,
             fit_kwargs: Dict = None,
             **kwargs):
         """
@@ -169,15 +166,13 @@ class SequenceLabelingModel(object):
         :param y_validate: list of validation target label data.
         :param y_validate: list of validation target label data.
         :param y_validate: list of validation target label data.
+        :param class_weight: set class weights for imbalanced classes
         :param fit_kwargs: additional kwargs to be passed to
-        :func:`~keras.models.Model.fit`
+               :func:`~keras.models.Model.fit`
         :return:
         """
-        if fit_kwargs is None:
-            fit_kwargs = {}
-
         assert len(x_train) == len(y_train)
-        self.prepare_tokenizer_if_needs(x_train, y_train, x_validate, y_validate)
+        self.build_token2id_label2id_dict(x_train, y_train, x_validate, y_validate)
 
         if len(x_train) < batch_size:
             batch_size = len(x_train) // 2
@@ -188,57 +183,59 @@ class SequenceLabelingModel(object):
         train_generator = self.get_data_generator(x_train,
                                                   y_train,
                                                   batch_size,
-                                                  is_bert=self.tokenizer.is_bert)
+                                                  is_bert=self.embedding.is_bert)
+
+        if fit_kwargs is None:
+            fit_kwargs = {}
+
         if x_validate:
             validation_generator = self.get_data_generator(x_validate,
                                                            y_validate,
                                                            batch_size,
-                                                           is_bert=self.tokenizer.is_bert)
+                                                           is_bert=self.embedding.is_bert)
             fit_kwargs['validation_data'] = validation_generator
             fit_kwargs['validation_steps'] = len(x_validate) // batch_size
+
+        if class_weight:
+            y_list = self.label_to_token(y_train)
+            class_weights = class_weight_calculte.compute_class_weight('balanced',
+                                                                       np.unique(y_list),
+                                                                       y_list)
+        else:
+            class_weights = None
 
         self.model.fit_generator(train_generator,
                                  steps_per_epoch=len(x_train) // batch_size,
                                  epochs=epochs,
+                                 class_weight=class_weights,
                                  **fit_kwargs)
 
-    def predict(self, sentence: str):
-        tokens = self.tokenizer.word_to_token(sentence)
-        padded_tokens = sequence.pad_sequences([tokens],
-                                               maxlen=self.tokenizer.sequence_length,
-                                               padding='post')
-        if self.tokenizer.is_bert:
-            x = [padded_tokens, np.zeros(shape=(1, self.tokenizer.sequence_length))]
+    def predict(self, sentence: Union[List[str], List[List[str]]], batch_size=None):
+        tokens = self.embedding.tokenize(sentence)
+        is_list = not isinstance(sentence[0], str)
+        if is_list:
+            padded_tokens = sequence.pad_sequences(tokens,
+                                                   maxlen=self.embedding.sequence_length,
+                                                   padding='post')
+        else:
+            padded_tokens = sequence.pad_sequences([tokens],
+                                                   maxlen=self.embedding.sequence_length,
+                                                   padding='post')
+        if self.embedding.is_bert:
+            x = [padded_tokens, np.zeros(shape=(len(padded_tokens), self.embedding.sequence_length))]
         else:
             x = padded_tokens
-        predict_result = self.model.predict(x)
-        predict_tokens = predict_result.argmax(-1)[0][:len(tokens)-2]
-        return self.tokenizer.token_to_label(list(predict_tokens))
-
-    def evaluate(self, x_data, y_data, batch_size: int = 128):
-        tokenized_x = []
-        sequence_length = []
-        for x_item in x_data:
-            tokens = self.tokenizer.word_to_token(x_item)
-            tokenized_x.append(tokens)
-            sequence_length.append(len(tokens) - 2)
-
-        tokenized_x_padding = sequence.pad_sequences(tokenized_x,
-                                                     maxlen=self.tokenizer.sequence_length,
-                                                     padding='post')
-        if self.tokenizer.is_bert:
-            tokenized_x_seg = np.zeros(shape=(len(tokenized_x_padding), self.tokenizer.sequence_length))
-            tokenized_x_data = [tokenized_x_padding, tokenized_x_seg]
+        predict_result = self.model.predict(x, batch_size=batch_size).argmax(-1)
+        labels = self.token_to_label(predict_result)
+        if is_list:
+            return labels
         else:
-            tokenized_x_data = tokenized_x_padding
+            return labels[0]
 
-        y_pred_array = self.model.predict(tokenized_x_data, batch_size=128).argmax(-1)
-        y_true = []
-        for index, item in enumerate(y_pred_array):
-            y_true.append(self.tokenizer.token_to_label(list(item)[: len(tokenized_x[index])]))
-
-        logging.info('\n{}'.format(classification_report(y_true,
-                                                         y_data)))
-
-        if __name__ == '__main__':
-            pass
+    def evaluate(self, x_data, y_data, batch_size=None) -> Tuple[float, float, Dict]:
+        y_pred = self.predict(x_data, batch_size=batch_size)
+        weighted_f1 = metrics.f1_score(y_data, y_pred, average='weighted')
+        weighted_recall = metrics.recall_score(y_data, y_pred, average='weighted')
+        report = metrics.classification_report(y_data, y_pred, output_dict=True)
+        print(metrics.classification_report(y_data, y_pred))
+        return weighted_f1, weighted_recall, report

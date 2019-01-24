@@ -11,5 +11,7 @@
 
 """
 
+from .blstm_model import BLSTMModel
+
 if __name__ == '__main__':
     print("hello, world")
