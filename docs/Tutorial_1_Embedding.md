@@ -119,6 +119,9 @@ embedding.
 
 # init embedding
 >>> embedding = BERTEmbedding('bert-base-chinese', sequence_length=30)
+# or init embedding by embedding file path
+>>> embedding = BERTEmbedding('/Users/brikerman/Desktop/corpus/bert/chinese_L-12_H-768_A-12/', 30)
+
 ```
 
 You can load any of the pre-trained BERT models by providing the model string during initialization:
