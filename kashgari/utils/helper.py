@@ -185,7 +185,7 @@ def check_should_download(file: str,
             dest.write(bz2.decompress(source.read()))
         return outfile_path
     else:
-        return file_path
+        return target_path
 
 
 if __name__ == "__main__":

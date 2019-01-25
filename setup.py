@@ -52,7 +52,7 @@ setup(
     author=AUTHOR,
     author_email=EMAIL,
     url=URL,
-    packages=["kashgari"],
+    packages=find_packages(exclude=('tests',)),
     install_requires=required,
     include_package_data=True,
     license=LICENSE,
