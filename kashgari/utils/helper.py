@@ -151,6 +151,7 @@ def check_should_download(file: str,
 
     folders = [DATA_PATH] + sub_folders + [file]
     target_path = os.path.join(*folders)
+    original_file_path = target_path
 
     if os.path.exists(target_path):
         return target_path
@@ -183,7 +184,7 @@ def check_should_download(file: str,
         outfile_path = file_path[:-4]
         with open(archive_path, 'rb') as source, open(outfile_path, 'wb') as dest:
             dest.write(bz2.decompress(source.read()))
-        return outfile_path
+        return original_file_path
     else:
         return target_path
 
