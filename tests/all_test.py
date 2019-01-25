@@ -11,7 +11,7 @@
 
 """
 import unittest
-from tests.kashgari.tasks import *
+# from tests.kashgari.tasks import *
 
 if __name__ == '__main__':
     unittest.main()
