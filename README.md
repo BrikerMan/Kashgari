@@ -1,9 +1,9 @@
 # Kashgari
 
-![Python version](https://img.shields.io/pypi/pyversions/Kashgari.svg)
-![Travis](https://img.shields.io/travis/BrikerMan/Kashgari.svg)
-![Download](https://img.shields.io/pypi/dm/kashgari.svg)
-![Issues](https://img.shields.io/github/issues/BrikerMan/Kashgari.svg)
+[![Pypi](https://img.shields.io/pypi/v/kashgari.svg)](https://pypi.org/project/kashgari/)
+[![Python version](https://img.shields.io/pypi/pyversions/Kashgari.svg)](https://www.python.org/downloads/release/python-360/)
+[![Travis](https://img.shields.io/travis/BrikerMan/Kashgari.svg)](https://travis-ci.org/BrikerMan/Kashgari)
+[![Issues](https://img.shields.io/github/issues/BrikerMan/Kashgari.svg)](https://github.com/BrikerMan/Kashgari/issues)
 ![Contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg)
 [![License: MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://opensource.org/licenses/MIT)
 

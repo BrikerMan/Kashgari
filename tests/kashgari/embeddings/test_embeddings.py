@@ -17,6 +17,8 @@ import unittest
 import kashgari.macros as k
 from kashgari.embeddings import WordEmbeddings, BERTEmbedding, CustomEmbedding
 
+from kashgari.utils.logger import init_logger
+init_logger()
 SEQUENCE_LENGTH = 30
 
 
@@ -131,8 +133,8 @@ class CustomEmbeddingsTest(unittest.TestCase):
         tokens = self.embedding.tokenize(sentence)
 
         logging.info('tokenize test: {} -> {}'.format(sentence, tokens))
-        self.assertEqual(len(tokens), len(tokens))
-        self.assertEqual(tokens[-1], 3, msg='check unk value')
+        self.assertEqual(len(tokens), len(sentence) + 2)
+        self.assertEqual(tokens[-2], 3, msg='check unk value')
 
         token_list = self.embedding.tokenize([sentence])
         self.assertEqual(len(token_list[0]), len(sentence))
