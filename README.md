@@ -3,7 +3,7 @@
 ![Python version](https://img.shields.io/pypi/pyversions/Kashgari.svg)
 ![Travis](https://img.shields.io/travis/BrikerMan/Kashgari.svg)
 ![Download](https://img.shields.io/pypi/dm/kashgari.svg)
-![Issues](https://img.shields.io/bitbucket/issues/BrikerMan/Kashgari.svg)
+![Issues](https://img.shields.io/github/issues/BrikerMan/Kashgari.svg)
 ![Contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg)
 [![License: MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://opensource.org/licenses/MIT)
 
