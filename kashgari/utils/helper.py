@@ -11,6 +11,7 @@
 
 """
 import os
+import bz2
 import h5py
 import random
 import logging
@@ -131,16 +132,17 @@ def weighted_categorical_crossentropy(weights):
 
 def check_should_download(file: str,
                           download_url: Optional[str],
-                          sub_folders: List[str] = None,
-                          unzip: bool = True):
+                          sub_folders: List[str] = None):
     """
     check should download the file, if exist return file url, if not download and unzip
     :param file:
     :param sub_folders:
     :param download_url:
-    :param unzip:
     :return:
     """
+    logging.debug('check_should_download: file {}\ndownload_url {}\nsub_folders {}'.format(file,
+                                                                                           download_url,
+                                                                                           sub_folders))
     if sub_folders is None:
         sub_folders = []
 
@@ -160,18 +162,32 @@ def check_should_download(file: str,
         url = download_url
     else:
         url = STORAGE_HOST + download_url
-    kind = 'file'
+
     if url.endswith('zip'):
         kind = 'zip'
     elif url.endswith('tar.gz'):
         kind = 'tar.gz'
+    else:
+        kind = 'file'
+        target_path = os.path.join(target_path, url.split('/')[-1])
 
-    logging.info('start model file, if it takes too long, you could download with other downloader\n'
+    logging.info('start downloading file, if it takes too long, you could download with other downloader\n'
                  'url  : {}\n'
                  'path : {}'.format(url,
                                     os.path.dirname(target_path)))
-    download.download(url, os.path.dirname(target_path), kind=kind, replace=True)
+
+    file_path = download.download(url, os.path.dirname(target_path), kind=kind, replace=True)
+    logging.debug('file downloaded to {}'.format(file_path))
+    if file_path.endswith('.bz2'):
+        archive_path = file_path
+        outfile_path = file_path[:-4]
+        with open(archive_path, 'rb') as source, open(outfile_path, 'wb') as dest:
+            dest.write(bz2.decompress(source.read()))
+        return outfile_path
+    else:
+        return file_path
 
 
 if __name__ == "__main__":
+
     print("Hello world")

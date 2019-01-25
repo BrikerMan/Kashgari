@@ -24,7 +24,7 @@ from keras.preprocessing import sequence
 from keras.utils import to_categorical
 from seqeval.metrics import f1_score, classification_report, recall_score
 
-from kashgari import k
+import kashgari.macros as k
 from kashgari.utils import helper
 from kashgari.embeddings import CustomEmbedding, BaseEmbedding
 from kashgari.type_hints import *

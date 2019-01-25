@@ -11,6 +11,7 @@
 
 """
 from . import classification
+from . import seq_labeling
 
 if __name__ == "__main__":
     print("Hello world")

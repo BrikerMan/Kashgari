@@ -26,7 +26,7 @@ from keras.utils import to_categorical
 from sklearn import metrics
 from sklearn.utils import class_weight as class_weight_calculte
 
-from kashgari import k
+import kashgari.macros as k
 from kashgari.embeddings import CustomEmbedding, BaseEmbedding
 from kashgari.type_hints import *
 
@@ -36,7 +36,7 @@ class ClassificationModel(object):
 
     def __init__(self, embedding: BaseEmbedding = None, hyper_parameters: Dict = None):
         if embedding is None:
-            self.embedding = CustomEmbedding('custom', sequence_length=10, embedding_size=100)
+            self.embedding = CustomEmbedding('custom', sequence_length=0, embedding_size=100)
         else:
             self.embedding = embedding
         self.model: Model = None
@@ -164,6 +164,9 @@ class ClassificationModel(object):
             batch_size = len(x_train) // 2
 
         if not self.model:
+            if self.embedding.sequence_length == 0:
+                self.embedding.sequence_length = sorted([len(y) for y in y_train])[int(0.95*len(y_train))]
+                logging.info('sequence length set to {}'.format(self.embedding.sequence_length))
             self.build_model()
 
         train_generator = self.get_data_generator(x_train,

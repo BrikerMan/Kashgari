@@ -1,10 +1,10 @@
 # Kashgari
 
-![](https://img.shields.io/pypi/pyversions/Kashgari.svg)
+![Python version](https://img.shields.io/pypi/pyversions/Kashgari.svg)
 ![Travis](https://img.shields.io/travis/BrikerMan/Kashgari.svg)
-![Download](https://img.shields.io/pypi/dm/Kashgari.svg)
+![Download](https://img.shields.io/pypi/dm/kashgari.svg)
 ![Issues](https://img.shields.io/bitbucket/issues/BrikerMan/Kashgari.svg)
-[![Contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg)](CONTRIBUTING.md)
+![Contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg)
 [![License: MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://opensource.org/licenses/MIT)
 
 Simple and powerful NLP framework, build your own state-of-art model in 5 minutes.
@@ -53,6 +53,10 @@ The project is based on Keras 2.2.0+ and Python 3.6+, because it is 2019 and typ
 
 ```bash
 pip install kashgari
+# CPU
+pip install tensorflow
+# GPU
+pip install tensorflow-gpu 
 ```
 
 ### Example Usage

@@ -10,9 +10,9 @@
 @time: 2019-01-19 13:42
 
 """
-import kashgari.macros as k
 import kashgari.embeddings
 import kashgari.corpus
+import kashgari.tasks
 
 
 if __name__ == "__main__":

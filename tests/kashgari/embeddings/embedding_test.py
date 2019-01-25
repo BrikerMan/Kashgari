@@ -14,7 +14,7 @@
 import logging
 import unittest
 
-from kashgari import k
+import kashgari.macros as k
 from kashgari.embeddings import WordEmbeddings, BERTEmbedding, CustomEmbedding
 
 SEQUENCE_LENGTH = 30

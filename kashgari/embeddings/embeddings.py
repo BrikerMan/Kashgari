@@ -22,7 +22,7 @@ from keras.layers import Input, Embedding
 from keras.models import Model
 from keras.preprocessing import sequence
 
-from kashgari import k
+import kashgari.macros as k
 from kashgari.type_hints import *
 from kashgari.utils import helper
 
