@@ -138,7 +138,8 @@ model.fit(train_x, train_y)
 ```
 
 ## Reference
-This library is inspired by following framework and papers.
+This library is inspired and reference following framework and papers.
 
 * [flair - A very simple framework for state-of-the-art Natural Language Processing (NLP)](https://github.com/zalandoresearch/flair)
 * [anago - Bidirectional LSTM-CRF and ELMo for Named-Entity Recognition, Part-of-Speech Tagging](https://github.com/Hironsan/anago)
+* [Chinese-Word-Vectors](https://github.com/Embedding/Chinese-Word-Vectors)
