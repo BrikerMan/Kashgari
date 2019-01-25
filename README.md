@@ -29,7 +29,6 @@ Kashgare is:
     * Bidirectional LSTM Labeling Model
     * Bidirectional LSTM CRF Labeling Model
     * CNN LSTM Labeling Model
-    * CNN Labeling Model
 * Model Training
 * Model Evaluate
 * GPU Support
