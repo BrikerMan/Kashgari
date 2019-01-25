@@ -44,8 +44,8 @@ class Corpus(object):
 
 class TencentDingdangSLUCorpus(Corpus):
 
-    __corpus_name__ = 'task-slu-tencent.dingdang-v1.1'
-    __zip_file__name = 'task-slu-tencent.dingdang-v1.1.tar.gz'
+    __corpus_name__ = 'corpus/task-slu-tencent.dingdang-v1.1'
+    __zip_file__name = 'corpus/task-slu-tencent.dingdang-v1.1.tar.gz'
 
     __desc__ = """    Download from NLPCC 2018 Task4 dataset
     details: http://tcci.ccf.org.cn/conference/2018/taskdata.php
@@ -74,8 +74,7 @@ class TencentDingdangSLUCorpus(Corpus):
 
     @classmethod
     def get_info(cls):
-        folder_path = helper.check_should_download('corpus/' + cls.__corpus_name__,
-                                                   'corpus/' + cls.__zip_file__name, )
+        folder_path = helper.cached_path(cls.__corpus_name__, cls.__zip_file__name, )
         logging.info("""{} info\n    dataset path: {}\n{}""".format(cls.__corpus_name__,
                                                                     folder_path,
                                                                     cls.__desc__))
@@ -94,8 +93,8 @@ class TencentDingdangSLUCorpus(Corpus):
         :param max_count:
         :return:
         """
-        folder_path = helper.check_should_download('corpus/' + cls.__corpus_name__,
-                                                   'corpus/' + cls.__zip_file__name)
+        folder_path = helper.cached_path(cls.__corpus_name__,
+                                         cls.__zip_file__name)
         if data_type not in [DATA_TRAIN, DATA_VALIDATE, DATA_TEST]:
             raise ValueError('data_type error, please use one onf the {}'.format([DATA_TRAIN,
                                                                                   DATA_VALIDATE,
@@ -104,7 +103,6 @@ class TencentDingdangSLUCorpus(Corpus):
             raise ValueError('data_type error, please use one onf the {}'.format([DATA_TRAIN,
                                                                                   DATA_VALIDATE,
                                                                                   DATA_TEST]))
-
         file_path = os.path.join(folder_path, '{}.csv'.format(data_type))
         df = pd.read_csv(file_path)
         x_data = df['text'].values
@@ -151,8 +149,8 @@ class TencentDingdangSLUCorpus(Corpus):
                                   is_test: bool = False,
                                   shuffle: bool = True,
                                   max_count: int = 0) -> Tuple[List[str], List[str]]:
-        folder_path = helper.check_should_download('corpus/' + cls.__corpus_name__,
-                                                   'corpus/' + cls.__zip_file__name, )
+        folder_path = helper.cached_path(cls.__corpus_name__,
+                                         cls.__zip_file__name)
 
         if is_test:
             file_path = os.path.join(folder_path, 'test.csv')
@@ -176,8 +174,8 @@ class TencentDingdangSLUCorpus(Corpus):
 
 
 class ChinaPeoplesDailyNerCorpus(object):
-    __corpus_name__ = 'china-people-daily-ner-corpus'
-    __zip_file__name = 'china-people-daily-ner-corpus.tar.gz'
+    __corpus_name__ = 'corpus/china-people-daily-ner-corpus'
+    __zip_file__name = 'corpus/china-people-daily-ner-corpus.tar.gz'
 
     __desc__ = """    Download from NLPCC 2018 Task4 dataset
         """
@@ -187,8 +185,8 @@ class ChinaPeoplesDailyNerCorpus(object):
                                   data_type: str = DATA_TRAIN,
                                   shuffle: bool = True,
                                   max_count: int = 0) -> Tuple[List[List[str]], List[List[str]]]:
-        folder_path = helper.check_should_download('corpus/' + cls.__corpus_name__,
-                                                   'corpus/' + cls.__zip_file__name)
+        folder_path = helper.cached_path(cls.__corpus_name__,
+                                         cls.__zip_file__name)
 
         if data_type == DATA_TRAIN:
             file_path = os.path.join(folder_path, 'example.train')
@@ -216,8 +214,8 @@ class ChinaPeoplesDailyNerCorpus(object):
 
 
 class CoNLL2003Corpus(Corpus):
-    __corpus_name__ = 'conll2003'
-    __zip_file__name = 'conll2003.tar.gz'
+    __corpus_name__ = 'corpus/conll2003'
+    __zip_file__name = 'corpus/conll2003.tar.gz'
 
     @classmethod
     def get_sequence_tagging_data(cls,
@@ -225,8 +223,8 @@ class CoNLL2003Corpus(Corpus):
                                   task_name: str = 'ner',
                                   shuffle: bool = True,
                                   max_count: int = 0) -> Tuple[List[List[str]], List[List[str]]]:
-        folder_path = helper.check_should_download('corpus/' + cls.__corpus_name__,
-                                                   'corpus/' + cls.__zip_file__name)
+        folder_path = helper.cached_path(cls.__corpus_name__,
+                                         cls.__zip_file__name)
 
         if data_type not in [DATA_TRAIN, DATA_VALIDATE, DATA_TEST]:
             raise ValueError('data_type error, please use one onf the {}'.format([DATA_TRAIN,
@@ -255,8 +253,8 @@ class CoNLL2003Corpus(Corpus):
 
 
 class SMP2017ECDTClassificationCorpus(Corpus):
-    __corpus_name__ = 'smp2017ecdt-data-task1'
-    __zip_file__name = 'smp2017ecdt-data-task1.tar.gz'
+    __corpus_name__ = 'corpus/smp2017ecdt-data-task1'
+    __zip_file__name = 'corpus/smp2017ecdt-data-task1.tar.gz'
 
     __desc__ = """
     http://ir.hit.edu.cn/smp2017ecdt-data
@@ -276,8 +274,8 @@ class SMP2017ECDTClassificationCorpus(Corpus):
         :param max_count:
         :return:
         """
-        folder_path = helper.check_should_download('corpus/' + cls.__corpus_name__,
-                                                   'corpus/' + cls.__zip_file__name)
+        folder_path = helper.cached_path(cls.__corpus_name__,
+                                         cls.__zip_file__name)
         if data_type not in [DATA_TRAIN, DATA_VALIDATE, DATA_TEST]:
             raise ValueError('data_type error, please use one onf the {}'.format([DATA_TRAIN,
                                                                                   DATA_VALIDATE,

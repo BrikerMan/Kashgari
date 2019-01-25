@@ -130,65 +130,111 @@ def weighted_categorical_crossentropy(weights):
     return loss
 
 
-def check_should_download(file: str,
-                          download_url: Optional[str],
-                          sub_folders: List[str] = None):
-    """
-    check should download the file, if exist return file url, if not download and unzip
-    :param file:
-    :param sub_folders:
-    :param download_url:
-    :return:
-    """
-    logging.debug('check_should_download: file {}\ndownload_url {}\nsub_folders {}'.format(file,
-                                                                                           download_url,
-                                                                                           sub_folders))
-    if sub_folders is None:
-        sub_folders = []
+def cached_path(file_path: str, download_url: Optional[str], sub_folders: List[str] = []):
+    logging.debug('check_should_download: file_path {}\ndownload_url {}'.format(file_path,
+                                                                                download_url))
+    if os.path.exists(file_path):
+        return file_path
 
-    if os.path.exists(file):
-        return file
-
-    folders = [DATA_PATH] + sub_folders + [file]
-    target_path = os.path.join(*folders)
-    original_file_path = target_path
-
-    if os.path.exists(target_path):
-        return target_path
-
-    if not download_url:
-        raise ValueError("need to provide valid model name or path")
+    file_name_list = [DATA_PATH] + sub_folders + [file_path]
+    file_path = os.path.join(*file_name_list)
+    if os.path.exists(file_path):
+        return file_path
 
     if download_url.startswith('http'):
         url = download_url
     else:
         url = STORAGE_HOST + download_url
 
+    final_path = file_path
     if url.endswith('zip'):
         kind = 'zip'
+        download_path = os.path.dirname(file_path)
     elif url.endswith('tar.gz'):
         kind = 'tar.gz'
+        download_path = os.path.dirname(file_path)
     else:
         kind = 'file'
-        target_path = os.path.join(target_path, url.split('/')[-1])
-
+        download_path = file_path
+    url = url.replace('https://', 'http://')
     logging.info('start downloading file, if it takes too long, you could download with other downloader\n'
                  'url  : {}\n'
-                 'path : {}'.format(url,
-                                    os.path.dirname(target_path)))
+                 'path : {}'.format(url, file_path))
+    e_path = download.download(url, download_path, kind=kind, replace=True)
+    logging.info('downloader file_path {}, {} '.format(e_path, file_path))
+    return final_path
+    # if file_path.endswith('.bz2'):
+    #     archive_path = e_path
+    #     outfile_path = e_path[:-4]
+    #     with open(archive_path, 'rb') as source, open(outfile_path, 'wb') as dest:
+    #         dest.write(bz2.decompress(source.read()))
+    #     return outfile_path
+    # else:
+    #     return final_path
 
-    file_path = download.download(url, os.path.dirname(target_path), kind=kind, replace=True)
-    logging.debug('file downloaded to {}'.format(file_path))
-    if file_path.endswith('.bz2'):
-        archive_path = file_path
-        outfile_path = file_path[:-4]
-        with open(archive_path, 'rb') as source, open(outfile_path, 'wb') as dest:
-            dest.write(bz2.decompress(source.read()))
-        return original_file_path
-    else:
-        return target_path
+
+# def check_should_download(file: str,
+#                           download_url: Optional[str],
+#                           sub_folders: List[str] = None):
+#     """
+#     check should download the file, if exist return file url, if not download and unzip
+#     :param file:
+#     :param sub_folders:
+#     :param download_url:
+#     :return:
+#     """
+#     logging.debug('check_should_download: file {}\ndownload_url {}\nsub_folders {}'.format(file,
+#                                                                                            download_url,
+#                                                                                            sub_folders))
+#     if sub_folders is None:
+#         sub_folders = []
+#
+#     if os.path.exists(file):
+#         return file
+#
+#     folders = [DATA_PATH] + sub_folders + [file]
+#     target_path = os.path.join(*folders)
+#     original_file_path = target_path
+#
+#     if os.path.exists(target_path):
+#         return target_path
+#
+#     if not download_url:
+#         raise ValueError("need to provide valid model name or path")
+#
+#     if download_url.startswith('http'):
+#         url = download_url
+#     else:
+#         url = STORAGE_HOST + download_url
+#
+#     if url.endswith('zip'):
+#         kind = 'zip'
+#     elif url.endswith('tar.gz'):
+#         kind = 'tar.gz'
+#     else:
+#         kind = 'file'
+#         target_path = os.path.join(target_path, url.split('/')[-1])
+#
+#     logging.info('start downloading file, if it takes too long, you could download with other downloader\n'
+#                  'url  : {}\n'
+#                  'path : {}'.format(url,
+#                                     os.path.dirname(target_path)))
+#
+#     file_path = download.download(url, target_path, kind=kind, replace=True)
+#     logging.debug('file downloaded to {}'.format(file_path))
+#     if file_path.endswith('.bz2'):
+#         archive_path = file_path
+#         outfile_path = file_path[:-4]
+#         with open(archive_path, 'rb') as source, open(outfile_path, 'wb') as dest:
+#             dest.write(bz2.decompress(source.read()))
+#         return original_file_path
+#     else:
+#         return target_path
 
 
 if __name__ == "__main__":
-
-    print("Hello world")
+    from kashgari.utils.logger import init_logger
+    init_logger()
+    file = 'embedding/word2vec/sgns.weibo.bigram-char'
+    url = 'embedding/word2vec/sgns.weibo.bigram-char.bz2'
+    print(cached_path(file, url))

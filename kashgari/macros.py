@@ -30,7 +30,7 @@ NO_TAG = 'O'
 home = str(Path.home())
 
 DATA_PATH = os.path.join(home, '.kashgari')
-STORAGE_HOST = 'https://storage.eliyar.biz/'
+STORAGE_HOST = 'http://storage.eliyar.biz/'
 PROCESSED_CORPUS_PATH = os.path.join(DATA_PATH, 'pre_processed')
 
 pathlib.Path(PROCESSED_CORPUS_PATH).mkdir(parents=True, exist_ok=True)

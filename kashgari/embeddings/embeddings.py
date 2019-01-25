@@ -132,7 +132,7 @@ class BaseEmbedding(object):
             embed_input = sequence.pad_sequences([tokens], self.sequence_length, padding='post')
 
         embed_input = self.prepare_model_input(embed_input)
-
+        print(embed_input)
         embed_pred = self.model.predict(embed_input)
         if is_list:
             return embed_pred
@@ -149,6 +149,13 @@ class WordEmbeddings(BaseEmbedding):
         k.BOS: 1,
         k.EOS: 2,
         k.UNK: 3
+    }
+
+    URL_MAP = {
+        'sgns.renmin.bigram': 'embedding/word2vec/sgns.renmin.bigram.bz2',
+        'sgns.renmin.bigram-char': 'embedding/word2vec/sgns.renmin.bigram-char.bz2',
+        'sgns.weibo.bigram': 'embedding/word2vec/sgns.weibo.bigram.bz2',
+        'sgns.weibo.bigram-char': 'embedding/word2vec/sgns.weibo.bigram-char.bz2',
     }
 
     def get_embedding_matrix(self) -> np.array:
@@ -173,11 +180,15 @@ class WordEmbeddings(BaseEmbedding):
 
     def build(self, **kwargs):
 
-        download_url = 'embedding/word2vev/{}.bz2'.format(self.name)
+        if self.name in WordEmbeddings.URL_MAP:
+            url = self.URL_MAP.get(self.name)
+            self.name = self.name + '.bz2'
+        else:
+            url = None
 
-        self.model_path = helper.check_should_download(file=self.name,
-                                                       download_url=download_url,
-                                                       sub_folders=['embedding', 'word2vec'])
+        self.model_path = helper.cached_path(self.name,
+                                             url,
+                                             sub_folders=['embedding', 'word2vec'])
 
         self.keyed_vector: KeyedVectors = KeyedVectors.load_word2vec_format(self.model_path, **kwargs)
         self.embedding_size = self.keyed_vector.vector_size
@@ -204,10 +215,7 @@ class WordEmbeddings(BaseEmbedding):
         logging.debug('------------------------------------------------')
 
     def build_token2idx_dict(self, x_data: List[TextSeqType], min_count: int = 5):
-        logging.warning("word2vec embedding no need to build token2idx with corpus")
-
-    def __repr__(self):
-        return 'word2vec:{}'.format(self.name)
+        logging.debug("word2vec embedding no need to build token2idx with corpus")
 
 
 class BERTEmbedding(BaseEmbedding):
@@ -264,9 +272,9 @@ class BERTEmbedding(BaseEmbedding):
 
     def build(self):
         url = self.pre_trained_models.get(self.model_key_map.get(self.name, self.name))
-        self.model_path = helper.check_should_download(file=self.model_key_map.get(self.name, self.name),
-                                                       download_url=url,
-                                                       sub_folders=['embedding', 'bert'])
+        self.model_path = helper.cached_path(self.model_key_map.get(self.name, self.name),
+                                             url,
+                                             ['embedding', 'bert'])
 
         config_path = os.path.join(self.model_path, 'bert_config.json')
         check_point_path = os.path.join(self.model_path, 'bert_model.ckpt')
@@ -281,8 +289,8 @@ class BERTEmbedding(BaseEmbedding):
         word2idx = {}
         with open(dict_path, 'r', encoding='utf-8') as f:
             words = f.read().splitlines()
-            for word in words:
-                word2idx[word] = len(word2idx)
+        for word in words:
+            word2idx[word] = len(word2idx)
         for key, value in self.special_tokens.items():
             word2idx[key] = word2idx[value]
 
@@ -294,9 +302,6 @@ class BERTEmbedding(BaseEmbedding):
     def prepare_model_input(self, input_x: np.array, **kwargs) -> np.array:
         input_seg = np.zeros(input_x.shape)
         return [input_x, input_seg]
-
-    def __repr__(self):
-        return 'bert:{}'.format(self.name)
 
 
 class CustomEmbedding(BaseEmbedding):

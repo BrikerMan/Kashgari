@@ -25,7 +25,7 @@ SEQUENCE_LENGTH = 30
 class WordEmbeddingsTest(unittest.TestCase):
     def __init__(self, *args, **kwargs):
         super(WordEmbeddingsTest, self).__init__(*args, **kwargs)
-        self.embedding = WordEmbeddings('sgns.weibo.bigram',
+        self.embedding = WordEmbeddings('sgns.weibo.bigram-char',
                                         sequence_length=SEQUENCE_LENGTH,
                                         limit=1000)
 
@@ -42,10 +42,10 @@ class WordEmbeddingsTest(unittest.TestCase):
 
         logging.info('tokenize test: {} -> {}'.format(sentence, tokens))
         self.assertEqual(len(tokens), len(tokens))
-        self.assertEqual(tokens[-1], 3, msg='check unk value')
+        self.assertEqual(tokens[-2], 3, msg='check unk value')
 
         token_list = self.embedding.tokenize([sentence])
-        self.assertEqual(len(token_list[0]), len(sentence))
+        self.assertEqual(len(token_list[0]), len(sentence) + 2)
 
     def test_embed(self):
         sentence = ['我', '想', '看', '电影', '%%##!$#%']
@@ -75,10 +75,8 @@ class BertEmbeddingsTest(unittest.TestCase):
         tokens = self.embedding.tokenize(sentence)
 
         logging.info('tokenize test: {} -> {}'.format(sentence, tokens))
-        self.assertEqual(len(tokens), len(tokens))
-
         token_list = self.embedding.tokenize([sentence])
-        self.assertEqual(len(token_list[0]), len(sentence))
+        self.assertEqual(len(token_list[0]), len(sentence)+2)
 
     def test_embed(self):
         sentence = ['我', '想', '看', '电影', '%%##!$#%']
@@ -137,7 +135,7 @@ class CustomEmbeddingsTest(unittest.TestCase):
         self.assertEqual(tokens[-2], 3, msg='check unk value')
 
         token_list = self.embedding.tokenize([sentence])
-        self.assertEqual(len(token_list[0]), len(sentence))
+        self.assertEqual(len(token_list[0]), len(sentence) + 2)
 
     def test_embed(self):
         self.test_build_word2idx()
