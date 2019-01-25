@@ -323,6 +323,8 @@ class SequenceLabelingModel(object):
         agent.model = keras.models.load_model(os.path.join(model_path, 'model.model'),
                                               custom_objects=custom_objects)
         agent.model.summary()
+        agent.embedding.sequence_length = agent.model.input_shape[-1]
         agent.label2idx = label2idx
         agent.embedding.token2idx = token2idx
+        logging.info('loaded model from {}'.format(os.path.abspath(model_path)))
         return agent

@@ -11,7 +11,7 @@
 
 """
 from .cnn_lstm_model_test import CNNBLSTMModelTest
-from .blstm_model_test import BLSTMModelTest
+from .test_classification_models import BLSTMModelTest
 from .cnn_model_test import CNNModelTest
 
 if __name__ == '__main__':

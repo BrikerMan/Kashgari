@@ -14,6 +14,7 @@ import os
 import json
 import random
 import pathlib
+import logging
 from typing import Tuple, Dict
 import numpy as np
 
@@ -235,6 +236,7 @@ class ClassificationModel(object):
             f.write(json.dumps(self.embedding.token2idx, indent=2, ensure_ascii=False))
 
         self.model.save(os.path.join(model_path, 'model.model'))
+        logging.info('model saved to {}'.format(os.path.abspath(model_path)))
 
     @staticmethod
     def load_model(model_path: str):
@@ -246,9 +248,11 @@ class ClassificationModel(object):
 
         agent = ClassificationModel()
         agent.model = keras.models.load_model(os.path.join(model_path, 'model.model'))
+        agent.embedding.sequence_length = agent.model.input_shape[-1]
         agent.model.summary()
         agent.label2idx = label2idx
         agent.embedding.token2idx = token2idx
+        logging.info('loaded model from {}'.format(os.path.abspath(model_path)))
         return agent
 
 

@@ -39,10 +39,15 @@ Kashgare is:
 * [Tutorial 3: Sequence labeling Model](docs/Tutorial_3_Sequence_Labeling.md)
 
 ## Quick start
+
+### Requirements and Installation
+The project is based on Keras 2.2.0+ and Python 3.6+, because it is 2019 and type hints is cool.
+
 ```bash
 pip install kashgari
 ```
 
+### Example Usage
 lets run a text classification with CNN model over [SMP 2017 ECDT Task1](http://ir.hit.edu.cn/smp2017ecdt-data).
 
 ```python
@@ -97,7 +102,7 @@ Epoch 1/5
 ...
 ```
 
-## Run with Bert Embedding
+### Run with Bert Embedding
 
 ```python
 from kashgari.embeddings import BERTEmbedding
@@ -111,7 +116,7 @@ train_x, train_y = SMP2017ECDTClassificationCorpus.get_classification_data()
 model.fit(train_x, train_y)
 ```
 
-## Run with Word2vec embedded
+### Run with Word2vec embedded
 
 ```python
 from kashgari.embeddings import WordEmbeddings
