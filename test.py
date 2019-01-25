@@ -12,6 +12,9 @@
 """
 import unittest
 from tests import *
+from kashgari.utils.logger import init_logger
+
+init_logger()
 
 if __name__ == '__main__':
     unittest.main()

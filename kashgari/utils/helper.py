@@ -156,7 +156,7 @@ def cached_path(file_path: str, download_url: Optional[str], sub_folders: List[s
     else:
         kind = 'file'
         download_path = file_path
-    url = url.replace('https://', 'http://')
+    # url = url.replace('https://', 'http://')
     logging.info('start downloading file, if it takes too long, you could download with other downloader\n'
                  'url  : {}\n'
                  'path : {}'.format(url, file_path))
