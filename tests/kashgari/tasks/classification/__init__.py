@@ -10,7 +10,7 @@
 @time: 2019-01-24
 
 """
-# from .test_classification_models import CNNLSTMModelTest, BLSTMModelModelTest, CNNModelTest
+from .test_classification_models import CNNLSTMModelTest, BLSTMModelModelTest, CNNModelTest
 
 if __name__ == '__main__':
     print("hello, world")

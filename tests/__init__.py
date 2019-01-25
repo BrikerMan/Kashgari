@@ -10,3 +10,5 @@
 @time: 2019-01-22
 
 """
+from tests.kashgari.embeddings import *
+from tests.kashgari.tasks import *

@@ -8,4 +8,5 @@ install:
   - pip install -r requirements.txt
   - pip install .
 # command to run tests
-script: pytest
+script:
+  - python test.py

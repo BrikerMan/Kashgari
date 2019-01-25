@@ -10,9 +10,8 @@
 @time: 2019-01-24
 
 """
-# from .classification import *
-# from .seq_labeling.blstm_model_test import BLSTMModelTest
-# from .seq_labeling.blstm_crf_model_test import BLSTMCRFModelTest
+from .seq_labeling import *
+from .classification import *
 
 
 if __name__ == '__main__':
