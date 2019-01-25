@@ -1,5 +1,13 @@
 # Kashgari
-State-of-the-art NLP framework for human.
+
+![](https://img.shields.io/pypi/pyversions/Kashgari.svg)
+![Travis](https://img.shields.io/travis/BrikerMan/Kashgari.svg)
+![Download](https://img.shields.io/pypi/dm/Kashgari.svg)
+![Issues](https://img.shields.io/bitbucket/issues/BrikerMan/Kashgari.svg)
+[![Contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg)](CONTRIBUTING.md)
+[![License: MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://opensource.org/licenses/MIT)
+
+Simple and powerful NLP framework, build your own state-of-art model in 5 minutes.
 
 Kashgare is:
 
@@ -128,7 +136,6 @@ model = CNNLSTMModel(bert_embedding)
 train_x, train_y = SMP2017ECDTClassificationCorpus.get_classification_data()
 model.fit(train_x, train_y)
 ```
-
 
 ## Reference
 This library is inspired by following framework and papers.
