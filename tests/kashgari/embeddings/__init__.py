@@ -11,7 +11,8 @@
 
 """
 
-from .test_embeddings import WordEmbeddingsTest, CustomEmbeddingsTest, BertEmbeddingsTest
+from .test_embeddings import WordEmbeddingsTest, CustomEmbeddingsTest
+from .test_embeddings import BertEmbeddingsTest
 
 if __name__ == "__main__":
     print("Hello world")
