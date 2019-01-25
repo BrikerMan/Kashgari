@@ -2,6 +2,7 @@ language: python
 
 python:
   - "3.6"
+cache: pip
 # command to install dependencies
 before_install:
   - export BOTO_CONFIG=/dev/null
