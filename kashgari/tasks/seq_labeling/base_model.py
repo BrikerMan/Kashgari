@@ -29,6 +29,8 @@ from kashgari.utils import helper
 from kashgari.embeddings import CustomEmbedding, BaseEmbedding
 from kashgari.type_hints import *
 
+from kashgari.utils.crf import CRF, crf_loss
+
 
 class SequenceLabelingModel(object):
     __base_hyper_parameters__ = {}
@@ -289,7 +291,6 @@ class SequenceLabelingModel(object):
 
     def save(self, model_path: str):
         pathlib.Path(model_path).mkdir(exist_ok=True, parents=True)
-
         with open(os.path.join(model_path, 'labels.json'), 'w', encoding='utf-8') as f:
             f.write(json.dumps(self.label2idx, indent=2, ensure_ascii=False))
 
@@ -303,6 +304,21 @@ class SequenceLabelingModel(object):
         logging.info('model saved to {}'.format(os.path.abspath(model_path)))
 
     @staticmethod
+    def create_custom_objects(model_info):
+        custom_objects = {}
+        loss = model_info.get('loss')
+        if loss and loss['name'] == 'weighted_categorical_crossentropy':
+            loss_f = helper.weighted_categorical_crossentropy(np.array(loss['weights']))
+            custom_objects['loss'] = loss_f
+
+        if loss and loss['name'] == 'crf':
+            custom_objects['CRF'] = CRF
+            custom_objects['crf_loss'] = crf_loss
+            custom_objects['crf_viterbi_accuracy'] = CRF(128).accuracy
+
+        return custom_objects
+
+    @staticmethod
     def load_model(model_path: str):
         with open(os.path.join(model_path, 'labels.json'), 'r', encoding='utf-8') as f:
             label2idx = json.load(f)
@@ -314,12 +330,10 @@ class SequenceLabelingModel(object):
             model_info = json.load(f)
 
         agent = SequenceLabelingModel()
+        custom_objects = SequenceLabelingModel.create_custom_objects(model_info)
 
-        loss = model_info.get('loss')
-        custom_objects = {}
-        if loss and loss['name'] == 'weighted_categorical_crossentropy':
-            loss_f = helper.weighted_categorical_crossentropy(np.array(loss['weights']))
-            custom_objects['loss'] = loss_f
+        if custom_objects:
+            logging.debug('prepared custom objects: {}'.format(custom_objects))
         agent.model = keras.models.load_model(os.path.join(model_path, 'model.model'),
                                               custom_objects=custom_objects)
         agent.model.summary()

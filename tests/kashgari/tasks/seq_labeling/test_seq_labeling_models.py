@@ -135,6 +135,9 @@ class BLSTMCRFModelTest(CNNLSTMModelTest):
         super(BLSTMCRFModelTest, self).__init__(*args, **kwargs)
         self.__model_class__ = BLSTMCRFModel
 
+    def test_save_and_load(self):
+        super(BLSTMCRFModelTest, self).test_save_and_load()
+
 
 if __name__ == "__main__":
     unittest.main()

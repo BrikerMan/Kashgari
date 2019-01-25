@@ -44,6 +44,9 @@ class BLSTMCRFModel(SequenceLabelingModel):
                       metrics=[crf.accuracy])
         self.model = model
         self.model.summary()
+        self.model_info['loss'] = {
+            'name': 'crf'
+        }
 
 
 if __name__ == "__main__":
