@@ -1,9 +1,12 @@
 language: python
+
 python:
   - "3.6"
   # PyPy versions
-  - "pypy3.5"
+  - "pypy3.6"
 # command to install dependencies
+before_install:
+  - export BOTO_CONFIG=/dev/null
 install:
   - pip install -r requirements.txt
   - pip install .
