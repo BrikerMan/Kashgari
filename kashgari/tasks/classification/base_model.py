@@ -43,6 +43,7 @@ class ClassificationModel(object):
         self.hyper_parameters = self.base_hyper_parameters.copy()
         self._label2idx = {}
         self._idx2label = {}
+        self.model_info = {}
         if hyper_parameters:
             self.hyper_parameters.update(hyper_parameters)
 
@@ -231,14 +232,37 @@ class ClassificationModel(object):
     def save(self, model_path: str):
         pathlib.Path(model_path).mkdir(exist_ok=True, parents=True)
 
+        self.model_info['embedding'] = {
+            'type': self.embedding.embedding_type,
+            'name': self.embedding.name,
+            'path': self.embedding.model_path,
+            'size': self.embedding.embedding_size,
+            'sequence_length': self.embedding.sequence_length
+        }
+
         with open(os.path.join(model_path, 'labels.json'), 'w', encoding='utf-8') as f:
             f.write(json.dumps(self.label2idx, indent=2, ensure_ascii=False))
 
         with open(os.path.join(model_path, 'words.json'), 'w', encoding='utf-8') as f:
             f.write(json.dumps(self.embedding.token2idx, indent=2, ensure_ascii=False))
 
+        with open(os.path.join(model_path, 'model.json'), 'w', encoding='utf-8') as f:
+            f.write(json.dumps(self.model_info, indent=2, ensure_ascii=False))
+
         self.model.save(os.path.join(model_path, 'model.model'))
         logging.info('model saved to {}'.format(os.path.abspath(model_path)))
+
+    @staticmethod
+    def create_custom_objects(model_info):
+        custom_objects = {}
+        embedding = model_info.get('embedding')
+        from kashgari.utils.helper import NonMaskingLayer
+        custom_objects['NonMaskingLayer'] = NonMaskingLayer
+        if embedding and embedding['type'] == 'bert':
+            from keras_bert.bert import get_custom_objects
+            custom_objects.update(get_custom_objects())
+
+        return custom_objects
 
     @staticmethod
     def load_model(model_path: str):
@@ -248,16 +272,22 @@ class ClassificationModel(object):
         with open(os.path.join(model_path, 'words.json'), 'r', encoding='utf-8') as f:
             token2idx = json.load(f)
 
+        with open(os.path.join(model_path, 'model.json'), 'r', encoding='utf-8') as f:
+            model_info = json.load(f)
         agent = ClassificationModel()
-        agent.model = keras.models.load_model(os.path.join(model_path, 'model.model'))
-        agent.embedding.sequence_length = agent.model.input_shape[-1]
+        custom_objects = ClassificationModel.create_custom_objects(model_info)
+
+        if custom_objects:
+            logging.debug('prepared custom objects: {}'.format(custom_objects))
+
+        agent.model = keras.models.load_model(os.path.join(model_path, 'model.model'),
+                                              custom_objects=custom_objects)
+        seq_len = model_info.get('embedding', {}).get('sequence_length', agent.model.input_shape[-1])
+        agent.embedding.sequence_length = seq_len
+        agent.embedding.is_bert = model_info['embedding']['type'] == 'bert'
         agent.model.summary()
         agent.label2idx = label2idx
         agent.embedding.token2idx = token2idx
         logging.info('loaded model from {}'.format(os.path.abspath(model_path)))
         return agent
 
-
-if __name__ == "__main__":
-    ClassificationModel.load_model('./classifier_saved2')
-    print("Hello world")

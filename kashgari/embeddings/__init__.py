@@ -14,7 +14,4 @@ from .embeddings import BERTEmbedding
 from .embeddings import BaseEmbedding
 from .embeddings import CustomEmbedding
 from .embeddings import WordEmbeddings
-from .embeddings import get_embedding_by_conf
 
-if __name__ == "__main__":
-    print("Hello world")

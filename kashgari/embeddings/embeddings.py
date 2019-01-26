@@ -56,12 +56,14 @@ class BaseEmbedding(object):
         :param embedding_size: embedding vector size, only need to set when using a CustomEmbedding
         :param kwargs: kwargs to pass to the method, func: `BaseEmbedding.build`
         """
+        self.embedding_type = 'base'
         self.name = name_or_path
         self.embedding_size = embedding_size
         self._sequence_length = sequence_length
         self.model_path = ''
         self._token2idx: Dict[str, int] = None
         self._idx2token: Dict[int, str] = None
+        self._is_bert = False
         self._model: Model = None
         self._kwargs = kwargs
         self.build(**kwargs)
@@ -89,7 +91,11 @@ class BaseEmbedding(object):
 
     @property
     def is_bert(self):
-        return False
+        return self._is_bert
+
+    @is_bert.setter
+    def is_bert(self, val):
+        self._is_bert = val
 
     @token2idx.setter
     def token2idx(self, value):
@@ -179,7 +185,7 @@ class WordEmbeddings(BaseEmbedding):
         return np.array(matrix_list)
 
     def build(self, **kwargs):
-
+        self.embedding_type = 'word2vec'
         if self.name in WordEmbeddings.URL_MAP:
             url = self.URL_MAP.get(self.name)
             self.name = self.name + '.bz2'
@@ -266,11 +272,9 @@ class BERTEmbedding(BaseEmbedding):
                                    'chinese_L-12_H-768_A-12.zip',
     }
 
-    @property
-    def is_bert(self):
-        return True
-
     def build(self):
+        self.embedding_type = 'bert'
+        self.is_bert = True
         url = self.pre_trained_models.get(self.model_key_map.get(self.name, self.name))
         self.model_path = helper.cached_path(self.model_key_map.get(self.name, self.name),
                                              url,
@@ -330,19 +334,6 @@ class CustomEmbedding(BaseEmbedding):
 
         self.token2idx = word2idx
         self.build()
-
-    def __repr__(self):
-        return 'custom_embedding:{}_embedding_size:{}'.format(self.name,
-                                                              self.embedding_size)
-
-
-def get_embedding_by_conf(name: str, **kwargs) -> BaseEmbedding:
-    embedding_class: Dict[str, Type[BaseEmbedding]] = {
-        'word2vec': WordEmbeddings,
-        'bert': BERTEmbedding,
-        'custom': CustomEmbedding
-    }
-    return embedding_class[name](**kwargs)
 
 
 if __name__ == '__main__':

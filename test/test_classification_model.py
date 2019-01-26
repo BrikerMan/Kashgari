@@ -115,6 +115,9 @@ class TestBLSTMModelWithBERT(TestBLSTMModelModel):
     def setup(self):
         embedding = get_bert_embedding()
         TestBLSTMModelWithBERT.model = BLSTMModel(embedding)
+    
+    def test_save_and_load(self):
+        super(TestBLSTMModelWithBERT, self).test_save_and_load()
 
 
 class TestCNNModel(TestBLSTMModelModel):
@@ -160,7 +163,3 @@ class TestLSTMCNNModelWithBERT(TestBLSTMModelModel):
     def setup(self):
         embedding = get_bert_embedding()
         TestLSTMCNNModelWithBERT.model = CNNLSTMModel(embedding)
-
-
-if __name__ == '__main__':
-    print("hello, world")

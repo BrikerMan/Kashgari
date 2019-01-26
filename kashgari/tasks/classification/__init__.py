@@ -14,6 +14,3 @@ from .base_model import ClassificationModel
 from .blstm_model import BLSTMModel
 from .cnn_lstm_model import CNNLSTMModel
 from .cnn_model import CNNModel
-
-if __name__ == "__main__":
-    print("Hello world")
