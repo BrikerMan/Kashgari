@@ -16,15 +16,15 @@ import unittest
 
 import kashgari.macros as k
 from kashgari.embeddings import WordEmbeddings, BERTEmbedding, CustomEmbedding
-
 from kashgari.utils.logger import init_logger
+
 init_logger()
 SEQUENCE_LENGTH = 30
 
 
-class WordEmbeddingsTest(unittest.TestCase):
+class TestWordEmbeddings(unittest.TestCase):
     def __init__(self, *args, **kwargs):
-        super(WordEmbeddingsTest, self).__init__(*args, **kwargs)
+        super(TestWordEmbeddings, self).__init__(*args, **kwargs)
         self.embedding = WordEmbeddings('sgns.weibo.bigram-char',
                                         sequence_length=SEQUENCE_LENGTH,
                                         limit=1000)
@@ -57,9 +57,9 @@ class WordEmbeddingsTest(unittest.TestCase):
         self.assertEqual(embedded_sentences.shape, (1, SEQUENCE_LENGTH, self.embedding.embedding_size))
 
 
-class BertEmbeddingsTest(unittest.TestCase):
+class TestBertEmbeddings(unittest.TestCase):
     def __init__(self, *args, **kwargs):
-        super(BertEmbeddingsTest, self).__init__(*args, **kwargs)
+        super(TestBertEmbeddings, self).__init__(*args, **kwargs)
         self.embedding = BERTEmbedding('chinese_L-12_H-768_A-12',
                                        sequence_length=SEQUENCE_LENGTH)
 
@@ -88,9 +88,9 @@ class BertEmbeddingsTest(unittest.TestCase):
         self.assertEqual(embedded_sentences.shape, (1, SEQUENCE_LENGTH, self.embedding.embedding_size))
 
 
-class CustomEmbeddingsTest(unittest.TestCase):
+class TestCustomEmbedding(unittest.TestCase):
     def __init__(self, *args, **kwargs):
-        super(CustomEmbeddingsTest, self).__init__(*args, **kwargs)
+        super(TestCustomEmbedding, self).__init__(*args, **kwargs)
         self.embedding = CustomEmbedding('empty_embedding',
                                          sequence_length=SEQUENCE_LENGTH,
                                          embedding_size=100)

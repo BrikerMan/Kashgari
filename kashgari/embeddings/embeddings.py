@@ -13,7 +13,7 @@
 import json
 import logging
 import os
-from typing import Dict, Type, Tuple, Optional
+from typing import Dict, Type
 
 import keras_bert
 import numpy as np
@@ -346,6 +346,9 @@ def get_embedding_by_conf(name: str, **kwargs) -> BaseEmbedding:
 
 
 if __name__ == '__main__':
+    from kashgari.utils.logger import init_logger
+
+    init_logger()
     embedding = BERTEmbedding('chinese_L-12_H-768_A-12', sequence_length=10)
 
     sentence = '我 想 去 看 电影www'.split(' ')

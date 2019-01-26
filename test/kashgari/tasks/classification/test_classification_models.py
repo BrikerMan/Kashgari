@@ -12,19 +12,19 @@
 """
 
 import logging
-import unittest
 import tempfile
+import unittest
 
 from kashgari.embeddings import WordEmbeddings, BERTEmbedding, BaseEmbedding
 from kashgari.tasks.classification import BLSTMModel, CNNModel, CNNLSTMModel
-
 from kashgari.utils.logger import init_logger
+
 init_logger()
 
 
-class BLSTMModelModelTest(unittest.TestCase):
+class TestBLSTMModelModel(unittest.TestCase):
     def __init__(self, *args, **kwargs):
-        super(BLSTMModelModelTest, self).__init__(*args, **kwargs)
+        super(TestBLSTMModelModel, self).__init__(*args, **kwargs)
 
         self.__model_class__ = BLSTMModel
         self.x_data = [
@@ -48,7 +48,10 @@ class BLSTMModelModelTest(unittest.TestCase):
         self.y_eval = ['a', 'a', 'a', 'b', 'c', 'a']
 
     def prepare_model(self, embedding: BaseEmbedding = None):
-        self.model = self.__model_class__(embedding)
+        if embedding:
+            self.model = self.__model_class__(embedding)
+        else:
+            self.model = self.__model_class__(embedding)
 
     def test_build(self):
         self.prepare_model()
@@ -115,15 +118,15 @@ class BLSTMModelModelTest(unittest.TestCase):
         self.assertTrue(isinstance(result, str))
 
 
-class CNNModelTest(BLSTMModelModelTest):
+class TestCNNModel(TestBLSTMModelModel):
     def __init__(self, *args, **kwargs):
-        super(CNNModelTest, self).__init__(*args, **kwargs)
+        super(TestCNNModel, self).__init__(*args, **kwargs)
         self.__model_class__ = CNNModel
 
 
-class CNNLSTMModelTest(BLSTMModelModelTest):
+class TestCNNLSTMModel(TestBLSTMModelModel):
     def __init__(self, *args, **kwargs):
-        super(CNNLSTMModelTest, self).__init__(*args, **kwargs)
+        super(TestCNNLSTMModel, self).__init__(*args, **kwargs)
         self.__model_class__ = CNNLSTMModel
 
 

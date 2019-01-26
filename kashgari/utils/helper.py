@@ -10,16 +10,16 @@
 @time: 2019-01-19 16:25
 
 """
-import os
-import bz2
-import h5py
-import random
 import logging
-import download
-import numpy as np
+import os
+import random
 from typing import List, Optional
-from keras.layers import Layer
+
+import download
+import h5py
+import numpy as np
 from keras import backend as K
+from keras.layers import Layer
 from keras.preprocessing import sequence
 from keras.utils import to_categorical
 
@@ -131,8 +131,6 @@ def weighted_categorical_crossentropy(weights):
 
 
 def cached_path(file_path: str, download_url: Optional[str], sub_folders: List[str] = []):
-    logging.debug('check_should_download: file_path {}\ndownload_url {}'.format(file_path,
-                                                                                download_url))
     if os.path.exists(file_path):
         return file_path
 

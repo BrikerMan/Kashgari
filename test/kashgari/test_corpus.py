@@ -10,18 +10,19 @@
 @time: 2019-01-25 18:01
 
 """
+import os
 import shutil
 import unittest
 
-from kashgari.macros import DATA_PATH
-from kashgari.corpus import TencentDingdangSLUCorpus, ChinaPeoplesDailyNerCorpus
 from kashgari.corpus import CoNLL2003Corpus, SMP2017ECDTClassificationCorpus
-
+from kashgari.corpus import TencentDingdangSLUCorpus, ChinaPeoplesDailyNerCorpus
+from kashgari.macros import DATA_PATH
 from kashgari.utils.logger import init_logger
+
 init_logger()
 
 
-class TencentDingdangSLUCorpusTest(unittest.TestCase):
+class TestTencentDingdangSLUCorpus(unittest.TestCase):
 
     def test_tencent_dingdang(self):
         x, y = TencentDingdangSLUCorpus.get_classification_data()
@@ -29,11 +30,11 @@ class TencentDingdangSLUCorpusTest(unittest.TestCase):
         self.assertEqual(len(x), len(y))
 
     def test_download(self):
-        shutil.rmtree(DATA_PATH, ignore_errors=True)
+        shutil.rmtree(os.path.join(DATA_PATH, 'corpus'), ignore_errors=True)
         self.test_tencent_dingdang()
 
 
-class ChinaPeoplesDailyNerCorpusTest(unittest.TestCase):
+class TestChinaPeoplesDailyNerCorpus(unittest.TestCase):
 
     def test_tagging_data(self):
         x, y = ChinaPeoplesDailyNerCorpus.get_sequence_tagging_data()
@@ -41,11 +42,11 @@ class ChinaPeoplesDailyNerCorpusTest(unittest.TestCase):
         self.assertEqual(len(x), len(y))
 
     def test_download(self):
-        shutil.rmtree(DATA_PATH, ignore_errors=True)
+        shutil.rmtree(os.path.join(DATA_PATH, 'corpus'), ignore_errors=True)
         self.test_tagging_data()
 
 
-class CoNLL2003CorpusTest(unittest.TestCase):
+class TestCoNLL2003Corpus(unittest.TestCase):
 
     def test_tagging_data(self):
         x, y = CoNLL2003Corpus.get_sequence_tagging_data()
@@ -53,11 +54,11 @@ class CoNLL2003CorpusTest(unittest.TestCase):
         self.assertEqual(len(x), len(y))
 
     def test_download(self):
-        shutil.rmtree(DATA_PATH, ignore_errors=True)
+        shutil.rmtree(os.path.join(DATA_PATH, 'corpus'), ignore_errors=True)
         self.test_tagging_data()
 
 
-class SMP2017ECDTClassificationCorpusTest(unittest.TestCase):
+class TestSMP2017ECDTClassificationCorpus(unittest.TestCase):
 
     def test_tagging_data(self):
         x, y = SMP2017ECDTClassificationCorpus.get_classification_data()
@@ -65,7 +66,7 @@ class SMP2017ECDTClassificationCorpusTest(unittest.TestCase):
         self.assertEqual(len(x), len(y))
 
     def test_download(self):
-        shutil.rmtree(DATA_PATH, ignore_errors=True)
+        shutil.rmtree(os.path.join(DATA_PATH, 'corpus'), ignore_errors=True)
         self.test_tagging_data()
 
 

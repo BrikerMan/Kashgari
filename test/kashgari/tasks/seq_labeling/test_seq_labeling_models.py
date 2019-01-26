@@ -16,8 +16,8 @@ import unittest
 
 from kashgari.embeddings import WordEmbeddings, BERTEmbedding, BaseEmbedding
 from kashgari.tasks.seq_labeling import CNNLSTMModel, BLSTMModel, BLSTMCRFModel
-
 from kashgari.utils.logger import init_logger
+
 init_logger()
 
 
