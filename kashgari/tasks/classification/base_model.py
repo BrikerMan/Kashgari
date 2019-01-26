@@ -135,10 +135,10 @@ class ClassificationModel(object):
     def fit(self,
             x_train: List[List[str]],
             y_train: List[str],
-            batch_size: int = 64,
-            epochs: int = 5,
             x_validate: List[List[str]] = None,
             y_validate: List[str] = None,
+            batch_size: int = 64,
+            epochs: int = 5,
             class_weight: bool = False,
             fit_kwargs: Dict = None,
             **kwargs):
@@ -146,15 +146,14 @@ class ClassificationModel(object):
 
         :param x_train: list of training data.
         :param y_train: list of training target label data.
-        :param batch_size: batch size for trainer model
-        :param epochs: Number of epochs to train the model.
         :param x_validate: list of validation data.
         :param y_validate: list of validation target label data.
-        :param y_validate: list of validation target label data.
-        :param y_validate: list of validation target label data.
+        :param batch_size: batch size for trainer model
+        :param epochs: Number of epochs to train the model.
         :param class_weight: set class weights for imbalanced classes
         :param fit_kwargs: additional kwargs to be passed to
                :func:`~keras.models.Model.fit`
+        :param kwargs:
         :return:
         """
         assert len(x_train) == len(y_train)
@@ -183,7 +182,7 @@ class ClassificationModel(object):
                                                            batch_size,
                                                            is_bert=self.embedding.is_bert)
             fit_kwargs['validation_data'] = validation_generator
-            fit_kwargs['validation_steps'] = len(x_validate) // batch_size
+            fit_kwargs['validation_steps'] = max(len(x_validate) // batch_size, 1)
 
         if class_weight:
             y_list = self.convert_label_to_idx(y_train)
