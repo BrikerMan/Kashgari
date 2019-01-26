@@ -38,7 +38,7 @@ required = [
     'colorlog>=4.0.0',
     'gensim>=3.5.0',
     # 'bz2file>=0.98',
-    'sklearn'
+    'sklearn',
     'pandas>=0.23.0'
 ]
 

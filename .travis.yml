@@ -11,4 +11,4 @@ install:
   - pip install .
 # command to run tests
 script:
-  - python3 -m unittest test.py
+  - sh test.sh
