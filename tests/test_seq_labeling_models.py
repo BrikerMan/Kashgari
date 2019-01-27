@@ -59,7 +59,9 @@ class EmbeddingManager(object):
     @classmethod
     def get_bert(cls):
         if cls.bert_embedding is None:
-            cls.bert_embedding = BERTEmbedding('chinese_L-12_H-768_A-12', sequence_length=SEQUENCE_LENGTH)
+            dir_path = os.path.dirname(os.path.realpath(__file__))
+            bert_path = os.path.join(dir_path, 'data', 'test_bert_checkpoint')
+            cls.bert_embedding = BERTEmbedding(bert_path, sequence_length=SEQUENCE_LENGTH)
         return cls.bert_embedding
 
     @classmethod
@@ -131,13 +133,13 @@ class TestCNNLSTMModelWithWord2Vec(TestCNNLSTMModel):
         cls.model = CNNLSTMModel(embedding)
 
 
-class TestLSTMCNNModelWithBERT(TestCNNLSTMModel):
-
-    @classmethod
-    def setUpClass(cls):
-        cls.epochs = 1
-        embedding = EmbeddingManager.get_bert()
-        cls.model = CNNLSTMModel(embedding)
+# class TestLSTMCNNModelWithBERT(TestCNNLSTMModel):
+#
+#     @classmethod
+#     def setUpClass(cls):
+#         cls.epochs = 1
+#         embedding = EmbeddingManager.get_bert()
+#         cls.model = CNNLSTMModel(embedding)
 
 
 class TestBLSTMModel(TestCNNLSTMModel):
@@ -155,12 +157,12 @@ class TestBLSTMModelWithWord2Vec(TestCNNLSTMModel):
         cls.model = BLSTMModel(embedding)
 
 
-class TestBLSTMModelWithBERT(TestCNNLSTMModel):
-    @classmethod
-    def setUpClass(cls):
-        cls.epochs = 1
-        embedding = EmbeddingManager.get_bert()
-        cls.model = BLSTMModel(embedding)
+# class TestBLSTMModelWithBERT(TestCNNLSTMModel):
+#     @classmethod
+#     def setUpClass(cls):
+#         cls.epochs = 1
+#         embedding = EmbeddingManager.get_bert()
+#         cls.model = BLSTMModel(embedding)
 
 
 class TestBLSTMCRFModel(TestCNNLSTMModel):
@@ -178,12 +180,12 @@ class TestBLSTMCRFModelWithWord2Vec(TestCNNLSTMModel):
         cls.model = BLSTMCRFModel(embedding)
 
 
-class TestBLSTMCRFModelWithBERT(TestCNNLSTMModel):
-    @classmethod
-    def setUpClass(cls):
-        cls.epochs = 1
-        embedding = EmbeddingManager.get_bert()
-        cls.model = BLSTMCRFModel(embedding)
+# class TestBLSTMCRFModelWithBERT(TestCNNLSTMModel):
+#     @classmethod
+#     def setUpClass(cls):
+#         cls.epochs = 1
+#         embedding = EmbeddingManager.get_bert()
+#         cls.model = BLSTMCRFModel(embedding)
 
 
 if __name__ == "__main__":
