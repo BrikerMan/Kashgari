@@ -7,8 +7,11 @@ cache: pip
 before_install:
   - export BOTO_CONFIG=/dev/null
 install:
+  - pip install python-coveralls
   - pip install -r requirements.txt
   - pip install .
 # command to run tests
 script:
   - sh test.sh
+after_success:
+  - coveralls
