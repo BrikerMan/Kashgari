@@ -30,27 +30,10 @@ from kashgari.embeddings import CustomEmbedding, BaseEmbedding
 from kashgari.type_hints import *
 
 from kashgari.utils.crf import CRF, crf_loss
+from kashgari.tasks.base import BaseModel
 
 
-class SequenceLabelingModel(object):
-    __base_hyper_parameters__ = {}
-
-    @property
-    def hyper_parameters(self):
-        return self._hyper_parameters_
-
-    def __init__(self, embedding: BaseEmbedding = None, hyper_parameters: Dict = None):
-        if embedding is None:
-            self.embedding = CustomEmbedding('custom', sequence_length=0, embedding_size=100)
-        else:
-            self.embedding = embedding
-        self.model: Model = None
-        self._hyper_parameters_ = self.__base_hyper_parameters__.copy()
-        self._label2idx = {}
-        self._idx2label = {}
-        if hyper_parameters:
-            self._hyper_parameters_.update(hyper_parameters)
-        self.model_info = {}
+class SequenceLabelingModel(BaseModel):
 
     @property
     def label2idx(self) -> Dict[str, int]:
@@ -76,12 +59,12 @@ class SequenceLabelingModel(object):
                                      x_train: List[List[str]],
                                      y_train: List[List[str]],
                                      x_validate: List[List[str]] = None,
-                                     y_validate: List[str] = None):
+                                     y_validate: List[List[str]] = None):
         x_data = x_train
         y_data = y_train
         if x_validate:
-            x_data += x_validate
-            y_data += y_validate
+            x_data = x_train + x_validate
+            y_data = y_data + y_validate
         self.embedding.build_token2idx_dict(x_data, 3)
 
         label_set = []
@@ -210,7 +193,7 @@ class SequenceLabelingModel(object):
 
         if not self.model:
             if self.embedding.sequence_length == 0:
-                self.embedding.sequence_length = sorted([len(y) for y in y_train])[int(0.95*len(y_train))]
+                self.embedding.sequence_length = sorted([len(x) for x in x_train])[int(0.95 * len(x_train))]
                 logging.info('sequence length set to {}'.format(self.embedding.sequence_length))
 
             if labels_weight:
@@ -282,63 +265,6 @@ class SequenceLabelingModel(object):
 
     def evaluate(self, x_data, y_data, batch_size=None) -> Tuple[float, float, Dict]:
         y_pred = self.predict(x_data, batch_size=batch_size)
-
-        weighted_f1 = f1_score(y_data, y_pred)
-        weighted_recall = recall_score(y_data, y_pred)
         report = classification_report(y_data, y_pred)
         print(classification_report(y_data, y_pred))
-        return weighted_f1, weighted_recall, report
-
-    def save(self, model_path: str):
-        pathlib.Path(model_path).mkdir(exist_ok=True, parents=True)
-        with open(os.path.join(model_path, 'labels.json'), 'w', encoding='utf-8') as f:
-            f.write(json.dumps(self.label2idx, indent=2, ensure_ascii=False))
-
-        with open(os.path.join(model_path, 'words.json'), 'w', encoding='utf-8') as f:
-            f.write(json.dumps(self.embedding.token2idx, indent=2, ensure_ascii=False))
-
-        with open(os.path.join(model_path, 'model.json'), 'w', encoding='utf-8') as f:
-            f.write(json.dumps(self.model_info, indent=2, ensure_ascii=False))
-
-        self.model.save(os.path.join(model_path, 'model.model'))
-        logging.info('model saved to {}'.format(os.path.abspath(model_path)))
-
-    @staticmethod
-    def create_custom_objects(model_info):
-        custom_objects = {}
-        loss = model_info.get('loss')
-        if loss and loss['name'] == 'weighted_categorical_crossentropy':
-            loss_f = helper.weighted_categorical_crossentropy(np.array(loss['weights']))
-            custom_objects['loss'] = loss_f
-
-        if loss and loss['name'] == 'crf':
-            custom_objects['CRF'] = CRF
-            custom_objects['crf_loss'] = crf_loss
-            custom_objects['crf_viterbi_accuracy'] = CRF(128).accuracy
-
-        return custom_objects
-
-    @staticmethod
-    def load_model(model_path: str):
-        with open(os.path.join(model_path, 'labels.json'), 'r', encoding='utf-8') as f:
-            label2idx = json.load(f)
-
-        with open(os.path.join(model_path, 'words.json'), 'r', encoding='utf-8') as f:
-            token2idx = json.load(f)
-
-        with open(os.path.join(model_path, 'model.json'), 'r', encoding='utf-8') as f:
-            model_info = json.load(f)
-
-        agent = SequenceLabelingModel()
-        custom_objects = SequenceLabelingModel.create_custom_objects(model_info)
-
-        if custom_objects:
-            logging.debug('prepared custom objects: {}'.format(custom_objects))
-        agent.model = keras.models.load_model(os.path.join(model_path, 'model.model'),
-                                              custom_objects=custom_objects)
-        agent.model.summary()
-        agent.embedding.sequence_length = agent.model.input_shape[-1]
-        agent.label2idx = label2idx
-        agent.embedding.token2idx = token2idx
-        logging.info('loaded model from {}'.format(os.path.abspath(model_path)))
-        return agent
+        return report

@@ -11,4 +11,4 @@ install:
   - pip install .
 # command to run tests
 script:
-  - py.test
+  - sh test.sh

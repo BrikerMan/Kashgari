@@ -274,7 +274,7 @@ class BERTEmbedding(BaseEmbedding):
 
     def build(self):
         self.embedding_type = 'bert'
-        self.is_bert = True
+        self._is_bert = True
         url = self.pre_trained_models.get(self.model_key_map.get(self.name, self.name))
         self.model_path = helper.cached_path(self.model_key_map.get(self.name, self.name),
                                              url,
@@ -282,6 +282,7 @@ class BERTEmbedding(BaseEmbedding):
 
         config_path = os.path.join(self.model_path, 'bert_config.json')
         check_point_path = os.path.join(self.model_path, 'bert_model.ckpt')
+        logging.info('loading bert model from {}\n'.format(self.model_path))
         model = keras_bert.load_trained_model_from_checkpoint(config_path,
                                                               check_point_path,
                                                               seq_len=self.sequence_length)
@@ -301,7 +302,7 @@ class BERTEmbedding(BaseEmbedding):
         self.token2idx = word2idx
 
     def build_token2idx_dict(self, x_data: List[TextSeqType], min_count: int = 5):
-        logging.warning("bert embedding no need to build token2idx with corpus")
+        logging.debug("bert embedding no need to build token2idx with corpus")
 
     def prepare_model_input(self, input_x: np.array, **kwargs) -> np.array:
         input_seg = np.zeros(input_x.shape)
@@ -320,19 +321,20 @@ class CustomEmbedding(BaseEmbedding):
             self._model = Model(input_x, current)
 
     def build_token2idx_dict(self, x_data: List[TextSeqType], min_count: int = 5):
-        word_set: Dict[str, int] = {}
-        for x_item in x_data:
-            for word in x_item:
-                word_set[word] = word_set.get(word, 0) + 1
+        if self.token2idx is None:
+            word_set: Dict[str, int] = {}
+            for x_item in x_data:
+                for word in x_item:
+                    word_set[word] = word_set.get(word, 0) + 1
 
-        word2idx_list = sorted(word_set.items(), key=lambda kv: -kv[1])
+            word2idx_list = sorted(word_set.items(), key=lambda kv: -kv[1])
 
-        word2idx = self.base_dict.copy()
-        for word, count in word2idx_list:
-            if count >= min_count:
-                word2idx[word] = len(word2idx)
+            word2idx = self.base_dict.copy()
+            for word, count in word2idx_list:
+                if count >= min_count:
+                    word2idx[word] = len(word2idx)
 
-        self.token2idx = word2idx
+            self.token2idx = word2idx
         self.build()
 
 

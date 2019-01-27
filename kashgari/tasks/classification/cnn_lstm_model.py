@@ -20,7 +20,7 @@ from kashgari.tasks.classification.base_model import ClassificationModel
 
 
 class CNNLSTMModel(ClassificationModel):
-    base_hyper_parameters = {
+    __base_hyper_parameters__ = {
         'conv_layer': {
             'filters': 32,
             'kernel_size': 3,

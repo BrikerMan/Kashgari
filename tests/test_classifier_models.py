@@ -6,16 +6,18 @@
 
 @version: 1.0
 @license: Apache Licence
-@file: test_classification_model
-@time: 2019-01-26
+@file: test_classifier_models.py
+@time: 2019-01-27 13:28
 
 """
+import time
+import os
+import random
 import logging
 import tempfile
-import pytest
-import random
+import unittest
 
-from kashgari.embeddings import WordEmbeddings, BERTEmbedding, BaseEmbedding
+from kashgari.embeddings import WordEmbeddings, BERTEmbedding
 from kashgari.tasks.classification import BLSTMModel, CNNModel, CNNLSTMModel, ClassificationModel
 from kashgari.utils.logger import init_logger
 init_logger()
@@ -45,28 +47,41 @@ eval_x = [
 eval_y = ['a', 'a', 'a', 'b', 'c', 'a', 'c']
 
 
-def get_word2vec_embedding() -> WordEmbeddings:
-    return WordEmbeddings('sgns.weibo.bigram', sequence_length=SEQUENCE_LENGTH, limit=5000)
+class EmbeddingManager(object):
+    word2vec_embedding = None
+    bert_embedding = None
+
+    @classmethod
+    def get_bert(cls):
+        if cls.bert_embedding is None:
+            cls.bert_embedding = BERTEmbedding('chinese_L-12_H-768_A-12', sequence_length=SEQUENCE_LENGTH)
+        return cls.bert_embedding
+
+    @classmethod
+    def get_w2v(cls):
+        if cls.word2vec_embedding is None:
+            cls.word2vec_embedding = WordEmbeddings('sgns.weibo.bigram', sequence_length=SEQUENCE_LENGTH, limit=5000)
+        return cls.word2vec_embedding
 
 
-def get_bert_embedding() -> BERTEmbedding:
-    return BERTEmbedding('chinese_L-12_H-768_A-12', sequence_length=SEQUENCE_LENGTH)
-
-
-class TestBLSTMModelModel(object):
+class TestBLSTMModelModel(unittest.TestCase):
     model: ClassificationModel = None
 
-    @pytest.fixture(scope="class", autouse=True)
-    def setup(self):
-        TestBLSTMModelModel.model = BLSTMModel()
+    @classmethod
+    def setUpClass(cls):
+        cls.epochs = 3
+        cls.model = BLSTMModel()
 
     def test_build(self):
-        self.model.fit(train_x, train_y)
+        self.model.fit(train_x, train_y, epochs=1)
         assert len(self.model.label2idx) == 4
         assert len(self.model.token2idx) > 4
 
     def test_fit(self):
-        self.model.fit(train_x, train_y, eval_x, eval_y)
+        self.model.fit(train_x, train_y, eval_x, eval_y, epochs=self.epochs)
+
+    def test_fit_class_weight(self):
+        self.model.fit(train_x, train_y, eval_x, eval_y, class_weight=True, batch_size=128, epochs=2)
 
     def test_label_token_convert(self):
         self.test_fit()
@@ -92,7 +107,7 @@ class TestBLSTMModelModel(object):
 
     def test_save_and_load(self):
         self.test_fit()
-        model_path = tempfile.gettempdir()
+        model_path = os.path.join(tempfile.gettempdir(), 'kashgari_model', str(time.time()))
         self.model.save(model_path)
         new_model = BLSTMModel.load_model(model_path)
         assert new_model is not None
@@ -100,67 +115,86 @@ class TestBLSTMModelModel(object):
         result = new_model.predict(sentence)
         assert isinstance(result, str)
 
+    @classmethod
+    def tearDownClass(cls):
+        del cls.model
+        logging.info('tearDownClass {}'.format(cls))
+
 
 class TestBLSTMModelWithWord2Vec(TestBLSTMModelModel):
 
-    @pytest.fixture(scope="class", autouse=True)
-    def setup(self):
-        embedding = get_word2vec_embedding()
-        TestBLSTMModelWithWord2Vec.model = BLSTMModel(embedding)
+    @classmethod
+    def setUpClass(cls):
+        cls.epochs = 3
+        embedding = EmbeddingManager.get_w2v()
+        cls.model = BLSTMModel(embedding)
 
 
 class TestBLSTMModelWithBERT(TestBLSTMModelModel):
 
-    @pytest.fixture(scope="class", autouse=True)
-    def setup(self):
-        embedding = get_bert_embedding()
-        TestBLSTMModelWithBERT.model = BLSTMModel(embedding)
-    
+    @classmethod
+    def setUpClass(cls):
+        cls.epochs = 1
+        embedding = EmbeddingManager.get_bert()
+        cls.model = BLSTMModel(embedding)
+
     def test_save_and_load(self):
         super(TestBLSTMModelWithBERT, self).test_save_and_load()
 
 
 class TestCNNModel(TestBLSTMModelModel):
 
-    @pytest.fixture(scope="class", autouse=True)
-    def setup(self):
+    @classmethod
+    def setUpClass(cls):
+        cls.epochs = 3
         TestCNNModel.model = CNNModel()
-        TestCNNModel.model.embedding.sequence_length = 100
+
+    def test_fit(self):
+        super(TestCNNModel, self).test_fit()
 
 
 class TestCNNModelWithWord2Vec(TestBLSTMModelModel):
 
-    @pytest.fixture(scope="class", autouse=True)
-    def setup(self):
-        embedding = get_word2vec_embedding()
-        TestCNNModelWithWord2Vec.model = CNNModel(embedding)
+    @classmethod
+    def setUpClass(cls):
+        cls.epochs = 3
+        embedding = EmbeddingManager.get_w2v()
+        cls.model = CNNModel(embedding)
 
 
 class TestCNNModelWithBERT(TestBLSTMModelModel):
-    @pytest.fixture(scope="class", autouse=True)
-    def setup(self):
-        embedding = get_bert_embedding()
+    @classmethod
+    def setUpClass(cls):
+        cls.epochs = 1
+        embedding = EmbeddingManager.get_bert()
         TestCNNModelWithBERT.model = CNNModel(embedding)
 
 
 class TestLSTMCNNModel(TestBLSTMModelModel):
 
-    @pytest.fixture(scope="class", autouse=True)
-    def setup(self):
-        TestLSTMCNNModel.model = CNNLSTMModel()
+    @classmethod
+    def setUpClass(cls):
+        cls.epochs = 3
+        cls.model = CNNLSTMModel()
 
 
 class TestLSTMCNNModelWithWord2Vec(TestBLSTMModelModel):
 
-    @pytest.fixture(scope="class", autouse=True)
-    def setup(self):
-        embedding = get_word2vec_embedding()
-        TestLSTMCNNModelWithWord2Vec.model = CNNLSTMModel(embedding)
+    @classmethod
+    def setUpClass(cls):
+        cls.epochs = 3
+        embedding = EmbeddingManager.get_w2v()
+        cls.model = CNNLSTMModel(embedding)
 
 
 class TestLSTMCNNModelWithBERT(TestBLSTMModelModel):
 
-    @pytest.fixture(scope="class", autouse=True)
-    def setup(self):
-        embedding = get_bert_embedding()
-        TestLSTMCNNModelWithBERT.model = CNNLSTMModel(embedding)
+    @classmethod
+    def setUpClass(cls):
+        cls.epochs = 1
+        embedding = EmbeddingManager.get_bert()
+        cls.model = CNNLSTMModel(embedding)
+
+
+if __name__ == "__main__":
+    unittest.main()

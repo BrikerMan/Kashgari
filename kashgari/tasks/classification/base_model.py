@@ -29,23 +29,10 @@ from sklearn.utils import class_weight as class_weight_calculte
 import kashgari.macros as k
 from kashgari.embeddings import CustomEmbedding, BaseEmbedding
 from kashgari.type_hints import *
+from kashgari.tasks.base import BaseModel
 
 
-class ClassificationModel(object):
-    base_hyper_parameters = {}
-
-    def __init__(self, embedding: BaseEmbedding = None, hyper_parameters: Dict = None):
-        if embedding is None:
-            self.embedding = CustomEmbedding('custom', sequence_length=0, embedding_size=100)
-        else:
-            self.embedding = embedding
-        self.model: Model = None
-        self.hyper_parameters = self.base_hyper_parameters.copy()
-        self._label2idx = {}
-        self._idx2label = {}
-        self.model_info = {}
-        if hyper_parameters:
-            self.hyper_parameters.update(hyper_parameters)
+class ClassificationModel(BaseModel):
 
     @property
     def label2idx(self) -> Dict[str, int]:
@@ -165,7 +152,7 @@ class ClassificationModel(object):
 
         if not self.model:
             if self.embedding.sequence_length == 0:
-                self.embedding.sequence_length = sorted([len(y) for y in y_train])[int(0.95*len(y_train))]
+                self.embedding.sequence_length = sorted([len(x) for x in x_train])[int(0.95 * len(x_train))]
                 logging.info('sequence length set to {}'.format(self.embedding.sequence_length))
             self.build_model()
 
@@ -223,71 +210,5 @@ class ClassificationModel(object):
 
     def evaluate(self, x_data, y_data, batch_size=None) -> Tuple[float, float, Dict]:
         y_pred = self.predict(x_data, batch_size=batch_size)
-        weighted_f1 = metrics.f1_score(y_data, y_pred, average='weighted')
-        weighted_recall = metrics.recall_score(y_data, y_pred, average='weighted')
         report = metrics.classification_report(y_data, y_pred, output_dict=True)
-        print(metrics.classification_report(y_data, y_pred))
-        return weighted_f1, weighted_recall, report
-
-    def save(self, model_path: str):
-        pathlib.Path(model_path).mkdir(exist_ok=True, parents=True)
-
-        self.model_info['embedding'] = {
-            'type': self.embedding.embedding_type,
-            'name': self.embedding.name,
-            'path': self.embedding.model_path,
-            'size': self.embedding.embedding_size,
-            'sequence_length': self.embedding.sequence_length
-        }
-
-        with open(os.path.join(model_path, 'labels.json'), 'w', encoding='utf-8') as f:
-            f.write(json.dumps(self.label2idx, indent=2, ensure_ascii=False))
-
-        with open(os.path.join(model_path, 'words.json'), 'w', encoding='utf-8') as f:
-            f.write(json.dumps(self.embedding.token2idx, indent=2, ensure_ascii=False))
-
-        with open(os.path.join(model_path, 'model.json'), 'w', encoding='utf-8') as f:
-            f.write(json.dumps(self.model_info, indent=2, ensure_ascii=False))
-
-        self.model.save(os.path.join(model_path, 'model.model'))
-        logging.info('model saved to {}'.format(os.path.abspath(model_path)))
-
-    @staticmethod
-    def create_custom_objects(model_info):
-        custom_objects = {}
-        embedding = model_info.get('embedding')
-        from kashgari.utils.helper import NonMaskingLayer
-        custom_objects['NonMaskingLayer'] = NonMaskingLayer
-        if embedding and embedding['type'] == 'bert':
-            from keras_bert.bert import get_custom_objects
-            custom_objects.update(get_custom_objects())
-
-        return custom_objects
-
-    @staticmethod
-    def load_model(model_path: str):
-        with open(os.path.join(model_path, 'labels.json'), 'r', encoding='utf-8') as f:
-            label2idx = json.load(f)
-
-        with open(os.path.join(model_path, 'words.json'), 'r', encoding='utf-8') as f:
-            token2idx = json.load(f)
-
-        with open(os.path.join(model_path, 'model.json'), 'r', encoding='utf-8') as f:
-            model_info = json.load(f)
-        agent = ClassificationModel()
-        custom_objects = ClassificationModel.create_custom_objects(model_info)
-
-        if custom_objects:
-            logging.debug('prepared custom objects: {}'.format(custom_objects))
-
-        agent.model = keras.models.load_model(os.path.join(model_path, 'model.model'),
-                                              custom_objects=custom_objects)
-        seq_len = model_info.get('embedding', {}).get('sequence_length', agent.model.input_shape[-1])
-        agent.embedding.sequence_length = seq_len
-        agent.embedding.is_bert = model_info['embedding']['type'] == 'bert'
-        agent.model.summary()
-        agent.label2idx = label2idx
-        agent.embedding.token2idx = token2idx
-        logging.info('loaded model from {}'.format(os.path.abspath(model_path)))
-        return agent
-
+        return report
