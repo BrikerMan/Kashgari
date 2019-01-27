@@ -56,60 +56,58 @@ SEQUENCE_LENGTH = 30
 
 
 class TestWordEmbeddings(object):
-    embedding = None
+    # embedding = None
 
     @pytest.fixture(scope="class", autouse=True)
-    def setup(self):
-        TestWordEmbeddings.embedding = WordEmbeddings('sgns.weibo.bigram-char',
-                                                      sequence_length=SEQUENCE_LENGTH,
-                                                      limit=1000)
+    def embedding(self):
+        return WordEmbeddings('sgns.weibo.bigram-char',
+                              sequence_length=SEQUENCE_LENGTH,
+                              limit=1000)
 
-    @classmethod
-    def build_model(cls):
-        cls.embedding = WordEmbeddings('sgns.weibo.bigram-char',
-                                       sequence_length=SEQUENCE_LENGTH,
-                                       limit=1000)
-
-    def test_build(self):
+    @staticmethod
+    def test_build(embedding):
         # self.setup()
-        assert self.embedding.idx2token[0] == k.PAD
-        assert self.embedding.idx2token[1] == k.BOS
-        assert self.embedding.idx2token[2] == k.EOS
-        assert self.embedding.idx2token[3] == k.UNK
+        assert embedding.idx2token[0] == k.PAD
+        assert embedding.idx2token[1] == k.BOS
+        assert embedding.idx2token[2] == k.EOS
+        assert embedding.idx2token[3] == k.UNK
 
-    def test_tokenize(self):
+    @staticmethod
+    def test_tokenize(embedding):
         # self.setup()
         sentence = ['我', '想', '看', '电影', '%%##!$#%']
-        tokens = self.embedding.tokenize(sentence)
+        tokens = embedding.tokenize(sentence)
 
         logging.info('tokenize test: {} -> {}'.format(sentence, tokens))
         assert len(tokens) == len(tokens)
-        assert tokens[-2] == self.embedding.token2idx[k.UNK]
+        assert tokens[-2] == embedding.token2idx[k.UNK]
 
-        token_list = self.embedding.tokenize([sentence])
+        token_list = embedding.tokenize([sentence])
         assert len(token_list[0]) == len(sentence) + 2
 
-    def test_embed(self):
+    @staticmethod
+    def test_embed(embedding):
         sentence = ['我', '想', '看', '电影', '%%##!$#%']
-        embedded_sentence = self.embedding.embed(sentence)
-        embedded_sentences = self.embedding.embed([sentence])
+        embedded_sentence = embedding.embed(sentence)
+        embedded_sentences = embedding.embed([sentence])
         logging.info('embed test: {} -> {}'.format(sentence, embedded_sentence))
-        assert embedded_sentence.shape == (SEQUENCE_LENGTH, self.embedding.embedding_size)
-        assert embedded_sentences.shape == (1, SEQUENCE_LENGTH, self.embedding.embedding_size)
+        assert embedded_sentence.shape == (SEQUENCE_LENGTH, embedding.embedding_size)
+        assert embedded_sentences.shape == (1, SEQUENCE_LENGTH, embedding.embedding_size)
 
 
 class TestBERTEmbedding(TestWordEmbeddings):
     @pytest.fixture(scope="class", autouse=True)
-    def setup(self):
-        TestBERTEmbedding.embedding = BERTEmbedding('chinese_L-12_H-768_A-12',
-                                                    sequence_length=SEQUENCE_LENGTH)
+    def setup(self) -> BERTEmbedding:
+        return BERTEmbedding('chinese_L-12_H-768_A-12',
+                             sequence_length=SEQUENCE_LENGTH)
 
-    def test_build(self):
-        assert self.embedding.embedding_size > 0
-        assert self.embedding.token2idx[k.PAD] == 0
-        assert self.embedding.token2idx[k.BOS] > 0
-        assert self.embedding.token2idx[k.EOS] > 0
-        assert self.embedding.token2idx[k.UNK] > 0
+    @staticmethod
+    def test_build(embedding):
+        assert embedding.embedding_size > 0
+        assert embedding.token2idx[k.PAD] == 0
+        assert embedding.token2idx[k.BOS] > 0
+        assert embedding.token2idx[k.EOS] > 0
+        assert embedding.token2idx[k.UNK] > 0
 
 
 class TestCustomEmbedding(TestWordEmbeddings):
@@ -138,9 +136,10 @@ class TestCustomEmbedding(TestWordEmbeddings):
                    '入', '画', '中', '，', '观', '之', '令', '人', '心', '驰', '。', '我']]
         self.embedding.build_token2idx_dict(x_data=corpus, min_count=2)
 
-    def test_build(self):
-        assert self.embedding.token_count == 33
-        super(TestCustomEmbedding, self).test_build()
+    @staticmethod
+    def test_build(embedding):
+        assert embedding.token_count == 33
+        super(TestCustomEmbedding, TestCustomEmbedding).test_build()
 
 
 if __name__ == '__main__':

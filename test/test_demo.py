@@ -33,11 +33,11 @@ class TestDemo1(TestDemoBase):
         self.code = 500
 
 
-class TestDemo2(TestDemoBase):
-
-    def prepare_demo(self):
-        self.name = 'demo2'
-        self.code = 300
+# class TestDemo2(TestDemoBase):
+#
+#     def prepare_demo(self):
+#         self.name = 'demo2'
+#         self.code = 300
 
 
 if __name__ == '__main__':

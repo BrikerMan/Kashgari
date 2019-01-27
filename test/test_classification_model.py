@@ -125,6 +125,7 @@ class TestCNNModel(TestBLSTMModelModel):
     @pytest.fixture(scope="class", autouse=True)
     def setup(self):
         TestCNNModel.model = CNNModel()
+        TestCNNModel.model.embedding.sequence_length = 100
 
 
 class TestCNNModelWithWord2Vec(TestBLSTMModelModel):
