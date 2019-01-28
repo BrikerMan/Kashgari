@@ -10,26 +10,19 @@
 @time: 2019-01-19 11:50
 
 """
-import os
-import json
-import random
-import pathlib
 import logging
+import random
 from typing import Tuple, Dict
-import numpy as np
 
-import keras
-from keras.models import Model
+import numpy as np
 from keras.preprocessing import sequence
 from keras.utils import to_categorical
-
 from sklearn import metrics
 from sklearn.utils import class_weight as class_weight_calculte
 
 import kashgari.macros as k
-from kashgari.embeddings import CustomEmbedding, BaseEmbedding
-from kashgari.type_hints import *
 from kashgari.tasks.base import BaseModel
+from kashgari.type_hints import *
 
 
 class ClassificationModel(BaseModel):
@@ -211,5 +204,5 @@ class ClassificationModel(BaseModel):
     def evaluate(self, x_data, y_data, batch_size=None) -> Tuple[float, float, Dict]:
         y_pred = self.predict(x_data, batch_size=batch_size)
         report = metrics.classification_report(y_data, y_pred, output_dict=True)
-        print(metrics.classification_report(y_data, y_pred, output_dict=True))
+        print(metrics.classification_report(y_data, y_pred))
         return report
