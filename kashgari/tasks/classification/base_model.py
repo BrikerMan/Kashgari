@@ -211,4 +211,5 @@ class ClassificationModel(BaseModel):
     def evaluate(self, x_data, y_data, batch_size=None) -> Tuple[float, float, Dict]:
         y_pred = self.predict(x_data, batch_size=batch_size)
         report = metrics.classification_report(y_data, y_pred, output_dict=True)
+        print(metrics.classification_report(y_data, y_pred, output_dict=True))
         return report
