@@ -144,10 +144,10 @@ class SequenceLabelingModel(BaseModel):
 
                 padded_x = sequence.pad_sequences(tokenized_x,
                                                   maxlen=self.embedding.sequence_length,
-                                                  padding='post')
+                                                  padding='post', truncating='post')
                 padded_y = sequence.pad_sequences(tokenized_y,
                                                   maxlen=self.embedding.sequence_length,
-                                                  padding='post')
+                                                  padding='post', truncating='post')
 
                 one_hot_y = to_categorical(padded_y, num_classes=len(self.label2idx))
 
@@ -256,12 +256,12 @@ class SequenceLabelingModel(BaseModel):
             seq_length = [len(item) for item in sentence]
             padded_tokens = sequence.pad_sequences(tokens,
                                                    maxlen=self.embedding.sequence_length,
-                                                   padding='post')
+                                                   padding='post', truncating='post')
         else:
             seq_length = [len(sentence)]
             padded_tokens = sequence.pad_sequences([tokens],
                                                    maxlen=self.embedding.sequence_length,
-                                                   padding='post')
+                                                   padding='post', truncating='post')
         if self.embedding.is_bert:
             x = [padded_tokens, np.zeros(shape=(len(padded_tokens), self.embedding.sequence_length))]
         else:
@@ -285,7 +285,20 @@ class SequenceLabelingModel(BaseModel):
                                           padding='post')
         y_true = self.convert_idx_to_labels(padded_y, seq_length)
         y_pred = self.predict(x_data, batch_size=batch_size)
-
+        for i in range(5):
+            print(padded_y[5])
+            print(y_true[5])
+            print(y_pred[5])
+            print('----------------------------')
+        for index in range(len(y_pred)):
+            if y_pred[index][-1] == '[EOS]':
+                print('===================')
+                print(x_data[index])
+                print(y_data[index])
+                print('-')
+                print(y_pred[index])
+                print(y_true[index])
+                print('===================')
         report = classification_report(y_true, y_pred)
         print(classification_report(y_true, y_pred))
         return report
