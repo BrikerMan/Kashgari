@@ -277,7 +277,7 @@ class SequenceLabelingModel(BaseModel):
         else:
             return result[0]
 
-    def evaluate(self, x_data, y_data, batch_size=None) -> Tuple[float, float, Dict]:
+    def evaluate(self, x_data, y_data, batch_size=None, debug_info=False, digits=4) -> Tuple[float, float, Dict]:
         seq_length = [len(x) for x in x_data]
         tokenized_y = self.convert_labels_to_idx(y_data)
         padded_y = sequence.pad_sequences(tokenized_y,
@@ -285,20 +285,13 @@ class SequenceLabelingModel(BaseModel):
                                           padding='post', truncating='post')
         y_true = self.convert_idx_to_labels(padded_y, seq_length)
         y_pred = self.predict(x_data, batch_size=batch_size)
-        for i in range(5):
-            print(padded_y[5])
-            print(y_true[5])
-            print(y_pred[5])
-            print('----------------------------')
-        for index in range(len(y_pred)):
-            if y_pred[index][-1] == '[EOS]':
-                print('===================')
-                print(x_data[index])
-                print(y_data[index])
-                print('-')
-                print(y_pred[index])
-                print(y_true[index])
-                print('===================')
-        report = classification_report(y_true, y_pred)
-        print(classification_report(y_true, y_pred))
+        if debug_info:
+            for index in random.sample(list(range(len(x_data)))):
+                logging.debug('------ sample {} ------'.format(index))
+                logging.debug('x      : {}'.format(x_data[index]))
+                logging.debug('y_true : {}'.format(y_true[index]))
+                logging.debug('y_pred : {}'.format(y_pred[index]))
+
+        report = classification_report(y_true, y_pred, digits=digits)
+        print(classification_report(y_true, y_pred, digits=digits))
         return report
