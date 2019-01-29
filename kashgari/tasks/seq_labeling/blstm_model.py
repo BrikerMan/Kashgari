@@ -59,7 +59,6 @@ class BLSTMModel(SequenceLabelingModel):
 if __name__ == '__main__':
     import random
     from keras.callbacks import ModelCheckpoint
-    from kashgari.embeddings import WordEmbeddings
     from kashgari.corpus import ChinaPeoplesDailyNerCorpus
 
     x_train, y_train = ChinaPeoplesDailyNerCorpus.get_sequence_tagging_data()

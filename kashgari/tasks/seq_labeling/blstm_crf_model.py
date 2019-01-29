@@ -54,13 +54,16 @@ if __name__ == "__main__":
     from kashgari.utils.logger import init_logger
     from kashgari.corpus import ChinaPeoplesDailyNerCorpus
 
-    init_logger()
-
-    x_train, y_train = ChinaPeoplesDailyNerCorpus.get_sequence_tagging_data()
-    x_validate, y_validate = ChinaPeoplesDailyNerCorpus.get_sequence_tagging_data(data_type='validate')
+    # init_logger()
+    #
+    # x_train, y_train = ChinaPeoplesDailyNerCorpus.get_sequence_tagging_data()
+    # x_validate, y_validate = ChinaPeoplesDailyNerCorpus.get_sequence_tagging_data(data_type='validate')
     x_test, y_test = ChinaPeoplesDailyNerCorpus.get_sequence_tagging_data(data_type='test')
+    #
+    # classifier = BLSTMCRFModel()
+    # classifier.fit(x_train, y_train, epochs=2)
+    # classifier.evaluate(x_validate, y_validate)
+    # classifier.evaluate(x_test, y_train)
 
-    classifier = BLSTMCRFModel()
-    classifier.fit(x_train, y_train, epochs=2)
-    classifier.evaluate(x_validate, y_validate)
-    classifier.evaluate(x_test, y_train)
+    model = BLSTMCRFModel.load_model('/Users/brikerman/Downloads/KashgariNER.output/model')
+    model.evaluate(x_test, y_test)

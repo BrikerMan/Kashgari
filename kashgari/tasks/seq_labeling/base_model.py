@@ -238,7 +238,18 @@ class SequenceLabelingModel(BaseModel):
                                  epochs=epochs,
                                  **fit_kwargs)
 
-    def predict(self, sentence: Union[List[str], List[List[str]]], batch_size=None):
+    def predict(self,
+                sentence: Union[List[str], List[List[str]]],
+                batch_size=None,
+                convert_to_labels=True):
+        """
+        predict with model
+        :param sentence: input for predict, accept a single sentence as type List[str] or
+                         list of sentence as List[List[str]]
+        :param batch_size: predict batch_size
+        :param convert_to_labels: if True, return labels or return label idxs
+        :return:
+        """
         tokens = self.embedding.tokenize(sentence)
         is_list = not isinstance(sentence[0], str)
         if is_list:
@@ -256,15 +267,25 @@ class SequenceLabelingModel(BaseModel):
         else:
             x = padded_tokens
         predict_result = self.model.predict(x, batch_size=batch_size).argmax(-1)
-        labels = self.convert_idx_to_labels(predict_result, seq_length)
+        if convert_to_labels:
+            result = self.convert_idx_to_labels(predict_result, seq_length)
+        else:
+            result = predict_result
 
         if is_list:
-            return labels
+            return result
         else:
-            return labels[0]
+            return result[0]
 
     def evaluate(self, x_data, y_data, batch_size=None) -> Tuple[float, float, Dict]:
+        seq_length = [len(x) for x in x_data]
+        tokenized_y = self.convert_labels_to_idx(y_data)
+        padded_y = sequence.pad_sequences(tokenized_y,
+                                          maxlen=self.embedding.sequence_length,
+                                          padding='post')
+        y_true = self.convert_idx_to_labels(padded_y, seq_length)
         y_pred = self.predict(x_data, batch_size=batch_size)
-        report = classification_report(y_data, y_pred)
-        print(classification_report(y_data, y_pred))
+
+        report = classification_report(y_true, y_pred)
+        print(classification_report(y_true, y_pred))
         return report
