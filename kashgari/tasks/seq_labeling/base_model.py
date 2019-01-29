@@ -282,7 +282,7 @@ class SequenceLabelingModel(BaseModel):
         tokenized_y = self.convert_labels_to_idx(y_data)
         padded_y = sequence.pad_sequences(tokenized_y,
                                           maxlen=self.embedding.sequence_length,
-                                          padding='post')
+                                          padding='post', truncating='post')
         y_true = self.convert_idx_to_labels(padded_y, seq_length)
         y_pred = self.predict(x_data, batch_size=batch_size)
         for i in range(5):
