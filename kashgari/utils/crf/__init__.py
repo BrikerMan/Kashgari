@@ -12,6 +12,7 @@
 """
 from .crf import CRF
 from .crf_losses import crf_loss
+from .crf_accuracies import crf_accuracy
 
 if __name__ == "__main__":
     print("Hello world")

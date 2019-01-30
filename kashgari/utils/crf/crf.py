@@ -355,36 +355,36 @@ class CRF(Layer):
         base_config = super(CRF, self).get_config()
         return dict(list(base_config.items()) + list(config.items()))
 
-    @property
-    def loss_function(self):
-        warnings.warn('CRF.loss_function is deprecated '
-                      'and it might be removed in the future. Please '
-                      'use losses.crf_loss instead.')
-        return crf_losses
-
-    @property
-    def accuracy(self):
-        warnings.warn('CRF.accuracy is deprecated and it '
-                      'might be removed in the future. Please '
-                      'use metrics.crf_accuracy')
-        if self.test_mode == 'viterbi':
-            return crf_viterbi_accuracy
-        else:
-            return crf_marginal_accuracy
-
-    @property
-    def viterbi_acc(self):
-        warnings.warn('CRF.viterbi_acc is deprecated and it might '
-                      'be removed in the future. Please '
-                      'use metrics.viterbi_acc instead.')
-        return crf_viterbi_accuracy
-
-    @property
-    def marginal_acc(self):
-        warnings.warn('CRF.moarginal_acc is deprecated and it '
-                      'might be removed in the future. Please '
-                      'use metrics.marginal_acc instead.')
-        return crf_marginal_accuracy
+    # @property
+    # def loss_function(self):
+    #     warnings.warn('CRF.loss_function is deprecated '
+    #                   'and it might be removed in the future. Please '
+    #                   'use losses.crf_loss instead.')
+    #     return crf_losses
+    #
+    # @property
+    # def accuracy(self):
+    #     warnings.warn('CRF.accuracy is deprecated and it '
+    #                   'might be removed in the future. Please '
+    #                   'use metrics.crf_accuracy')
+    #     if self.test_mode == 'viterbi':
+    #         return crf_viterbi_accuracy
+    #     else:
+    #         return crf_marginal_accuracy
+    #
+    # @property
+    # def viterbi_acc(self):
+    #     warnings.warn('CRF.viterbi_acc is deprecated and it might '
+    #                   'be removed in the future. Please '
+    #                   'use metrics.viterbi_acc instead.')
+    #     return crf_viterbi_accuracy
+    #
+    # @property
+    # def marginal_acc(self):
+    #     warnings.warn('CRF.moarginal_acc is deprecated and it '
+    #                   'might be removed in the future. Please '
+    #                   'use metrics.marginal_acc instead.')
+    #     return crf_marginal_accuracy
 
     @staticmethod
     def softmaxNd(x, axis=-1):

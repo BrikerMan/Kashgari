@@ -20,6 +20,7 @@ from kashgari.tasks.seq_labeling.base_model import SequenceLabelingModel
 
 
 class BLSTMCRFModel(SequenceLabelingModel):
+    __architect_name__ = 'BLSTMCRFModel'
     __base_hyper_parameters__ = {
         'lstm_layer': {
             'units': 256,
@@ -35,18 +36,16 @@ class BLSTMCRFModel(SequenceLabelingModel):
         base_model = self.embedding.model
         blstm_layer = Bidirectional(LSTM(**self.hyper_parameters['lstm_layer']))(base_model.output)
         dense_layer = Dense(128, activation='tanh')(blstm_layer)
-        crf = CRF(len(self.label2idx), sparse_target=True)
+        crf = CRF(len(self.label2idx), sparse_target=False)
         crf_layer = crf(dense_layer)
-
         model = Model(base_model.inputs, crf_layer)
+        # model.compile(loss=crf_loss,
+        #               optimizer='adam',
+        #               metrics=[crf.accuracy])
         model.compile(loss=crf_loss,
-                      optimizer='adam',
-                      metrics=[crf.accuracy])
+                      optimizer='adam')
         self.model = model
         self.model.summary()
-        self.model_info['loss'] = {
-            'name': 'crf'
-        }
 
 
 if __name__ == "__main__":

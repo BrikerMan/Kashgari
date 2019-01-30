@@ -10,30 +10,28 @@
 @time: 2019-01-21
 
 """
-import os
 import random
-import json
-import pathlib
 import logging
 from typing import Tuple, Dict
 
 import numpy as np
-import keras
-from keras.models import Model
 from keras.preprocessing import sequence
 from keras.utils import to_categorical
-from seqeval.metrics import f1_score, classification_report, recall_score
+from seqeval.metrics import classification_report
 
 import kashgari.macros as k
 from kashgari.utils import helper
-from kashgari.embeddings import CustomEmbedding, BaseEmbedding
 from kashgari.type_hints import *
 
-from kashgari.utils.crf import CRF, crf_loss
 from kashgari.tasks.base import BaseModel
+from kashgari.embeddings import BaseEmbedding
 
 
 class SequenceLabelingModel(BaseModel):
+
+    def __init__(self, embedding: BaseEmbedding = None, hyper_parameters: Dict = None, **kwargs):
+        super(SequenceLabelingModel, self).__init__(embedding, hyper_parameters, **kwargs)
+        self.task = 'sequence_labeling'
 
     @property
     def label2idx(self) -> Dict[str, int]:
@@ -125,8 +123,8 @@ class SequenceLabelingModel(BaseModel):
     def get_data_generator(self,
                            x_data: List[List[str]],
                            y_data: List[List[str]],
-                           batch_size: int = 64,
-                           is_bert: bool = False):
+                           batch_size: int = 64):
+        is_bert = self.embedding.embedding_type == 'bert'
         while True:
             page_list = list(range(len(x_data) // batch_size + 1))
             random.shuffle(page_list)
@@ -218,8 +216,7 @@ class SequenceLabelingModel(BaseModel):
 
         train_generator = self.get_data_generator(x_train,
                                                   y_train,
-                                                  batch_size,
-                                                  is_bert=self.embedding.is_bert)
+                                                  batch_size)
 
         if fit_kwargs is None:
             fit_kwargs = {}
@@ -227,8 +224,7 @@ class SequenceLabelingModel(BaseModel):
         if x_validate:
             validation_generator = self.get_data_generator(x_validate,
                                                            y_validate,
-                                                           batch_size,
-                                                           is_bert=self.embedding.is_bert)
+                                                           batch_size)
 
             fit_kwargs['validation_data'] = validation_generator
             fit_kwargs['validation_steps'] = len(x_validate) // batch_size
@@ -291,7 +287,6 @@ class SequenceLabelingModel(BaseModel):
                 logging.debug('x      : {}'.format(x_data[index]))
                 logging.debug('y_true : {}'.format(y_true[index]))
                 logging.debug('y_pred : {}'.format(y_pred[index]))
-
         report = classification_report(y_true, y_pred, digits=digits)
         print(classification_report(y_true, y_pred, digits=digits))
         return report

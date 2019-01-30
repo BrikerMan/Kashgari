@@ -21,6 +21,7 @@ from kashgari.tasks.seq_labeling.base_model import SequenceLabelingModel
 
 
 class BLSTMModel(SequenceLabelingModel):
+    __architect_name__ = 'BLSTMModel'
     __base_hyper_parameters__ = {
         'lstm_layer': {
             'units': 256,

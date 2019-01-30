@@ -20,12 +20,16 @@ from keras.utils import to_categorical
 from sklearn import metrics
 from sklearn.utils import class_weight as class_weight_calculte
 
-import kashgari.macros as k
+from kashgari import macros as k
 from kashgari.tasks.base import BaseModel
+from kashgari.embeddings import BaseEmbedding
 from kashgari.type_hints import *
 
 
 class ClassificationModel(BaseModel):
+
+    def __init__(self, embedding: BaseEmbedding = None, hyper_parameters: Dict = None, **kwargs):
+        super(ClassificationModel, self).__init__(embedding, hyper_parameters, **kwargs)
 
     @property
     def label2idx(self) -> Dict[str, int]:

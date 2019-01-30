@@ -13,7 +13,7 @@
 import json
 import logging
 import os
-from typing import Dict, Type
+from typing import Dict, Any
 
 import keras_bert
 import numpy as np
@@ -63,10 +63,27 @@ class BaseEmbedding(object):
         self.model_path = ''
         self._token2idx: Dict[str, int] = None
         self._idx2token: Dict[int, str] = None
-        self._is_bert = False
         self._model: Model = None
         self._kwargs = kwargs
         self.build(**kwargs)
+
+    def update(self, info: Dict[str, Any]):
+        self.name = info['name']
+        self.embedding_type = info['embedding_type']
+        self.embedding_size = info['embedding_size']
+        self._sequence_length = info['sequence_length']
+        self.model_path = info['model_path']
+        self._kwargs = info['kwargs']
+
+    def info(self):
+        return {
+            'embedding_type': self.embedding_type,
+            'name': self.name,
+            'embedding_size': self.embedding_size,
+            'sequence_length': self._sequence_length,
+            'model_path': self.model_path,
+            'kwargs': self._kwargs
+        }
 
     @property
     def token_count(self):
@@ -91,11 +108,7 @@ class BaseEmbedding(object):
 
     @property
     def is_bert(self):
-        return self._is_bert
-
-    @is_bert.setter
-    def is_bert(self, val):
-        self._is_bert = val
+        return self.embedding_type == 'bert'
 
     @token2idx.setter
     def token2idx(self, value):
@@ -274,7 +287,6 @@ class BERTEmbedding(BaseEmbedding):
 
     def build(self):
         self.embedding_type = 'bert'
-        self._is_bert = True
         url = self.pre_trained_models.get(self.model_key_map.get(self.name, self.name))
         self.model_path = helper.cached_path(self.model_key_map.get(self.name, self.name),
                                              url,
@@ -342,9 +354,10 @@ if __name__ == '__main__':
     from kashgari.utils.logger import init_logger
 
     init_logger()
-    embedding = BERTEmbedding('chinese_L-12_H-768_A-12', sequence_length=10)
+    embedding = WordEmbeddings('sgns.weibo.bigram.bz2', 10)
 
     sentence = '我 想 去 看 电影www'.split(' ')
+    print(embedding.__dict__)
 
     print(embedding.tokenize(sentence))
     print(embedding.tokenize([sentence]))
