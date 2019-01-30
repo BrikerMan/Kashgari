@@ -87,7 +87,7 @@ class BaseModel(object):
         if architect_name and 'CRF' in architect_name:
             custom_objects['CRF'] = CRF
             custom_objects['crf_loss'] = crf_loss
-            custom_objects['crf_viterbi_accuracy'] = crf_accuracy
+            custom_objects['crf_accuracy'] = crf_accuracy
 
         embedding = model_info.get('embedding')
 

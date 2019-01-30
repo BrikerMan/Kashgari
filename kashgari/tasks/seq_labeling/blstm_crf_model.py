@@ -10,11 +10,11 @@
 @time: 2019-01-23 17:02
 
 """
-from keras.layers import Dense, Bidirectional, Flatten
+from keras.layers import Dense, Bidirectional
 from keras.layers.recurrent import LSTM
 from keras.models import Model
 
-from kashgari.utils.crf import CRF, crf_loss
+from kashgari.utils.crf import CRF, crf_loss, crf_accuracy
 
 from kashgari.tasks.seq_labeling.base_model import SequenceLabelingModel
 
@@ -39,11 +39,9 @@ class BLSTMCRFModel(SequenceLabelingModel):
         crf = CRF(len(self.label2idx), sparse_target=False)
         crf_layer = crf(dense_layer)
         model = Model(base_model.inputs, crf_layer)
-        # model.compile(loss=crf_loss,
-        #               optimizer='adam',
-        #               metrics=[crf.accuracy])
         model.compile(loss=crf_loss,
-                      optimizer='adam')
+                      optimizer='adam',
+                      metrics=[crf_accuracy, 'acc'])
         self.model = model
         self.model.summary()
 
@@ -54,16 +52,16 @@ if __name__ == "__main__":
     init_logger()
     from kashgari.corpus import ChinaPeoplesDailyNerCorpus
 
-    # init_logger()
-    #
-    # x_train, y_train = ChinaPeoplesDailyNerCorpus.get_sequence_tagging_data()
-    # x_validate, y_validate = ChinaPeoplesDailyNerCorpus.get_sequence_tagging_data(data_type='validate')
+    init_logger()
+
+    x_train, y_train = ChinaPeoplesDailyNerCorpus.get_sequence_tagging_data()
+    x_validate, y_validate = ChinaPeoplesDailyNerCorpus.get_sequence_tagging_data(data_type='validate')
     x_test, y_test = ChinaPeoplesDailyNerCorpus.get_sequence_tagging_data(data_type='test')
-    #
-    # classifier = BLSTMCRFModel()
-    # classifier.fit(x_train, y_train, epochs=2)
-    # classifier.evaluate(x_validate, y_validate)
-    # classifier.evaluate(x_test, y_train)
+
+    tagger = BLSTMCRFModel()
+    tagger.fit(x_train, y_train, epochs=2)
+    tagger.evaluate(x_validate, y_validate)
+    tagger.evaluate(x_test, y_test, debug_info=True)
 
     model = BLSTMCRFModel.load_model('/Users/brikerman/Downloads/KashgariNER.output/model')
     model.evaluate(x_test, y_test, debug_info=True)
