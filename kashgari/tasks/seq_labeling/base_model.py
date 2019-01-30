@@ -277,7 +277,7 @@ class SequenceLabelingModel(BaseModel):
         else:
             return result[0]
 
-    def evaluate(self, x_data, y_data, batch_size=None, debug_info=False, digits=4) -> Tuple[float, float, Dict]:
+    def evaluate(self, x_data, y_data, batch_size=None, digits=4, debug_info=False) -> Tuple[float, float, Dict]:
         seq_length = [len(x) for x in x_data]
         tokenized_y = self.convert_labels_to_idx(y_data)
         padded_y = sequence.pad_sequences(tokenized_y,
@@ -286,7 +286,7 @@ class SequenceLabelingModel(BaseModel):
         y_true = self.convert_idx_to_labels(padded_y, seq_length)
         y_pred = self.predict(x_data, batch_size=batch_size)
         if debug_info:
-            for index in random.sample(list(range(len(x_data)))):
+            for index in random.sample(list(range(len(x_data))), 5):
                 logging.debug('------ sample {} ------'.format(index))
                 logging.debug('x      : {}'.format(x_data[index]))
                 logging.debug('y_true : {}'.format(y_true[index]))

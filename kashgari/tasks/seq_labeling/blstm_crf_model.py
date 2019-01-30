@@ -52,6 +52,7 @@ class BLSTMCRFModel(SequenceLabelingModel):
 if __name__ == "__main__":
     print("Hello world")
     from kashgari.utils.logger import init_logger
+    init_logger()
     from kashgari.corpus import ChinaPeoplesDailyNerCorpus
 
     # init_logger()
@@ -66,4 +67,4 @@ if __name__ == "__main__":
     # classifier.evaluate(x_test, y_train)
 
     model = BLSTMCRFModel.load_model('/Users/brikerman/Downloads/KashgariNER.output/model')
-    model.evaluate(x_test, y_test)
+    model.evaluate(x_test, y_test, debug_info=True)

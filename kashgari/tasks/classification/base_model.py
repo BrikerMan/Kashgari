@@ -201,8 +201,14 @@ class ClassificationModel(BaseModel):
         else:
             return labels[0]
 
-    def evaluate(self, x_data, y_data, batch_size=None, debug_info=False, digits=4) -> Tuple[float, float, Dict]:
+    def evaluate(self, x_data, y_data, batch_size=None, digits=4, debug_info=False) -> Tuple[float, float, Dict]:
         y_pred = self.predict(x_data, batch_size=batch_size)
         report = metrics.classification_report(y_data, y_pred, output_dict=True, digits=digits)
         print(metrics.classification_report(y_data, y_pred, digits=digits))
+        if debug_info:
+            for index in random.sample(list(range(len(x_data))), 5):
+                logging.debug('------ sample {} ------'.format(index))
+                logging.debug('x      : {}'.format(x_data[index]))
+                logging.debug('y      : {}'.format(y_data[index]))
+                logging.debug('y_pred : {}'.format(y_pred[index]))
         return report
