@@ -47,6 +47,10 @@ Kashgare is:
 * [Tutorial 2: Classification Model](docs/Tutorial_2_Classification.md)
 * [Tutorial 3: Sequence labeling Model](docs/Tutorial_3_Sequence_Labeling.md)
 
+### Chinese
+
+* [15分钟搭建中文文本分类模型](https://eliyar.biz/nlp_chinese_text_classification_in_15mins/)
+
 ## Quick start
 
 ### Requirements and Installation
