@@ -126,7 +126,7 @@ class SequenceLabelingModel(BaseModel):
                            batch_size: int = 64):
         is_bert = self.embedding.embedding_type == 'bert'
         while True:
-            page_list = list(range(len(x_data) // batch_size + 1))
+            page_list = list(range((len(x_data) // batch_size) + 1))
             random.shuffle(page_list)
             for page in page_list:
                 start_index = page * batch_size
