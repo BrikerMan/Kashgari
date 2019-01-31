@@ -6,7 +6,7 @@
 [![](https://img.shields.io/coveralls/github/BrikerMan/Kashgari.svg)](https://coveralls.io/github/BrikerMan/Kashgari)
 [![Issues](https://img.shields.io/github/issues/BrikerMan/Kashgari.svg)](https://github.com/BrikerMan/Kashgari/issues)
 ![Contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg)
-[![License: MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://opensource.org/licenses/MIT)
+![](https://img.shields.io/pypi/l/kashgari.svg?style=flat)
 [![](https://img.shields.io/pypi/dw/kashgari.svg)](https://pypi.org/project/kashgari/)
 
 Simple and powerful NLP framework, build your state-of-art model in 5 minutes.
