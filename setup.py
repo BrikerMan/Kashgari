@@ -21,7 +21,7 @@ DESCRIPTION = 'simple and powerful state-of-the-art NLP framework with pre-train
 URL = 'https://github.com/BrikerMan/Kashgari'
 EMAIL = 'eliyar917@gmail.com'
 AUTHOR = 'BrikerMan'
-LICENSE = 'MIT'
+LICENSE = 'Apache License 2.0'
 
 HERE = pathlib.Path(__file__).parent
 README = (HERE / "README.md").read_text()
@@ -58,7 +58,7 @@ setup(
     include_package_data=True,
     license=LICENSE,
     classifiers=[
-        'License :: OSI Approved :: MIT License',
+        'License :: OSI Approved :: Apache Software License',
         # 'Programming Language :: Python',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: Implementation :: CPython',
