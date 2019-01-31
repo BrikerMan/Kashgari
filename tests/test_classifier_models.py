@@ -56,7 +56,7 @@ class EmbeddingManager(object):
         if cls.bert_embedding is None:
             dir_path = os.path.dirname(os.path.realpath(__file__))
             bert_path = os.path.join(dir_path, 'data', 'test_bert_checkpoint')
-            cls.bert_embedding = BERTEmbedding(bert_path, sequence_length=SEQUENCE_LENGTH)
+            cls.bert_embedding = BERTEmbedding(bert_path, sequence_length=15)
             logging.info('bert_embedding seq len: {}'.format(cls.bert_embedding.sequence_length))
         return cls.bert_embedding
 
@@ -133,16 +133,16 @@ class TestBLSTMModelWithWord2Vec(TestBLSTMModelModel):
         cls.model = BLSTMModel(embedding)
 
 
-# class TestBLSTMModelWithBERT(TestBLSTMModelModel):
-#
-#     @classmethod
-#     def setUpClass(cls):
-#         cls.epochs = 1
-#         embedding = EmbeddingManager.get_bert()
-#         cls.model = BLSTMModel(embedding)
-#
-#     def test_save_and_load(self):
-#         super(TestBLSTMModelWithBERT, self).test_save_and_load()
+class TestBLSTMModelWithBERT(TestBLSTMModelModel):
+
+    @classmethod
+    def setUpClass(cls):
+        cls.epochs = 1
+        embedding = EmbeddingManager.get_bert()
+        cls.model = BLSTMModel(embedding)
+
+    def test_save_and_load(self):
+        super(TestBLSTMModelWithBERT, self).test_save_and_load()
 
 
 class TestCNNModel(TestBLSTMModelModel):
@@ -165,12 +165,12 @@ class TestCNNModelWithWord2Vec(TestBLSTMModelModel):
         cls.model = CNNModel(embedding)
 
 
-# class TestCNNModelWithBERT(TestBLSTMModelModel):
-#     @classmethod
-#     def setUpClass(cls):
-#         cls.epochs = 1
-#         embedding = EmbeddingManager.get_bert()
-#         TestCNNModelWithBERT.model = CNNModel(embedding)
+class TestCNNModelWithBERT(TestBLSTMModelModel):
+    @classmethod
+    def setUpClass(cls):
+        cls.epochs = 1
+        embedding = EmbeddingManager.get_bert()
+        TestCNNModelWithBERT.model = CNNModel(embedding)
 
 
 class TestLSTMCNNModel(TestBLSTMModelModel):
@@ -190,13 +190,13 @@ class TestLSTMCNNModelWithWord2Vec(TestBLSTMModelModel):
         cls.model = CNNLSTMModel(embedding)
 
 
-# class TestLSTMCNNModelWithBERT(TestBLSTMModelModel):
-#
-#     @classmethod
-#     def setUpClass(cls):
-#         cls.epochs = 1
-#         embedding = EmbeddingManager.get_bert()
-#         cls.model = CNNLSTMModel(embedding)
+class TestLSTMCNNModelWithBERT(TestBLSTMModelModel):
+
+    @classmethod
+    def setUpClass(cls):
+        cls.epochs = 1
+        embedding = EmbeddingManager.get_bert()
+        cls.model = CNNLSTMModel(embedding)
 
 
 if __name__ == "__main__":

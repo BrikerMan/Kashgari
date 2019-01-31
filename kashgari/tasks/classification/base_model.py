@@ -20,12 +20,16 @@ from keras.utils import to_categorical
 from sklearn import metrics
 from sklearn.utils import class_weight as class_weight_calculte
 
-import kashgari.macros as k
+from kashgari import macros as k
 from kashgari.tasks.base import BaseModel
+from kashgari.embeddings import BaseEmbedding
 from kashgari.type_hints import *
 
 
 class ClassificationModel(BaseModel):
+
+    def __init__(self, embedding: BaseEmbedding = None, hyper_parameters: Dict = None, **kwargs):
+        super(ClassificationModel, self).__init__(embedding, hyper_parameters, **kwargs)
 
     @property
     def label2idx(self) -> Dict[str, int]:
@@ -201,8 +205,14 @@ class ClassificationModel(BaseModel):
         else:
             return labels[0]
 
-    def evaluate(self, x_data, y_data, batch_size=None) -> Tuple[float, float, Dict]:
+    def evaluate(self, x_data, y_data, batch_size=None, digits=4, debug_info=False) -> Tuple[float, float, Dict]:
         y_pred = self.predict(x_data, batch_size=batch_size)
-        report = metrics.classification_report(y_data, y_pred, output_dict=True)
-        print(metrics.classification_report(y_data, y_pred))
+        report = metrics.classification_report(y_data, y_pred, output_dict=True, digits=digits)
+        print(metrics.classification_report(y_data, y_pred, digits=digits))
+        if debug_info:
+            for index in random.sample(list(range(len(x_data))), 5):
+                logging.debug('------ sample {} ------'.format(index))
+                logging.debug('x      : {}'.format(x_data[index]))
+                logging.debug('y      : {}'.format(y_data[index]))
+                logging.debug('y_pred : {}'.format(y_pred[index]))
         return report

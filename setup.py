@@ -46,7 +46,7 @@ required = [
 
 setup(
     name=NAME,
-    version='0.1.4',
+    version='0.1.5',
     description=DESCRIPTION,
     long_description=README,
     long_description_content_type="text/markdown",

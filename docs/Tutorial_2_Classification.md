@@ -2,9 +2,9 @@
 
 Kashgari provides `CNN_Model`, `CNN_LSTM_Model` and `BLSTM_Model` for text classification, All classification models inherit from the `ClassificationModel`. You could easily switch from one model to another just by changing one line of code.
 
-Also it is very easy to customize your own model by using the ClassificationModel class. And all the models could build with Word2vec embedding, BERT embedding or just an empty embedding layer.
+Also, it is very easy to customize your own model by using the `ClassificationModel` class. And all the models could build with Word2vec embedding, BERT embedding or just an empty embedding layer.
 
-Here is a real life example of how to train and save on your own corpus.
+Here is a real-life example of how to train and save on your own corpus.
 
 ```python
 from kashgari.utils.logger import init_logger
@@ -53,7 +53,7 @@ model = CNNLSTMModel(hyper_parameters=hyper_params)
 
 ## Customize your own model
 
-It is very easy and straightforward to build you own customized model, just inherit the `ClassificationModel` and implement the `build_model()` function.
+It is very easy and straightforward to build your own customized model, just inherit the `ClassificationModel` and implement the `build_model()` function.
 
 ```python
 from keras.layers import LSTM, Dense, Dropout

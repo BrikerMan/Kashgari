@@ -18,6 +18,7 @@ from kashgari.tasks.classification.base_model import ClassificationModel
 
 
 class CNNModel(ClassificationModel):
+    __architect_name__ = 'CNNModel'
     __base_hyper_parameters__ = {
         'conv1d_layer': {
             'filters': 128,

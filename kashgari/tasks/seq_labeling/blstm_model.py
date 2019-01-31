@@ -21,6 +21,7 @@ from kashgari.tasks.seq_labeling.base_model import SequenceLabelingModel
 
 
 class BLSTMModel(SequenceLabelingModel):
+    __architect_name__ = 'BLSTMModel'
     __base_hyper_parameters__ = {
         'lstm_layer': {
             'units': 256,
@@ -59,7 +60,6 @@ class BLSTMModel(SequenceLabelingModel):
 if __name__ == '__main__':
     import random
     from keras.callbacks import ModelCheckpoint
-    from kashgari.embeddings import WordEmbeddings
     from kashgari.corpus import ChinaPeoplesDailyNerCorpus
 
     x_train, y_train = ChinaPeoplesDailyNerCorpus.get_sequence_tagging_data()

@@ -12,7 +12,7 @@
 """
 import logging
 
-from keras.layers import Dense, Conv1D, MaxPooling1D, TimeDistributed, Activation
+from keras.layers import Dense, Conv1D, TimeDistributed, Activation
 from keras.layers.recurrent import LSTM
 from keras.models import Model
 
@@ -20,6 +20,7 @@ from kashgari.tasks.seq_labeling.base_model import SequenceLabelingModel
 
 
 class CNNLSTMModel(SequenceLabelingModel):
+    __architect_name__ = 'CNNLSTMModel'
     __base_hyper_parameters__ = {
         'conv_layer': {
             'filters': 32,

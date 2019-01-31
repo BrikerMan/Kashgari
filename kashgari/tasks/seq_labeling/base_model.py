@@ -10,30 +10,28 @@
 @time: 2019-01-21
 
 """
-import os
 import random
-import json
-import pathlib
 import logging
 from typing import Tuple, Dict
 
 import numpy as np
-import keras
-from keras.models import Model
 from keras.preprocessing import sequence
 from keras.utils import to_categorical
-from seqeval.metrics import f1_score, classification_report, recall_score
+from seqeval.metrics import classification_report
 
 import kashgari.macros as k
 from kashgari.utils import helper
-from kashgari.embeddings import CustomEmbedding, BaseEmbedding
 from kashgari.type_hints import *
 
-from kashgari.utils.crf import CRF, crf_loss
 from kashgari.tasks.base import BaseModel
+from kashgari.embeddings import BaseEmbedding
 
 
 class SequenceLabelingModel(BaseModel):
+
+    def __init__(self, embedding: BaseEmbedding = None, hyper_parameters: Dict = None, **kwargs):
+        super(SequenceLabelingModel, self).__init__(embedding, hyper_parameters, **kwargs)
+        self.task = 'sequence_labeling'
 
     @property
     def label2idx(self) -> Dict[str, int]:
@@ -125,8 +123,8 @@ class SequenceLabelingModel(BaseModel):
     def get_data_generator(self,
                            x_data: List[List[str]],
                            y_data: List[List[str]],
-                           batch_size: int = 64,
-                           is_bert: bool = False):
+                           batch_size: int = 64):
+        is_bert = self.embedding.embedding_type == 'bert'
         while True:
             page_list = list(range(len(x_data) // batch_size + 1))
             random.shuffle(page_list)
@@ -144,10 +142,10 @@ class SequenceLabelingModel(BaseModel):
 
                 padded_x = sequence.pad_sequences(tokenized_x,
                                                   maxlen=self.embedding.sequence_length,
-                                                  padding='post')
+                                                  padding='post', truncating='post')
                 padded_y = sequence.pad_sequences(tokenized_y,
                                                   maxlen=self.embedding.sequence_length,
-                                                  padding='post')
+                                                  padding='post', truncating='post')
 
                 one_hot_y = to_categorical(padded_y, num_classes=len(self.label2idx))
 
@@ -218,8 +216,7 @@ class SequenceLabelingModel(BaseModel):
 
         train_generator = self.get_data_generator(x_train,
                                                   y_train,
-                                                  batch_size,
-                                                  is_bert=self.embedding.is_bert)
+                                                  batch_size)
 
         if fit_kwargs is None:
             fit_kwargs = {}
@@ -227,8 +224,7 @@ class SequenceLabelingModel(BaseModel):
         if x_validate:
             validation_generator = self.get_data_generator(x_validate,
                                                            y_validate,
-                                                           batch_size,
-                                                           is_bert=self.embedding.is_bert)
+                                                           batch_size)
 
             fit_kwargs['validation_data'] = validation_generator
             fit_kwargs['validation_steps'] = len(x_validate) // batch_size
@@ -238,33 +234,59 @@ class SequenceLabelingModel(BaseModel):
                                  epochs=epochs,
                                  **fit_kwargs)
 
-    def predict(self, sentence: Union[List[str], List[List[str]]], batch_size=None):
+    def predict(self,
+                sentence: Union[List[str], List[List[str]]],
+                batch_size=None,
+                convert_to_labels=True):
+        """
+        predict with model
+        :param sentence: input for predict, accept a single sentence as type List[str] or
+                         list of sentence as List[List[str]]
+        :param batch_size: predict batch_size
+        :param convert_to_labels: if True, return labels or return label idxs
+        :return:
+        """
         tokens = self.embedding.tokenize(sentence)
         is_list = not isinstance(sentence[0], str)
         if is_list:
             seq_length = [len(item) for item in sentence]
             padded_tokens = sequence.pad_sequences(tokens,
                                                    maxlen=self.embedding.sequence_length,
-                                                   padding='post')
+                                                   padding='post', truncating='post')
         else:
             seq_length = [len(sentence)]
             padded_tokens = sequence.pad_sequences([tokens],
                                                    maxlen=self.embedding.sequence_length,
-                                                   padding='post')
+                                                   padding='post', truncating='post')
         if self.embedding.is_bert:
             x = [padded_tokens, np.zeros(shape=(len(padded_tokens), self.embedding.sequence_length))]
         else:
             x = padded_tokens
         predict_result = self.model.predict(x, batch_size=batch_size).argmax(-1)
-        labels = self.convert_idx_to_labels(predict_result, seq_length)
+        if convert_to_labels:
+            result = self.convert_idx_to_labels(predict_result, seq_length)
+        else:
+            result = predict_result
 
         if is_list:
-            return labels
+            return result
         else:
-            return labels[0]
+            return result[0]
 
-    def evaluate(self, x_data, y_data, batch_size=None) -> Tuple[float, float, Dict]:
+    def evaluate(self, x_data, y_data, batch_size=None, digits=4, debug_info=False) -> Tuple[float, float, Dict]:
+        seq_length = [len(x) for x in x_data]
+        tokenized_y = self.convert_labels_to_idx(y_data)
+        padded_y = sequence.pad_sequences(tokenized_y,
+                                          maxlen=self.embedding.sequence_length,
+                                          padding='post', truncating='post')
+        y_true = self.convert_idx_to_labels(padded_y, seq_length)
         y_pred = self.predict(x_data, batch_size=batch_size)
-        report = classification_report(y_data, y_pred)
-        print(classification_report(y_data, y_pred))
+        if debug_info:
+            for index in random.sample(list(range(len(x_data))), 5):
+                logging.debug('------ sample {} ------'.format(index))
+                logging.debug('x      : {}'.format(x_data[index]))
+                logging.debug('y_true : {}'.format(y_true[index]))
+                logging.debug('y_pred : {}'.format(y_pred[index]))
+        report = classification_report(y_true, y_pred, digits=digits)
+        print(classification_report(y_true, y_pred, digits=digits))
         return report

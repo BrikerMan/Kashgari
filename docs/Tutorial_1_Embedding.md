@@ -1,19 +1,19 @@
 # Tutorial 1: Word Embeddings
 
-Kashgari provide classic Word2vec embedding and BERT embedding to embed the words in sentences.
+Kashgari provides classic Word2vec embedding and BERT embedding for embedding the words in sentences.
 
 
 ## Embeddings
 
-All word embedding classes inherit from the `BaseEmbedding` class and implement the `embed()` to embed your text and `model` property which you need to fine-tune a keras model. This mean you for most users of Kashgari don't, the complexity of different embeddings remains hidden behind this interface. 
+All word embedding classes inherit from the `BaseEmbedding` class and implement the `embed()` to embed your text and `model` property which you need to fine-tune a keras model. This means you for most users of Kashgari don't, the complexity of different embeddings remains hidden behind this interface. 
 
-All embeddings produced with kashgari embed method is a numpy array with fixed shape, so they can be immediately used for training and fine-tuning. Or you could use the `embedding.model` property which provides a functional keras model, and add your layer to this model.
+All embeddings produced with kashgari embed method is a numpy array with a fixed shape so that they could be immediately used for training and fine-tuning. Or you could use the `embedding.model`  property which provides a functional keras model, and adds your layer to this model.
 
 ## Classic Word Embedding
 
 Classic word embeddings are static and word-level, meaning that each distinct word gets exactly one pre-computed embedding. Most embeddings fall under this class, including the popular GloVe or Komnios embeddings. 
 
-Simply instantiate the WordEmbeddings class and pass a string identifier or file path of the embedding you wish to load.
+Just instantiate the WordEmbeddings class and pass a string identifier or file path of the embedding you wish to load.
 
 ```python
 >>> from kashgari.utils.logger import init_logger
@@ -65,7 +65,7 @@ Here is the list of embedding id, Thanks [Embedding/Chinese-Word-Vectors](https:
 | sgns.weibo.bigram | Chinese | Sina Weibo Word + Ngram |
 | sgns.weibo.bigram-char | Chinese | Sina Weibo Word + Character + Ngram |
 
-Now, this is the example of how to use the `model` property to fine-tune a model.
+Now, this is an example of how to use the `model` property to fine-tune a model.
 
 ```python
 >>> from keras.layers import Dense
@@ -111,7 +111,7 @@ _________________________________________________________________
 
 [BERT embeddings](https://arxiv.org/pdf/1810.04805.pdf) were developed by Devlin et al. (2018) and are a different kind of powerful word embedding based on a bidirectional transformer architecture.
 Kashgari is using the implementation of [CyberZHG](https://github.com/CyberZHG/keras-bert).
-The embeddings itself are wrapped into our simple embedding interface, so that they can be used like any other
+The embeddings itself are wrapped into our simple embedding interface so that they can be used like any other
 embedding.
 
 ```python
