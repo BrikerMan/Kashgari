@@ -9,13 +9,13 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://opensource.org/licenses/MIT)
 [![](https://img.shields.io/pypi/dw/kashgari.svg)](https://pypi.org/project/kashgari/)
 
-Simple and powerful NLP framework, build your own state-of-art model in 5 minutes.
+Simple and powerful NLP framework, build your state-of-art model in 5 minutes.
 
 Kashgare is:
 
-* **Human-friendly framework**. Kashgare's code is very simple, well documented and tested, which makes it very easy to understand and modify.
-* **Powerful and simple NLP library**. Kashgare allows you to apply state-of-the-art natural language processing (NLP) models to your text, such as named entity recognition (NER), part-of-speech tagging (PoS) and classification.
-* **A Keras NLP framework**. Kashgare builds directly on Keras, making it easy to train your own models and experiment with new approaches using different embeddings and model structure.
+* **Human-friendly**. Kashgare's code is straightforward, well documented and tested, which makes it very easy to understand and modify.
+* **Powerful and simple**. Kashgare allows you to apply state-of-the-art natural language processing (NLP) models to your text, such as named entity recognition (NER), part-of-speech tagging (PoS) and classification.
+* **Keras based**. Kashgare builds directly on Keras, making it easy to train your models and experiment with new approaches using different embeddings and model structure.
 
  
 ## Feature List 
@@ -37,9 +37,9 @@ Kashgare is:
 * Customize Model
 
 ## Roadmap
-* ELMo Embedding
-* Pre-trained models
-* More model structure
+* [ ] ELMo Embedding
+* [ ] Pre-trained models
+* [ ] More model structure
 
 ## Tutorials
 
@@ -133,7 +133,7 @@ train_x, train_y = SMP2017ECDTClassificationCorpus.get_classification_data()
 model.fit(train_x, train_y)
 ```
 
-### Run with Word2vec embedded
+### Run with Word2vec Embedding
 
 ```python
 from kashgari.embeddings import WordEmbeddings
@@ -147,7 +147,7 @@ model.fit(train_x, train_y)
 ```
 
 ## Reference
-This library is inspired and reference following framework and papers.
+This library is inspired and references following frameworks and papers.
 
 * [flair - A very simple framework for state-of-the-art Natural Language Processing (NLP)](https://github.com/zalandoresearch/flair)
 * [anago - Bidirectional LSTM-CRF and ELMo for Named-Entity Recognition, Part-of-Speech Tagging](https://github.com/Hironsan/anago)
