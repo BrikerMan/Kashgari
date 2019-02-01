@@ -40,7 +40,7 @@ Kashgare is:
 
 | Task                     | Language | Dataset                   | Score          | Detail                                                                         |
 | ------------------------ | -------- | ------------------------- | -------------- | ------------------------------------------------------------------------------ |
-| Named Entity Recognition | Chinese  | People's Daily Ner Corpus | **92.20** (F1) | [基于 BERT 的中文命名实体识别（NER)](https://eliyar.biz/nlp_chinese_bert_ner/) |
+| Named Entity Recognition | Chinese  | People's Daily Ner Corpus | **92.20** (F1) | [基于 BERT 的中文命名实体识别](https://eliyar.biz/nlp_chinese_bert_ner/) |
 
 ## Roadmap
 * [ ] ELMo Embedding
