@@ -36,6 +36,12 @@ Kashgare is:
 * GPU Support
 * Customize Model
 
+## Performance
+
+| Task                     | Language | Dataset                   | Score          | Detail                                                                         |
+| ------------------------ | -------- | ------------------------- | -------------- | ------------------------------------------------------------------------------ |
+| Named Entity Recognition | Chinese  | People's Daily Ner Corpus | **92.20** (F1) | [基于 BERT 的中文命名实体识别（NER)](https://eliyar.biz/nlp_chinese_bert_ner/) |
+
 ## Roadmap
 * [ ] ELMo Embedding
 * [ ] Pre-trained models
@@ -50,6 +56,7 @@ Kashgare is:
 ### Chinese
 
 * [15分钟搭建中文文本分类模型](https://eliyar.biz/nlp_chinese_text_classification_in_15mins/)
+* [基于 BERT 的中文命名实体识别（NER)](https://eliyar.biz/nlp_chinese_bert_ner/)
 
 ## Quick start
 
