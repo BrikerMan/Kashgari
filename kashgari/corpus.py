@@ -177,8 +177,9 @@ class ChinaPeoplesDailyNerCorpus(object):
     __corpus_name__ = 'corpus/china-people-daily-ner-corpus'
     __zip_file__name = 'corpus/china-people-daily-ner-corpus.tar.gz'
 
-    __desc__ = """    Download from NLPCC 2018 Task4 dataset
-        """
+    __desc__ = """
+    https://github.com/zjy-ucas/ChineseNER/
+    """
 
     @classmethod
     def get_sequence_tagging_data(cls,

@@ -237,13 +237,15 @@ class SequenceLabelingModel(BaseModel):
     def predict(self,
                 sentence: Union[List[str], List[List[str]]],
                 batch_size=None,
-                convert_to_labels=True):
+                convert_to_labels=True,
+                debug_info=False):
         """
         predict with model
         :param sentence: input for predict, accept a single sentence as type List[str] or
                          list of sentence as List[List[str]]
         :param batch_size: predict batch_size
         :param convert_to_labels: if True, return labels or return label idxs
+        :param debug_info: print debug info using logging.debug when True
         :return:
         """
         tokens = self.embedding.tokenize(sentence)
@@ -262,9 +264,17 @@ class SequenceLabelingModel(BaseModel):
             x = [padded_tokens, np.zeros(shape=(len(padded_tokens), self.embedding.sequence_length))]
         else:
             x = padded_tokens
-        predict_result = self.model.predict(x, batch_size=batch_size).argmax(-1)
+
+        predict_result_prob = self.model.predict(x, batch_size=batch_size)
+        predict_result = predict_result_prob.argmax(-1)
+        if debug_info:
+            logging.info('input: {}'.format(x))
+            logging.info('output: {}'.format(predict_result_prob))
+            logging.info('output argmax: {}'.format(predict_result))
+
         if convert_to_labels:
             result = self.convert_idx_to_labels(predict_result, seq_length)
+            logging.info('output labels: {}'.format(result))
         else:
             result = predict_result
 
