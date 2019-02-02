@@ -183,7 +183,35 @@ class ClassificationModel(BaseModel):
                                  class_weight=class_weights,
                                  **fit_kwargs)
 
-    def predict(self, sentence: Union[List[str], List[List[str]]], batch_size=None):
+    def _format_output_dic(self, words: List[str], res: np.ndarray):
+        results = sorted(list(enumerate(res)), key=lambda x: -x[1])
+        candidates = []
+        for result in results:
+            if float(result[1]) > 0.01:
+                candidates.append({
+                    'name': self.convert_idx_to_label([result[0]])[0],
+                    'confidence': float(result[1]),
+                })
+        data = {
+            'words': words,
+            'class': candidates[0],
+            'class_candidates': candidates
+        }
+        return data
+
+    def predict(self,
+                sentence: Union[List[str], List[List[str]]],
+                batch_size=None,
+                output_dict=False,
+                debug_info=False) -> Union[List[str], str, List[Dict], Dict]:
+        """
+        predict with model
+        :param sentence: single sentence as List[str] or list of sentence as List[List[str]]
+        :param batch_size: predict batch_size
+        :param output_dict: return dict with result with confidence
+        :param debug_info: print debug info using logging.debug when True
+        :return:
+        """
         tokens = self.embedding.tokenize(sentence)
         is_list = not isinstance(sentence[0], str)
         if is_list:
@@ -198,12 +226,32 @@ class ClassificationModel(BaseModel):
             x = [padded_tokens, np.zeros(shape=(len(padded_tokens), self.embedding.sequence_length))]
         else:
             x = padded_tokens
-        predict_result = self.model.predict(x, batch_size=batch_size).argmax(-1)
-        labels = self.convert_idx_to_label(predict_result)
-        if is_list:
-            return labels
+        res = self.model.predict(x, batch_size=batch_size)
+        predict_result = res.argmax(-1)
+
+        if debug_info:
+            logging.info('input: {}'.format(x))
+            logging.info('output: {}'.format(res))
+            logging.info('output argmax: {}'.format(predict_result))
+
+        if output_dict:
+            if is_list:
+                words_list: List[List[str]] = sentence
+            else:
+                words_list: List[List[str]] = [sentence]
+            results = []
+            for index in range(len(words_list)):
+                results.append(self._format_output_dic(words_list[index], res[index]))
+            if is_list:
+                return results
+            else:
+                return results[0]
         else:
-            return labels[0]
+            results = self.convert_idx_to_label(predict_result)
+            if is_list:
+                return results
+            else:
+                return results[0]
 
     def evaluate(self, x_data, y_data, batch_size=None, digits=4, debug_info=False) -> Tuple[float, float, Dict]:
         y_pred = self.predict(x_data, batch_size=batch_size)

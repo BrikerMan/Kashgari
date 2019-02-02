@@ -18,6 +18,7 @@ import numpy as np
 from keras.preprocessing import sequence
 from keras.utils import to_categorical
 from seqeval.metrics import classification_report
+from seqeval.metrics.sequence_labeling import get_entities
 
 import kashgari.macros as k
 from kashgari.utils import helper
@@ -234,17 +235,37 @@ class SequenceLabelingModel(BaseModel):
                                  epochs=epochs,
                                  **fit_kwargs)
 
+    def _format_output_dic(self, words: List[str], tags: List[str], chunk_joiner: str):
+        chunks = get_entities(tags)
+        res = {
+            'words': words,
+            'entities': []
+        }
+        for chunk_type, chunk_start, chunk_end in chunks:
+            chunk_end += 1
+            entity = {
+                'text': chunk_joiner.join(words[chunk_start: chunk_end]),
+                'type': chunk_type,
+                # 'score': float(np.average(prob[chunk_start: chunk_end])),
+                'beginOffset': chunk_start,
+                'endOffset': chunk_end
+            }
+            res['entities'].append(entity)
+        return res
+
     def predict(self,
                 sentence: Union[List[str], List[List[str]]],
                 batch_size=None,
-                convert_to_labels=True,
+                output_dict=False,
+                chunk_joiner=' ',
                 debug_info=False):
         """
         predict with model
         :param sentence: input for predict, accept a single sentence as type List[str] or
                          list of sentence as List[List[str]]
         :param batch_size: predict batch_size
-        :param convert_to_labels: if True, return labels or return label idxs
+        :param output_dict: return dict with result with confidence
+        :param chunk_joiner: the char to join the chunks when output dict
         :param debug_info: print debug info using logging.debug when True
         :return:
         """
@@ -272,16 +293,26 @@ class SequenceLabelingModel(BaseModel):
             logging.info('output: {}'.format(predict_result_prob))
             logging.info('output argmax: {}'.format(predict_result))
 
-        if convert_to_labels:
-            result = self.convert_idx_to_labels(predict_result, seq_length)
-            logging.info('output labels: {}'.format(result))
+        result: List[List[str]] = self.convert_idx_to_labels(predict_result, seq_length)
+        if output_dict:
+            dict_list = []
+            if is_list:
+                sentence_list: List[List[str]] = sentence
+            else:
+                sentence_list: List[List[str]] = [sentence]
+            for index in range(len(sentence_list)):
+                dict_list.append(self._format_output_dic(sentence_list[index],
+                                                         result[index],
+                                                         chunk_joiner))
+            if is_list:
+                return dict_list
+            else:
+                return dict_list[0]
         else:
-            result = predict_result
-
-        if is_list:
-            return result
-        else:
-            return result[0]
+            if is_list:
+                return result
+            else:
+                return result[0]
 
     def evaluate(self, x_data, y_data, batch_size=None, digits=4, debug_info=False) -> Tuple[float, float, Dict]:
         seq_length = [len(x) for x in x_data]

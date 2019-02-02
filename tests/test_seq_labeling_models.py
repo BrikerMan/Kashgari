@@ -133,6 +133,7 @@ class TestCNNLSTMModel(unittest.TestCase):
         self.assertTrue(isinstance(self.model.predict(sentence)[0], str))
         self.assertTrue(isinstance(self.model.predict([sentence])[0], list))
         self.assertEqual(len(self.model.predict(sentence)), len(sentence))
+        self.model.predict(sentence, output_dict=True)
 
     def test_eval(self):
         self.test_fit()
