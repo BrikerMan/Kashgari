@@ -49,14 +49,17 @@ Kashgare is:
 
 ## Tutorials
 
+Here is a set of quick tutorials to get you started with the library:
+
 * [Tutorial 1: Word Embeddings](docs/Tutorial_1_Embedding.md)
 * [Tutorial 2: Classification Model](docs/Tutorial_2_Classification.md)
 * [Tutorial 3: Sequence labeling Model](docs/Tutorial_3_Sequence_Labeling.md)
 
-### Chinese
+There are also articles and posts that illustrate how to use Kashgari:
 
 * [15分钟搭建中文文本分类模型](https://eliyar.biz/nlp_chinese_text_classification_in_15mins/)
 * [基于 BERT 的中文命名实体识别（NER)](https://eliyar.biz/nlp_chinese_bert_ner/)
+* [Multi-Class Text Classification with Kashgari in 15 minutes](https://medium.com/@BrikerMan/multi-class-text-classification-with-kashgari-in-15mins-c3e744ce971d)
 
 ## Quick start
 
@@ -154,7 +157,7 @@ model.fit(train_x, train_y)
 ```
 
 ## Reference
-This library is inspired and references following frameworks and papers.
+This library is inspired by and references following frameworks and papers.
 
 * [flair - A very simple framework for state-of-the-art Natural Language Processing (NLP)](https://github.com/zalandoresearch/flair)
 * [anago - Bidirectional LSTM-CRF and ELMo for Named-Entity Recognition, Part-of-Speech Tagging](https://github.com/Hironsan/anago)
