@@ -62,6 +62,8 @@ from kashgari.tasks.classification import ClassificationModel
 
 
 class MyOwnModel(ClassificationModel):
+    __architect_name__ = 'MyOwnModel'
+
     def build_model(self):
         base_model = self.embedding.model
         lstm_layer = LSTM(100, return_sequences=True)(base_model.output)
