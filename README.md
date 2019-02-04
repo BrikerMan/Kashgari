@@ -5,7 +5,7 @@
 [![Travis](https://img.shields.io/travis/BrikerMan/Kashgari.svg)](https://travis-ci.org/BrikerMan/Kashgari)
 [![](https://img.shields.io/coveralls/github/BrikerMan/Kashgari.svg)](https://coveralls.io/github/BrikerMan/Kashgari)
 [![Issues](https://img.shields.io/github/issues/BrikerMan/Kashgari.svg)](https://github.com/BrikerMan/Kashgari/issues)
-![Contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg)
+[![Contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg)](CONTRIBUTING.md)
 ![](https://img.shields.io/pypi/l/kashgari.svg?style=flat)
 [![](https://img.shields.io/pypi/dw/kashgari.svg)](https://pypi.org/project/kashgari/)
 
@@ -155,6 +155,10 @@ model = CNNLSTMModel(bert_embedding)
 train_x, train_y = SMP2017ECDTClassificationCorpus.get_classification_data()
 model.fit(train_x, train_y)
 ```
+
+## Contributing
+
+Thanks for your interest in contributing! There are many ways to get involved; start with the [contributor guidelines](CONTRIBUTING.md) and then check these open issues for specific tasks.
 
 ## Reference
 This library is inspired by and references following frameworks and papers.
