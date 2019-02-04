@@ -103,6 +103,7 @@ class TestBLSTMModelModel(unittest.TestCase):
         assert isinstance(self.model.predict(sentence), str)
         assert isinstance(self.model.predict([sentence]), list)
         logging.info('test predict: {} -> {}'.format(sentence, self.model.predict(sentence)))
+        self.model.predict(sentence, output_dict=True)
 
     def test_eval(self):
         self.test_fit()

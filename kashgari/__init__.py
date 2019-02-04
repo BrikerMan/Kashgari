@@ -14,6 +14,9 @@ import kashgari.embeddings
 import kashgari.corpus
 import kashgari.tasks
 
+from kashgari.tasks import classification
+from kashgari.tasks import seq_labeling
+
 
 if __name__ == "__main__":
     print("Hello world")
