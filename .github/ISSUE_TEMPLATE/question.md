@@ -2,7 +2,7 @@
 name: Question
 about: Any question related to the usage of Kashgari
 title: "[Question]"
-labels: help wanted
+labels: question
 assignees: BrikerMan
 
 ---
