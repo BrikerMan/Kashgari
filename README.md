@@ -18,6 +18,7 @@ Kashgare is:
 * **Powerful and simple**. Kashgare allows you to apply state-of-the-art natural language processing (NLP) models to your text, such as named entity recognition (NER), part-of-speech tagging (PoS) and classification.
 * **Keras based**. Kashgare builds directly on Keras, making it easy to train your models and experiment with new approaches using different embeddings and model structure.
 * **Easy to fine-tune**. Kashgare build-in pre-trained BERT and Word2vec embedding models, which makes it very simple to fine-tune your model based on this embeddings.
+* **Fully scalable**. Kashgare provide a simple, fast, and scalable environment for fast experimentation.
  
 ## Feature List 
 
