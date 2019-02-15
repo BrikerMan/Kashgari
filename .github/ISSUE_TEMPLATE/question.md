@@ -1,7 +1,7 @@
 ---
 name: Question
 about: Any question related to the usage of Kashgari
-title: "[Question]"
+title: "[Question] "
 labels: question
 assignees: BrikerMan
 
