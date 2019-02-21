@@ -12,7 +12,7 @@
 
 """
 import pathlib
-
+from version import __version__
 from setuptools import find_packages, setup
 
 # Package meta-data.
@@ -46,7 +46,7 @@ required = [
 
 setup(
     name=NAME,
-    version='0.1.6',
+    version=__version__,
     description=DESCRIPTION,
     long_description=README,
     long_description_content_type="text/markdown",
