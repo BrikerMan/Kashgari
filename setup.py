@@ -28,7 +28,7 @@ README = (HERE / "README.md").read_text()
 
 required = [
     'Keras>=2.2.0',
-    'keras_bert',
+    'keras-bert==0.25.0',
     'h5py>=2.7.1',
     'keras-bert==0.25.0',
     'scikit-learn>=0.19.1',
