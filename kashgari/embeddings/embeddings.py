@@ -333,6 +333,8 @@ class CustomEmbedding(BaseEmbedding):
         :param embedding_size: embedding vector size, only need to set when using a CustomEmbedding
         :param kwargs: kwargs to pass to the method, func: `BaseEmbedding.build`
         """
+        if sequence_length is None or embedding_size is None:
+            raise ValueError('Must set sequence_length and sequence_length when using the CustomEmbedding layer')
         super(CustomEmbedding, self).__init__(name_or_path, sequence_length, embedding_size, **kwargs)
 
     def build(self, **kwargs):
