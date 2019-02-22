@@ -12,12 +12,17 @@
 
 """
 import pathlib
-from version import __version__
+
 from setuptools import find_packages, setup
+
+from version import __version__
 
 # Package meta-data.
 NAME = 'kashgari'
-DESCRIPTION = 'simple and powerful state-of-the-art NLP framework with pre-trained word2vec and bert embedding.'
+DESCRIPTION = 'Simple and powerful NLP framework, ' \
+              'build your state-of-art model in 5 minutes for ' \
+              'named entity recognition (NER), part-of-speech ' \
+              'tagging (PoS) and text classification tasks.'
 URL = 'https://github.com/BrikerMan/Kashgari'
 EMAIL = 'eliyar917@gmail.com'
 AUTHOR = 'BrikerMan'
