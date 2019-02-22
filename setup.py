@@ -12,7 +12,7 @@
 
 """
 import pathlib
-
+from version import __version__
 from setuptools import find_packages, setup
 
 # Package meta-data.
@@ -28,7 +28,7 @@ README = (HERE / "README.md").read_text()
 
 required = [
     'Keras>=2.2.0',
-    'keras_bert',
+    'keras-bert==0.25.0',
     'h5py>=2.7.1',
     'keras-bert==0.25.0',
     'scikit-learn>=0.19.1',
@@ -46,7 +46,7 @@ required = [
 
 setup(
     name=NAME,
-    version='0.1.6',
+    version=__version__,
     description=DESCRIPTION,
     long_description=README,
     long_description_content_type="text/markdown",

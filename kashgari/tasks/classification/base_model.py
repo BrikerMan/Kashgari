@@ -187,11 +187,11 @@ class ClassificationModel(BaseModel):
         results = sorted(list(enumerate(res)), key=lambda x: -x[1])
         candidates = []
         for result in results:
-            if float(result[1]) > 0.01:
-                candidates.append({
-                    'name': self.convert_idx_to_label([result[0]])[0],
-                    'confidence': float(result[1]),
-                })
+            candidates.append({
+                'name': self.convert_idx_to_label([result[0]])[0],
+                'confidence': float(result[1]),
+            })
+
         data = {
             'words': words,
             'class': candidates[0],
