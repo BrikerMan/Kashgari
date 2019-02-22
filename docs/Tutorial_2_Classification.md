@@ -89,3 +89,23 @@ loaded_model = MyOwnModel.load_model('./my_own_model')
 ## Use pre-embedding embedding layer
 
 see [Tutorial 1: Word Embeddings](Tutorial_1_Embedding.md) for detail. All models, include the customized one support using word2vec or BERT embedding as the embedding layer. 
+
+
+## Use callbacks
+
+Kashgari is based on keras so that you could use all of the [keras callbacks](https://keras.io/callbacks/) directly with Kashgari model. For example, here is how to visualize training with tensorboard.
+
+```python
+import keras
+
+tf_board_callback = keras.callbacks.TensorBoard(log_dir='./logs', update_freq=1000)
+
+
+model = CNNModel()
+model.fit(train_x,
+          train_y,
+          val_x,
+          val_y,
+          batch_size=100,
+          fit_kwargs={'callbacks': [tf_board_callback]})
+```
