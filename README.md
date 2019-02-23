@@ -25,18 +25,83 @@ Kashgare is:
 * Embedding support
     * Classic word2vec embedding
     * BERT embedding
-* Text Classification Models
-    * CNN Classification Model
-    * CNN LSTM Classification Model
-    * Bidirectional LSTM Classification Model
-* Text Labeling Models (NER, PoS)
-    * Bidirectional LSTM Labeling Model
-    * Bidirectional LSTM CRF Labeling Model
-    * CNN LSTM Labeling Model
+* Sequence(Text) Classification Models
+* Sequence(Text) Labeling Models (NER, PoS)
 * Model Training
 * Model Evaluate
 * GPU Support
 * Customize Model
+
+<table>
+		<tbody>
+			<tr>
+				<td valign="top">
+					<p>
+						<span>task</span>
+					</p>
+				</td>
+				<td valign="top">
+					<p>
+						<span>Models</span>
+					</p>
+				</td>
+			</tr>
+			<tr>
+				<td valign="top">
+					<p>
+						<span>Text Classification</span>
+					</p>
+				</td>
+				<td valign="top">
+					<p>
+						<span>* CNNModel</span>
+					</p>
+					<p>
+						<span>* BLSTMModel</span>
+					</p>
+					<p>
+						<span>* CNNLSTMModel</span>
+					</p>
+					<p>
+						<span>* AVCNNModel</span>
+					</p>
+					<p>
+						<span>* KMaxCNNModel</span>
+					</p>
+					<p>
+						<span>* RCNNModel</span>
+					</p>
+					<p>
+						<span>* AVRNNModel</span>
+					</p>
+					<p>
+						<span>* DropoutBGRUModel</span>
+					</p>
+					<p>
+						<span>* DropoutAVRNNModel</span>
+					</p>
+				</td>
+			</tr>
+			<tr>
+				<td valign="top">
+					<p>
+						<span>Sequence Labeling</span>
+					</p>
+				</td>
+				<td valign="top">
+					<p>
+						<span>* CNNLSTMModel</span>
+					</p>
+					<p>
+						<span>* BLSTMModel</span>
+					</p>
+					<p>
+						<span>* BLSTMCRFModel</span>
+					</p>
+				</td>
+			</tr>
+		</tbody>
+	</table>
 
 ## Performance
 
