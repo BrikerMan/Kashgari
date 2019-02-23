@@ -122,19 +122,19 @@ class TestBLSTMModelModel(unittest.TestCase):
         result = new_model.predict(sentence)
         assert isinstance(result, str)
 
-    def test_bert_embedding(self):
-        embedding = EmbeddingManager.get_bert()
-        bert_model = self.model_class(embedding)
-        bert_model.fit(train_x, train_y, epochs=1)
-        assert len(bert_model.label2idx) == 4
-        assert len(bert_model.token2idx) > 4
-
-        sentence = list('语言学包含了几种分支领域。')
-        assert isinstance(bert_model.predict(sentence), str)
-        assert isinstance(bert_model.predict([sentence]), list)
-        logging.info('test predict: {} -> {}'.format(sentence, self.model.predict(sentence)))
-        bert_model.predict(sentence, output_dict=True)
-        bert_model.predict(sentence, output_dict=False)
+    # def test_bert_embedding(self):
+    #     embedding = EmbeddingManager.get_bert()
+    #     bert_model = self.model_class(embedding)
+    #     bert_model.fit(train_x, train_y, epochs=1)
+    #     assert len(bert_model.label2idx) == 4
+    #     assert len(bert_model.token2idx) > 4
+    #
+    #     sentence = list('语言学包含了几种分支领域。')
+    #     assert isinstance(bert_model.predict(sentence), str)
+    #     assert isinstance(bert_model.predict([sentence]), list)
+    #     logging.info('test predict: {} -> {}'.format(sentence, self.model.predict(sentence)))
+    #     bert_model.predict(sentence, output_dict=True)
+    #     bert_model.predict(sentence, output_dict=False)
 
     def test_w2v_embedding(self):
         embedding = EmbeddingManager.get_w2v()

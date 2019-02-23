@@ -11,6 +11,6 @@
 
 """
 from .base_model import ClassificationModel
-from .models import BLSTMModel, CNNLSTMModel, CNNModel
-from .models import AVCNNModel, KMaxCNNModel, RCNNModel, AVRNNModel
-from .models import DropoutBGRUModel, DropoutAVRNNModel
+from kashgari.tasks.classification.models import BLSTMModel, CNNLSTMModel, CNNModel
+from kashgari.tasks.classification.models import AVCNNModel, KMaxCNNModel, RCNNModel, AVRNNModel
+from kashgari.tasks.classification.models import DropoutBGRUModel, DropoutAVRNNModel
