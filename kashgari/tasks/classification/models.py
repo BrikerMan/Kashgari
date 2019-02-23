@@ -579,7 +579,7 @@ class DropoutAVRNNModel(ClassificationModel):
         average = GlobalAveragePooling1D()(rnn_1)
 
         all_views = concatenate([last, maxpool, attn, average],
-                                **self.hyper_parameters)
+                                **self.hyper_parameters['all_views'])
         output = Dropout(**self.hyper_parameters['dropout_0'])(all_views)
         output = Dense(**self.hyper_parameters['dense'])(output)
         output = Dropout(**self.hyper_parameters['dropout_1'])(output)
