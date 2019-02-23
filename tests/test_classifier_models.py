@@ -18,7 +18,12 @@ import tempfile
 import unittest
 
 from kashgari.embeddings import WordEmbeddings, BERTEmbedding
-from kashgari.tasks.classification import BLSTMModel, CNNModel, CNNLSTMModel, ClassificationModel
+
+from kashgari.tasks.classification import BLSTMModel, CNNLSTMModel, CNNModel
+from kashgari.tasks.classification import AVCNNModel, KMaxCNNModel, RCNNModel, AVRNNModel
+from kashgari.tasks.classification import DropoutBGRUModel, DropoutAVRNNModel
+
+
 from kashgari.utils.logger import init_logger
 init_logger()
 
@@ -54,9 +59,7 @@ class EmbeddingManager(object):
     @classmethod
     def get_bert(cls):
         if cls.bert_embedding is None:
-            dir_path = os.path.dirname(os.path.realpath(__file__))
-            bert_path = os.path.join(dir_path, 'data', 'test_bert_checkpoint')
-            cls.bert_embedding = BERTEmbedding(bert_path, sequence_length=15)
+            cls.bert_embedding = BERTEmbedding('bert-base-chinese', sequence_length=15)
             logging.info('bert_embedding seq len: {}'.format(cls.bert_embedding.sequence_length))
         return cls.bert_embedding
 
@@ -68,12 +71,12 @@ class EmbeddingManager(object):
 
 
 class TestBLSTMModelModel(unittest.TestCase):
-    model: ClassificationModel = None
 
     @classmethod
     def setUpClass(cls):
-        cls.epochs = 3
-        cls.model = BLSTMModel()
+        cls.epochs = 2
+        cls.model_class = BLSTMModel
+        cls.model = cls.model_class()
 
     def test_build(self):
         self.model.fit(train_x, train_y, epochs=1)
@@ -119,86 +122,107 @@ class TestBLSTMModelModel(unittest.TestCase):
         result = new_model.predict(sentence)
         assert isinstance(result, str)
 
+    def test_bert_embedding(self):
+        embedding = EmbeddingManager.get_bert()
+        bert_model = self.model_class(embedding)
+        bert_model.fit(train_x, train_y, epochs=1)
+        assert len(bert_model.label2idx) == 4
+        assert len(bert_model.token2idx) > 4
+
+        sentence = list('语言学包含了几种分支领域。')
+        assert isinstance(bert_model.predict(sentence), str)
+        assert isinstance(bert_model.predict([sentence]), list)
+        logging.info('test predict: {} -> {}'.format(sentence, self.model.predict(sentence)))
+        bert_model.predict(sentence, output_dict=True)
+        bert_model.predict(sentence, output_dict=False)
+
+    def test_w2v_embedding(self):
+        embedding = EmbeddingManager.get_w2v()
+        w2v_model = self.model_class(embedding)
+        w2v_model.fit(train_x, train_y, epochs=1)
+        assert len(w2v_model.label2idx) == 4
+        assert len(w2v_model.token2idx) > 4
+
+        sentence = list('语言学包含了几种分支领域。')
+        assert isinstance(w2v_model.predict(sentence), str)
+        assert isinstance(w2v_model.predict([sentence]), list)
+        logging.info('test predict: {} -> {}'.format(sentence, self.model.predict(sentence)))
+        w2v_model.predict(sentence, output_dict=True)
+        w2v_model.predict(sentence, output_dict=False)
+
     @classmethod
     def tearDownClass(cls):
         del cls.model
         logging.info('tearDownClass {}'.format(cls))
 
 
-class TestBLSTMModelWithWord2Vec(TestBLSTMModelModel):
+class TestCNNLSTMModel(TestBLSTMModelModel):
 
     @classmethod
     def setUpClass(cls):
-        cls.epochs = 3
-        embedding = EmbeddingManager.get_w2v()
-        cls.model = BLSTMModel(embedding)
-
-
-class TestBLSTMModelWithBERT(TestBLSTMModelModel):
-
-    @classmethod
-    def setUpClass(cls):
-        cls.epochs = 1
-        embedding = EmbeddingManager.get_bert()
-        cls.model = BLSTMModel(embedding)
-
-    def test_save_and_load(self):
-        super(TestBLSTMModelWithBERT, self).test_save_and_load()
+        cls.epochs = 2
+        cls.model_class = CNNLSTMModel
+        cls.model = cls.model_class()
 
 
 class TestCNNModel(TestBLSTMModelModel):
 
     @classmethod
     def setUpClass(cls):
-        cls.epochs = 3
-        TestCNNModel.model = CNNModel()
-
-    def test_fit(self):
-        super(TestCNNModel, self).test_fit()
+        cls.epochs = 2
+        cls.model_class = CNNModel
+        cls.model = cls.model_class()
 
 
-class TestCNNModelWithWord2Vec(TestBLSTMModelModel):
+class TestAVCNNModel(TestBLSTMModelModel):
 
     @classmethod
     def setUpClass(cls):
-        cls.epochs = 3
-        embedding = EmbeddingManager.get_w2v()
-        cls.model = CNNModel(embedding)
+        cls.epochs = 2
+        cls.model_class = AVCNNModel
+        cls.model = cls.model_class()
 
 
-class TestCNNModelWithBERT(TestBLSTMModelModel):
-    @classmethod
-    def setUpClass(cls):
-        cls.epochs = 1
-        embedding = EmbeddingManager.get_bert()
-        TestCNNModelWithBERT.model = CNNModel(embedding)
-
-
-class TestLSTMCNNModel(TestBLSTMModelModel):
+class TestKMaxCNNModel(TestBLSTMModelModel):
 
     @classmethod
     def setUpClass(cls):
-        cls.epochs = 3
-        cls.model = CNNLSTMModel()
+        cls.epochs = 2
+        cls.model_class = KMaxCNNModel
+        cls.model = cls.model_class()
 
 
-class TestLSTMCNNModelWithWord2Vec(TestBLSTMModelModel):
-
-    @classmethod
-    def setUpClass(cls):
-        cls.epochs = 3
-        embedding = EmbeddingManager.get_w2v()
-        cls.model = CNNLSTMModel(embedding)
-
-
-class TestLSTMCNNModelWithBERT(TestBLSTMModelModel):
+class TestRCNNModel(TestBLSTMModelModel):
 
     @classmethod
     def setUpClass(cls):
-        cls.epochs = 1
-        embedding = EmbeddingManager.get_bert()
-        cls.model = CNNLSTMModel(embedding)
+        cls.epochs = 2
+        cls.model_class = RCNNModel
+        cls.model = cls.model_class()
 
 
-if __name__ == "__main__":
-    unittest.main()
+class TestAVRNNModel(TestBLSTMModelModel):
+
+    @classmethod
+    def setUpClass(cls):
+        cls.epochs = 2
+        cls.model_class = AVRNNModel
+        cls.model = cls.model_class()
+
+
+class TestDropoutBGRUModel(TestBLSTMModelModel):
+
+    @classmethod
+    def setUpClass(cls):
+        cls.epochs = 2
+        cls.model_class = DropoutBGRUModel
+        cls.model = cls.model_class()
+
+
+class TestDropoutAVRNNModel(TestBLSTMModelModel):
+
+    @classmethod
+    def setUpClass(cls):
+        cls.epochs = 2
+        cls.model_class = DropoutAVRNNModel
+        cls.model = cls.model_class()

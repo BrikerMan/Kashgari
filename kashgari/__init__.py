@@ -17,6 +17,8 @@ import kashgari.tasks
 from kashgari.tasks import classification
 from kashgari.tasks import seq_labeling
 
+from kashgari.macros import config
+
 
 if __name__ == "__main__":
     print("Hello world")
