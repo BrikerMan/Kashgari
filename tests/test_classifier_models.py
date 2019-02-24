@@ -111,12 +111,12 @@ class TestBLSTMModelModelBasic(unittest.TestCase):
         logging.info('tearDownClass {}'.format(cls))
 
 
-class TestAllBLSTMModelModel(unittest.TestCase):
+class TestAllCNNModelModel(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
         cls.epochs = 2
-        cls.model_class = BLSTMModel
+        cls.model_class = CNNModel
         cls.model = cls.model_class()
 
     def test_build(self):
