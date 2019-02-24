@@ -567,7 +567,7 @@ class DropoutAVRNNModel(ClassificationModel):
         base_model = self.embedding.model
         rnn_0 = Bidirectional(GRU(**self.hyper_parameters['rnn_0']))(base_model.output)
         rnn_dropout = SpatialDropout1D(**self.hyper_parameters['rnn_dropout'])(rnn_0)
-        rnn_1 = Bidirectional(GRU(**self.hyper_parameters['rnn_dropout']))(rnn_dropout)
+        rnn_1 = Bidirectional(GRU(**self.hyper_parameters['rnn_1']))(rnn_dropout)
 
         last = Lambda(lambda t: t[:, -1], name='last')(rnn_1)
         maxpool = GlobalMaxPooling1D()(rnn_1)
@@ -575,7 +575,7 @@ class DropoutAVRNNModel(ClassificationModel):
         average = GlobalAveragePooling1D()(rnn_1)
 
         all_views = concatenate([last, maxpool, attn, average],
-                **self.hyper_parameters)
+                **self.hyper_parameters['all_views'])
         output = Dropout(**self.hyper_parameters['dropout_0'])(all_views)
         output = Dense(**self.hyper_parameters['dense'])(output)
         output = Dropout(**self.hyper_parameters['dropout_1'])(output)
