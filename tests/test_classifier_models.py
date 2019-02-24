@@ -70,7 +70,48 @@ class EmbeddingManager(object):
         return cls.word2vec_embedding
 
 
-class TestBLSTMModelModel(unittest.TestCase):
+class TestBLSTMModelModelBasic(unittest.TestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        cls.epochs = 2
+        cls.model_class = BLSTMModel
+        cls.model = cls.model_class()
+
+    def test_fit(self):
+        self.model.fit(train_x, train_y, eval_x, eval_y, epochs=self.epochs)
+
+    def test_save_and_load(self):
+        self.test_fit()
+        model_path = os.path.join(tempfile.gettempdir(), 'kashgari_model', str(time.time()))
+        self.model.save(model_path)
+        new_model = BLSTMModel.load_model(model_path)
+        assert new_model is not None
+        sentence = list('语言学包含了几种分支领域。')
+        result = new_model.predict(sentence)
+        assert isinstance(result, str)
+
+    def test_w2v_embedding(self):
+        embedding = EmbeddingManager.get_w2v()
+        w2v_model = self.model_class(embedding)
+        w2v_model.fit(train_x, train_y, epochs=1)
+        assert len(w2v_model.label2idx) == 4
+        assert len(w2v_model.token2idx) > 4
+
+        sentence = list('语言学包含了几种分支领域。')
+        assert isinstance(w2v_model.predict(sentence), str)
+        assert isinstance(w2v_model.predict([sentence]), list)
+        logging.info('test predict: {} -> {}'.format(sentence, self.model.predict(sentence)))
+        w2v_model.predict(sentence, output_dict=True)
+        w2v_model.predict(sentence, output_dict=False)
+
+    @classmethod
+    def tearDownClass(cls):
+        del cls.model
+        logging.info('tearDownClass {}'.format(cls))
+
+
+class TestAllBLSTMModelModel(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
@@ -156,7 +197,7 @@ class TestBLSTMModelModel(unittest.TestCase):
         logging.info('tearDownClass {}'.format(cls))
 
 
-class TestCNNLSTMModel(TestBLSTMModelModel):
+class TestCNNLSTMModelBasic(TestBLSTMModelModelBasic):
 
     @classmethod
     def setUpClass(cls):
@@ -165,7 +206,7 @@ class TestCNNLSTMModel(TestBLSTMModelModel):
         cls.model = cls.model_class()
 
 
-class TestCNNModel(TestBLSTMModelModel):
+class TestCNNModelBasic(TestBLSTMModelModelBasic):
 
     @classmethod
     def setUpClass(cls):
@@ -174,7 +215,7 @@ class TestCNNModel(TestBLSTMModelModel):
         cls.model = cls.model_class()
 
 
-class TestAVCNNModel(TestBLSTMModelModel):
+class TestAVCNNModelBasic(TestBLSTMModelModelBasic):
 
     @classmethod
     def setUpClass(cls):
@@ -183,7 +224,7 @@ class TestAVCNNModel(TestBLSTMModelModel):
         cls.model = cls.model_class()
 
 
-class TestKMaxCNNModel(TestBLSTMModelModel):
+class TestKMaxCNNModelBasic(TestBLSTMModelModelBasic):
 
     @classmethod
     def setUpClass(cls):
@@ -192,7 +233,7 @@ class TestKMaxCNNModel(TestBLSTMModelModel):
         cls.model = cls.model_class()
 
 
-class TestRCNNModel(TestBLSTMModelModel):
+class TestRCNNModelBasic(TestBLSTMModelModelBasic):
 
     @classmethod
     def setUpClass(cls):
@@ -201,7 +242,7 @@ class TestRCNNModel(TestBLSTMModelModel):
         cls.model = cls.model_class()
 
 
-class TestAVRNNModel(TestBLSTMModelModel):
+class TestAVRNNModelBasic(TestBLSTMModelModelBasic):
 
     @classmethod
     def setUpClass(cls):
@@ -210,7 +251,7 @@ class TestAVRNNModel(TestBLSTMModelModel):
         cls.model = cls.model_class()
 
 
-class TestDropoutBGRUModel(TestBLSTMModelModel):
+class TestDropoutBGRUModelBasic(TestBLSTMModelModelBasic):
 
     @classmethod
     def setUpClass(cls):
@@ -219,7 +260,7 @@ class TestDropoutBGRUModel(TestBLSTMModelModel):
         cls.model = cls.model_class()
 
 
-class TestDropoutAVRNNModel(TestBLSTMModelModel):
+class TestDropoutAVRNNModelBasic(TestBLSTMModelModelBasic):
 
     @classmethod
     def setUpClass(cls):
