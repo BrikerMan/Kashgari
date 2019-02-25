@@ -41,7 +41,7 @@ class BLSTMCRFModel(SequenceLabelingModel):
         model = Model(base_model.inputs, crf_layer)
         model.compile(loss=crf_loss,
                       optimizer='adam',
-                      metrics=[crf_accuracy, 'acc'])
+                      metrics=[crf_accuracy])
         self.model = model
         self.model.summary()
 

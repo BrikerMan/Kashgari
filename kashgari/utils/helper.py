@@ -27,47 +27,28 @@ from kashgari.macros import DATA_PATH
 from kashgari.macros import STORAGE_HOST
 
 
-def h5f_generator(h5path: str,
-                  # indices: List[int],
-                  num_classes: int,
-                  batch_size: int = 128):
-    """
-    fit generator for h5 file
-    :param h5path: target f5file
-    :param num_classes: label counts to covert y label to one hot array
-    :param batch_size:
-    :return:
-    """
-
-    db = h5py.File(h5path, "r")
-    while True:
-        page_list = list(range(len(db['x']) // batch_size + 1))
-        random.shuffle(page_list)
-        for page in page_list:
-            x = db["x"][page: (page + 1) * batch_size]
-            y = to_categorical(db["y"][page: (page + 1) * batch_size],
-                               num_classes=num_classes,
-                               dtype=np.int)
-            yield (x, y)
-
-
-def classification_list_generator(x_data: List,
-                                  y_data: List,
-                                  sequence_lenght: int,
-                                  num_classes: int,
-                                  batch_size: int = 128):
-    assert len(x_data) == len(y_data)
-    while True:
-        page_list = list(range(len(x_data) // batch_size + 1))
-        random.shuffle(page_list)
-        for page in page_list:
-            x = x_data[page: (page + 1) * batch_size]
-            x = sequence.pad_sequences(x,
-                                       maxlen=sequence_lenght)
-            y = to_categorical(y_data[page: (page + 1) * batch_size],
-                               num_classes=num_classes,
-                               dtype=np.int)
-            yield (x, y)
+# def h5f_generator(h5path: str,
+#                   # indices: List[int],
+#                   num_classes: int,
+#                   batch_size: int = 128):
+#     """
+#     fit generator for h5 file
+#     :param h5path: target f5file
+#     :param num_classes: label counts to covert y label to one hot array
+#     :param batch_size:
+#     :return:
+#     """
+#
+#     db = h5py.File(h5path, "r")
+#     while True:
+#         page_list = list(range(len(db['x']) // batch_size + 1))
+#         random.shuffle(page_list)
+#         for page in page_list:
+#             x = db["x"][page: (page + 1) * batch_size]
+#             y = to_categorical(db["y"][page: (page + 1) * batch_size],
+#                                num_classes=num_classes,
+#                                dtype=np.int)
+#             yield (x, y)
 
 
 def unison_shuffled_copies(a, b):

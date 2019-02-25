@@ -36,6 +36,14 @@ PROCESSED_CORPUS_PATH = os.path.join(DATA_PATH, 'pre_processed')
 pathlib.Path(PROCESSED_CORPUS_PATH).mkdir(parents=True, exist_ok=True)
 
 
+class _Config(object):
+    def __init__(self):
+        self.use_CuDNN_cell = False
+
+
+config = _Config()
+
+
 class CustomEmbedding(object):
     def __init__(self, embedding_size=100):
         self.embedding_size = embedding_size
