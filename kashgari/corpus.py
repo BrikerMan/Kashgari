@@ -353,6 +353,71 @@ def _load_data_and_labels(filename, encoding='utf-8'):
     return sents, labels
 
 
+class NLPCCEmotionDetectionDataHelper(object):
+
+    class Post(object):
+        def __init__(self, content, happiness, sadness, anger, fear, surprise):
+            self.content = content
+            self.emotions = dict()
+            self.emotions['happiness'] = happiness == 'T'
+            self.emotions['sadness'] = sadness == 'T'
+            self.emotions['anger'] = anger == 'T'
+            self.emotions['fear'] = fear == 'T'
+            self.emotions['surprise'] = surprise == 'T'
+
+            self.tags = list()
+            for emotion in self.emotions.keys():
+                if self.emotions[emotion]:
+                    self.tags.append(emotion)
+            self.tags = tuple(self.tags)
+
+    @classmethod
+    def _read_posts(cls, file_path):
+        posts = []
+        post_begin = False
+        post = []
+        d = {}
+        # print fpath
+        for line in open(file_path, 'r', encoding='utf-8').read().splitlines():
+            line = line.strip()
+            if len(line) > 0:
+                if line[:10] == '<Tweet id=':
+                    post_begin = True
+                    continue
+                if line == '</Tweet>':
+                    post_begin = False
+                    content = post[5 * 3 + 1]
+                    happiness = post[1]
+                    sadness = post[1 * 3 + 1]
+                    anger = post[2 * 3 + 1]
+                    fear = post[3 * 3 + 1]
+                    surprise = post[4 * 3 + 1]
+
+                    if content not in d:
+                        posts.append(cls.Post(content, happiness, sadness, anger, fear, surprise))
+                        d[content] = 0
+
+                    post = []
+                    continue
+                if post_begin:
+                    post.append(line)
+        return posts
+
+    @classmethod
+    def get_classification_data(cls,
+                                file_path: str,
+                                shuffle: bool = True) -> Tuple[List[List[str]], List[Tuple]]:
+        posts = cls._read_posts(file_path)
+        x_data = []
+        y_data = []
+        for post in posts:
+            x_data.append(post.content.split(' '))
+            y_data.append(post.tags)
+        if shuffle:
+            x_data, y_data = helper.unison_shuffled_copies(x_data, y_data)
+        return x_data, y_data
+
+
 if __name__ == '__main__':
 
     # init_logger()

@@ -51,12 +51,23 @@ class CNNModel(ClassificationModel):
         conv1d_layer = Conv1D(**self.hyper_parameters['conv1d_layer'])(base_model.output)
         max_pool_layer = GlobalMaxPooling1D(**self.hyper_parameters['max_pool_layer'])(conv1d_layer)
         dense_1_layer = Dense(**self.hyper_parameters['dense_1_layer'])(max_pool_layer)
-        dense_2_layer = Dense(len(self.label2idx), **self.hyper_parameters['activation_layer'])(dense_1_layer)
+        if self.multi_label:
+            self._hyper_parameters_['activation_layer']['activation'] = 'sigmoid'
 
-        model = Model(base_model.inputs, dense_2_layer)
-        model.compile(loss='categorical_crossentropy',
+        activation_layer = Dense(len(self.label2idx), **self.hyper_parameters['activation_layer'])(dense_1_layer)
+
+        model = Model(base_model.inputs, activation_layer)
+
+        loss = 'categorical_crossentropy'
+        metrics = ['accuracy']
+
+        if self.multi_label:
+            loss = 'binary_crossentropy'
+            metrics = ['categorical_accuracy']
+
+        model.compile(loss=loss,
                       optimizer='adam',
-                      metrics=['accuracy'])
+                      metrics=metrics)
         self.model = model
         self.model.summary()
 
@@ -596,14 +607,25 @@ class DropoutAVRNNModel(ClassificationModel):
 
 
 if __name__ == '__main__':
-    from kashgari.corpus import TencentDingdangSLUCorpus
-    from kashgari.embeddings import WordEmbeddings, BERTEmbedding
+    import numpy as np
+    from kashgari.utils.logger import init_logger
+    from kashgari.corpus import NLPCCEmotionDetectionDataHelper
+    from kashgari.tasks.classification import CNNModel
+    from kashgari.embeddings import WordEmbeddings
 
-    train_x, train_y = TencentDingdangSLUCorpus.get_classification_data()
+    init_logger()
 
-    w2v = WordEmbeddings('sgns.weibo.bigram',
-                         sequence_length=15,
-                         limit=5000)
-    bert = BERTEmbedding('bert-base-chinese', sequence_length=15)
-    model = CNNModel(bert)
-    model.fit(train_x, train_y, epochs=1)
+    x, y = NLPCCEmotionDetectionDataHelper.get_classification_data('/Users/brikerman/Downloads/data/train.txt')
+
+    embedding = WordEmbeddings('sgns.weibo.bigram')
+    model = CNNModel(embedding, multi_label=True)
+    model.fit(x, y, epochs=10)
+    logging.info(model.multi_label_binarzier.classes_)
+    logging.info(model.multi_label_binarzier.fit_transform(np.array([('happiness', )])))
+    logging.info(model.multi_label_binarzier.fit_transform(np.array([['happiness']])))
+
+    for i in range(20):
+        logging.info('-------------------------------')
+        logging.info(f'y_true: {y[i]}')
+        logging.info(f'y_one_hut: {model.multi_label_binarzier.fit_transform([y[i]])}')
+        logging.info(f'y_pred: {model.predict(x[i], debug_info=True)}')

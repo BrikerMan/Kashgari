@@ -19,6 +19,7 @@ from keras.preprocessing import sequence
 from keras.utils import to_categorical
 from sklearn import metrics
 from sklearn.utils import class_weight as class_weight_calculte
+from sklearn.preprocessing import MultiLabelBinarizer
 
 from kashgari import macros as k
 from kashgari.tasks.base import BaseModel
@@ -28,8 +29,14 @@ from kashgari.type_hints import *
 
 class ClassificationModel(BaseModel):
 
-    def __init__(self, embedding: BaseEmbedding = None, hyper_parameters: Dict = None, **kwargs):
+    def __init__(self,
+                 embedding: BaseEmbedding = None,
+                 hyper_parameters: Dict = None,
+                 multi_label: bool = False,
+                 **kwargs):
         super(ClassificationModel, self).__init__(embedding, hyper_parameters, **kwargs)
+        self.multi_label = multi_label
+        self.multi_label_binarzier: MultiLabelBinarizer = None
 
     @property
     def label2idx(self) -> Dict[str, int]:
@@ -63,14 +70,20 @@ class ClassificationModel(BaseModel):
             y_data += y_validate
         self.embedding.build_token2idx_dict(x_data, 3)
 
-        label_set = set(y_data)
-        label2idx = {
-            k.PAD: 0,
-        }
+        if self.multi_label:
+            label_set = []
+            for i in y_data:
+                label_set += list(i)
+            label_set = set(label_set)
+        else:
+            label_set = set(y_data)
+
+        label2idx = {}
         for label in label_set:
             label2idx[label] = len(label2idx)
         self._label2idx = label2idx
         self._idx2label = dict([(val, key) for (key, val) in label2idx.items()])
+        self.multi_label_binarzier = MultiLabelBinarizer(classes=list(self.label2idx.keys()))
 
     def convert_label_to_idx(self, label: Union[List[str], str]) -> Union[List[int], int]:
         if isinstance(label, str):
@@ -102,14 +115,18 @@ class ClassificationModel(BaseModel):
                     target_y = y_data[0: batch_size]
 
                 tokenized_x = self.embedding.tokenize(target_x)
-                tokenized_y = self.convert_label_to_idx(target_y)
 
                 padded_x = sequence.pad_sequences(tokenized_x,
                                                   maxlen=self.embedding.sequence_length,
                                                   padding='post')
-                padded_y = to_categorical(tokenized_y,
-                                          num_classes=len(self.label2idx),
-                                          dtype=np.int)
+
+                if self.multi_label:
+                    padded_y = self.multi_label_binarzier.fit_transform(target_y)
+                else:
+                    tokenized_y = self.convert_label_to_idx(target_y)
+                    padded_y = to_categorical(tokenized_y,
+                                              num_classes=len(self.label2idx),
+                                              dtype=np.int)
                 if is_bert:
                     padded_x_seg = np.zeros(shape=(len(padded_x), self.embedding.sequence_length))
                     x_input_data = [padded_x, padded_x_seg]
@@ -203,6 +220,7 @@ class ClassificationModel(BaseModel):
                 sentence: Union[List[str], List[List[str]]],
                 batch_size=None,
                 output_dict=False,
+                multi_label_threshold=0.6,
                 debug_info=False) -> Union[List[str], str, List[Dict], Dict]:
         """
         predict with model
@@ -227,7 +245,14 @@ class ClassificationModel(BaseModel):
         else:
             x = padded_tokens
         res = self.model.predict(x, batch_size=batch_size)
-        predict_result = res.argmax(-1)
+        if self.multi_label:
+            if debug_info:
+                logging.info('raw output: {}'.format(x))
+            res[res >= multi_label_threshold] = 1
+            res[res < multi_label_threshold] = 0
+            predict_result = res
+        else:
+            predict_result = res.argmax(-1)
 
         if debug_info:
             logging.info('input: {}'.format(x))
@@ -247,7 +272,10 @@ class ClassificationModel(BaseModel):
             else:
                 return results[0]
         else:
-            results = self.convert_idx_to_label(predict_result)
+            if self.multi_label:
+                results = self.multi_label_binarzier.inverse_transform(predict_result)
+            else:
+                results = self.convert_idx_to_label(predict_result)
             if is_list:
                 return results
             else:
