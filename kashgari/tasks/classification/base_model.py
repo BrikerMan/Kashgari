@@ -247,7 +247,7 @@ class ClassificationModel(BaseModel):
         res = self.model.predict(x, batch_size=batch_size)
         if self.multi_label:
             if debug_info:
-                logging.info('raw output: {}'.format(x))
+                logging.info('raw output: {}'.format(res))
             res[res >= multi_label_threshold] = 1
             res[res < multi_label_threshold] = 0
             predict_result = res
