@@ -126,9 +126,9 @@ class KMaxPooling(Layer):
         self.sorted = sorted
         self.data_format = K.normalize_data_format(data_format)
 
-    def build(self, input_shape):
-        assert len(input_shape) == 3
-        super(KMaxPooling, self).build(input_shape)
+    # def build(self, input_shape):
+    #     assert len(input_shape) == 3
+    #     super(KMaxPooling, self).build(input_shape)
 
     def compute_output_shape(self, input_shape):
         if self.data_format == 'channels_first':
@@ -149,7 +149,9 @@ class KMaxPooling(Layer):
         return tf.transpose(top_k, [0, 2, 1])
 
     def get_config(self):
-        config = {'data_format': self.data_format}
+        config = {'k': self.k,
+                  'sorted': self.sorted,
+                  'data_format': self.data_format}
         base_config = super(KMaxPooling, self).get_config()
         return dict(list(base_config.items()) + list(config.items()))
 
