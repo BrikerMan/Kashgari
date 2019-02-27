@@ -14,7 +14,8 @@ from __future__ import absolute_import, division
 
 import logging
 
-from keras import optimizers
+import keras
+#from keras import optimizers
 
 from keras.models import Model
 from keras.layers import Dense, Lambda, Flatten, Reshape
@@ -44,9 +45,17 @@ class CNNModel(ClassificationModel):
         'activation_layer': {
             'activation': 'softmax'
         },
-        'optimizer_param': {
+        'optimizer': {
+            'module': 'keras.optimizers',
+            'name': 'Adam',
+            'params': {
+                'lr': 1e-3,
+                'decay': 0.0
+            }
+        },
+        'compile_params': {
             'loss': 'categorical_crossentropy',
-            'optimizer': 'adam',
+            #'optimizer': 'adam',
             'metrics': ['accuracy']
         }
     }
@@ -59,7 +68,10 @@ class CNNModel(ClassificationModel):
         dense_2_layer = Dense(len(self.label2idx), **self.hyper_parameters['activation_layer'])(dense_1_layer)
 
         model = Model(base_model.inputs, dense_2_layer)
-        model.compile(**self.hyper_parameters['optimizer_param'])
+        optimizer = getattr(eval(self.hyper_parameters['optimizer']['module']),
+                            self.hyper_parameters['optimizer']['name'])(
+                                    **self.hyper_parameters['optimizer']['params'])
+        model.compile(optimizer=optimizer, **self.hyper_parameters['compile_params'])
         self.model = model
         self.model.summary()
 
@@ -74,9 +86,17 @@ class BLSTMModel(ClassificationModel):
         'activation_layer': {
             'activation': 'softmax'
         },
-        'optimizer_param': {
+        'optimizer': {
+            'module': 'keras.optimizers',
+            'name': 'Adam',
+            'params': {
+                'lr': 1e-3,
+                'decay': 0.0
+            }
+        },
+        'compile_params': {
             'loss': 'categorical_crossentropy',
-            'optimizer': 'adam',
+            #'optimizer': 'adam',
             'metrics': ['accuracy']
         }
     }
@@ -88,7 +108,10 @@ class BLSTMModel(ClassificationModel):
         output_layers = [dense_layer]
 
         model = Model(base_model.inputs, output_layers)
-        model.compile(**self.hyper_parameters['optimizer_param'])
+        optimizer = getattr(eval(self.hyper_parameters['optimizer']['module']),
+                            self.hyper_parameters['optimizer']['name'])(
+                                    **self.hyper_parameters['optimizer']['params'])
+        model.compile(optimizer=optimizer, **self.hyper_parameters['compile_params'])
         self.model = model
         self.model.summary()
 
@@ -111,7 +134,15 @@ class CNNLSTMModel(ClassificationModel):
         'activation_layer': {
             'activation': 'softmax'
         },
-        'optimizer_param': {
+        'optimizer': {
+            'module': 'keras.optimizers',
+            'name': 'Adam',
+            'params': {
+                'lr': 1e-3,
+                'decay': 0.0
+            }
+        },
+        'compile_params': {
             'loss': 'categorical_crossentropy',
             'optimizer': 'adam',
             'metrics': ['accuracy']
@@ -128,7 +159,10 @@ class CNNLSTMModel(ClassificationModel):
         output_layers = [dense_layer]
 
         model = Model(base_model.inputs, output_layers)
-        model.compile(**self.hyper_parameters['optimizer_param'])
+        optimizer = getattr(eval(self.hyper_parameters['optimizer']['module']),
+                            self.hyper_parameters['optimizer']['name'])(
+                                    **self.hyper_parameters['optimizer']['params'])
+        model.compile(optimizer=optimizer, **self.hyper_parameters['compile_params'])
         self.model = model
         self.model.summary()
 
@@ -210,11 +244,15 @@ class AVCNNModel(ClassificationModel):
         'activation_layer': {
             'activation': 'softmax'
         },
-        'adam_optimizer': {
-            'lr': 1e-3,
-            'decay': 1e-7
+        'optimizer': {
+            'module': 'keras.optimizers',
+            'name': 'Adam',
+            'params': {
+                'lr': 1e-3,
+                'decay': 1e-7
+            }
         },
-        'optimizer_param': {
+        'compile_params': {
             'loss': 'categorical_crossentropy',
             #'optimizer': 'adam',
             'metrics': ['accuracy']
@@ -259,9 +297,10 @@ class AVCNNModel(ClassificationModel):
                        **self.hyper_parameters['activation_layer'])(output)
 
         model = Model(base_model.inputs, output)
-        adam_optimizer = optimizers.Adam(**self.hyper_parameters['adam_optimizer'])
-        model.compile(optimizer=adam_optimizer,
-                      **self.hyper_parameters['optimizer_param'])
+        optimizer = getattr(eval(self.hyper_parameters['optimizer']['module']),
+                            self.hyper_parameters['optimizer']['name'])(
+                                    **self.hyper_parameters['optimizer']['params'])
+        model.compile(optimizer=optimizer, **self.hyper_parameters['compile_params'])
         self.model = model
         self.model.summary()
 
@@ -326,11 +365,15 @@ class KMaxCNNModel(ClassificationModel):
         'activation_layer': {
             'activation': 'softmax'
         },
-        'adam_optimizer': {
-            'lr': 1e-3,
-            'decay': 1e-7
+        'optimizer': {
+            'module': 'keras.optimizers',
+            'name': 'Adam',
+            'params': {
+                'lr': 1e-3,
+                'decay': 1e-7
+            }
         },
-        'optimizer_param': {
+        'compile_params': {
             'loss': 'categorical_crossentropy',
             #'optimizer': 'adam',
             'metrics': ['accuracy']
@@ -374,9 +417,10 @@ class KMaxCNNModel(ClassificationModel):
                        **self.hyper_parameters['activation_layer'])(output)
 
         model = Model(base_model.inputs, output)
-        adam_optimizer = optimizers.Adam(**self.hyper_parameters['adam_optimizer'])
-        model.compile(optimizer=adam_optimizer,
-                      **self.hyper_parameters['optimizer_param'])
+        optimizer = getattr(eval(self.hyper_parameters['optimizer']['module']),
+                            self.hyper_parameters['optimizer']['name'])(
+                                    **self.hyper_parameters['optimizer']['params'])
+        model.compile(optimizer=optimizer, **self.hyper_parameters['compile_params'])
         self.model = model
         self.model.summary()
 
@@ -415,12 +459,16 @@ class RCNNModel(ClassificationModel):
         'activation_layer': {
             'activation': 'softmax'
         },
-        'adam_optimizer': {
-            'lr': 1e-3,
-            'clipvalue': 5,
-            'decay': 1e-5
+        'optimizer': {
+            'module': 'keras.optimizers',
+            'name': 'Adam',
+            'params': {
+                'lr': 1e-3,
+                'clipvalue': 5,
+                'decay': 1e-5
+            }
         },
-        'optimizer_param': {
+        'compile_params': {
             'loss': 'categorical_crossentropy',
             #'optimizer': 'adam',
             'metrics': ['accuracy']
@@ -444,9 +492,10 @@ class RCNNModel(ClassificationModel):
                        **self.hyper_parameters['activation_layer'])(output)
 
         model = Model(base_model.inputs, output)
-        adam_optimizer = optimizers.Adam(**self.hyper_parameters['adam_optimizer'])
-        model.compile(optimizer=adam_optimizer,
-                      **self.hyper_parameters['optimizer_param'])
+        optimizer = getattr(eval(self.hyper_parameters['optimizer']['module']),
+                            self.hyper_parameters['optimizer']['name'])(
+                                    **self.hyper_parameters['optimizer']['params'])
+        model.compile(optimizer=optimizer, **self.hyper_parameters['compile_params'])
         self.model = model
         self.model.summary()
 
@@ -485,12 +534,16 @@ class AVRNNModel(ClassificationModel):
         'activation_layer': {
             'activation': 'softmax'
         },
-        'adam_optimizer': {
-            'lr': 1e-3,
-            'clipvalue': 5,
-            'decay': 1e-6
+        'optimizer': {
+            'module': 'keras.optimizers',
+            'name': 'Adam',
+            'params': {
+                'lr': 1e-3,
+                'clipvalue': 5,
+                'decay': 1e-6
+            }
         },
-        'optimizer_param': {
+        'compile_params': {
             'loss': 'categorical_crossentropy',
             #'optimizer': 'adam',
             'metrics': ['accuracy']
@@ -518,9 +571,10 @@ class AVRNNModel(ClassificationModel):
                        **self.hyper_parameters['activation_layer'])(output)
 
         model = Model(base_model.inputs, output)
-        adam_optimizer = optimizers.Adam(**self.hyper_parameters['adam_optimizer'])
-        model.compile(optimizer=adam_optimizer,
-                      **self.hyper_parameters['optimizer_param'])
+        optimizer = getattr(eval(self.hyper_parameters['optimizer']['module']),
+                            self.hyper_parameters['optimizer']['name'])(
+                                    **self.hyper_parameters['optimizer']['params'])
+        model.compile(optimizer=optimizer, **self.hyper_parameters['compile_params'])
         self.model = model
         self.model.summary()
 
@@ -558,9 +612,17 @@ class DropoutBGRUModel(ClassificationModel):
         'activation_layer': {
             'activation': 'softmax'
         },
-        'optimizer_param': {
+        'optimizer': {
+            'module': 'keras.optimizers',
+            'name': 'Adam',
+            'params': {
+                'lr': 1e-3,
+                'decay': 0.0
+            }
+        },
+        'compile_params': {
             'loss': 'categorical_crossentropy',
-            'optimizer': 'adam',
+            #'optimizer': 'adam',
             'metrics': ['accuracy']
         }
     }
@@ -584,8 +646,10 @@ class DropoutBGRUModel(ClassificationModel):
                        **self.hyper_parameters['activation_layer'])(output)
 
         model = Model(base_model.inputs, output)
-        # adam_optimizer = optimizers.Adam(**self.hyper_parameters['adam_optimizer'])
-        model.compile(**self.hyper_parameters['optimizer_param'])
+        optimizer = getattr(eval(self.hyper_parameters['optimizer']['module']),
+                            self.hyper_parameters['optimizer']['name'])(
+                                    **self.hyper_parameters['optimizer']['params'])
+        model.compile(optimizer=optimizer, **self.hyper_parameters['compile_params'])
         self.model = model
         self.model.summary()
 
@@ -627,12 +691,16 @@ class DropoutAVRNNModel(ClassificationModel):
         'activation_layer': {
             'activation': 'softmax'
         },
-        'adam_optimizer': {
-            'lr': 1e-3,
-            'clipvalue': 5,
-            'decay': 1e-7
+        'optimizer': {
+            'module': 'keras.optimizers',
+            'name': 'Adam',
+            'params': {
+                'lr': 1e-3,
+                'clipvalue': 5,
+                'decay': 1e-7
+            }
         },
-        'optimizer_param': {
+        'compile_params': {
             'loss': 'categorical_crossentropy',
             #'optimizer': 'adam',
             'metrics': ['accuracy']
@@ -660,9 +728,10 @@ class DropoutAVRNNModel(ClassificationModel):
                        **self.hyper_parameters['activation_layer'])(output)
 
         model = Model(base_model.inputs, output)
-        adam_optimizer = optimizers.Adam(**self.hyper_parameters['adam_optimizer'])
-        model.compile(optimizer=adam_optimizer,
-                      **self.hyper_parameters['optimizer_param'])
+        optimizer = getattr(eval(self.hyper_parameters['optimizer']['module']),
+                            self.hyper_parameters['optimizer']['name'])(
+                                    **self.hyper_parameters['optimizer']['params'])
+        model.compile(optimizer=optimizer, **self.hyper_parameters['compile_params'])
         self.model = model
         self.model.summary()
 
