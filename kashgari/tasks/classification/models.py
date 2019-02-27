@@ -17,7 +17,7 @@ import logging
 from keras import optimizers
 
 from keras.models import Model
-from keras.layers import Dense, Lambda
+from keras.layers import Dense, Lambda, Flatten, Reshape
 from keras.layers import Dropout, SpatialDropout1D
 from keras.layers import GlobalAveragePooling1D, GlobalMaxPooling1D, MaxPooling1D
 from keras.layers import Bidirectional, Conv1D
@@ -252,6 +252,9 @@ class AVCNNModel(ClassificationModel):
 class KMaxCNNModel(ClassificationModel):
     __architect_name__ = 'KMaxCNNModel'
     __base_hyper_parameters__ = {
+        'spatial_dropout': {
+            'rate': 0.2
+        },
         'conv_0': {
             'filters': 180,
             'kernel_size': 1,
@@ -314,18 +317,35 @@ class KMaxCNNModel(ClassificationModel):
 
     def build_model(self):
         base_model = self.embedding.model
-        conv_0 = Conv1D(**self.hyper_parameters['conv_0'])(base_model.output)
-        conv_1 = Conv1D(**self.hyper_parameters['conv_1'])(base_model.output)
-        conv_2 = Conv1D(**self.hyper_parameters['conv_2'])(base_model.output)
-        conv_3 = Conv1D(**self.hyper_parameters['conv_3'])(base_model.output)
+        embedded_seq = SpatialDropout1D(**self.hyper_parameters['spatial_dropout'])(base_model.output)
+        conv_0 = Conv1D(**self.hyper_parameters['conv_0'])(embedded_seq)
+        conv_1 = Conv1D(**self.hyper_parameters['conv_1'])(embedded_seq)
+        conv_2 = Conv1D(**self.hyper_parameters['conv_2'])(embedded_seq)
+        conv_3 = Conv1D(**self.hyper_parameters['conv_3'])(embedded_seq)
 
         maxpool_0 = KMaxPooling(**self.hyper_parameters['maxpool_0'])(conv_0)
+        #maxpool_0f = Reshape((-1,))(maxpool_0)
+        maxpool_0f = Flatten()(maxpool_0)
         maxpool_1 = KMaxPooling(**self.hyper_parameters['maxpool_1'])(conv_1)
+        #maxpool_1f = Reshape((-1,))(maxpool_1)
+        maxpool_0f = Flatten()(maxpool_0)
         maxpool_2 = KMaxPooling(**self.hyper_parameters['maxpool_2'])(conv_2)
+        #maxpool_2f = Reshape((-1,))(maxpool_2)
+        maxpool_0f = Flatten()(maxpool_0)
         maxpool_3 = KMaxPooling(**self.hyper_parameters['maxpool_3'])(conv_3)
+        #maxpool_3f = Reshape((-1,))(maxpool_3)
+        maxpool_0f = Flatten()(maxpool_0)
+        #maxpool_0 = GlobalMaxPooling1D()(conv_0)
+        #maxpool_1 = GlobalMaxPooling1D()(conv_1)
+        #maxpool_2 = GlobalMaxPooling1D()(conv_2)
+        #maxpool_3 = GlobalMaxPooling1D()(conv_3)
 
-        merged_tensor = concatenate([maxpool_0, maxpool_1, maxpool_2, maxpool_3],
+        #merged_tensor = concatenate([maxpool_0, maxpool_1, maxpool_2, maxpool_3],
+        #                            **self.hyper_parameters['merged_tensor'])
+        merged_tensor = concatenate([maxpool_0f, maxpool_1f, maxpool_2f, maxpool_3f],
                                     **self.hyper_parameters['merged_tensor'])
+        #flatten = Reshape((-1,))(merged_tensor)
+        #output = Dropout(**self.hyper_parameters['dropout'])(flatten)
         output = Dropout(**self.hyper_parameters['dropout'])(merged_tensor)
         output = Dense(**self.hyper_parameters['dense'])(output)
         output = Dense(len(self.label2idx),
