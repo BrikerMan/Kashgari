@@ -144,7 +144,7 @@ class CNNLSTMModel(ClassificationModel):
         },
         'compile_params': {
             'loss': 'categorical_crossentropy',
-            'optimizer': 'adam',
+            #'optimizer': 'adam',
             'metrics': ['accuracy']
         }
     }
