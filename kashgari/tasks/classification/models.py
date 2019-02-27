@@ -43,6 +43,11 @@ class CNNModel(ClassificationModel):
         },
         'activation_layer': {
             'activation': 'softmax'
+        },
+        'optimizer_param': {
+            'loss': 'categorical_crossentropy',
+            'optimizer': 'adam',
+            'metrics': ['accuracy']
         }
     }
 
@@ -54,9 +59,7 @@ class CNNModel(ClassificationModel):
         dense_2_layer = Dense(len(self.label2idx), **self.hyper_parameters['activation_layer'])(dense_1_layer)
 
         model = Model(base_model.inputs, dense_2_layer)
-        model.compile(loss='categorical_crossentropy',
-                      optimizer='adam',
-                      metrics=['accuracy'])
+        model.compile(**self.hyper_parameters['optimizer_param'])
         self.model = model
         self.model.summary()
 
@@ -70,6 +73,11 @@ class BLSTMModel(ClassificationModel):
         },
         'activation_layer': {
             'activation': 'softmax'
+        },
+        'optimizer_param': {
+            'loss': 'categorical_crossentropy',
+            'optimizer': 'adam',
+            'metrics': ['accuracy']
         }
     }
 
@@ -80,9 +88,7 @@ class BLSTMModel(ClassificationModel):
         output_layers = [dense_layer]
 
         model = Model(base_model.inputs, output_layers)
-        model.compile(loss='categorical_crossentropy',
-                      optimizer='adam',
-                      metrics=['accuracy'])
+        model.compile(**self.hyper_parameters['optimizer_param'])
         self.model = model
         self.model.summary()
 
@@ -104,6 +110,11 @@ class CNNLSTMModel(ClassificationModel):
         },
         'activation_layer': {
             'activation': 'softmax'
+        },
+        'optimizer_param': {
+            'loss': 'categorical_crossentropy',
+            'optimizer': 'adam',
+            'metrics': ['accuracy']
         }
     }
 
@@ -117,9 +128,7 @@ class CNNLSTMModel(ClassificationModel):
         output_layers = [dense_layer]
 
         model = Model(base_model.inputs, output_layers)
-        model.compile(loss='categorical_crossentropy',
-                      optimizer='adam',
-                      metrics=['accuracy'])
+        model.compile(**self.hyper_parameters['optimizer_param'])
         self.model = model
         self.model.summary()
 
@@ -127,6 +136,9 @@ class CNNLSTMModel(ClassificationModel):
 class AVCNNModel(ClassificationModel):
     __architect_name__ = 'AVCNNModel'
     __base_hyper_parameters__ = {
+        'spatial_dropout': {
+            'rate': 0.25
+        },
         'conv_0': {
             'filters': 300,
             'kernel_size':1,
@@ -201,15 +213,21 @@ class AVCNNModel(ClassificationModel):
         'adam_optimizer': {
             'lr': 1e-3,
             'decay': 1e-7
+        },
+        'optimizer_param': {
+            'loss': 'categorical_crossentropy',
+            #'optimizer': 'adam',
+            'metrics': ['accuracy']
         }
     }
 
     def build_model(self):
         base_model = self.embedding.model
-        conv_0 = Conv1D(**self.hyper_parameters['conv_0'])(base_model.output)
-        conv_1 = Conv1D(**self.hyper_parameters['conv_1'])(base_model.output)
-        conv_2 = Conv1D(**self.hyper_parameters['conv_2'])(base_model.output)
-        conv_3 = Conv1D(**self.hyper_parameters['conv_3'])(base_model.output)
+        embedded_seq = SpatialDropout1D(**self.hyper_parameters['spatial_dropout'])(base_model.output)
+        conv_0 = Conv1D(**self.hyper_parameters['conv_0'])(embedded_seq)
+        conv_1 = Conv1D(**self.hyper_parameters['conv_1'])(embedded_seq)
+        conv_2 = Conv1D(**self.hyper_parameters['conv_2'])(embedded_seq)
+        conv_3 = Conv1D(**self.hyper_parameters['conv_3'])(embedded_seq)
 
         maxpool_0 = GlobalMaxPooling1D()(conv_0)
         attn_0 = AttentionWeightedAverage()(conv_0)
@@ -242,9 +260,8 @@ class AVCNNModel(ClassificationModel):
 
         model = Model(base_model.inputs, output)
         adam_optimizer = optimizers.Adam(**self.hyper_parameters['adam_optimizer'])
-        model.compile(loss='categorical_crossentropy',
-                      optimizer=adam_optimizer,
-                      metrics=['accuracy'])
+        model.compile(optimizer=adam_optimizer,
+                      **self.hyper_parameters['optimizer_param'])
         self.model = model
         self.model.summary()
 
@@ -312,6 +329,11 @@ class KMaxCNNModel(ClassificationModel):
         'adam_optimizer': {
             'lr': 1e-3,
             'decay': 1e-7
+        },
+        'optimizer_param': {
+            'loss': 'categorical_crossentropy',
+            #'optimizer': 'adam',
+            'metrics': ['accuracy']
         }
     }
 
@@ -353,9 +375,8 @@ class KMaxCNNModel(ClassificationModel):
 
         model = Model(base_model.inputs, output)
         adam_optimizer = optimizers.Adam(**self.hyper_parameters['adam_optimizer'])
-        model.compile(loss='categorical_crossentropy',
-                      optimizer=adam_optimizer,
-                      metrics=['accuracy'])
+        model.compile(optimizer=adam_optimizer,
+                      **self.hyper_parameters['optimizer_param'])
         self.model = model
         self.model.summary()
 
@@ -363,6 +384,9 @@ class KMaxCNNModel(ClassificationModel):
 class RCNNModel(ClassificationModel):
     __architect_name__ = 'RCNNModel'
     __base_hyper_parameters__ = {
+        'spatial_dropout': {
+            'rate': 0.2
+        },
         'rnn_0': {
             'units': 64,
             'return_sequences': True
@@ -395,12 +419,18 @@ class RCNNModel(ClassificationModel):
             'lr': 1e-3,
             'clipvalue': 5,
             'decay': 1e-5
+        },
+        'optimizer_param': {
+            'loss': 'categorical_crossentropy',
+            #'optimizer': 'adam',
+            'metrics': ['accuracy']
         }
     }
 
     def build_model(self):
         base_model = self.embedding.model
-        rnn_0 = Bidirectional(GRULayer(**self.hyper_parameters['rnn_0']))(base_model.output)
+        embedded_seq = SpatialDropout1D(**self.hyper_parameters['spatial_dropout'])(base_model.output)
+        rnn_0 = Bidirectional(GRULayer(**self.hyper_parameters['rnn_0']))(embedded_seq)
         conv_0 = Conv1D(**self.hyper_parameters['conv_0'])(rnn_0)
         maxpool = GlobalMaxPooling1D()(conv_0)
         attn = AttentionWeightedAverage()(conv_0)
@@ -415,9 +445,8 @@ class RCNNModel(ClassificationModel):
 
         model = Model(base_model.inputs, output)
         adam_optimizer = optimizers.Adam(**self.hyper_parameters['adam_optimizer'])
-        model.compile(loss='categorical_crossentropy',
-                      optimizer=adam_optimizer,
-                      metrics=['accuracy'])
+        model.compile(optimizer=adam_optimizer,
+                      **self.hyper_parameters['optimizer_param'])
         self.model = model
         self.model.summary()
 
@@ -425,6 +454,9 @@ class RCNNModel(ClassificationModel):
 class AVRNNModel(ClassificationModel):
     __architect_name__ = 'AVRNNModel'
     __base_hyper_parameters__ = {
+        'spatial_dropout': {
+            'rate': 0.25
+        },
         'rnn_0': {
             'units': 60,
             'return_sequences': True
@@ -457,12 +489,18 @@ class AVRNNModel(ClassificationModel):
             'lr': 1e-3,
             'clipvalue': 5,
             'decay': 1e-6
+        },
+        'optimizer_param': {
+            'loss': 'categorical_crossentropy',
+            #'optimizer': 'adam',
+            'metrics': ['accuracy']
         }
     }
 
     def build_model(self):
         base_model = self.embedding.model
-        rnn_0 = Bidirectional(GRULayer(**self.hyper_parameters['rnn_0']))(base_model.output)
+        embedded_seq = SpatialDropout1D(**self.hyper_parameters['spatial_dropout'])(base_model.output)
+        rnn_0 = Bidirectional(GRULayer(**self.hyper_parameters['rnn_0']))(embedded_seq)
         rnn_1 = Bidirectional(GRULayer(**self.hyper_parameters['rnn_1']))(rnn_0)
         concat_rnn = concatenate([rnn_0, rnn_1],
                                  **self.hyper_parameters['concat_rnn'])
@@ -481,9 +519,8 @@ class AVRNNModel(ClassificationModel):
 
         model = Model(base_model.inputs, output)
         adam_optimizer = optimizers.Adam(**self.hyper_parameters['adam_optimizer'])
-        model.compile(loss='categorical_crossentropy',
-                      optimizer=adam_optimizer,
-                      metrics=['accuracy'])
+        model.compile(optimizer=adam_optimizer,
+                      **self.hyper_parameters['optimizer_param'])
         self.model = model
         self.model.summary()
 
@@ -491,6 +528,9 @@ class AVRNNModel(ClassificationModel):
 class DropoutBGRUModel(ClassificationModel):
     __architect_name__ = 'DropoutBGRUModel'
     __base_hyper_parameters__ = {
+        'spatial_dropout': {
+            'rate': 0.15
+        },
         'rnn_0': {
             'units': 64,
             'return_sequences': True
@@ -517,12 +557,18 @@ class DropoutBGRUModel(ClassificationModel):
         },
         'activation_layer': {
             'activation': 'softmax'
+        },
+        'optimizer_param': {
+            'loss': 'categorical_crossentropy',
+            'optimizer': 'adam',
+            'metrics': ['accuracy']
         }
     }
 
     def build_model(self):
         base_model = self.embedding.model
-        rnn_0 = Bidirectional(GRULayer(**self.hyper_parameters['rnn_0']))(base_model.output)
+        embedded_seq = SpatialDropout1D(**self.hyper_parameters['spatial_dropout'])(base_model.output)
+        rnn_0 = Bidirectional(GRULayer(**self.hyper_parameters['rnn_0']))(embedded_seq)
         dropout_rnn = Dropout(**self.hyper_parameters['dropout_rnn'])(rnn_0)
         rnn_1 = Bidirectional(GRULayer(**self.hyper_parameters['rnn_1']))(dropout_rnn)
         last = Lambda(lambda t: t[:, -1], name='last')(rnn_1)
@@ -539,9 +585,7 @@ class DropoutBGRUModel(ClassificationModel):
 
         model = Model(base_model.inputs, output)
         # adam_optimizer = optimizers.Adam(**self.hyper_parameters['adam_optimizer'])
-        model.compile(loss='categorical_crossentropy',
-                      optimizer='adam',
-                      metrics=['accuracy'])
+        model.compile(**self.hyper_parameters['optimizer_param'])
         self.model = model
         self.model.summary()
 
@@ -549,6 +593,9 @@ class DropoutBGRUModel(ClassificationModel):
 class DropoutAVRNNModel(ClassificationModel):
     __architect_name__ = 'DropoutAVRNNModel'
     __base_hyper_parameters__ = {
+        'spatial_dropout': {
+            'rate': 0.25
+        },
         'rnn_0': {
             'units': 56,
             'return_sequences': True
@@ -584,12 +631,18 @@ class DropoutAVRNNModel(ClassificationModel):
             'lr': 1e-3,
             'clipvalue': 5,
             'decay': 1e-7
+        },
+        'optimizer_param': {
+            'loss': 'categorical_crossentropy',
+            #'optimizer': 'adam',
+            'metrics': ['accuracy']
         }
     }
 
     def build_model(self):
         base_model = self.embedding.model
-        rnn_0 = Bidirectional(GRULayer(**self.hyper_parameters['rnn_0']))(base_model.output)
+        embedded_seq = SpatialDropout1D(**self.hyper_parameters['spatial_dropout'])(base_model.output)
+        rnn_0 = Bidirectional(GRULayer(**self.hyper_parameters['rnn_0']))(embedded_seq)
         rnn_dropout = SpatialDropout1D(**self.hyper_parameters['rnn_dropout'])(rnn_0)
         rnn_1 = Bidirectional(GRULayer(**self.hyper_parameters['rnn_1']))(rnn_dropout)
 
@@ -608,9 +661,8 @@ class DropoutAVRNNModel(ClassificationModel):
 
         model = Model(base_model.inputs, output)
         adam_optimizer = optimizers.Adam(**self.hyper_parameters['adam_optimizer'])
-        model.compile(loss='categorical_crossentropy',
-                      optimizer=adam_optimizer,
-                      metrics=['accuracy'])
+        model.compile(optimizer=adam_optimizer,
+                      **self.hyper_parameters['optimizer_param'])
         self.model = model
         self.model.summary()
 
