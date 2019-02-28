@@ -8,7 +8,7 @@
 [![Issues](https://img.shields.io/github/issues/BrikerMan/Kashgari.svg)](https://github.com/BrikerMan/Kashgari/issues)
 [![Contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg)](CONTRIBUTING.md)
 ![](https://img.shields.io/pypi/l/kashgari.svg?style=flat)
-[![](https://img.shields.io/pypi/dw/kashgari.svg)](https://pypi.org/project/kashgari/)
+[![](https://img.shields.io/pypi/dm/kashgari.svg)](https://pypi.org/project/kashgari/)
 
 Simple and powerful NLP framework, build your state-of-art model in 5 minutes for named entity recognition (NER), part-of-speech tagging (PoS) and text classification tasks.
 
@@ -26,82 +26,23 @@ Kashgare is:
     * Classic word2vec embedding
     * BERT embedding
 * Sequence(Text) Classification Models
+    * CNNModel
+    * BLSTMModel
+    * CNNLSTMModel
+    * AVCNNModel
+    * KMaxCNNModel
+    * RCNNModel
+    * AVRNNModel
+    * DropoutBGRUModel
+    * DropoutAVRNNModel
 * Sequence(Text) Labeling Models (NER, PoS)
+    * CNNLSTMModel
+    * BLSTMModel
+    * BLSTMCRFModel
 * Model Training
 * Model Evaluate
 * GPU Support
 * Customize Model
-
-<table>
-		<tbody>
-			<tr>
-				<td valign="top">
-					<p>
-						<span>task</span>
-					</p>
-				</td>
-				<td valign="top">
-					<p>
-						<span>Models</span>
-					</p>
-				</td>
-			</tr>
-			<tr>
-				<td valign="top">
-					<p>
-						<span>Text Classification</span>
-					</p>
-				</td>
-				<td valign="top">
-					<p>
-						<span>* CNNModel</span>
-					</p>
-					<p>
-						<span>* BLSTMModel</span>
-					</p>
-					<p>
-						<span>* CNNLSTMModel</span>
-					</p>
-					<p>
-						<span>* AVCNNModel</span>
-					</p>
-					<p>
-						<span>* KMaxCNNModel</span>
-					</p>
-					<p>
-						<span>* RCNNModel</span>
-					</p>
-					<p>
-						<span>* AVRNNModel</span>
-					</p>
-					<p>
-						<span>* DropoutBGRUModel</span>
-					</p>
-					<p>
-						<span>* DropoutAVRNNModel</span>
-					</p>
-				</td>
-			</tr>
-			<tr>
-				<td valign="top">
-					<p>
-						<span>Sequence Labeling</span>
-					</p>
-				</td>
-				<td valign="top">
-					<p>
-						<span>* CNNLSTMModel</span>
-					</p>
-					<p>
-						<span>* BLSTMModel</span>
-					</p>
-					<p>
-						<span>* BLSTMCRFModel</span>
-					</p>
-				</td>
-			</tr>
-		</tbody>
-	</table>
 
 ## Performance
 
