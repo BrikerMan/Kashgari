@@ -10,8 +10,8 @@
 @time: 2019-01-21
 
 """
-import random
 import logging
+import random
 from typing import Tuple, Dict
 
 import numpy as np
@@ -21,11 +21,10 @@ from seqeval.metrics import classification_report
 from seqeval.metrics.sequence_labeling import get_entities
 
 import kashgari.macros as k
-from kashgari.utils import helper
-from kashgari.type_hints import *
-
-from kashgari.tasks.base import BaseModel
 from kashgari.embeddings import BaseEmbedding
+from kashgari.tasks.base import BaseModel
+from kashgari.type_hints import *
+from kashgari.utils import helper
 
 
 class SequenceLabelingModel(BaseModel):
@@ -47,7 +46,7 @@ class SequenceLabelingModel(BaseModel):
         self._label2idx = value
         self._idx2label = dict([(val, key) for (key, val) in value.items()])
 
-    def build_model(self, loss_f=None, optimizer=None, metrics=None, **kwargs):
+    def build_model(self):
         """
         build model function
         :return:
