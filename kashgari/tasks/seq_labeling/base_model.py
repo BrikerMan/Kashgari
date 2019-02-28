@@ -59,6 +59,8 @@ class SequenceLabelingModel(BaseModel):
                                      y_train: List[List[str]],
                                      x_validate: List[List[str]] = None,
                                      y_validate: List[List[str]] = None):
+        for index in range(len(x_train)):
+            assert len(x_train[index]) == len(y_train[index])
         x_data = x_train
         y_data = y_train
         if x_validate:

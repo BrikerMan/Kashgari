@@ -133,7 +133,7 @@ class BaseEmbedding(object):
         def tokenize_sentence(text: TextSeqType) -> TokenSeqType:
             tokens = [self.token2idx.get(token, self.token2idx[k.UNK]) for token in text]
             if add_bos_eos:
-                tokens = [self.token2idx[k.BOS]] + tokens + [self.token2idx[k.BOS]]
+                tokens = [self.token2idx[k.BOS]] + tokens + [self.token2idx[k.EOS]]
             return tokens
 
         if is_list:
