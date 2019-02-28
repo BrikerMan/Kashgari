@@ -229,7 +229,7 @@ class TestKMaxCNNModelBasic(TestBLSTMModelModelBasic):
     @classmethod
     def setUpClass(cls):
         cls.epochs = 2
-        cls.model_class = KMaxCNNModel
+        cls .model_class = KMaxCNNModel
         cls.model = cls.model_class()
 
 

@@ -13,6 +13,7 @@ exclude_lines =
     raise AssertionError
     raise NotImplementedError
     raise ValueError
+    except Exception as e:
 
     # Don't complain if non-runnable code isn't run:
     if __name__ == .__main__.:

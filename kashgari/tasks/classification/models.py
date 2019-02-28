@@ -55,7 +55,7 @@ class CNNModel(ClassificationModel):
         },
         'compile_params': {
             'loss': 'categorical_crossentropy',
-            #'optimizer': 'adam',
+            # 'optimizer': 'adam',
             'metrics': ['accuracy']
         }
     }
@@ -70,7 +70,7 @@ class CNNModel(ClassificationModel):
         model = Model(base_model.inputs, dense_2_layer)
         optimizer = getattr(eval(self.hyper_parameters['optimizer']['module']),
                             self.hyper_parameters['optimizer']['name'])(
-                                    **self.hyper_parameters['optimizer']['params'])
+            **self.hyper_parameters['optimizer']['params'])
         model.compile(optimizer=optimizer, **self.hyper_parameters['compile_params'])
         self.model = model
         self.model.summary()
@@ -96,7 +96,7 @@ class BLSTMModel(ClassificationModel):
         },
         'compile_params': {
             'loss': 'categorical_crossentropy',
-            #'optimizer': 'adam',
+            # 'optimizer': 'adam',
             'metrics': ['accuracy']
         }
     }
@@ -110,7 +110,7 @@ class BLSTMModel(ClassificationModel):
         model = Model(base_model.inputs, output_layers)
         optimizer = getattr(eval(self.hyper_parameters['optimizer']['module']),
                             self.hyper_parameters['optimizer']['name'])(
-                                    **self.hyper_parameters['optimizer']['params'])
+            **self.hyper_parameters['optimizer']['params'])
         model.compile(optimizer=optimizer, **self.hyper_parameters['compile_params'])
         self.model = model
         self.model.summary()
@@ -144,7 +144,7 @@ class CNNLSTMModel(ClassificationModel):
         },
         'compile_params': {
             'loss': 'categorical_crossentropy',
-            #'optimizer': 'adam',
+            # 'optimizer': 'adam',
             'metrics': ['accuracy']
         }
     }
@@ -161,7 +161,7 @@ class CNNLSTMModel(ClassificationModel):
         model = Model(base_model.inputs, output_layers)
         optimizer = getattr(eval(self.hyper_parameters['optimizer']['module']),
                             self.hyper_parameters['optimizer']['name'])(
-                                    **self.hyper_parameters['optimizer']['params'])
+            **self.hyper_parameters['optimizer']['params'])
         model.compile(optimizer=optimizer, **self.hyper_parameters['compile_params'])
         self.model = model
         self.model.summary()
@@ -175,28 +175,28 @@ class AVCNNModel(ClassificationModel):
         },
         'conv_0': {
             'filters': 300,
-            'kernel_size':1,
+            'kernel_size': 1,
             'kernel_initializer': 'normal',
             'padding': 'valid',
             'activation': 'relu'
         },
         'conv_1': {
             'filters': 300,
-            'kernel_size':2,
+            'kernel_size': 2,
             'kernel_initializer': 'normal',
             'padding': 'valid',
             'activation': 'relu'
         },
         'conv_2': {
             'filters': 300,
-            'kernel_size':3,
+            'kernel_size': 3,
             'kernel_initializer': 'normal',
             'padding': 'valid',
             'activation': 'relu'
         },
         'conv_3': {
             'filters': 300,
-            'kernel_size':4,
+            'kernel_size': 4,
             'kernel_initializer': 'normal',
             'padding': 'valid',
             'activation': 'relu'
@@ -219,19 +219,19 @@ class AVCNNModel(ClassificationModel):
         'avg_3': {},
         # ---
         'v0_col': {
-            #'mode': 'concat',
+            # 'mode': 'concat',
             'axis': 1
         },
         'v1_col': {
-            #'mode': 'concat',
+            # 'mode': 'concat',
             'axis': 1
         },
         'v2_col': {
-            #'mode': 'concat',
+            # 'mode': 'concat',
             'axis': 1
         },
         'merged_tensor': {
-            #'mode': 'concat',
+            # 'mode': 'concat',
             'axis': 1
         },
         'dropout': {
@@ -254,7 +254,7 @@ class AVCNNModel(ClassificationModel):
         },
         'compile_params': {
             'loss': 'categorical_crossentropy',
-            #'optimizer': 'adam',
+            # 'optimizer': 'adam',
             'metrics': ['accuracy']
         }
     }
@@ -299,7 +299,7 @@ class AVCNNModel(ClassificationModel):
         model = Model(base_model.inputs, output)
         optimizer = getattr(eval(self.hyper_parameters['optimizer']['module']),
                             self.hyper_parameters['optimizer']['name'])(
-                                    **self.hyper_parameters['optimizer']['params'])
+            **self.hyper_parameters['optimizer']['params'])
         model.compile(optimizer=optimizer, **self.hyper_parameters['compile_params'])
         self.model = model
         self.model.summary()
@@ -352,7 +352,7 @@ class KMaxCNNModel(ClassificationModel):
             'k': 3
         },
         'merged_tensor': {
-            #'mode': 'concat',
+            # 'mode': 'concat',
             'axis': 1
         },
         'dropout': {
@@ -375,7 +375,7 @@ class KMaxCNNModel(ClassificationModel):
         },
         'compile_params': {
             'loss': 'categorical_crossentropy',
-            #'optimizer': 'adam',
+            # 'optimizer': 'adam',
             'metrics': ['accuracy']
         }
     }
@@ -389,28 +389,28 @@ class KMaxCNNModel(ClassificationModel):
         conv_3 = Conv1D(**self.hyper_parameters['conv_3'])(embedded_seq)
 
         maxpool_0 = KMaxPooling(**self.hyper_parameters['maxpool_0'])(conv_0)
-        #maxpool_0f = Reshape((-1,))(maxpool_0)
+        # maxpool_0f = Reshape((-1,))(maxpool_0)
         maxpool_0f = Flatten()(maxpool_0)
         maxpool_1 = KMaxPooling(**self.hyper_parameters['maxpool_1'])(conv_1)
-        #maxpool_1f = Reshape((-1,))(maxpool_1)
+        # maxpool_1f = Reshape((-1,))(maxpool_1)
         maxpool_1f = Flatten()(maxpool_1)
         maxpool_2 = KMaxPooling(**self.hyper_parameters['maxpool_2'])(conv_2)
-        #maxpool_2f = Reshape((-1,))(maxpool_2)
+        # maxpool_2f = Reshape((-1,))(maxpool_2)
         maxpool_2f = Flatten()(maxpool_2)
         maxpool_3 = KMaxPooling(**self.hyper_parameters['maxpool_3'])(conv_3)
-        #maxpool_3f = Reshape((-1,))(maxpool_3)
+        # maxpool_3f = Reshape((-1,))(maxpool_3)
         maxpool_3f = Flatten()(maxpool_3)
-        #maxpool_0 = GlobalMaxPooling1D()(conv_0)
-        #maxpool_1 = GlobalMaxPooling1D()(conv_1)
-        #maxpool_2 = GlobalMaxPooling1D()(conv_2)
-        #maxpool_3 = GlobalMaxPooling1D()(conv_3)
+        # maxpool_0 = GlobalMaxPooling1D()(conv_0)
+        # maxpool_1 = GlobalMaxPooling1D()(conv_1)
+        # maxpool_2 = GlobalMaxPooling1D()(conv_2)
+        # maxpool_3 = GlobalMaxPooling1D()(conv_3)
 
-        #merged_tensor = concatenate([maxpool_0, maxpool_1, maxpool_2, maxpool_3],
+        # merged_tensor = concatenate([maxpool_0, maxpool_1, maxpool_2, maxpool_3],
         #                            **self.hyper_parameters['merged_tensor'])
         merged_tensor = concatenate([maxpool_0f, maxpool_1f, maxpool_2f, maxpool_3f],
                                     **self.hyper_parameters['merged_tensor'])
-        #flatten = Reshape((-1,))(merged_tensor)
-        #output = Dropout(**self.hyper_parameters['dropout'])(flatten)
+        # flatten = Reshape((-1,))(merged_tensor)
+        # output = Dropout(**self.hyper_parameters['dropout'])(flatten)
         output = Dropout(**self.hyper_parameters['dropout'])(merged_tensor)
         output = Dense(**self.hyper_parameters['dense'])(output)
         output = Dense(len(self.label2idx),
@@ -419,7 +419,7 @@ class KMaxCNNModel(ClassificationModel):
         model = Model(base_model.inputs, output)
         optimizer = getattr(eval(self.hyper_parameters['optimizer']['module']),
                             self.hyper_parameters['optimizer']['name'])(
-                                    **self.hyper_parameters['optimizer']['params'])
+            **self.hyper_parameters['optimizer']['params'])
         model.compile(optimizer=optimizer, **self.hyper_parameters['compile_params'])
         self.model = model
         self.model.summary()
@@ -470,7 +470,7 @@ class RCNNModel(ClassificationModel):
         },
         'compile_params': {
             'loss': 'categorical_crossentropy',
-            #'optimizer': 'adam',
+            # 'optimizer': 'adam',
             'metrics': ['accuracy']
         }
     }
@@ -494,7 +494,7 @@ class RCNNModel(ClassificationModel):
         model = Model(base_model.inputs, output)
         optimizer = getattr(eval(self.hyper_parameters['optimizer']['module']),
                             self.hyper_parameters['optimizer']['name'])(
-                                    **self.hyper_parameters['optimizer']['params'])
+            **self.hyper_parameters['optimizer']['params'])
         model.compile(optimizer=optimizer, **self.hyper_parameters['compile_params'])
         self.model = model
         self.model.summary()
@@ -545,7 +545,7 @@ class AVRNNModel(ClassificationModel):
         },
         'compile_params': {
             'loss': 'categorical_crossentropy',
-            #'optimizer': 'adam',
+            # 'optimizer': 'adam',
             'metrics': ['accuracy']
         }
     }
@@ -573,7 +573,7 @@ class AVRNNModel(ClassificationModel):
         model = Model(base_model.inputs, output)
         optimizer = getattr(eval(self.hyper_parameters['optimizer']['module']),
                             self.hyper_parameters['optimizer']['name'])(
-                                    **self.hyper_parameters['optimizer']['params'])
+            **self.hyper_parameters['optimizer']['params'])
         model.compile(optimizer=optimizer, **self.hyper_parameters['compile_params'])
         self.model = model
         self.model.summary()
@@ -622,7 +622,7 @@ class DropoutBGRUModel(ClassificationModel):
         },
         'compile_params': {
             'loss': 'categorical_crossentropy',
-            #'optimizer': 'adam',
+            # 'optimizer': 'adam',
             'metrics': ['accuracy']
         }
     }
@@ -648,7 +648,7 @@ class DropoutBGRUModel(ClassificationModel):
         model = Model(base_model.inputs, output)
         optimizer = getattr(eval(self.hyper_parameters['optimizer']['module']),
                             self.hyper_parameters['optimizer']['name'])(
-                                    **self.hyper_parameters['optimizer']['params'])
+            **self.hyper_parameters['optimizer']['params'])
         model.compile(optimizer=optimizer, **self.hyper_parameters['compile_params'])
         self.model = model
         self.model.summary()
@@ -702,7 +702,7 @@ class DropoutAVRNNModel(ClassificationModel):
         },
         'compile_params': {
             'loss': 'categorical_crossentropy',
-            #'optimizer': 'adam',
+            # 'optimizer': 'adam',
             'metrics': ['accuracy']
         }
     }
@@ -730,7 +730,7 @@ class DropoutAVRNNModel(ClassificationModel):
         model = Model(base_model.inputs, output)
         optimizer = getattr(eval(self.hyper_parameters['optimizer']['module']),
                             self.hyper_parameters['optimizer']['name'])(
-                                    **self.hyper_parameters['optimizer']['params'])
+            **self.hyper_parameters['optimizer']['params'])
         model.compile(optimizer=optimizer, **self.hyper_parameters['compile_params'])
         self.model = model
         self.model.summary()
@@ -746,5 +746,5 @@ if __name__ == '__main__':
                          sequence_length=15,
                          limit=5000)
     bert = BERTEmbedding('bert-base-chinese', sequence_length=15)
-    model = CNNModel(bert)
-    model.fit(train_x, train_y, epochs=1)
+    t_model = CNNModel(bert)
+    t_model.fit(train_x, train_y, epochs=1)
