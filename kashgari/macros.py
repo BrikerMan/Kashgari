@@ -38,7 +38,45 @@ pathlib.Path(PROCESSED_CORPUS_PATH).mkdir(parents=True, exist_ok=True)
 
 class _Config(object):
     def __init__(self):
-        self.use_CuDNN_cell = False
+        self._use_CuDNN_cell = False
+
+        self._sequence_labeling_tokenize_add_bos_eos = False
+
+    @property
+    def use_CuDNN_cell(self):
+        """
+        if true, will use `cuDNNLSTM` and `cuDNNGRU` layer instead of `LSTM` and `GRU` layer
+        which will speed up training when using GPU
+        :return:
+        """
+        return self._use_CuDNN_cell
+
+    @use_CuDNN_cell.setter
+    def use_CuDNN_cell(self, value):
+        """
+        if true, will use `cuDNNLSTM` and `cuDNNGRU` layer instead of `LSTM` and `GRU` layer
+        which will speed up training when using GPU
+        :param value:
+        :return:
+        """
+        self._use_CuDNN_cell = value
+
+    @property
+    def sequence_labeling_tokenize_add_bos_eos(self):
+        """
+        if true, will add BOS and EOS label to sequence labeling result.
+        :return:
+        """
+        return self._sequence_labeling_tokenize_add_bos_eos
+
+    @sequence_labeling_tokenize_add_bos_eos.setter
+    def sequence_labeling_tokenize_add_bos_eos(self, value):
+        """
+        if true, will add BOS and EOS label to sequence labeling result.
+        :param value:
+        :return:
+        """
+        self._sequence_labeling_tokenize_add_bos_eos = value
 
 
 config = _Config()
