@@ -16,7 +16,7 @@ from keras.models import Model
 
 from kashgari.layers import LSTMLayer
 from kashgari.tasks.seq_labeling.base_model import SequenceLabelingModel
-from kashgari.utils.crf import CRF, crf_loss, crf_accuracy
+from kashgari.utils.crf import CRF, crf_loss as kashgari_crf_loss, crf_accuracy as kashgari_crf_accuracy
 
 
 class CNNLSTMModel(SequenceLabelingModel):
@@ -149,22 +149,22 @@ class BLSTMCRFModel(SequenceLabelingModel):
             }
         },
         'compile_params': {
-            'loss': 'crf_loss',
+            'loss': 'kashgari_crf_loss',
             # 'optimizer': 'adam',
-            'metrics': ['crf_accuracy']
+            'metrics': ['kashgari_crf_accuracy']
         }
     }
 
     def build_model(self):
         loss = self.hyper_parameters['compile_params']['loss']
-        if loss == 'crf_loss':
-            loss = crf_loss
+        if loss.startswith('kashgari'):
+            loss = eval(loss)
 
         metrics = self.hyper_parameters['compile_params']['metrics']
         new_metrics = []
         for met in metrics:
-            if met == 'crf_accuracy':
-                new_metrics.append(crf_accuracy)
+            if met.startswith('kashgari') :
+                new_metrics.append(eval(met))
             else:
                 new_metrics.append(met)
         metrics = new_metrics
