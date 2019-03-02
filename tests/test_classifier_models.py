@@ -95,7 +95,7 @@ class TestBLSTMModelModelBasic(unittest.TestCase):
         embedding = EmbeddingManager.get_w2v()
         w2v_model = self.model_class(embedding)
         w2v_model.fit(train_x, train_y, epochs=1)
-        assert len(w2v_model.label2idx) == 4
+        assert len(w2v_model.label2idx) == 3
         assert len(w2v_model.token2idx) > 4
 
         sentence = list('语言学包含了几种分支领域。')
@@ -121,7 +121,7 @@ class TestAllCNNModelModel(unittest.TestCase):
 
     def test_build(self):
         self.model.fit(train_x, train_y, epochs=1)
-        assert len(self.model.label2idx) == 4
+        assert len(self.model.label2idx) == 3
         assert len(self.model.token2idx) > 4
 
     def test_fit(self):
@@ -181,7 +181,7 @@ class TestAllCNNModelModel(unittest.TestCase):
         embedding = EmbeddingManager.get_w2v()
         w2v_model = self.model_class(embedding)
         w2v_model.fit(train_x, train_y, epochs=1)
-        assert len(w2v_model.label2idx) == 4
+        assert len(w2v_model.label2idx) == 3
         assert len(w2v_model.token2idx) > 4
 
         sentence = list('语言学包含了几种分支领域。')
