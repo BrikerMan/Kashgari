@@ -8,7 +8,7 @@
 [![Issues](https://img.shields.io/github/issues/BrikerMan/Kashgari.svg)](https://github.com/BrikerMan/Kashgari/issues)
 [![Contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg)](CONTRIBUTING.md)
 ![](https://img.shields.io/pypi/l/kashgari.svg?style=flat)
-[![](https://img.shields.io/pypi/dw/kashgari.svg)](https://pypi.org/project/kashgari/)
+[![](https://img.shields.io/pypi/dm/kashgari.svg)](https://pypi.org/project/kashgari/)
 
 Simple and powerful NLP framework, build your state-of-art model in 5 minutes for named entity recognition (NER), part-of-speech tagging (PoS) and text classification tasks.
 
@@ -25,14 +25,20 @@ Kashgare is:
 * Embedding support
     * Classic word2vec embedding
     * BERT embedding
-* Text Classification Models
-    * CNN Classification Model
-    * CNN LSTM Classification Model
-    * Bidirectional LSTM Classification Model
-* Text Labeling Models (NER, PoS)
-    * Bidirectional LSTM Labeling Model
-    * Bidirectional LSTM CRF Labeling Model
-    * CNN LSTM Labeling Model
+* Sequence(Text) Classification Models
+    * CNNModel
+    * BLSTMModel
+    * CNNLSTMModel
+    * AVCNNModel
+    * KMaxCNNModel
+    * RCNNModel
+    * AVRNNModel
+    * DropoutBGRUModel
+    * DropoutAVRNNModel
+* Sequence(Text) Labeling Models (NER, PoS)
+    * CNNLSTMModel
+    * BLSTMModel
+    * BLSTMCRFModel
 * Model Training
 * Model Evaluate
 * GPU Support
