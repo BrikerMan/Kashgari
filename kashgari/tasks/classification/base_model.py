@@ -45,6 +45,30 @@ class ClassificationModel(BaseModel):
         self.multi_label = multi_label
         self.multi_label_binarizer: MultiLabelBinarizer = None
 
+        if self.multi_label:
+            if not hyper_parameters or \
+                    hyper_parameters.get('compile_params', {}).get('loss') is None:
+                self.hyper_parameters['compile_params']['loss'] = 'binary_crossentropy'
+            else:
+                logging.warning('recommend to use binary_crossentropy loss for multi_label task')
+
+            if not hyper_parameters or \
+                    hyper_parameters.get('compile_params', {}).get('metrics') is None:
+                self.hyper_parameters['compile_params']['metrics'] = ['categorical_accuracy']
+            else:
+                logging.warning('recommend to use categorical_accuracy metrivs for multi_label task')
+
+            if not hyper_parameters or \
+                    hyper_parameters.get('activation_layer', {}).get('sigmoid') is None:
+                self.hyper_parameters['activation_layer']['activation'] = 'sigmoid'
+            else:
+                logging.warning('recommend to use sigmoid activation for multi_label task')
+
+    def info(self):
+        info = super(ClassificationModel, self).info()
+        info['model_info']['multi_label'] = self.multi_label
+        return info
+
     @property
     def label2idx(self) -> Dict[str, int]:
         return self._label2idx
@@ -65,16 +89,27 @@ class ClassificationModel(BaseModel):
         """
         raise NotImplementedError()
 
+    @classmethod
+    def load_model(cls, model_path: str):
+        agent: ClassificationModel = super(ClassificationModel, cls).load_model(model_path)
+        agent.multi_label = agent.model_info.get('multi_label', False)
+        if agent.multi_label:
+            keys = list(agent.label2idx.keys())
+            agent.multi_label_binarizer = MultiLabelBinarizer(classes=keys)
+            agent.multi_label_binarizer.fit(keys[0])
+        return agent
+
     def build_token2id_label2id_dict(self,
                                      x_train: List[List[str]],
                                      y_train: List[str],
                                      x_validate: List[List[str]] = None,
                                      y_validate: List[str] = None):
-        x_data = x_train
-        y_data = y_train
         if x_validate:
-            x_data += x_validate
-            y_data += y_validate
+            x_data = x_train + x_validate
+            y_data = y_train + y_validate
+        else:
+            x_data = x_train
+            y_data = y_train
         self.embedding.build_token2idx_dict(x_data, 3)
 
         if self.multi_label:
@@ -143,9 +178,9 @@ class ClassificationModel(BaseModel):
 
     def fit(self,
             x_train: List[List[str]],
-            y_train: List[str],
+            y_train: Union[List[str], List[List[str]], List[Tuple[str]]],
             x_validate: List[List[str]] = None,
-            y_validate: List[str] = None,
+            y_validate: Union[List[str], List[List[str]], List[Tuple[str]]] = None,
             batch_size: int = 64,
             epochs: int = 5,
             class_weight: bool = False,
