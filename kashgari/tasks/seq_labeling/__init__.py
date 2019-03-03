@@ -11,10 +11,7 @@
 
 """
 
-from .blstm_model import BLSTMModel
-from .blstm_crf_model import BLSTMCRFModel
-from .cnn_lstm_model import CNNLSTMModel
-from .base_model import SequenceLabelingModel
+from .models import BLSTMModel, BLSTMCRFModel, CNNLSTMModel
 
 
 if __name__ == '__main__':
