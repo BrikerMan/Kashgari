@@ -10,8 +10,8 @@
 @time: 2019-01-21
 
 """
-import logging
 import random
+import logging
 from typing import Tuple, Dict
 
 import numpy as np
@@ -21,11 +21,11 @@ from seqeval.metrics import classification_report
 from seqeval.metrics.sequence_labeling import get_entities
 
 import kashgari.macros as k
-from kashgari.embeddings import BaseEmbedding
-from kashgari.tasks.base import BaseModel
-from kashgari.type_hints import *
 from kashgari.utils import helper
-from kashgari.macros import config
+from kashgari.type_hints import *
+
+from kashgari.tasks.base import BaseModel
+from kashgari.embeddings import BaseEmbedding
 
 
 class SequenceLabelingModel(BaseModel):
@@ -47,7 +47,7 @@ class SequenceLabelingModel(BaseModel):
         self._label2idx = value
         self._idx2label = dict([(val, key) for (key, val) in value.items()])
 
-    def build_model(self):
+    def build_model(self, loss_f=None, optimizer=None, metrics=None, **kwargs):
         """
         build model function
         :return:
@@ -92,10 +92,7 @@ class SequenceLabelingModel(BaseModel):
         def tokenize_tokens(seq: List[str]):
             tokens = [self._label2idx[i] for i in seq]
             if add_eos_bos:
-                if config.sequence_labeling_tokenize_add_bos_eos:
-                    tokens = [self._label2idx[k.BOS]] + tokens + [self._label2idx[k.EOS]]
-                else:
-                    tokens = [self._label2idx[k.NO_TAG]] + tokens + [self._label2idx[k.NO_TAG]]
+                tokens = [self._label2idx[k.BOS]] + tokens + [self._label2idx[k.EOS]]
             return tokens
 
         if isinstance(label[0], str):
