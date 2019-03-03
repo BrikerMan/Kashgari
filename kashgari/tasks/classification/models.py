@@ -12,15 +12,20 @@
 """
 from __future__ import absolute_import, division
 
+import logging
+
 import keras
-from keras.layers import Bidirectional, Conv1D
-from keras.layers import Dense, Lambda, Flatten
+#from keras import optimizers
+
+from keras.models import Model
+from keras.layers import Dense, Lambda, Flatten, Reshape
 from keras.layers import Dropout, SpatialDropout1D
 from keras.layers import GlobalAveragePooling1D, GlobalMaxPooling1D, MaxPooling1D
+from keras.layers import Bidirectional, Conv1D
 from keras.layers import concatenate
-from keras.models import Model
 
 from kashgari.layers import AttentionWeightedAverage, KMaxPooling, LSTMLayer, GRULayer
+
 from kashgari.tasks.classification.base_model import ClassificationModel
 
 
@@ -56,13 +61,6 @@ class CNNModel(ClassificationModel):
     }
 
     def build_model(self):
-
-        # TODO: maybe refactor this
-        if self.multi_label:
-            self.hyper_parameters['compile_params']['loss'] = 'binary_crossentropy'
-            self.hyper_parameters['compile_params']['metrics'] = ['categorical_accuracy']
-            self.hyper_parameters['activation_layer']['activation'] = 'sigmoid'
-
         base_model = self.embedding.model
         conv1d_layer = Conv1D(**self.hyper_parameters['conv1d_layer'])(base_model.output)
         max_pool_layer = GlobalMaxPooling1D(**self.hyper_parameters['max_pool_layer'])(conv1d_layer)

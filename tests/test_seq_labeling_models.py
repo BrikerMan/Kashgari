@@ -19,8 +19,6 @@ import unittest
 from kashgari.embeddings import WordEmbeddings, BERTEmbedding
 from kashgari.tasks.seq_labeling import CNNLSTMModel, BLSTMModel, BLSTMCRFModel
 from kashgari.utils.logger import init_logger
-from kashgari.macros import config, BOS, EOS, NO_TAG
-
 
 init_logger()
 
@@ -126,20 +124,6 @@ class TestCNNLSTMModel(unittest.TestCase):
                          min(len(idxs)-2, self.model.embedding.sequence_length))
         tokens = self.model.embedding.tokenize(sentence)
         self.assertEqual(len(sentence)+2, len(tokens))
-
-        config.sequence_labeling_tokenize_add_bos_eos = True
-        label = train_y[0]
-        idx = self.model.convert_labels_to_idx(label)
-        self.assertEqual(len(label)+2, len(idx))
-        self.assertEqual(idx[0], self.model.label2idx[BOS])
-        self.assertEqual(idx[-1], self.model.label2idx[EOS])
-
-        config.sequence_labeling_tokenize_add_bos_eos = False
-        label = train_y[0]
-        idx = self.model.convert_labels_to_idx(label)
-        self.assertEqual(len(label) + 2, len(idx))
-        self.assertEqual(idx[0], self.model.label2idx[NO_TAG])
-        self.assertEqual(idx[-1], self.model.label2idx[NO_TAG])
 
     def test_predict(self):
         self.test_fit()

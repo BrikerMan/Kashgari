@@ -38,48 +38,15 @@ pathlib.Path(PROCESSED_CORPUS_PATH).mkdir(parents=True, exist_ok=True)
 
 class _Config(object):
     def __init__(self):
-        self._use_CuDNN_cell = False
-
-        self._sequence_labeling_tokenize_add_bos_eos = False
-
-    @property
-    def use_CuDNN_cell(self):
-        """
-        if true, will use `cuDNNLSTM` and `cuDNNGRU` layer instead of `LSTM` and `GRU` layer
-        which will speed up training when using GPU
-        :return:
-        """
-        return self._use_CuDNN_cell
-
-    @use_CuDNN_cell.setter
-    def use_CuDNN_cell(self, value):
-        """
-        if true, will use `cuDNNLSTM` and `cuDNNGRU` layer instead of `LSTM` and `GRU` layer
-        which will speed up training when using GPU
-        :param value:
-        :return:
-        """
-        self._use_CuDNN_cell = value
-
-    @property
-    def sequence_labeling_tokenize_add_bos_eos(self):
-        """
-        if true, will add BOS and EOS label to sequence labeling result.
-        :return:
-        """
-        return self._sequence_labeling_tokenize_add_bos_eos
-
-    @sequence_labeling_tokenize_add_bos_eos.setter
-    def sequence_labeling_tokenize_add_bos_eos(self, value):
-        """
-        if true, will add BOS and EOS label to sequence labeling result.
-        :param value:
-        :return:
-        """
-        self._sequence_labeling_tokenize_add_bos_eos = value
+        self.use_CuDNN_cell = False
 
 
 config = _Config()
+
+
+class CustomEmbedding(object):
+    def __init__(self, embedding_size=100):
+        self.embedding_size = embedding_size
 
 
 class TaskType(Enum):
@@ -102,6 +69,26 @@ class SegmenterType(Enum):
 URL_MAP = {
     'w2v.sgns.weibo.bigram': 'embedding/word2vev/sgns.weibo.bigram.bz2'
 }
+
+
+def download_file(file: str):
+    url = STORAGE_HOST + file
+    target_path = os.path.join(DATA_PATH, file)
+    download.download(url, target_path)
+
+
+def download_if_not_existed(file_path: str) -> str:
+    target_path = os.path.join(DATA_PATH, file_path)
+    if not os.path.exists(target_path[:-4]):
+        download_file(file_path)
+        with open(target_path, 'rb') as source, open(target_path[:-4], 'wb') as dest:
+            dest.write(bz2.decompress(source.read()))
+    return target_path[:-4]
+
+
+def get_model_path(file: str) -> str:
+    file_path = URL_MAP.get(file, file)
+    return download_if_not_existed(file_path)
 
 
 if __name__ == "__main__":
