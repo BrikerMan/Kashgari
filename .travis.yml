@@ -19,6 +19,11 @@ install:
   - pip install nose
 # command to run tests
 script:
+  - sonar-scanner
   - nosetests --with-coverage --cover-html --cover-html-dir=htmlcov --cover-package="kashgari" $TEST_FILE
 after_success:
   - coveralls
+
+addons:
+  sonarcloud:
+    organization: "brikerman-github" # the key of the org you chose at step #3
