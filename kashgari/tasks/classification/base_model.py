@@ -113,16 +113,15 @@ class ClassificationModel(BaseModel):
         self.embedding.build_token2idx_dict(x_data, 3)
 
         if self.multi_label:
-            label_set = []
+            label_set = set()
             for i in y_data:
-                label_set += list(i)
-            label_set = set(label_set)
+                label_set = label_set.union(list(i))
         else:
             label_set = set(y_data)
 
         label2idx = {}
-        for label in label_set:
-            label2idx[label] = len(label2idx)
+        for idx, label in enumerate(label_set):
+            label2idx[label] = idx
         self._label2idx = label2idx
         self._idx2label = dict([(val, key) for (key, val) in label2idx.items()])
         self.multi_label_binarizer = MultiLabelBinarizer(classes=list(self.label2idx.keys()))
