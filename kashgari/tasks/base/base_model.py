@@ -28,7 +28,7 @@ from kashgari.utils import helper
 from kashgari.embeddings import CustomEmbedding, BaseEmbedding
 from kashgari.utils.crf import CRF, crf_loss, crf_accuracy
 from keras_bert.bert import get_custom_objects as get_bert_custom_objects
-from kashgari.layers import AttentionWeightedAverage, KMaxPooling
+from kashgari.layers import AttentionWeightedAverage, KMaxPooling, NonMaskingLayer
 
 
 class BaseModel(object):
@@ -114,7 +114,7 @@ class BaseModel(object):
         embedding = model_info.get('embedding')
 
         if embedding and embedding['embedding_type'] == 'bert':
-            custom_objects['NonMaskingLayer'] = helper.NonMaskingLayer
+            custom_objects['NonMaskingLayer'] = NonMaskingLayer
             custom_objects.update(get_bert_custom_objects())
         custom_objects['AttentionWeightedAverage'] = AttentionWeightedAverage
         custom_objects['KMaxPooling'] = KMaxPooling
