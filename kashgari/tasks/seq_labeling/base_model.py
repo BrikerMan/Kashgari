@@ -92,7 +92,10 @@ class SequenceLabelingModel(BaseModel):
         def tokenize_tokens(seq: List[str]):
             tokens = [self._label2idx[i] for i in seq]
             if add_eos_bos:
-                tokens = [self._label2idx[k.BOS]] + tokens + [self._label2idx[k.EOS]]
+                if k.config.sequence_labeling_tokenize_add_bos_eos:
+                    tokens = [self._label2idx[k.BOS]] + tokens + [self._label2idx[k.EOS]]
+                else:
+                    tokens = [self._label2idx[k.NO_TAG]] + tokens + [self._label2idx[k.NO_TAG]]
             return tokens
 
         if isinstance(label[0], str):

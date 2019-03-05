@@ -25,6 +25,7 @@ from keras.preprocessing import sequence
 import kashgari.macros as k
 from kashgari.type_hints import *
 from kashgari.utils import helper
+from kashgari.layers import NonMaskingLayer
 
 EMBEDDINGS_PATH = os.path.join(k.DATA_PATH, 'embedding')
 
@@ -298,7 +299,7 @@ class BERTEmbedding(BaseEmbedding):
         model = keras_bert.load_trained_model_from_checkpoint(config_path,
                                                               check_point_path,
                                                               seq_len=self.sequence_length)
-        output_layer = helper.NonMaskingLayer()(model.output)
+        output_layer = NonMaskingLayer()(model.output)
         self._model = Model(model.inputs, output_layer)
 
         self.embedding_size = self.model.output_shape[-1]

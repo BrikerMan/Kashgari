@@ -39,6 +39,7 @@ pathlib.Path(PROCESSED_CORPUS_PATH).mkdir(parents=True, exist_ok=True)
 class _Config(object):
     def __init__(self):
         self.use_CuDNN_cell = False
+        self.sequence_labeling_tokenize_add_bos_eos = False
 
 
 config = _Config()

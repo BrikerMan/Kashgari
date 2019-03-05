@@ -28,7 +28,7 @@ from kashgari.utils import helper
 from kashgari.embeddings import CustomEmbedding, BaseEmbedding
 from kashgari.utils.crf import CRF, crf_loss, crf_accuracy
 from keras_bert.bert import get_custom_objects as get_bert_custom_objects
-from kashgari.layers import AttentionWeightedAverage, KMaxPooling
+from kashgari.layers import AttentionWeightedAverage, KMaxPooling, NonMaskingLayer
 
 
 class BaseModel(object):
@@ -114,7 +114,7 @@ class BaseModel(object):
         embedding = model_info.get('embedding')
 
         if embedding and embedding['embedding_type'] == 'bert':
-            custom_objects['NonMaskingLayer'] = helper.NonMaskingLayer
+            custom_objects['NonMaskingLayer'] = NonMaskingLayer
             custom_objects.update(get_bert_custom_objects())
         custom_objects['AttentionWeightedAverage'] = AttentionWeightedAverage
         custom_objects['KMaxPooling'] = KMaxPooling
@@ -132,7 +132,7 @@ class BaseModel(object):
             model_info = json.load(f)
         agent = cls()
         custom_objects = cls.create_custom_objects(model_info)
-
+        agent.model_info = model_info['model_info']
         if custom_objects:
             logger.debug('prepared custom objects: {}'.format(custom_objects))
 
@@ -140,7 +140,7 @@ class BaseModel(object):
             agent.model = keras.models.load_model(os.path.join(model_path, 'model.model'),
                                                   custom_objects=custom_objects)
         except Exception as e:
-            logger.warn('Error `{}` occured trying directly model loading. Try to rebuild.'.format(e))
+            logger.warning('Error `{}` occured trying directly model loading. Try to rebuild.'.format(e))
             logger.debug('Load model structure from json.')
             with open(os.path.join(model_path, 'struct.json'), 'r', encoding='utf-8') as f:
                 model_struct = f.read()
