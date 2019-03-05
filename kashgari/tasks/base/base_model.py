@@ -132,7 +132,7 @@ class BaseModel(object):
             model_info = json.load(f)
         agent = cls()
         custom_objects = cls.create_custom_objects(model_info)
-
+        agent.model_info = model_info['model_info']
         if custom_objects:
             logger.debug('prepared custom objects: {}'.format(custom_objects))
 
@@ -140,7 +140,7 @@ class BaseModel(object):
             agent.model = keras.models.load_model(os.path.join(model_path, 'model.model'),
                                                   custom_objects=custom_objects)
         except Exception as e:
-            logger.warn('Error `{}` occured trying directly model loading. Try to rebuild.'.format(e))
+            logger.warning('Error `{}` occured trying directly model loading. Try to rebuild.'.format(e))
             logger.debug('Load model structure from json.')
             with open(os.path.join(model_path, 'struct.json'), 'r', encoding='utf-8') as f:
                 model_struct = f.read()

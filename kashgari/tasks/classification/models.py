@@ -56,13 +56,6 @@ class CNNModel(ClassificationModel):
     }
 
     def build_model(self):
-
-        # TODO: maybe refactor this
-        if self.multi_label:
-            self.hyper_parameters['compile_params']['loss'] = 'binary_crossentropy'
-            self.hyper_parameters['compile_params']['metrics'] = ['categorical_accuracy']
-            self.hyper_parameters['activation_layer']['activation'] = 'sigmoid'
-
         base_model = self.embedding.model
         conv1d_layer = Conv1D(**self.hyper_parameters['conv1d_layer'])(base_model.output)
         max_pool_layer = GlobalMaxPooling1D(**self.hyper_parameters['max_pool_layer'])(conv1d_layer)

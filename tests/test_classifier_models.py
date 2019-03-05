@@ -38,6 +38,7 @@ train_x = [
     list('在语言结构（语法）研究与意义（语义与语用）研究之间存在一个重要的主题划分'),
 ]
 train_y = ['a', 'a', 'a', 'b', 'c']
+train_multi_y = [['b', 'c'], ['a'], ['a', 'c'], ['a', 'b'], ['c']]
 
 eval_x = [
     list('语言学是一门关于人类语言的科学研究。'),
@@ -50,6 +51,7 @@ eval_x = [
 ]
 
 eval_y = ['a', 'a', 'a', 'b', 'c', 'a', 'c']
+eval_multi_y = [['b', 'c'], ['a'], ['a', 'c'], ['a', 'b'], ['c'], ['b'], ['a']]
 
 
 class EmbeddingManager(object):
@@ -104,6 +106,19 @@ class TestBLSTMModelModelBasic(unittest.TestCase):
         logging.info('test predict: {} -> {}'.format(sentence, self.model.predict(sentence)))
         w2v_model.predict(sentence, output_dict=True)
         w2v_model.predict(sentence, output_dict=False)
+
+    def test_multi_label_model(self):
+        multi_label_model = self.model_class(multi_label=True)
+        multi_label_model.fit(train_x, train_multi_y, eval_x, eval_multi_y, epochs=2)
+        assert isinstance(multi_label_model.predict(train_x[0]), tuple)
+
+        model_path = os.path.join(tempfile.gettempdir(), 'kashgari_model', str(time.time()))
+        multi_label_model.save(model_path)
+        new_model = BLSTMModel.load_model(model_path)
+        assert new_model is not None
+        sentence = list('语言学包含了几种分支领域。')
+        result = new_model.predict(sentence)
+        assert isinstance(result, tuple)
 
     @classmethod
     def tearDownClass(cls):
@@ -190,6 +205,19 @@ class TestAllCNNModelModel(unittest.TestCase):
         logging.info('test predict: {} -> {}'.format(sentence, self.model.predict(sentence)))
         w2v_model.predict(sentence, output_dict=True)
         w2v_model.predict(sentence, output_dict=False)
+
+    def test_multi_label_model(self):
+        multi_label_model = self.model_class(multi_label=True)
+        multi_label_model.fit(train_x, train_multi_y, eval_x, eval_multi_y, epochs=2)
+        assert isinstance(multi_label_model.predict(train_x[0]), tuple)
+
+        model_path = os.path.join(tempfile.gettempdir(), 'kashgari_model', str(time.time()))
+        multi_label_model.save(model_path)
+        new_model = BLSTMModel.load_model(model_path)
+        assert new_model is not None
+        sentence = list('语言学包含了几种分支领域。')
+        result = new_model.predict(sentence)
+        assert isinstance(result, tuple)
 
     @classmethod
     def tearDownClass(cls):
