@@ -12,15 +12,20 @@
 """
 from __future__ import absolute_import, division
 
+import logging
+
 import keras
-from keras.layers import Bidirectional, Conv1D
-from keras.layers import Dense, Lambda, Flatten
+#from keras import optimizers
+
+from keras.models import Model
+from keras.layers import Dense, Lambda, Flatten, Reshape
 from keras.layers import Dropout, SpatialDropout1D
 from keras.layers import GlobalAveragePooling1D, GlobalMaxPooling1D, MaxPooling1D
+from keras.layers import Bidirectional, Conv1D
 from keras.layers import concatenate
-from keras.models import Model
 
 from kashgari.layers import AttentionWeightedAverage, KMaxPooling, LSTMLayer, GRULayer
+
 from kashgari.tasks.classification.base_model import ClassificationModel
 
 
