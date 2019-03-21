@@ -228,7 +228,11 @@ class ClassificationModel(BaseModel):
             fit_kwargs['validation_steps'] = max(len(x_validate) // batch_size, 1)
 
         if class_weight:
-            y_list = self.convert_label_to_idx(y_train)
+            if self.multi_label:
+                y_list = [self.convert_label_to_idx(y) for y in y_train]
+                y_list = [y for ys in y_list for y in ys]
+            else:
+                y_list = self.convert_label_to_idx(y_train)
             class_weights = class_weight_calculte.compute_class_weight('balanced',
                                                                        np.unique(y_list),
                                                                        y_list)
