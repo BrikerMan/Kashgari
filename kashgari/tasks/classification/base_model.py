@@ -119,12 +119,13 @@ class ClassificationModel(BaseModel):
         else:
             label_set = set(y_data)
 
-        label2idx = {}
-        for idx, label in enumerate(label_set):
-            label2idx[label] = idx
-        self._label2idx = label2idx
-        self._idx2label = dict([(val, key) for (key, val) in label2idx.items()])
-        self.multi_label_binarizer = MultiLabelBinarizer(classes=list(self.label2idx.keys()))
+        if not len(self.label2idx):
+            label2idx = {}
+            for idx, label in enumerate(label_set):
+                label2idx[label] = idx
+            self._label2idx = label2idx
+            self._idx2label = dict([(val, key) for (key, val) in label2idx.items()])
+            self.multi_label_binarizer = MultiLabelBinarizer(classes=list(self.label2idx.keys()))
 
     def convert_label_to_idx(self, label: Union[List[str], str]) -> Union[List[int], int]:
         if isinstance(label, str):
