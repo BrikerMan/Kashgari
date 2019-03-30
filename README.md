@@ -77,9 +77,9 @@ The project is based on Keras 2.2.0+ and Python 3.6+, because it is 2019 and typ
 ```bash
 pip install kashgari
 # CPU
-pip install tensorflow
+pip install tensorflow==1.12.0
 # GPU
-pip install tensorflow-gpu 
+pip install tensorflow-gpu==1.12.0
 ```
 
 ### Example Usage
