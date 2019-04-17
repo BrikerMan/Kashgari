@@ -14,11 +14,13 @@ import json
 import logging
 import os
 from typing import Dict, Any
+from itertools import chain
+from collections import Counter
 
 import keras_bert
 import numpy as np
 from gensim.models import KeyedVectors
-from keras.layers import Input, Embedding
+from keras.layers import Input, Embedding, concatenate
 from keras.models import Model
 from keras.preprocessing import sequence
 
@@ -349,20 +351,62 @@ class CustomEmbedding(BaseEmbedding):
 
     def build_token2idx_dict(self, x_data: List[TextSeqType], min_count: int = 5):
         if self.token2idx is None:
-            word_set: Dict[str, int] = {}
-            for x_item in x_data:
-                for word in x_item:
-                    word_set[word] = word_set.get(word, 0) + 1
+            #word_set: Dict[str, int] = {}
+            # for x_item in x_data:
+            #     for word in x_item:
+            #         word_set[word] = word_set.get(word, 0) + 1
 
-            word2idx_list = sorted(word_set.items(), key=lambda kv: -kv[1])
+            x_items = chain(*x_data)
+            word_freq = Counter(x_items)
+            # word_set = {word: freq for word, freq in word_freq.items() if freq >= min_count}
+            # word2idx_list = sorted(word_set.items(), key=lambda kv: -kv[1])
+            word2idx_list = sorted(word_freq.items(), key=lambda kv: -kv[1])
 
             word2idx = self.base_dict.copy()
-            for word, count in word2idx_list:
-                if count >= min_count:
-                    word2idx[word] = len(word2idx)
+            offset = len(word2idx)
+            # for word, count in word2idx_list:
+            #     if count >= min_count:
+            #         word2idx[word] = len(word2idx)
+            for idx, (word, freq) in enumerate(word2idx_list):
+                if freq >= min_count:
+                    word2idx[word] = idx + offset
 
             self.token2idx = word2idx
         self.build()
+
+
+class TwoHeadEmbedding(CustomEmbedding):
+    def __init__(self,
+                 name_or_path: str = 'twohead-embedding',
+                 sequence_length: List[int] = None,
+                 embedding_size: int = None,
+                 **kwargs):
+        """
+        Inheritated from CustomEmbedding class.
+        :param name_or_path: just a name for two head embedding
+        :param sequence_length: max length list of sequences, all embedding is shaped as (sequence_length[idx], embedding_size)
+        :param embedding_size: embedding vector size, only need to set when using a CustomEmbedding or its subclass
+        :param kwargs: kwargs to pass to the method, func: `BaseEmbedding.build`
+        """
+        if sequence_length is None or embedding_size is None:
+            raise ValueError('Must set all sequence_length and embedding_size when using the TwoheadEmbedding layer')
+        super(TwoHeadEmbedding, self).__init__(name_or_path, sequence_length, embedding_size, **kwargs)
+
+    def build(self, **kwargs):
+        if self._token2idx is None:
+            logging.debug('need to build after build_word2idx')
+        else:
+            input_x1 = Input(shape=(self.sequence_length[0],), dtype='int32', name='master_input')
+            current1 = Embedding(self.token_count,
+                                self.embedding_size)(input_x1)
+            input_x2 = Input(shape=(self.sequence_length[1],), dtype='int32', name='assist_input')
+            current2 = Embedding(self.token_count,
+                                self.embedding_size)(input_x2)
+            current = concatenate([current1, current2], axis=1)
+            self._model = Model(inputs=[input_x1, input_x2], outputs=current)
+
+    def build_token2idx_dict(self, x_data: List[TextSeqType], min_count: int = 5):
+        super(TwoHeadEmbedding, self).build_token2idx_dict(x_data, min_count)
 
 
 if __name__ == '__main__':

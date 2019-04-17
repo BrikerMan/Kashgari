@@ -187,6 +187,10 @@ def cached_path(file_path: str, download_url: Optional[str], sub_folders: List[s
 #         return target_path
 
 
+def depth_count(lst: List[List]) -> int:
+    return 1 + max(map(depth_count, lst)) if lst and isinstance(lst, list) else 0
+
+
 if __name__ == "__main__":
     from kashgari.utils.logger import init_logger
     init_logger()
