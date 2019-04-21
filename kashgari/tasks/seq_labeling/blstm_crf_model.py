@@ -32,23 +32,24 @@ class BLSTMCRFModel(SequenceLabelingModel):
         }
     }
 
-    def build_model(self):
+    def _prepare_model(self):
         base_model = self.embedding.model
         blstm_layer = Bidirectional(LSTM(**self.hyper_parameters['lstm_layer']))(base_model.output)
         dense_layer = Dense(128, activation='tanh')(blstm_layer)
         crf = CRF(len(self.label2idx), sparse_target=False)
         crf_layer = crf(dense_layer)
-        model = Model(base_model.inputs, crf_layer)
-        model.compile(loss=crf_loss,
-                      optimizer='adam',
-                      metrics=[crf_accuracy])
-        self.model = model
-        self.model.summary()
+        self.model = Model(base_model.inputs, crf_layer)
+
+    def _compile_model(self, loss_f=None, optimizer=None, metrics=None, **kwargs):
+        self.model.compile(loss=crf_loss,
+                           optimizer='adam',
+                           metrics=[crf_accuracy])
 
 
 if __name__ == "__main__":
     print("Hello world")
     from kashgari.utils.logger import init_logger
+
     init_logger()
     from kashgari.corpus import ChinaPeoplesDailyNerCorpus
 

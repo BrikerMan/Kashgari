@@ -16,12 +16,11 @@ from typing import Tuple, Dict
 
 import numpy as np
 from keras.preprocessing import sequence
-from keras.utils import to_categorical
+from keras.utils import to_categorical, multi_gpu_model
 from sklearn import metrics
 from sklearn.utils import class_weight as class_weight_calculte
 from sklearn.preprocessing import MultiLabelBinarizer
 
-from kashgari import macros as k
 from kashgari.tasks.base import BaseModel
 from kashgari.embeddings import BaseEmbedding
 from kashgari.type_hints import *
@@ -82,12 +81,40 @@ class ClassificationModel(BaseModel):
         self._label2idx = value
         self._idx2label = dict([(val, key) for (key, val) in value.items()])
 
+    def _prepare_model(self):
+        """
+        prepare model function
+        :return:
+        """
+        raise NotImplementedError()
+
+    def _compile_model(self):
+        """
+        compile model function
+        :return:
+        """
+        raise NotImplementedError()
+
     def build_model(self):
         """
         build model function
         :return:
         """
-        raise NotImplementedError()
+        self._prepare_model()
+        self._compile_model()
+        self.model.summary()
+
+    def build_multi_gpu_model(self, gpus: int):
+        """
+        build multi-gpu model function
+        :return:
+        """
+        self._prepare_model()
+        # If gpus < 2, this will fall back to normal build_model() on CPU or GPU
+        if gpus >= 2:
+            self.model = multi_gpu_model(self.model, gpus=gpus)
+        self._compile_model()
+        self.model.summary()
 
     @classmethod
     def load_model(cls, model_path: str):

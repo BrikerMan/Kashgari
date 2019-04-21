@@ -10,8 +10,6 @@
 @time: 2019-01-24 15:27
 
 """
-import logging
-
 from keras.layers import Dense, Conv1D, TimeDistributed, Activation
 from keras.layers.recurrent import LSTM
 from keras.models import Model
@@ -37,7 +35,7 @@ class CNNLSTMModel(SequenceLabelingModel):
         }
     }
 
-    def build_model(self):
+    def _prepare_model(self):
         base_model = self.embedding.model
         conv_layer = Conv1D(**self.hyper_parameters['conv_layer'])(base_model.output)
         # max_pool_layer = MaxPooling1D(**self.hyper_parameters['max_pool_layer'])(conv_layer)
@@ -46,12 +44,12 @@ class CNNLSTMModel(SequenceLabelingModel):
         activation = Activation('softmax')(time_distributed_layer)
         output_layers = [activation]
 
-        model = Model(base_model.inputs, output_layers)
-        model.compile(loss='categorical_crossentropy',
-                      optimizer='adam',
-                      metrics=['accuracy'])
-        self.model = model
-        self.model.summary()
+        self.model = Model(base_model.inputs, output_layers)
+
+    def _compile_model(self, loss_f=None, optimizer=None, metrics=None, **kwargs):
+        self.model.compile(loss='categorical_crossentropy',
+                           optimizer='adam',
+                           metrics=['accuracy'])
 
 
 if __name__ == "__main__":
