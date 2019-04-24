@@ -126,7 +126,7 @@ class TestTwoHeadEmbedding(TestWordEmbeddings):
                    '春', '机', '荣', '欣', '，', '从', '诗',
                    '人', '句', '中', '得', '之', '，', '而',
                    '入', '画', '中', '，', '观', '之', '令', '人', '心', '驰', '。', '我']]
-        cls.embedding.build_token2idx_dict(x_data=[corpus, corpus], min_count=2)
+        cls.embedding.build_token2idx_dict(x_data=corpus, min_count=2)
 
     def test_build(self):
         assert self.embedding.token_count == 33
