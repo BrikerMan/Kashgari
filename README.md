@@ -164,6 +164,21 @@ train_x, train_y = SMP2017ECDTClassificationCorpus.get_classification_data()
 model.fit(train_x, train_y)
 ```
 
+### Support for Training on Multiple GPUs
+
+```python
+from kashgari.embeddings import BERTEmbedding
+from kashgari.tasks.classification import CNNLSTMModel
+
+bert_embedding = BERTEmbedding('bert-large-cased', sequence_length=128)
+model = CNNLSTMModel(bert_embedding)
+model.build_multi_gpu_model(gpus=8)
+
+train_x, train_y = prepare_your_classification_data()
+# 256 / 8 = 32 samples for every GPU per batch
+model.fit(train_x, train_y, batch_size=256)
+```
+
 ## Contributing
 
 Thanks for your interest in contributing! There are many ways to get involved; start with the [contributor guidelines](CONTRIBUTING.md) and then check these open issues for specific tasks.
