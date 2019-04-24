@@ -301,7 +301,12 @@ class BERTEmbedding(BaseEmbedding):
         model = keras_bert.load_trained_model_from_checkpoint(config_path,
                                                               check_point_path,
                                                               seq_len=self.sequence_length)
-        output_layer = NonMaskingLayer()(model.output)
+        num_layers = len(model.layers)
+        features_layers = [model.get_layer(index=num_layers-1+idx*8).output\
+                            for idx in range(-3, 1)]
+        embedding_layer = concatenate(features_layers)
+        output_layer = NonMaskingLayer()(embedding_layer)
+        #output_layer = NonMaskingLayer()(model.output)
         self._model = Model(model.inputs, output_layer)
 
         self.embedding_size = self.model.output_shape[-1]
@@ -309,8 +314,9 @@ class BERTEmbedding(BaseEmbedding):
         word2idx = {}
         with open(dict_path, 'r', encoding='utf-8') as f:
             words = f.read().splitlines()
-        for word in words:
-            word2idx[word] = len(word2idx)
+        for idx, word in enumerate(words):
+            word2idx[word] = idx
+            #word2idx[word] = len(word2idx)
         for key, value in self.special_tokens.items():
             word2idx[key] = word2idx[value]
 
@@ -393,6 +399,7 @@ class TwoHeadEmbedding(CustomEmbedding):
         super(TwoHeadEmbedding, self).__init__(name_or_path, sequence_length, embedding_size, **kwargs)
 
     def build(self, **kwargs):
+        self.embedding_type = 'twohead'
         if self._token2idx is None:
             logging.debug('need to build after build_word2idx')
         else:
