@@ -41,13 +41,11 @@ class BLSTMModel(SequenceLabelingModel):
 
         self.model = Model(embed_model.inputs, activation)
 
-    def _compile_model(self, loss_f=None, optimizer=None, metrics=None, **kwargs):
-        if not loss_f:
-            loss_f = 'categorical_crossentropy'
-        if not optimizer:
-            optimizer = 'adam'
-        if not metrics:
-            metrics = ['accuracy']
+    # TODO: Allow custom loss and optimizer
+    def _compile_model(self):
+        loss_f = 'categorical_crossentropy'
+        optimizer = 'adam'
+        metrics = ['accuracy']
 
         self.model.compile(loss=loss_f,
                            optimizer=optimizer,

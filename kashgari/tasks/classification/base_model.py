@@ -81,38 +81,23 @@ class ClassificationModel(BaseModel):
         self._label2idx = value
         self._idx2label = dict([(val, key) for (key, val) in value.items()])
 
-    def _prepare_model(self):
-        """
-        prepare model function
-        :return:
-        """
-        raise NotImplementedError()
-
-    def _compile_model(self):
-        """
-        compile model function
-        :return:
-        """
-        raise NotImplementedError()
-
-    def build_model(self):
+    def build_model(self,
+                    x_train: List[List[str]],
+                    y_train: Union[List[str], List[List[str]], List[Tuple[str]]],
+                    x_validate: List[List[str]] = None,
+                    y_validate: Union[List[str], List[List[str]], List[Tuple[str]]] = None):
         """
         build model function
         :return:
         """
-        self._prepare_model()
-        self._compile_model()
-        self.model.summary()
+        assert len(x_train) == len(y_train)
+        self.build_token2id_label2id_dict(x_train, y_train, x_validate, y_validate)
 
-    def build_multi_gpu_model(self, gpus: int):
-        """
-        build multi-gpu model function
-        :return:
-        """
+        if not self.model:
+            if self.embedding.sequence_length == 0:
+                self.embedding.sequence_length = sorted([len(x) for x in x_train])[int(0.95 * len(x_train))]
+                logging.info('sequence length set to {}'.format(self.embedding.sequence_length))
         self._prepare_model()
-        # If gpus < 2, this will fall back to normal build_model() on CPU or GPU
-        if gpus >= 2:
-            self.model = multi_gpu_model(self.model, gpus=gpus)
         self._compile_model()
         self.model.summary()
 
@@ -227,17 +212,11 @@ class ClassificationModel(BaseModel):
         :param kwargs:
         :return:
         """
-        assert len(x_train) == len(y_train)
-        self.build_token2id_label2id_dict(x_train, y_train, x_validate, y_validate)
+        if not self.model:
+            self.build_model(x_train, y_train, x_validate, y_validate)
 
         if len(x_train) < batch_size:
             batch_size = len(x_train) // 2
-
-        if not self.model:
-            if self.embedding.sequence_length == 0:
-                self.embedding.sequence_length = sorted([len(x) for x in x_train])[int(0.95 * len(x_train))]
-                logging.info('sequence length set to {}'.format(self.embedding.sequence_length))
-            self.build_model()
 
         train_generator = self.get_data_generator(x_train,
                                                   y_train,

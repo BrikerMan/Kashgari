@@ -41,7 +41,7 @@ Kashgare is:
     * BLSTMCRFModel
 * Model Training
 * Model Evaluate
-* GPU Support
+* GPU Support / Multi GPU Support
 * Customize Model
 
 ## Performance
@@ -170,12 +170,22 @@ model.fit(train_x, train_y)
 from kashgari.embeddings import BERTEmbedding
 from kashgari.tasks.classification import CNNLSTMModel
 
+train_x, train_y = prepare_your_classification_data()
+
+# build model with embedding
 bert_embedding = BERTEmbedding('bert-large-cased', sequence_length=128)
 model = CNNLSTMModel(bert_embedding)
+
+# or without pre-trained embedding
+model = CNNLSTMModel()
+
+# Build model with your corpus
+model.build_model(train_x, train_y)
+
+# Add multi gpu support
 model.build_multi_gpu_model(gpus=8)
 
-train_x, train_y = prepare_your_classification_data()
-# 256 / 8 = 32 samples for every GPU per batch
+# Train, 256 / 8 = 32 samples for every GPU per batch
 model.fit(train_x, train_y, batch_size=256)
 ```
 

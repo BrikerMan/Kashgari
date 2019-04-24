@@ -40,7 +40,8 @@ class BLSTMCRFModel(SequenceLabelingModel):
         crf_layer = crf(dense_layer)
         self.model = Model(base_model.inputs, crf_layer)
 
-    def _compile_model(self, loss_f=None, optimizer=None, metrics=None, **kwargs):
+    # TODO: Allow custom loss and optimizer
+    def _compile_model(self):
         self.model.compile(loss=crf_loss,
                            optimizer='adam',
                            metrics=[crf_accuracy])

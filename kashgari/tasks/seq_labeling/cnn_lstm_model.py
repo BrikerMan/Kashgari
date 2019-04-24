@@ -46,7 +46,8 @@ class CNNLSTMModel(SequenceLabelingModel):
 
         self.model = Model(base_model.inputs, output_layers)
 
-    def _compile_model(self, loss_f=None, optimizer=None, metrics=None, **kwargs):
+    # TODO: Allow custom loss and optimizer
+    def _compile_model(self):
         self.model.compile(loss='categorical_crossentropy',
                            optimizer='adam',
                            metrics=['accuracy'])
