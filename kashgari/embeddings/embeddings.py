@@ -417,6 +417,17 @@ class TwoHeadEmbedding(CustomEmbedding):
     def build_token2idx_dict(self, x_data: List[TextSeqType], min_count: int = 5):
         super(TwoHeadEmbedding, self).build_token2idx_dict(x_data, min_count)
 
+    def embed(self, sentences_pair: List[List[TextSeqInputType]]) -> np.array:
+        embed_inputs = []
+        for idx, sentences in enumerate(sentences_pair):
+            tokens = self.tokenize(sentences)
+            embed_input = super(TwoHeadEmbedding, self).embed(sentences, idx)
+            embed_inputs.append(embed_input)
+        embed_inputs = self.prepare_model_input(embed_inputs)
+        print(embed_inputs)
+        embed_pred = self.model.predict(embed_inputs)
+        return embed_pred
+
 
 if __name__ == '__main__':
     from kashgari.utils.logger import init_logger
