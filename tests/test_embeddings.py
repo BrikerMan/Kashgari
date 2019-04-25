@@ -109,15 +109,15 @@ class TestTwoHeadEmbedding(TestWordEmbeddings):
         cls.embedding = TwoHeadEmbedding('empty_embedding',
                                          sequence_length=[SEQUENCE_LENGTH, SEQUENCE_LENGTH],
                                          embedding_size=100)
-        corpus = [['我', '们', '变', '而', '以', '书', '会', '友', '，', '以', '书', '结', '缘', '，',
+        corpus1 = [['我', '们', '变', '而', '以', '书', '会', '友', '，', '以', '书', '结', '缘', '，',
                    '把', '欧', '美', '、', '港', '台', '流', '行', '的',
                    '食', '品', '类', '图', '谱', '、', '画', '册', '、',
                    '工', '具', '书', '汇', '集', '一', '堂', '。'],
                   ['为', '了', '跟', '踪', '国', '际', '最', '新', '食', '品',
                    '工', '艺', '、', '流', '行', '趋', '势', '，', '大', '量',
                    '搜', '集', '海', '外', '专', '业', '书', '刊', '资', '料',
-                   '是', '提', '高', '技', '艺', '的', '捷', '径', '。'],
-                  ['其', '中', '线', '装', '古', '籍', '逾', '千', '册',
+                   '是', '提', '高', '技', '艺', '的', '捷', '径', '。']]
+        corpus2 = [['其', '中', '线', '装', '古', '籍', '逾', '千', '册',
                    '；', '民', '国', '出', '版', '物', '几', '百', '种',
                    '；', '珍', '本', '四', '册', '、', '稀', '见', '本',
                    '四', '百', '余', '册', '，', '出', '版', '时', '间',
@@ -126,7 +126,7 @@ class TestTwoHeadEmbedding(TestWordEmbeddings):
                    '春', '机', '荣', '欣', '，', '从', '诗',
                    '人', '句', '中', '得', '之', '，', '而',
                    '入', '画', '中', '，', '观', '之', '令', '人', '心', '驰', '。', '我']]
-        cls.embedding.build_token2idx_dict(x_data=[corpus, corpus], min_count=2)
+        cls.embedding.build_token2idx_dict(x_data=[corpus1, corpus2], min_count=2)
 
     def test_build(self):
         assert self.embedding.token_count == 33
