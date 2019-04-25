@@ -363,8 +363,10 @@ class CustomEmbedding(BaseEmbedding):
             # for x_item in x_data:
             #     for word in x_item:
             #         word_set[word] = word_set.get(word, 0) + 1
-
-            x_items = chain(*x_data)
+            data_depth = helper.depth_count(x_data)
+            if data_depth > 1:
+                for _ in range(data_depth-1):
+                    x_items = list(chain(*x_data))
             word_freq = Counter(x_items)
             # word_set = {word: freq for word, freq in word_freq.items() if freq >= min_count}
             # word2idx_list = sorted(word_set.items(), key=lambda kv: -kv[1])
