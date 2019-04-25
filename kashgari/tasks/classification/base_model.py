@@ -16,12 +16,11 @@ from typing import Tuple, Dict
 
 import numpy as np
 from keras.preprocessing import sequence
-from keras.utils import to_categorical
+from keras.utils import to_categorical, multi_gpu_model
 from sklearn import metrics
 from sklearn.utils import class_weight as class_weight_calculte
 from sklearn.preprocessing import MultiLabelBinarizer
 
-from kashgari import macros as k
 from kashgari.tasks.base import BaseModel
 from kashgari.embeddings import BaseEmbedding
 from kashgari.type_hints import *
@@ -82,12 +81,25 @@ class ClassificationModel(BaseModel):
         self._label2idx = value
         self._idx2label = dict([(val, key) for (key, val) in value.items()])
 
-    def build_model(self):
+    def build_model(self,
+                    x_train: List[List[str]],
+                    y_train: Union[List[str], List[List[str]], List[Tuple[str]]],
+                    x_validate: List[List[str]] = None,
+                    y_validate: Union[List[str], List[List[str]], List[Tuple[str]]] = None):
         """
         build model function
         :return:
         """
-        raise NotImplementedError()
+        assert len(x_train) == len(y_train)
+        self.build_token2id_label2id_dict(x_train, y_train, x_validate, y_validate)
+
+        if not self.model:
+            if self.embedding.sequence_length == 0:
+                self.embedding.sequence_length = sorted([len(x) for x in x_train])[int(0.95 * len(x_train))]
+                logging.info('sequence length set to {}'.format(self.embedding.sequence_length))
+        self._prepare_model()
+        self._compile_model()
+        self.model.summary()
 
     @classmethod
     def load_model(cls, model_path: str):
@@ -119,12 +131,13 @@ class ClassificationModel(BaseModel):
         else:
             label_set = set(y_data)
 
-        label2idx = {}
-        for idx, label in enumerate(label_set):
-            label2idx[label] = idx
-        self._label2idx = label2idx
-        self._idx2label = dict([(val, key) for (key, val) in label2idx.items()])
-        self.multi_label_binarizer = MultiLabelBinarizer(classes=list(self.label2idx.keys()))
+        if not len(self.label2idx):
+            label2idx = {}
+            for idx, label in enumerate(label_set):
+                label2idx[label] = idx
+            self._label2idx = label2idx
+            self._idx2label = dict([(val, key) for (key, val) in label2idx.items()])
+            self.multi_label_binarizer = MultiLabelBinarizer(classes=list(self.label2idx.keys()))
 
     def convert_label_to_idx(self, label: Union[List[str], str]) -> Union[List[int], int]:
         if isinstance(label, str):
@@ -199,17 +212,11 @@ class ClassificationModel(BaseModel):
         :param kwargs:
         :return:
         """
-        assert len(x_train) == len(y_train)
-        self.build_token2id_label2id_dict(x_train, y_train, x_validate, y_validate)
+        if not self.model:
+            self.build_model(x_train, y_train, x_validate, y_validate)
 
         if len(x_train) < batch_size:
             batch_size = len(x_train) // 2
-
-        if not self.model:
-            if self.embedding.sequence_length == 0:
-                self.embedding.sequence_length = sorted([len(x) for x in x_train])[int(0.95 * len(x_train))]
-                logging.info('sequence length set to {}'.format(self.embedding.sequence_length))
-            self.build_model()
 
         train_generator = self.get_data_generator(x_train,
                                                   y_train,
@@ -228,7 +235,11 @@ class ClassificationModel(BaseModel):
             fit_kwargs['validation_steps'] = max(len(x_validate) // batch_size, 1)
 
         if class_weight:
-            y_list = self.convert_label_to_idx(y_train)
+            if self.multi_label:
+                y_list = [self.convert_label_to_idx(y) for y in y_train]
+                y_list = [y for ys in y_list for y in ys]
+            else:
+                y_list = self.convert_label_to_idx(y_train)
             class_weights = class_weight_calculte.compute_class_weight('balanced',
                                                                        np.unique(y_list),
                                                                        y_list)
