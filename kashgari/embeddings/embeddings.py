@@ -144,14 +144,16 @@ class BaseEmbedding(object):
         else:
             return tokenize_sentence(sentence)
 
-    def embed(self, sentence: TextSeqInputType) -> np.array:
+    def embed(self, sentence: TextSeqInputType, seq_idx: int=0) -> np.array:
         is_list = isinstance(sentence[0], list)
         tokens = self.tokenize(sentence)
 
-        if is_list:
+        if not is_list:
+            tokens = [tokens]
+        if isinstance(self.sequence_length, int):
             embed_input = sequence.pad_sequences(tokens, self.sequence_length, padding='post')
-        else:
-            embed_input = sequence.pad_sequences([tokens], self.sequence_length, padding='post')
+        elif isinstance(self.sequence_length, list):
+            embed_input = sequence.pad_sequences(tokens, self.sequence_length[seq_idx], padding='post')
 
         embed_input = self.prepare_model_input(embed_input)
         print(embed_input)
