@@ -139,11 +139,7 @@ class TestTwoHeadEmbedding(TestWordEmbeddings):
         embedded_sentences = self.embedding.embed(sentences)
         logging.info('embed test: {} -> {}'.format(sentences, embedded_sentences))
         # assert embedded_sentence.shape == (SEQUENCE_LENGTH, self.embedding.embedding_size)
-        if isinstance(self.embedding.embedding_size, int):
-            embedding_size = self.embedding.embedding_size*2
-        elif isinstance(self.embedding.embedding_size, list):
-            embedding_size = sum(self.embedding.embedding_size)
-        assert embedded_sentences.shape == (1, SEQUENCE_LENGTH, embedding_size)
+        assert embedded_sentences.shape == (1, SEQUENCE_LENGTH*2, self.embedding.embedding_size)
 
 
 if __name__ == "__main__":
