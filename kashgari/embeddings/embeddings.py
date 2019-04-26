@@ -423,7 +423,10 @@ class TwoHeadEmbedding(CustomEmbedding):
     def embed(self, sentences_pair: List[List[TextSeqInputType]]) -> np.array:
         embed_inputs = []
         for idx, sentences in enumerate(sentences_pair):
+            is_list = isinstance(sentences[0], list)
             tokens = self.tokenize(sentences)
+            if not is_list:
+                tokens = [tokens]
             if isinstance(self.sequence_length, list):
                 embed_input = sequence.pad_sequences(tokens, self.sequence_length[idx], padding='post')
             elif isinstance(self.sequence_length, int):
