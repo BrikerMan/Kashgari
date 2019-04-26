@@ -51,6 +51,7 @@ Kashgare is:
 | Named Entity Recognition | Chinese  | People's Daily Ner Corpus | **92.20** (F1) | [基于 BERT 的中文命名实体识别](https://eliyar.biz/nlp_chinese_bert_ner/) |
 
 ## Roadmap
+* [ ] **[Migrate to tf.keras](https://github.com/BrikerMan/Kashgari/issues/77)**
 * [ ] ELMo Embedding
 * [ ] Pre-trained models
 * [ ] More model structure
