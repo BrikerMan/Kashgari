@@ -132,6 +132,19 @@ class TestTwoHeadEmbedding(TestWordEmbeddings):
         assert self.embedding.token_count == 33
         super(TestTwoHeadEmbedding, self).test_build()
 
+    def test_embed(self):
+        sentence1 = ['我', '想', '看', '电影', '%%##!$#%']
+        sentence2 = ['我', '不', '看', '电影', '%%##!$#%']
+        sentences = [[sentence1], [sentence2]]
+        embedded_sentences = self.embedding.embed(sentences)
+        logging.info('embed test: {} -> {}'.format(sentences, embedded_sentences))
+        # assert embedded_sentence.shape == (SEQUENCE_LENGTH, self.embedding.embedding_size)
+        if isinstance(self.embedding.embedding_size, int):
+            embedding_size = self.embedding.embedding_size*2
+        elif isinstance(self.embedding.embedding_size, list):
+            embedding_size = sum(self.embedding.embedding_size)
+        assert embedded_sentences.shape == (1, SEQUENCE_LENGTH, embedding_size)
+
 
 if __name__ == "__main__":
     unittest.main()
