@@ -424,7 +424,10 @@ class TwoHeadEmbedding(CustomEmbedding):
         embed_inputs = []
         for idx, sentences in enumerate(sentences_pair):
             tokens = self.tokenize(sentences)
-            embed_input = super(TwoHeadEmbedding, self).embed(sentences, idx)
+            if isinstance(self.sequence_length, list):
+                embed_input = sequence.pad_sequences(tokens, self.sequence_length[idx], padding='post')
+            elif isinstance(self.sequence_length, int):
+                embed_input = sequence.pad_sequences(tokens, self.sequence_length, padding='post')
             embed_inputs.append(embed_input)
         embed_inputs = self.prepare_model_input(embed_inputs)
         print(embed_inputs)
