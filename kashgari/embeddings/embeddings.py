@@ -469,21 +469,14 @@ class GPT2Embedding(BaseEmbedding):
 
 
 if __name__ == '__main__':
-    import keras
-
-    NUM_WORDS=2000 # only use top 1000 words
-    INDEX_FROM=3   # word index offset
-    train,test = keras.datasets.imdb.load_data(num_words=NUM_WORDS, index_from=INDEX_FROM)
-    train_x,train_y = train
-    test_x,test_y = test
-    word_to_id = keras.datasets.imdb.get_word_index()
-    word_to_id = {k:(v+INDEX_FROM) for k,v in word_to_id.items()}
-    word_to_id["<PAD>"] = 0
-    word_to_id["<START>"] = 1
-    word_to_id["<UNK>"] = 2
-    id_to_word = {value:key for key,value in word_to_id.items()}
-    x_data = [[id_to_word[id] for id in x] for x in train_x[:100]]
-    y_data = train_y[:100]
+    train_x = [
+        list('语言学（英语：linguistics）是一门关于人类语言的科学研究'),
+        list('语言学（英语：linguistics）是一门关于人类语言的科学研究'),
+        list('语言学（英语：linguistics）是一门关于人类语言的科学研究'),
+        list('语言学包含了几种分支领域。'),
+        list('在语言结构（语法）研究与意义（语义与语用）研究之间存在一个重要的主题划分'),
+    ]
+    train_y = ['a', 'a', 'a', 'b', 'c']
 
     from kashgari.utils.logger import init_logger
     from kashgari.tasks.classification import CNNModel
@@ -491,5 +484,5 @@ if __name__ == '__main__':
     embedding = GPT2Embedding('/Users/brikerman/Desktop/python/gpt-2/models/117M', 10)
     r = embedding.embed(['hello', 'world'])
     model = CNNModel(embedding)
-    model.fit(x_data, y_data, epochs=20)
+    model.fit(train_x, train_y, epochs=20)
     print(r.shape)
