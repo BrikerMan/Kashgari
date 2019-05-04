@@ -25,6 +25,7 @@ Kashgare is:
 * Embedding support
     * Classic word2vec embedding
     * BERT embedding
+    * GPT-2 embedding
 * Sequence(Text) Classification Models
     * CNNModel
     * BLSTMModel
