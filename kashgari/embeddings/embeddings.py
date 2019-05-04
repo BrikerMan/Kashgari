@@ -23,11 +23,14 @@ from gensim.models import KeyedVectors
 from keras.layers import Input, Embedding, concatenate
 from keras.models import Model
 from keras.preprocessing import sequence
+from keras_gpt_2 import load_trained_model_from_checkpoint, get_bpe_from_files, BytePairEncoding
 
 import kashgari.macros as k
 from kashgari.type_hints import *
 from kashgari.utils import helper
 from kashgari.layers import NonMaskingLayer
+
+
 
 EMBEDDINGS_PATH = os.path.join(k.DATA_PATH, 'embedding')
 
@@ -438,15 +441,55 @@ class TwoHeadEmbedding(CustomEmbedding):
         return embed_pred
 
 
+class GPT2Embedding(BaseEmbedding):
+
+    def build(self, **kwargs):
+        self.embedding_type = 'gpt2'
+
+        config_path = os.path.join(self.name, 'hparams.json')
+        checkpoint_path = os.path.join(self.name, 'model.ckpt')
+        encoder_path = os.path.join(self.name, 'encoder.json')
+        vocab_path = os.path.join(self.name, 'vocab.bpe')
+
+        self._model: Model = load_trained_model_from_checkpoint(config_path, checkpoint_path)
+        for layer in self._model.layers:
+            layer.trainable = False
+
+        self.bpe: BytePairEncoding = get_bpe_from_files(encoder_path, vocab_path)
+
+        word2idx = self.bpe.token_dict.copy()
+        word2idx[k.PAD] = word2idx['pad']
+        word2idx[k.UNK] = word2idx['unk']
+        word2idx[k.BOS] = word2idx['pad']
+        word2idx[k.EOS] = word2idx['pad']
+        self.token2idx = word2idx
+
+    def build_token2idx_dict(self, x_data: List[TextSeqType], min_count: int = 5):
+        logging.debug("word2vec embedding no need to build token2idx with corpus")
+
+
 if __name__ == '__main__':
+    import keras
+
+    NUM_WORDS=2000 # only use top 1000 words
+    INDEX_FROM=3   # word index offset
+    train,test = keras.datasets.imdb.load_data(num_words=NUM_WORDS, index_from=INDEX_FROM)
+    train_x,train_y = train
+    test_x,test_y = test
+    word_to_id = keras.datasets.imdb.get_word_index()
+    word_to_id = {k:(v+INDEX_FROM) for k,v in word_to_id.items()}
+    word_to_id["<PAD>"] = 0
+    word_to_id["<START>"] = 1
+    word_to_id["<UNK>"] = 2
+    id_to_word = {value:key for key,value in word_to_id.items()}
+    x_data = [[id_to_word[id] for id in x] for x in train_x[:100]]
+    y_data = train_y[:100]
+
     from kashgari.utils.logger import init_logger
-
+    from kashgari.tasks.classification import CNNModel
     init_logger()
-    embedding = WordEmbeddings('sgns.weibo.bigram.bz2', 10)
-
-    sentence = '我 想 去 看 电影www'.split(' ')
-    print(embedding.__dict__)
-
-    print(embedding.tokenize(sentence))
-    print(embedding.tokenize([sentence]))
-    print(embedding.embed([sentence]))
+    embedding = GPT2Embedding('/Users/brikerman/Desktop/python/gpt-2/models/117M', 10)
+    r = embedding.embed(['hello', 'world'])
+    model = CNNModel(embedding)
+    model.fit(x_data, y_data, epochs=20)
+    print(r.shape)
