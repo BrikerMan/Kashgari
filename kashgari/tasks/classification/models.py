@@ -55,20 +55,20 @@ class CNNModel(ClassificationModel):
         }
     }
 
-    def build_model(self):
+    def _prepare_model(self):
         base_model = self.embedding.model
         conv1d_layer = Conv1D(**self.hyper_parameters['conv1d_layer'])(base_model.output)
         max_pool_layer = GlobalMaxPooling1D(**self.hyper_parameters['max_pool_layer'])(conv1d_layer)
         dense_1_layer = Dense(**self.hyper_parameters['dense_1_layer'])(max_pool_layer)
         dense_2_layer = Dense(len(self.label2idx), **self.hyper_parameters['activation_layer'])(dense_1_layer)
 
-        model = Model(base_model.inputs, dense_2_layer)
+        self.model = Model(base_model.inputs, dense_2_layer)
+
+    def _compile_model(self):
         optimizer = getattr(eval(self.hyper_parameters['optimizer']['module']),
                             self.hyper_parameters['optimizer']['name'])(
             **self.hyper_parameters['optimizer']['params'])
-        model.compile(optimizer=optimizer, **self.hyper_parameters['compile_params'])
-        self.model = model
-        self.model.summary()
+        self.model.compile(optimizer=optimizer, **self.hyper_parameters['compile_params'])
 
 
 class BLSTMModel(ClassificationModel):
@@ -96,19 +96,19 @@ class BLSTMModel(ClassificationModel):
         }
     }
 
-    def build_model(self):
+    def _prepare_model(self):
         base_model = self.embedding.model
         blstm_layer = Bidirectional(LSTMLayer(**self.hyper_parameters['lstm_layer']))(base_model.output)
         dense_layer = Dense(len(self.label2idx), **self.hyper_parameters['activation_layer'])(blstm_layer)
         output_layers = [dense_layer]
 
-        model = Model(base_model.inputs, output_layers)
+        self.model = Model(base_model.inputs, output_layers)
+
+    def _compile_model(self):
         optimizer = getattr(eval(self.hyper_parameters['optimizer']['module']),
                             self.hyper_parameters['optimizer']['name'])(
             **self.hyper_parameters['optimizer']['params'])
-        model.compile(optimizer=optimizer, **self.hyper_parameters['compile_params'])
-        self.model = model
-        self.model.summary()
+        self.model.compile(optimizer=optimizer, **self.hyper_parameters['compile_params'])
 
 
 class CNNLSTMModel(ClassificationModel):
@@ -144,7 +144,7 @@ class CNNLSTMModel(ClassificationModel):
         }
     }
 
-    def build_model(self):
+    def _prepare_model(self):
         base_model = self.embedding.model
         conv_layer = Conv1D(**self.hyper_parameters['conv_layer'])(base_model.output)
         max_pool_layer = MaxPooling1D(**self.hyper_parameters['max_pool_layer'])(conv_layer)
@@ -153,13 +153,13 @@ class CNNLSTMModel(ClassificationModel):
                             **self.hyper_parameters['activation_layer'])(lstm_layer)
         output_layers = [dense_layer]
 
-        model = Model(base_model.inputs, output_layers)
+        self.model = Model(base_model.inputs, output_layers)
+
+    def _compile_model(self):
         optimizer = getattr(eval(self.hyper_parameters['optimizer']['module']),
                             self.hyper_parameters['optimizer']['name'])(
             **self.hyper_parameters['optimizer']['params'])
-        model.compile(optimizer=optimizer, **self.hyper_parameters['compile_params'])
-        self.model = model
-        self.model.summary()
+        self.model.compile(optimizer=optimizer, **self.hyper_parameters['compile_params'])
 
 
 class AVCNNModel(ClassificationModel):
@@ -254,7 +254,7 @@ class AVCNNModel(ClassificationModel):
         }
     }
 
-    def build_model(self):
+    def _prepare_model(self):
         base_model = self.embedding.model
         embedded_seq = SpatialDropout1D(**self.hyper_parameters['spatial_dropout'])(base_model.output)
         conv_0 = Conv1D(**self.hyper_parameters['conv_0'])(embedded_seq)
@@ -291,13 +291,13 @@ class AVCNNModel(ClassificationModel):
         output = Dense(len(self.label2idx),
                        **self.hyper_parameters['activation_layer'])(output)
 
-        model = Model(base_model.inputs, output)
+        self.model = Model(base_model.inputs, output)
+
+    def _compile_model(self):
         optimizer = getattr(eval(self.hyper_parameters['optimizer']['module']),
                             self.hyper_parameters['optimizer']['name'])(
             **self.hyper_parameters['optimizer']['params'])
-        model.compile(optimizer=optimizer, **self.hyper_parameters['compile_params'])
-        self.model = model
-        self.model.summary()
+        self.model.compile(optimizer=optimizer, **self.hyper_parameters['compile_params'])
 
 
 class KMaxCNNModel(ClassificationModel):
@@ -375,7 +375,7 @@ class KMaxCNNModel(ClassificationModel):
         }
     }
 
-    def build_model(self):
+    def _prepare_model(self):
         base_model = self.embedding.model
         embedded_seq = SpatialDropout1D(**self.hyper_parameters['spatial_dropout'])(base_model.output)
         conv_0 = Conv1D(**self.hyper_parameters['conv_0'])(embedded_seq)
@@ -411,13 +411,13 @@ class KMaxCNNModel(ClassificationModel):
         output = Dense(len(self.label2idx),
                        **self.hyper_parameters['activation_layer'])(output)
 
-        model = Model(base_model.inputs, output)
+        self.model = Model(base_model.inputs, output)
+
+    def _compile_model(self):
         optimizer = getattr(eval(self.hyper_parameters['optimizer']['module']),
                             self.hyper_parameters['optimizer']['name'])(
             **self.hyper_parameters['optimizer']['params'])
-        model.compile(optimizer=optimizer, **self.hyper_parameters['compile_params'])
-        self.model = model
-        self.model.summary()
+        self.model.compile(optimizer=optimizer, **self.hyper_parameters['compile_params'])
 
 
 class RCNNModel(ClassificationModel):
@@ -470,7 +470,7 @@ class RCNNModel(ClassificationModel):
         }
     }
 
-    def build_model(self):
+    def _prepare_model(self):
         base_model = self.embedding.model
         embedded_seq = SpatialDropout1D(**self.hyper_parameters['spatial_dropout'])(base_model.output)
         rnn_0 = Bidirectional(GRULayer(**self.hyper_parameters['rnn_0']))(embedded_seq)
@@ -486,13 +486,13 @@ class RCNNModel(ClassificationModel):
         output = Dense(len(self.label2idx),
                        **self.hyper_parameters['activation_layer'])(output)
 
-        model = Model(base_model.inputs, output)
+        self.model = Model(base_model.inputs, output)
+
+    def _compile_model(self):
         optimizer = getattr(eval(self.hyper_parameters['optimizer']['module']),
                             self.hyper_parameters['optimizer']['name'])(
             **self.hyper_parameters['optimizer']['params'])
-        model.compile(optimizer=optimizer, **self.hyper_parameters['compile_params'])
-        self.model = model
-        self.model.summary()
+        self.model.compile(optimizer=optimizer, **self.hyper_parameters['compile_params'])
 
 
 class AVRNNModel(ClassificationModel):
@@ -545,7 +545,7 @@ class AVRNNModel(ClassificationModel):
         }
     }
 
-    def build_model(self):
+    def _prepare_model(self):
         base_model = self.embedding.model
         embedded_seq = SpatialDropout1D(**self.hyper_parameters['spatial_dropout'])(base_model.output)
         rnn_0 = Bidirectional(GRULayer(**self.hyper_parameters['rnn_0']))(embedded_seq)
@@ -565,13 +565,13 @@ class AVRNNModel(ClassificationModel):
         output = Dense(len(self.label2idx),
                        **self.hyper_parameters['activation_layer'])(output)
 
-        model = Model(base_model.inputs, output)
+        self.model = Model(base_model.inputs, output)
+
+    def _compile_model(self):
         optimizer = getattr(eval(self.hyper_parameters['optimizer']['module']),
                             self.hyper_parameters['optimizer']['name'])(
             **self.hyper_parameters['optimizer']['params'])
-        model.compile(optimizer=optimizer, **self.hyper_parameters['compile_params'])
-        self.model = model
-        self.model.summary()
+        self.model.compile(optimizer=optimizer, **self.hyper_parameters['compile_params'])
 
 
 class DropoutBGRUModel(ClassificationModel):
@@ -622,7 +622,7 @@ class DropoutBGRUModel(ClassificationModel):
         }
     }
 
-    def build_model(self):
+    def _prepare_model(self):
         base_model = self.embedding.model
         embedded_seq = SpatialDropout1D(**self.hyper_parameters['spatial_dropout'])(base_model.output)
         rnn_0 = Bidirectional(GRULayer(**self.hyper_parameters['rnn_0']))(embedded_seq)
@@ -640,13 +640,13 @@ class DropoutBGRUModel(ClassificationModel):
         output = Dense(len(self.label2idx),
                        **self.hyper_parameters['activation_layer'])(output)
 
-        model = Model(base_model.inputs, output)
+        self.model = Model(base_model.inputs, output)
+
+    def _compile_model(self):
         optimizer = getattr(eval(self.hyper_parameters['optimizer']['module']),
                             self.hyper_parameters['optimizer']['name'])(
             **self.hyper_parameters['optimizer']['params'])
-        model.compile(optimizer=optimizer, **self.hyper_parameters['compile_params'])
-        self.model = model
-        self.model.summary()
+        self.model.compile(optimizer=optimizer, **self.hyper_parameters['compile_params'])
 
 
 class DropoutAVRNNModel(ClassificationModel):
@@ -702,7 +702,7 @@ class DropoutAVRNNModel(ClassificationModel):
         }
     }
 
-    def build_model(self):
+    def _prepare_model(self):
         base_model = self.embedding.model
         embedded_seq = SpatialDropout1D(**self.hyper_parameters['spatial_dropout'])(base_model.output)
         rnn_0 = Bidirectional(GRULayer(**self.hyper_parameters['rnn_0']))(embedded_seq)
@@ -722,13 +722,13 @@ class DropoutAVRNNModel(ClassificationModel):
         output = Dense(len(self.label2idx),
                        **self.hyper_parameters['activation_layer'])(output)
 
-        model = Model(base_model.inputs, output)
+        self.model = Model(base_model.inputs, output)
+
+    def _compile_model(self):
         optimizer = getattr(eval(self.hyper_parameters['optimizer']['module']),
                             self.hyper_parameters['optimizer']['name'])(
             **self.hyper_parameters['optimizer']['params'])
-        model.compile(optimizer=optimizer, **self.hyper_parameters['compile_params'])
-        self.model = model
-        self.model.summary()
+        self.model.compile(optimizer=optimizer, **self.hyper_parameters['compile_params'])
 
 
 if __name__ == '__main__':

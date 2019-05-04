@@ -16,7 +16,7 @@ from typing import Tuple, Dict
 
 import numpy as np
 from keras.preprocessing import sequence
-from keras.utils import to_categorical
+from keras.utils import to_categorical, multi_gpu_model
 from seqeval.metrics import classification_report
 from seqeval.metrics.sequence_labeling import get_entities
 
@@ -47,12 +47,55 @@ class SequenceLabelingModel(BaseModel):
         self._label2idx = value
         self._idx2label = dict([(val, key) for (key, val) in value.items()])
 
-    def build_model(self, loss_f=None, optimizer=None, metrics=None, **kwargs):
+    def _prepare_model(self):
         """
-        build model function
+        prepare model function
         :return:
         """
         raise NotImplementedError()
+
+    def _compile_model(self):
+        """
+        compile model function
+        :return:
+        """
+        raise NotImplementedError()
+
+    def build_model(self,
+                    x_train: List[List[str]],
+                    y_train: List[List[str]],
+                    x_validate: List[List[str]] = None,
+                    y_validate: List[List[str]] = None,
+                    labels_weight: bool = None,
+                    default_labels_weight: float = 50.0,
+                    ):
+        assert len(x_train) == len(y_train)
+        self.build_token2id_label2id_dict(x_train, y_train, x_validate, y_validate)
+
+        if not self.model:
+            if self.embedding.sequence_length == 0:
+                self.embedding.sequence_length = sorted([len(x) for x in x_train])[int(0.95 * len(x_train))]
+                logging.info('sequence length set to {}'.format(self.embedding.sequence_length))
+
+            if labels_weight:
+                weights = []
+                initial_weights = {
+                    k.PAD: 1,
+                    k.BOS: 1,
+                    k.EOS: 1,
+                    'O': 1
+                }
+                for label in self.label2idx.keys():
+                    weights.append(initial_weights.get(label, default_labels_weight))
+                loss_f = helper.weighted_categorical_crossentropy(np.array(weights))
+                self.model_info['loss'] = {
+                    'func': 'weighted_categorical_crossentropy',
+                    'weights': weights
+                }
+
+        self._prepare_model()
+        self._compile_model()
+        self.model.summary()
 
     def build_token2id_label2id_dict(self,
                                      x_train: List[List[str]],
@@ -189,36 +232,10 @@ class SequenceLabelingModel(BaseModel):
                :func:`~keras.models.Model.fit`
         :return:
         """
-        assert len(x_train) == len(y_train)
-        self.build_token2id_label2id_dict(x_train, y_train, x_validate, y_validate)
-
+        if not self.model:
+            self.build_model(x_train, y_train, x_validate, y_validate, labels_weight, default_labels_weight)
         if len(x_train) < batch_size:
             batch_size = len(x_train) // 2
-
-        if not self.model:
-            if self.embedding.sequence_length == 0:
-                self.embedding.sequence_length = sorted([len(x) for x in x_train])[int(0.95 * len(x_train))]
-                logging.info('sequence length set to {}'.format(self.embedding.sequence_length))
-
-            if labels_weight:
-                weights = []
-                initial_weights = {
-                    k.PAD: 1,
-                    k.BOS: 1,
-                    k.EOS: 1,
-                    'O': 1
-                }
-                for label in self.label2idx.keys():
-                    weights.append(initial_weights.get(label, default_labels_weight))
-                loss_f = helper.weighted_categorical_crossentropy(np.array(weights))
-                self.model_info['loss'] = {
-                    'func': 'weighted_categorical_crossentropy',
-                    'weights': weights
-                }
-
-                self.build_model(loss_f=loss_f, metrics=['categorical_accuracy', 'acc'])
-            else:
-                self.build_model()
 
         train_generator = self.get_data_generator(x_train,
                                                   y_train,

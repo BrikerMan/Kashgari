@@ -23,6 +23,7 @@ from typing import Dict
 import keras
 from keras.models import Model
 from keras import backend as K
+from keras.utils import multi_gpu_model
 
 from kashgari.utils import helper
 from kashgari.embeddings import CustomEmbedding, BaseEmbedding
@@ -63,6 +64,35 @@ class BaseModel(object):
             'hyper_parameters': self.hyper_parameters,
             'model_info': self.model_info
         }
+
+    def _compile_model(self):
+        """
+        compile model function
+        :return:
+        """
+        raise NotImplementedError()
+
+    def _prepare_model(self):
+        """
+        prepare model function
+        :return:
+        """
+        raise NotImplementedError()
+
+    def build_multi_gpu_model(self, gpus: int):
+        """
+        build multi-gpu model function
+        :return:
+        """
+        if not self.model:
+            raise RuntimeError("Model not built yet, Please call build_model function with"
+                               "your corpus to build model")
+
+        # If gpus < 2, this will fall back to normal build_model() on CPU or GPU
+        if gpus >= 2:
+            self.model = multi_gpu_model(self.model, gpus=gpus)
+        self._compile_model()
+        self.model.summary()
 
     def save(self, model_path: str):
         pathlib.Path(model_path).mkdir(exist_ok=True, parents=True)

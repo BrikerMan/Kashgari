@@ -31,17 +31,7 @@ class BLSTMModel(SequenceLabelingModel):
         }
     }
 
-    def build_model(self, loss_f=None, optimizer=None, metrics=None, **kwargs):
-        """
-        build model function
-        :return:
-        """
-        if not loss_f:
-            loss_f = 'categorical_crossentropy'
-        if not optimizer:
-            optimizer = 'adam'
-        if not metrics:
-            metrics = ['accuracy']
+    def _prepare_model(self):
         embed_model = self.embedding.model
 
         blstm_layer = Bidirectional(LSTM(**self.hyper_parameters['lstm_layer']))(embed_model.output)
@@ -49,12 +39,17 @@ class BLSTMModel(SequenceLabelingModel):
         time_distributed_layer = TimeDistributed(Dense(len(self.label2idx)))(dropout_layer)
         activation = Activation('softmax')(time_distributed_layer)
 
-        model = Model(embed_model.inputs, activation)
-        model.compile(loss=loss_f,
-                      optimizer=optimizer,
-                      metrics=metrics)
-        self.model = model
-        self.model.summary()
+        self.model = Model(embed_model.inputs, activation)
+
+    # TODO: Allow custom loss and optimizer
+    def _compile_model(self):
+        loss_f = 'categorical_crossentropy'
+        optimizer = 'adam'
+        metrics = ['accuracy']
+
+        self.model.compile(loss=loss_f,
+                           optimizer=optimizer,
+                           metrics=metrics)
 
 
 if __name__ == '__main__':

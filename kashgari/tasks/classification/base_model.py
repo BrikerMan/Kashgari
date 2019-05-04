@@ -17,12 +17,12 @@ from typing import Tuple, Dict
 
 import numpy as np
 from keras.preprocessing import sequence
-from keras.utils import to_categorical
+from keras.utils import to_categorical, multi_gpu_model
 from sklearn import metrics
 from sklearn.utils import class_weight as class_weight_calculte
 from sklearn.preprocessing import MultiLabelBinarizer
 
-from kashgari import macros as k
+import kashgari.macros as k
 from kashgari.tasks.base import BaseModel
 from kashgari.embeddings import BaseEmbedding
 from kashgari.type_hints import *
@@ -84,12 +84,25 @@ class ClassificationModel(BaseModel):
         self._label2idx = value
         self._idx2label = dict([(val, key) for (key, val) in value.items()])
 
-    def build_model(self):
+    def build_model(self,
+                    x_train: List[List[str]],
+                    y_train: Union[List[str], List[List[str]], List[Tuple[str]]],
+                    x_validate: List[List[str]] = None,
+                    y_validate: Union[List[str], List[List[str]], List[Tuple[str]]] = None):
         """
         build model function
         :return:
         """
-        raise NotImplementedError()
+        assert len(x_train) == len(y_train)
+        self.build_token2id_label2id_dict(x_train, y_train, x_validate, y_validate)
+
+        if not self.model:
+            if self.embedding.sequence_length == 0:
+                self.embedding.sequence_length = sorted([len(x) for x in x_train])[int(0.95 * len(x_train))]
+                logging.info('sequence length set to {}'.format(self.embedding.sequence_length))
+        self._prepare_model()
+        self._compile_model()
+        self.model.summary()
 
     @classmethod
     def load_model(cls, model_path: str):
@@ -244,9 +257,7 @@ class ClassificationModel(BaseModel):
                 assert len(x_part) == len(y_train)
         else:
             raise Exception('x_train type error')
-
-        self.build_token2id_label2id_dict(x_train, y_train, x_validate, y_validate)
-
+       
         if len(y_train) < batch_size:
             batch_size = len(y_train) // 2
 
@@ -264,7 +275,7 @@ class ClassificationModel(BaseModel):
                     else:
                         seq_len.append(self.embedding.sequence_length[i])
                 self.embedding.sequence_length = seq_len
-            self.build_model()
+            self.build_model(x_train, y_train, x_validate, y_validate)
 
         train_generator = self.get_data_generator(x_train,
                                                   y_train,

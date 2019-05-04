@@ -41,7 +41,7 @@ Kashgare is:
     * BLSTMCRFModel
 * Model Training
 * Model Evaluate
-* GPU Support
+* GPU Support / Multi GPU Support
 * Customize Model
 
 ## Performance
@@ -51,6 +51,7 @@ Kashgare is:
 | Named Entity Recognition | Chinese  | People's Daily Ner Corpus | **92.20** (F1) | [基于 BERT 的中文命名实体识别](https://eliyar.biz/nlp_chinese_bert_ner/) |
 
 ## Roadmap
+* [ ] **[Migrate to tf.keras](https://github.com/BrikerMan/Kashgari/issues/77)**
 * [ ] ELMo Embedding
 * [ ] Pre-trained models
 * [ ] More model structure
@@ -162,6 +163,31 @@ bert_embedding = WordEmbeddings('sgns.weibo.bigram', sequence_length=30)
 model = CNNLSTMModel(bert_embedding)
 train_x, train_y = SMP2017ECDTClassificationCorpus.get_classification_data()
 model.fit(train_x, train_y)
+```
+
+### Support for Training on Multiple GPUs
+
+```python
+from kashgari.embeddings import BERTEmbedding
+from kashgari.tasks.classification import CNNLSTMModel
+
+train_x, train_y = prepare_your_classification_data()
+
+# build model with embedding
+bert_embedding = BERTEmbedding('bert-large-cased', sequence_length=128)
+model = CNNLSTMModel(bert_embedding)
+
+# or without pre-trained embedding
+model = CNNLSTMModel()
+
+# Build model with your corpus
+model.build_model(train_x, train_y)
+
+# Add multi gpu support
+model.build_multi_gpu_model(gpus=8)
+
+# Train, 256 / 8 = 32 samples for every GPU per batch
+model.fit(train_x, train_y, batch_size=256)
 ```
 
 ## Contributing

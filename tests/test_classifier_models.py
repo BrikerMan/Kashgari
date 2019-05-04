@@ -107,6 +107,11 @@ class TestBLSTMModelModelBasic(unittest.TestCase):
         w2v_model.predict(sentence, output_dict=True)
         w2v_model.predict(sentence, output_dict=False)
 
+    def test_build_multi_gpu_model(self):
+        self.model.build_model(train_x, train_y, eval_x, eval_y)
+        # self.model.build_multi_gpu_model(2)
+        logging.info(self.model)
+
     def test_multi_label_model(self):
         multi_label_model = self.model_class(multi_label=True)
         multi_label_model.fit(train_x, train_multi_y, eval_x, eval_multi_y, epochs=2)
@@ -135,6 +140,7 @@ class TestAllCNNModelModel(unittest.TestCase):
         cls.model = cls.model_class()
 
     def test_build(self):
+        self.model.build_model(train_x, train_y)
         self.model.fit(train_x, train_y, epochs=1)
         assert len(self.model.label2idx) == 4
         assert len(self.model.token2idx) > 4
