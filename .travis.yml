@@ -13,8 +13,9 @@ before_install:
   - export BOTO_CONFIG=/dev/null
 install:
   - pip install python-coveralls
-  - pip install -r requirements.txt
+#  - pip install -r requirements.txt
   - pip install .
+  - pip install tensorflow==1.12.0
   - pip install coverage
   - pip install nose
 # command to run tests

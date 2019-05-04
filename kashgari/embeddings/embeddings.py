@@ -14,18 +14,23 @@ import json
 import logging
 import os
 from typing import Dict, Any
+from itertools import chain
+from collections import Counter
 
 import keras_bert
 import numpy as np
 from gensim.models import KeyedVectors
-from keras.layers import Input, Embedding
+from keras.layers import Input, Embedding, concatenate
 from keras.models import Model
 from keras.preprocessing import sequence
+from keras_gpt_2 import load_trained_model_from_checkpoint, get_bpe_from_files, BytePairEncoding
 
 import kashgari.macros as k
 from kashgari.type_hints import *
 from kashgari.utils import helper
 from kashgari.layers import NonMaskingLayer
+
+
 
 EMBEDDINGS_PATH = os.path.join(k.DATA_PATH, 'embedding')
 
@@ -142,14 +147,16 @@ class BaseEmbedding(object):
         else:
             return tokenize_sentence(sentence)
 
-    def embed(self, sentence: TextSeqInputType) -> np.array:
+    def embed(self, sentence: TextSeqInputType, seq_idx: int=0) -> np.array:
         is_list = isinstance(sentence[0], list)
         tokens = self.tokenize(sentence)
 
-        if is_list:
+        if not is_list:
+            tokens = [tokens]
+        if isinstance(self.sequence_length, int):
             embed_input = sequence.pad_sequences(tokens, self.sequence_length, padding='post')
-        else:
-            embed_input = sequence.pad_sequences([tokens], self.sequence_length, padding='post')
+        elif isinstance(self.sequence_length, list):
+            embed_input = sequence.pad_sequences(tokens, self.sequence_length[seq_idx], padding='post')
 
         embed_input = self.prepare_model_input(embed_input)
         print(embed_input)
@@ -299,7 +306,12 @@ class BERTEmbedding(BaseEmbedding):
         model = keras_bert.load_trained_model_from_checkpoint(config_path,
                                                               check_point_path,
                                                               seq_len=self.sequence_length)
-        output_layer = NonMaskingLayer()(model.output)
+        num_layers = len(model.layers)
+        features_layers = [model.get_layer(index=num_layers-1+idx*8).output\
+                            for idx in range(-3, 1)]
+        embedding_layer = concatenate(features_layers)
+        output_layer = NonMaskingLayer()(embedding_layer)
+        #output_layer = NonMaskingLayer()(model.output)
         self._model = Model(model.inputs, output_layer)
 
         self.embedding_size = self.model.output_shape[-1]
@@ -307,8 +319,9 @@ class BERTEmbedding(BaseEmbedding):
         word2idx = {}
         with open(dict_path, 'r', encoding='utf-8') as f:
             words = f.read().splitlines()
-        for word in words:
-            word2idx[word] = len(word2idx)
+        for idx, word in enumerate(words):
+            word2idx[word] = idx
+            #word2idx[word] = len(word2idx)
         for key, value in self.special_tokens.items():
             word2idx[key] = word2idx[value]
 
@@ -349,31 +362,127 @@ class CustomEmbedding(BaseEmbedding):
 
     def build_token2idx_dict(self, x_data: List[TextSeqType], min_count: int = 5):
         if self.token2idx is None:
-            word_set: Dict[str, int] = {}
-            for x_item in x_data:
-                for word in x_item:
-                    word_set[word] = word_set.get(word, 0) + 1
-
-            word2idx_list = sorted(word_set.items(), key=lambda kv: -kv[1])
+            #word_set: Dict[str, int] = {}
+            # for x_item in x_data:
+            #     for word in x_item:
+            #         word_set[word] = word_set.get(word, 0) + 1
+            data_depth = helper.depth_count(x_data)
+            if data_depth > 1:
+                x_items = x_data
+                for _ in range(data_depth-1):
+                    x_items = list(chain(*x_items))
+            word_freq = Counter(x_items)
+            # word_set = {word: freq for word, freq in word_freq.items() if freq >= min_count}
+            # word2idx_list = sorted(word_set.items(), key=lambda kv: -kv[1])
+            word2idx_list = sorted(word_freq.items(), key=lambda kv: -kv[1])
 
             word2idx = self.base_dict.copy()
-            for word, count in word2idx_list:
-                if count >= min_count:
-                    word2idx[word] = len(word2idx)
+            offset = len(word2idx)
+            # for word, count in word2idx_list:
+            #     if count >= min_count:
+            #         word2idx[word] = len(word2idx)
+            for idx, (word, freq) in enumerate(word2idx_list):
+                if freq >= min_count:
+                    word2idx[word] = idx + offset
 
             self.token2idx = word2idx
         self.build()
 
 
+class TwoHeadEmbedding(CustomEmbedding):
+    def __init__(self,
+                 name_or_path: str = 'twohead-embedding',
+                 sequence_length: List[int] = None,
+                 embedding_size: int = None,
+                 **kwargs):
+        """
+        Inheritated from CustomEmbedding class.
+        :param name_or_path: just a name for two head embedding
+        :param sequence_length: max length list of sequences, all embedding is shaped as (sequence_length[idx], embedding_size)
+        :param embedding_size: embedding vector size, only need to set when using a CustomEmbedding or its subclass
+        :param kwargs: kwargs to pass to the method, func: `BaseEmbedding.build`
+        """
+        if sequence_length is None or embedding_size is None:
+            raise ValueError('Must set all sequence_length and embedding_size when using the TwoheadEmbedding layer')
+        super(TwoHeadEmbedding, self).__init__(name_or_path, sequence_length, embedding_size, **kwargs)
+
+    def build(self, **kwargs):
+        self.embedding_type = 'twohead'
+        if self._token2idx is None:
+            logging.debug('need to build after build_word2idx')
+        else:
+            input_x1 = Input(shape=(self.sequence_length[0],), dtype='int32', name='master_input')
+            current1 = Embedding(self.token_count,
+                                self.embedding_size)(input_x1)
+            input_x2 = Input(shape=(self.sequence_length[1],), dtype='int32', name='assist_input')
+            current2 = Embedding(self.token_count,
+                                self.embedding_size)(input_x2)
+            current = concatenate([current1, current2], axis=1)
+            self._model = Model(inputs=[input_x1, input_x2], outputs=current)
+
+    def build_token2idx_dict(self, x_data: List[TextSeqType], min_count: int = 5):
+        super(TwoHeadEmbedding, self).build_token2idx_dict(x_data, min_count)
+
+    def embed(self, sentences_pair: List[List[TextSeqInputType]]) -> np.array:
+        embed_inputs = []
+        for idx, sentences in enumerate(sentences_pair):
+            is_list = isinstance(sentences[0], list)
+            tokens = self.tokenize(sentences)
+            if not is_list:
+                tokens = [tokens]
+            if isinstance(self.sequence_length, list):
+                embed_input = sequence.pad_sequences(tokens, self.sequence_length[idx], padding='post')
+            elif isinstance(self.sequence_length, int):
+                embed_input = sequence.pad_sequences(tokens, self.sequence_length, padding='post')
+            embed_inputs.append(embed_input)
+        embed_inputs = self.prepare_model_input(embed_inputs)
+        print(embed_inputs)
+        embed_pred = self.model.predict(embed_inputs)
+        return embed_pred
+
+
+class GPT2Embedding(BaseEmbedding):
+
+    def build(self, **kwargs):
+        self.embedding_type = 'gpt2'
+
+        config_path = os.path.join(self.name, 'hparams.json')
+        checkpoint_path = os.path.join(self.name, 'model.ckpt')
+        encoder_path = os.path.join(self.name, 'encoder.json')
+        vocab_path = os.path.join(self.name, 'vocab.bpe')
+
+        self._model: Model = load_trained_model_from_checkpoint(config_path, checkpoint_path)
+        for layer in self._model.layers:
+            layer.trainable = False
+
+        self.bpe: BytePairEncoding = get_bpe_from_files(encoder_path, vocab_path)
+
+        word2idx = self.bpe.token_dict.copy()
+        word2idx[k.PAD] = word2idx['pad']
+        word2idx[k.UNK] = word2idx['unk']
+        word2idx[k.BOS] = word2idx['pad']
+        word2idx[k.EOS] = word2idx['pad']
+        self.token2idx = word2idx
+
+    def build_token2idx_dict(self, x_data: List[TextSeqType], min_count: int = 5):
+        logging.debug("word2vec embedding no need to build token2idx with corpus")
+
+
 if __name__ == '__main__':
+    train_x = [
+        list('语言学（英语：linguistics）是一门关于人类语言的科学研究'),
+        list('语言学（英语：linguistics）是一门关于人类语言的科学研究'),
+        list('语言学（英语：linguistics）是一门关于人类语言的科学研究'),
+        list('语言学包含了几种分支领域。'),
+        list('在语言结构（语法）研究与意义（语义与语用）研究之间存在一个重要的主题划分'),
+    ]
+    train_y = ['a', 'a', 'a', 'b', 'c']
+
     from kashgari.utils.logger import init_logger
-
+    from kashgari.tasks.classification import CNNModel
     init_logger()
-    embedding = WordEmbeddings('sgns.weibo.bigram.bz2', 10)
-
-    sentence = '我 想 去 看 电影www'.split(' ')
-    print(embedding.__dict__)
-
-    print(embedding.tokenize(sentence))
-    print(embedding.tokenize([sentence]))
-    print(embedding.embed([sentence]))
+    embedding = GPT2Embedding('/Users/brikerman/Desktop/python/gpt-2/models/117M', 10)
+    r = embedding.embed(['hello', 'world'])
+    model = CNNModel(embedding)
+    model.fit(train_x, train_y, epochs=20)
+    print(r.shape)
