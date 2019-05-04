@@ -43,7 +43,8 @@ required = [
     'gensim>=3.5.0',
     # 'bz2file>=0.98',
     'sklearn',
-    'pandas>=0.23.0'
+    'pandas>=0.23.0',
+    'keras-gpt-2==0.7.0'
 ]
 
 # long_description = ""

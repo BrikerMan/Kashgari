@@ -138,6 +138,20 @@ Epoch 1/5
 ...
 ```
 
+### Run with GPT-2 Embedding
+
+```python
+from kashgari.embeddings import GPT2Embedding
+from kashgari.tasks.classification import CNNLSTMModel
+from kashgari.corpus import SMP2017ECDTClassificationCorpus
+
+gpt2_embedding = GPT2Embedding('<path-to-gpt-model>', sequence_length=30)                                   
+model = CNNLSTMModel(gpt2_embedding)
+
+train_x, train_y = SMP2017ECDTClassificationCorpus.get_classification_data()
+model.fit(train_x, train_y)
+```
+
 ### Run with Bert Embedding
 
 ```python
