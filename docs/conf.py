@@ -24,7 +24,6 @@ author = 'BrikerMan'
 
 
 # -- General configuration ---------------------------------------------------
-from kashgari import corpus
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
@@ -37,6 +36,8 @@ templates_path = ['_templates']
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = []
+
+autoclass_content = "both"
 
 
 # -- Options for HTML output -------------------------------------------------
@@ -51,3 +52,10 @@ html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
+
+
+import kashgari
+# The short X.Y version.
+version = kashgari.__version__
+# The full version, including alpha/beta/rc tags.
+release = version

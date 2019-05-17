@@ -6,14 +6,13 @@
 Welcome to Kashgari's documentation!
 ====================================
 
-.. toctree::
-   :maxdepth: 2
-   :caption: Contents:
 
-API
-===
-.. automodule:: kashgari.corpus
-   :members:
+
+Corpus
+======
+
+Kashgari rovides xxxx
+
 
 Indices and tables
 ==================
@@ -21,3 +20,9 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
+
+.. toctree::
+   :maxdepth: 2
+
+   corpus
+   api
