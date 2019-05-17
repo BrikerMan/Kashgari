@@ -14,5 +14,9 @@ Usage::
     test_x, test_y = ChineseDailyNerCorpus.load_data('test')
     valid_x, valid_y = ChineseDailyNerCorpus.load_data('valid')
 
-x[0] is a sequence of tokenized chinese sentence. ``['海', '钓', '比', '赛', '地', '点', '在', '厦', '门']``
-y[0] is label of x[0] ``['O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-LOC', 'I-LOC']``
+Data Sample::
+
+    >>> x[0] 
+    ['海', '钓', '比', '赛', '地', '点', '在', '厦', '门']
+    >>> y[0] 
+    ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-LOC', 'I-LOC']
