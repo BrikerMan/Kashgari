@@ -5,6 +5,12 @@ API Documentation
 
 Tada
 
+PreProcessor
+------------
+
+.. automodule:: kashgari.pre_processor
+   :members:
+
 Corpus
 ------
 

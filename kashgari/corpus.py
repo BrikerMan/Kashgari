@@ -1,15 +1,5 @@
 # encoding: utf-8
 
-# author: BrikerMan
-# contact: eliyar917@gmail.com
-# blog: https://eliyar.biz
-
-# version: 1.0
-# license: Apache Licence
-# file: corpus.py
-# time: 2019-05-17 11:28
-
-
 import os
 import kashgari.macros as k
 from typing import Tuple, List
