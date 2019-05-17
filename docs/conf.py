@@ -13,6 +13,10 @@
 import os
 import sys
 import sphinx_rtd_theme
+from recommonmark.parser import CommonMarkParser
+from recommonmark.transform import AutoStructify
+
+
 sys.path.insert(0, os.path.abspath('.'))
 sys.path.insert(0, os.path.abspath('../'))
 
@@ -24,10 +28,16 @@ author = 'BrikerMan'
 
 
 # -- General configuration ---------------------------------------------------
+source_suffix = ['.rst', '.md']
+
+# source_parsers = {
+#     '.md': CommonMarkParser
+# }
+
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = ['sphinx.ext.autodoc', 'sphinx.ext.doctest']
+extensions = ['sphinx.ext.autodoc', 'sphinx.ext.doctest', 'recommonmark']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -60,3 +70,12 @@ import kashgari
 version = kashgari.__version__
 # The full version, including alpha/beta/rc tags.
 release = version
+
+
+def setup(app):
+    app.add_config_value('recommonmark_config', {
+        #'url_resolver': lambda url: github_doc_root + url,
+        'auto_toc_tree_section': 'Contents',
+        'enable_eval_rst': True,
+    }, True)
+    app.add_transform(AutoStructify)
