@@ -6,18 +6,11 @@
 
 @version: 1.0
 @license: Apache Licence
-@file: __init__.py.py
-@time: 2019-01-19 13:42
+@file: __init__.py
+@time: 2019-05-17 11:15
 
 """
-import kashgari.embeddings
-import kashgari.corpus
-import kashgari.tasks
-
-from kashgari.tasks import classification
-from kashgari.tasks import seq_labeling
-
-from kashgari.macros import config
+from version import __version__
 
 
 if __name__ == "__main__":
