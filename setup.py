@@ -12,21 +12,23 @@
 
 """
 import pathlib
-
+from version import __version__
 from setuptools import find_packages, setup
 
-from version import __version__
+__name__ = 'kashgari'
+__author__ = "BrikerMan"
+__copyright__ = "Copyright 2018, BrikerMan"
+__credits__ = []
+__license__ = "Apache License 2.0"
+__maintainer__ = "BrikerMan"
+__email__ = "eliyar917@gmail.com"
 
-# Package meta-data.
-NAME = 'kashgari'
-DESCRIPTION = 'Simple and powerful NLP framework, ' \
-              'build your state-of-art model in 5 minutes for ' \
-              'named entity recognition (NER), part-of-speech ' \
-              'tagging (PoS) and text classification tasks.'
-URL = 'https://github.com/BrikerMan/Kashgari'
-EMAIL = 'eliyar917@gmail.com'
-AUTHOR = 'BrikerMan'
-LICENSE = 'Apache License 2.0'
+__url__ = 'https://github.com/BrikerMan/Kashgari'
+__description__ = 'Simple, Keras-powered multilingual NLP framework,' \
+                  ' allows you to build your models in 5 minutes for named entity recognition (NER),' \
+                  ' part-of-speech tagging (PoS) and text classification tasks. ' \
+                  'Includes BERT, GPT-2 and word2vec embedding.'
+
 
 HERE = pathlib.Path(__file__).parent
 README = (HERE / "README.md").read_text()
@@ -47,21 +49,19 @@ required = [
     # 'keras-gpt-2==0.7.0'
 ]
 
-# long_description = ""
-
 setup(
-    name=NAME,
+    name=__name__,
     version=__version__,
-    description=DESCRIPTION,
+    description=__description__,
     long_description=README,
     long_description_content_type="text/markdown",
-    author=AUTHOR,
-    author_email=EMAIL,
-    url=URL,
+    author=__author__,
+    author_email=__email__,
+    url=__url__,
     packages=find_packages(exclude=('tests',)),
     install_requires=required,
     include_package_data=True,
-    license=LICENSE,
+    license=__license__,
     classifiers=[
         'License :: OSI Approved :: Apache Software License',
         # 'Programming Language :: Python',

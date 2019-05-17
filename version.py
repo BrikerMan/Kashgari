@@ -6,9 +6,12 @@
 
 @version: 1.0
 @license: Apache Licence
-@file: __version__.py
-@time: 2019-02-21 15:22
+@file: version.py.py
+@time: 2019-05-17 15:22
 
 """
 
 __version__ = '0.4.0'
+
+if __name__ == "__main__":
+    print("Hello world")
