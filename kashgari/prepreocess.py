@@ -6,9 +6,15 @@
 
 @version: 1.0
 @license: Apache Licence
-@file: __init__.py
-@time: 2019-05-17 11:15
+@file: prepreocess.py
+@time: 2019-05-17 11:33
 
 """
-from version import __version__
 
+
+class Preprocessor(object):
+    pass
+
+
+if __name__ == "__main__":
+    print("Hello world")
