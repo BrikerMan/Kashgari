@@ -38,6 +38,7 @@ templates_path = ['_templates']
 exclude_patterns = []
 
 autoclass_content = "both"
+master_doc = 'index'
 
 
 # -- Options for HTML output -------------------------------------------------
