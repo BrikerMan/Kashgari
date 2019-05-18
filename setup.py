@@ -12,7 +12,7 @@
 
 """
 import pathlib
-from version import __version__
+from kashgari import __version__
 from setuptools import find_packages, setup
 
 __name__ = 'kashgari'

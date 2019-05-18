@@ -4,9 +4,9 @@ python:
   - "3.6"
 cache: pip
 # command to install dependencies
-env:
-  - TEST_FILE=tests/test_corpus.py
-  - TEST_FILE=tests/test_pre_processor.py
+#env:
+#  - TEST_FILE=tests/test_corpus.py
+#  - TEST_FILE=tests/test_pre_processor.py
 before_install:
   - export BOTO_CONFIG=/dev/null
 install:
@@ -24,7 +24,7 @@ addons:
       secure: $SONAR_TOKEN # encrypted value of your token
 
 script:
-  - nosetests --with-xunit --with-coverage --cover-html --cover-html-dir=htmlcov --cover-package="kashgari" $TEST_FILE
+  - nosetests --with-xunit --with-coverage --cover-html --cover-html-dir=htmlcov --cover-package="kashgari" tests
   - coverage xml -i
   - sonar-scanner
 after_success:

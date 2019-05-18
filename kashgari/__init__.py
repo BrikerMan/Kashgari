@@ -10,5 +10,7 @@
 @time: 2019-05-17 11:15
 
 """
-from version import __version__
+
+
+__version__ = '0.4.0'
 
