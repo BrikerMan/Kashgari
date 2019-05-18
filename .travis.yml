@@ -6,6 +6,7 @@ cache: pip
 # command to install dependencies
 env:
   - TEST_FILE=tests/test_corpus.py
+  - TEST_FILE=tests/test_pre_processor.py
 before_install:
   - export BOTO_CONFIG=/dev/null
 install:
