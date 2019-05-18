@@ -24,7 +24,8 @@ addons:
       secure: $SONAR_TOKEN # encrypted value of your token
 
 script:
-  - nosetests --with-coverage --cover-html --cover-html-dir=htmlcov --cover-package="kashgari" $TEST_FILE
+  - nosetests --with-xunit --with-coverage --cover-html --cover-html-dir=htmlcov --cover-package="kashgari" $TEST_FILE
+  - coverage xml -i
   - sonar-scanner
 after_success:
   - coveralls

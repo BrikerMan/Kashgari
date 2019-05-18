@@ -72,7 +72,6 @@ class TestPreProcessor(unittest.TestCase):
         p = PreProcessor()
         p.load_cached_dicts('./saved_preprocessor')
 
-        print(p.idx2token)
         assert len(p.token2idx) == 100
         assert len(p.label2idx) == 3
         assert p.label2idx == {'O': 0, 'B-LOC': 1, 'I-LOC': 2}
