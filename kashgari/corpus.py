@@ -103,14 +103,14 @@ class SMP2018ECDTCorpus(object):
 
         labels: ``['news', 'epg', ...]``
 
+        Samples::
+            train_x, train_y = SMP2018ECDTCorpus.load_data('train')
+            test_x, test_y = SMP2018ECDTCorpus.load_data('test')
+
         Args:
             subset_name: {train, test, valid}
             shuffle: should shuffle or not, default True.
             cutter: sentence cutter, {char, jieba}
-
-        Samples::
-            train_x, train_y = SMP2018ECDTCorpus.load_data('train')
-            test_x, test_y = SMP2018ECDTCorpus.load_data('test')
 
         Returns:
             dataset_features and dataset labels
@@ -142,7 +142,7 @@ class SMP2018ECDTCorpus(object):
 
 
 if __name__ == "__main__":
-    x, y = SMP2018ECDTCorpus.load_data('train', cutter='char')
+    x, y = SMP2018ECDTCorpus.load_data('train', cutter='jieba')
     print(x[:2])
     print(y[:2])
     print("Hello world")

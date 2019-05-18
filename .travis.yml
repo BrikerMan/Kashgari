@@ -5,21 +5,17 @@ python:
 cache: pip
 # command to install dependencies
 env:
-  - TEST_FILE=tests/test_classifier_models.py
-  - TEST_FILE=tests/test_seq_labeling_models.py
   - TEST_FILE=tests/test_corpus.py
-  - TEST_FILE=tests/test_embeddings.py
 before_install:
   - export BOTO_CONFIG=/dev/null
 install:
   - pip install python-coveralls
-#  - pip install -r requirements.txt
   - pip install .
-  - pip install tensorflow==1.12.0
+  - pip install tensorflow==1.13.1
   - pip install coverage
   - pip install nose
 # command to run tests
-#script:
-#  - nosetests --with-coverage --cover-html --cover-html-dir=htmlcov --cover-package="kashgari" $TEST_FILE
+script:
+  - nosetests --with-coverage --cover-html --cover-html-dir=htmlcov --cover-package="kashgari" $TEST_FILE
 after_success:
   - coveralls
