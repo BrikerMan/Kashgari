@@ -142,7 +142,8 @@ class SMP2018ECDTCorpus(object):
 
 
 if __name__ == "__main__":
-    x, y = SMP2018ECDTCorpus.load_data('train', cutter='jieba')
-    print(x[:2])
-    print(y[:2])
+    x, y = ChineseDailyNerCorpus.load_data('train')
+    import json
+    print(x[:3])
+    print(y[:3])
     print("Hello world")

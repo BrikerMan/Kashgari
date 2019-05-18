@@ -69,17 +69,17 @@ class PreProcessor(object):
         self.token2idx = token2idx
         self.idx2token = dict([(value, key) for key, value in self.token2idx.items()])
 
-    def _build_classification_label2idx_dict(self,
-                                             label_list: Union[List[str], List[List[str]]],
-                                             multi_label: bool = False):
-        """
-        Build label2idx dict for classification labeling task
-
-        Args:
-            label_list: corpus label list
-            multi_label: is multi-labeling task, default False.
-        """
-        pass
+    # def _build_classification_label2idx_dict(self,
+    #                                          label_list: Union[List[str], List[List[str]]],
+    #                                          multi_label: bool = False):
+    #     """
+    #     Build label2idx dict for classification labeling task
+    #
+    #     Args:
+    #         label_list: corpus label list
+    #         multi_label: is multi-labeling task, default False.
+    #     """
+    #     pass
 
     def _build_seq_labeling_label2idx_dict(self,
                                            label_list: List[List[str]]):
@@ -138,11 +138,13 @@ class PreProcessor(object):
             f.write(json.dumps(self.label2idx, ensure_ascii=False, indent=2))
 
     def load_cached_dicts(self, cache_dir: str):
-        with open(os.path.join(cache_dir, 'token2idx.json'), 'w') as f:
+        with open(os.path.join(cache_dir, 'token2idx.json'), 'r') as f:
             self.token2idx = json.loads(f.read())
+            self.idx2token = dict([(value, key) for key, value in self.token2idx.items()])
 
-        with open(os.path.join(cache_dir, 'label2idx.json'), 'w') as f:
+        with open(os.path.join(cache_dir, 'label2idx.json'), 'r') as f:
             self.label2idx = json.loads(f.read())
+            self.idx2label = dict([(value, key) for key, value in self.label2idx.items()])
 
     def numerize_token_sequence(self,
                                 sequence: List[str]) -> List[int]:
