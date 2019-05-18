@@ -19,9 +19,9 @@ install:
 
 addons:
   sonarcloud:
-    organization: "brikerman-github" # the key of the org you chose at step #3
+    organization: "brikerman-github"
     token:
-      secure: $SONAR_TOKEN # encrypted value of your token
+      secure: $SONAR_TOKEN
 
 script:
   - nosetests --with-xunit --with-coverage --cover-html --cover-html-dir=htmlcov --cover-package="kashgari" tests
