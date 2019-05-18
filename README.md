@@ -5,7 +5,7 @@
 ![Travis (.com) branch](https://img.shields.io/travis/com/BrikerMan/Kashgari/tf.keras-version.svg)
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FBrikerMan%2FKashgari.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2FBrikerMan%2FKashgari?ref=badge_shield)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?branch=tf.keras-version&project=BrikerMan_Kashgari&metric=coverage)](https://sonarcloud.io/dashboard?id=BrikerMan_Kashgari&branch=tf.keras-version)
-[![Coverage](https://sonarcloud.io/api/project_badges/measure?branch=tf.keras-version&project=BrikerMan_Kashgari&metric=coverage)](https://sonarcloud.io/dashboard?id=BrikerMan_Kashgari&branch=tf.keras-version)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?branch=tf.keras-version&project=BrikerMan_Kashgari&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=BrikerMan_Kashgari&branch=tf.keras-version)
 [![Issues](https://img.shields.io/github/issues/BrikerMan/Kashgari.svg)](https://github.com/BrikerMan/Kashgari/issues)
 [![Contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg)](CONTRIBUTING.md)
 ![](https://img.shields.io/pypi/l/kashgari.svg?style=flat)
