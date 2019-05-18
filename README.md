@@ -2,7 +2,7 @@
 
 [![Pypi](https://img.shields.io/pypi/v/kashgari.svg)](https://pypi.org/project/kashgari/)
 [![Python version](https://img.shields.io/pypi/pyversions/Kashgari.svg)](https://www.python.org/downloads/release/python-360/)
-[![Travis](https://img.shields.io/travis/BrikerMan/Kashgari.svg)](https://travis-ci.org/BrikerMan/Kashgari)
+![Travis (.com) branch](https://img.shields.io/travis/com/BrikerMan/Kashgari/master.svg)
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FBrikerMan%2FKashgari.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2FBrikerMan%2FKashgari?ref=badge_shield)
 [![](https://img.shields.io/coveralls/github/BrikerMan/Kashgari.svg)](https://coveralls.io/github/BrikerMan/Kashgari)
 [![Issues](https://img.shields.io/github/issues/BrikerMan/Kashgari.svg)](https://github.com/BrikerMan/Kashgari/issues)
