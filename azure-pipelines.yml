@@ -33,5 +33,5 @@ steps:
 
 - script: |
     pip install pytest pytest-azurepipelines pytest-cov
-    pytest tests/ --cov kashgari --cov-report htmlcov
+    pytest tests/ --cov kashgari --cov-report html
   displayName: 'pytest'
