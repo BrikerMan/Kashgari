@@ -2,6 +2,7 @@ language: python
 
 python:
   - "3.6"
+  - "3.7"
 cache: pip
 # command to install dependencies
 #env:
