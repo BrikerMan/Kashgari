@@ -27,6 +27,7 @@ addons:
       secure: $SONAR_TOKEN
 
 script:
+  - git fetch --unshallow --quiet
   - nosetests --with-xunit --with-coverage --cover-html --cover-html-dir=htmlcov --cover-package="kashgari" tests
   - coverage xml -i
   - sonar-scanner
