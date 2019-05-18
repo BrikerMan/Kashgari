@@ -16,8 +16,15 @@ install:
   - pip install tensorflow==1.13.1
   - pip install coverage
   - pip install nose
-# command to run tests
+
+addons:
+  sonarcloud:
+    organization: "brikerman-github" # the key of the org you chose at step #3
+    token:
+      secure: $SONAR_TOKEN # encrypted value of your token
+
 script:
   - nosetests --with-coverage --cover-html --cover-html-dir=htmlcov --cover-package="kashgari" $TEST_FILE
+  - sonar-scanner
 after_success:
   - coveralls
