@@ -11,11 +11,11 @@
 
 import os
 import json
-import pickle
+import logging
 import operator
 import collections
 import pathlib
-from typing import List, Union, Dict
+from typing import List, Dict
 
 
 class PreProcessor(object):
@@ -68,6 +68,7 @@ class PreProcessor(object):
 
         self.token2idx = token2idx
         self.idx2token = dict([(value, key) for key, value in self.token2idx.items()])
+        logging.debug(f"build token2idx dict finished, contains {len(self.token2idx)} tokens.")
 
     # def _build_classification_label2idx_dict(self,
     #                                          label_list: Union[List[str], List[List[str]]],
@@ -108,6 +109,7 @@ class PreProcessor(object):
 
         self.label2idx = label2idx
         self.idx2label = dict([(value, key) for key, value in self.label2idx.items()])
+        logging.debug(f"build label2idx dict finished, contains {len(self.token2idx)} labels.")
 
     def prepare_labeling_dicts_if_need(self,
                                        x: List[List[str]],
@@ -136,6 +138,7 @@ class PreProcessor(object):
 
         with open(os.path.join(cache_dir, 'label2idx.json'), 'w') as f:
             f.write(json.dumps(self.label2idx, ensure_ascii=False, indent=2))
+        logging.debug(f"saved token2idx and label2idx to dir: {cache_dir}.")
 
     def load_cached_dicts(self, cache_dir: str):
         with open(os.path.join(cache_dir, 'token2idx.json'), 'r') as f:
@@ -145,6 +148,8 @@ class PreProcessor(object):
         with open(os.path.join(cache_dir, 'label2idx.json'), 'r') as f:
             self.label2idx = json.loads(f.read())
             self.idx2label = dict([(value, key) for key, value in self.label2idx.items()])
+        logging.debug(f"loaded token2idx and label2idx from dir: {cache_dir}. "
+                      f"Contain {len(self.token2idx)} tokens and {len(self.label2idx)} labels.")
 
     def numerize_token_sequence(self,
                                 sequence: List[str]) -> List[int]:

@@ -7,8 +7,11 @@
 # file: test_pre_processor.py
 # time: 2019-05-18 13:13
 
+import logging
 import unittest
 from kashgari.pre_processor import PreProcessor
+
+logging.basicConfig(level=logging.DEBUG)
 
 LABELING_X_DATA = [
     ['后', '者', '曾', '明', '确', '宣', '布', '苏', '将', '归', '还', '齿', '舞', '和', '色', '丹', '两', '岛', '。'],

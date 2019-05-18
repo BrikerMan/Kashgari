@@ -1,6 +1,7 @@
 # encoding: utf-8
 
 import os
+import logging
 import pandas as pd
 import kashgari.macros as k
 from typing import Tuple, List
@@ -69,6 +70,9 @@ class ChineseDailyNerCorpus(object):
                     y.append(rows[1])
         if shuffle:
             x_data, y_data = utils.unison_shuffled_copies(x_data, y_data)
+        logging.debug(f"loaded {len(x_data)} samples from {file_path}. Sample:\n"
+                      f"x[0]: {x_data[0]}\n"
+                      f"y[0]: {y_data[0]}")
         return x_data, y_data
 
 
@@ -138,12 +142,14 @@ class SMP2018ECDTCorpus(object):
 
         if shuffle:
             x_data, y_data = utils.unison_shuffled_copies(x_data, y_data)
+        logging.debug(f"loaded {len(x_data)} samples from {df_path}. Sample:\n"
+                      f"x[0]: {x_data[0]}\n"
+                      f"y[0]: {y_data[0]}")
         return x_data, y_data
 
 
 if __name__ == "__main__":
     x, y = ChineseDailyNerCorpus.load_data('train')
-    import json
     print(x[:3])
     print(y[:3])
     print("Hello world")

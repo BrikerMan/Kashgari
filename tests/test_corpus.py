@@ -7,7 +7,6 @@
 # file: test_corpus.py
 # time: 2019-05-17 15:35
 
-
 import unittest
 from kashgari.corpus import ChineseDailyNerCorpus
 from kashgari.corpus import SMP2018ECDTCorpus
