@@ -9,6 +9,7 @@ env:
 before_install:
   - export BOTO_CONFIG=/dev/null
 install:
+  - pip install jieba
   - pip install python-coveralls
   - pip install .
   - pip install tensorflow==1.13.1
