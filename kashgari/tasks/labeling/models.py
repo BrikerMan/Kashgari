@@ -7,10 +7,13 @@
 # file: models.py
 # time: 2019-05-20 11:13
 
+import logging
 from typing import Dict, Any
 
 from tensorflow import keras
 
+from kashgari.embeddings import BareEmbedding
+from kashgari.pre_processors import PreProcessor
 from kashgari.tasks.labeling.base_model import BaseLabelingModel
 
 L = keras.layers
@@ -107,8 +110,6 @@ class CNNLSTMModel(BaseLabelingModel):
 
 
 if __name__ == "__main__":
-    import logging
-
     logging.basicConfig(level=logging.DEBUG)
 
     from kashgari.corpus import ChineseDailyNerCorpus
@@ -119,26 +120,25 @@ if __name__ == "__main__":
     old_fashion_model = CNNLSTMModel()
     old_fashion_model.fit(x, y)
 
-    # # Model For pros 1
-    # embedding = BareEmbedding(sequence_length=20)
-    # embedding.prepare_for_labeling(x, y)
-    # embedding.processor.save_dicts('./cached_processor')
-    #
-    # print(embedding.embed_model.summary())
-    # labeling1 = BLSTMModel(embedding=embedding)
-    # labeling1.prepare_model_arc()
-    # labeling1.compile_model()
-    #
-    # # Model For pros 1
-    # processor = PreProcessor.load_cached_processor('./cached_processor')
-    # embedding = BareEmbedding(sequence_length='variable', processor=processor)
-    #
-    # labeling2 = BLSTMModel(embedding=embedding)
-    # labeling2.prepare_model_arc()
-    # labeling2.compile_model()
-    #
-    # hyper_parameters = BLSTMModel.get_default_hyper_parameters()
-    # hyper_parameters['layer_blstm']['units'] = 12
-    # labeling_model = BLSTMModel(hyper_parameters=hyper_parameters)
-    # labeling_model.fit(x, y)
-    #
+    # Model For pros 1
+    embedding = BareEmbedding(sequence_length=20)
+    embedding.prepare_for_labeling(x, y)
+    embedding.processor.save_dicts('./cached_processor')
+
+    print(embedding.embed_model.summary())
+    labeling1 = BLSTMModel(embedding=embedding)
+    labeling1.prepare_model_arc()
+    labeling1.compile_model()
+
+    # Model For pros 1
+    processor = PreProcessor.load_cached_processor('./cached_processor')
+    embedding = BareEmbedding(sequence_length='variable', processor=processor)
+
+    labeling2 = BLSTMModel(embedding=embedding)
+    labeling2.prepare_model_arc()
+    labeling2.compile_model()
+
+    hyper_parameters = BLSTMModel.get_default_hyper_parameters()
+    hyper_parameters['layer_blstm']['units'] = 12
+    labeling_model = BLSTMModel(hyper_parameters=hyper_parameters)
+    labeling_model.fit(x, y)

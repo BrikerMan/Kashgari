@@ -13,6 +13,7 @@ from typing import Dict, Any, List, Optional
 from tensorflow import keras
 
 from kashgari.embeddings import BareEmbedding
+from kashgari.embeddings.base_embedding import Embedding
 
 L = keras.layers
 
@@ -26,7 +27,7 @@ class BaseLabelingModel(object):
         raise NotImplementedError
 
     def __init__(self,
-                 embedding: Optional[BareEmbedding] = None,
+                 embedding: Optional[Embedding] = None,
                  hyper_parameters: Optional[Dict[str, Dict[str, Any]]] = None):
         """
 

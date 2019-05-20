@@ -9,11 +9,11 @@
 # file: corpus.py
 # time: 2019-05-17 11:28
 
-import os
+import collections
 import json
 import logging
 import operator
-import collections
+import os
 import pathlib
 from typing import List, Dict
 
@@ -71,8 +71,6 @@ class PreProcessor(object):
         self.idx2token = dict([(value, key) for key, value in self.token2idx.items()])
         logging.debug(f"build token2idx dict finished, contains {len(self.token2idx)} tokens.")
 
-        self.seq_length_95 = sorted([len(seq) for seq in tokenized_corpus])[int(0.95 * len(tokenized_corpus))]
-
 
     # def _build_classification_label2idx_dict(self,
     #                                          label_list: Union[List[str], List[List[str]]],
@@ -124,12 +122,11 @@ class PreProcessor(object):
         Args:
             x:
             y:
-            cache_dir:
 
         Returns:
 
         """
-
+        self.seq_length_95 = sorted([len(seq) for seq in x])[int(0.95 * len(x))]
         if not self.token2idx:
             self._build_token2idx_dict(x)
         if not self.label2idx:
