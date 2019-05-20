@@ -12,8 +12,10 @@
 
 """
 import pathlib
-from kashgari import __version__
+
 from setuptools import find_packages, setup
+
+from kashgari.version import __version__
 
 __name__ = 'kashgari'
 __author__ = "BrikerMan"
