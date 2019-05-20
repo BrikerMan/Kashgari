@@ -6,11 +6,12 @@
 
 # file: bare_embedding.py
 # time: 2019-05-20 10:36
-
 import logging
 from enum import Enum, unique
+from typing import Union, List, Optional
+
 from tensorflow import keras
-from typing import Union, Dict, List, Optional
+
 from kashgari.pre_processors import PreProcessor
 
 L = keras.layers
@@ -43,7 +44,7 @@ class BareEmbedding(object):
 
         self.embedding_size = embedding_size
         self.sequence_length: Union[int, str] = sequence_length
-        self.embed_model: keras.Model = None
+        self.embed_model: Optional[keras.Model] = None
 
         if processor is None:
             self.processor = PreProcessor()
@@ -77,10 +78,14 @@ class BareEmbedding(object):
             if self.sequence_length == 'auto':
                 self.sequence_length = self.processor.seq_length_95
 
-            input_x = L.Input(shape=(self.sequence_length,), dtype='int32')
-            current = L.Embedding(self.token_count,
-                                  self.embedding_size)(input_x)
-            self.embed_model = keras.Model(input_x, current)
+            input_tensor = L.Input(shape=(self.sequence_length,),
+                                   name='inputs')
+            layer_embedding = L.Embedding(self.token_count,
+                                          self.embedding_size,
+                                          name='layer_embedding')
+
+            embedded_tensor = layer_embedding(input_tensor)
+            self.embed_model = keras.Model(input_tensor, embedded_tensor)
 
     def prepare_for_labeling(self,
                              x: List[List[str]],
@@ -100,7 +105,4 @@ class BareEmbedding(object):
 
 
 if __name__ == "__main__":
-    import logging
-
-    logging.basicConfig(level=logging.DEBUG)
-
+    pass

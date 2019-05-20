@@ -12,10 +12,8 @@
 #
 import os
 import sys
-import sphinx_rtd_theme
-from recommonmark.parser import CommonMarkParser
-from recommonmark.transform import AutoStructify
 
+from recommonmark.transform import AutoStructify
 
 sys.path.insert(0, os.path.abspath('.'))
 sys.path.insert(0, os.path.abspath('../'))
@@ -37,7 +35,12 @@ source_suffix = ['.rst', '.md']
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = ['sphinx.ext.napoleon', 'sphinx.ext.doctest', 'recommonmark']
+extensions = [
+    'sphinx.ext.napoleon',
+    'sphinx.ext.doctest',
+    'recommonmark',
+    'sphinx.ext.autosummary'
+]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -48,8 +51,21 @@ templates_path = ['_templates']
 exclude_patterns = []
 
 autoclass_content = "both"
+autodoc_member_order = 'bysource'
 master_doc = 'index'
 pygments_style = 'sphinx'
+
+napoleon_google_docstring = True
+napoleon_numpy_docstring = True
+napoleon_include_init_with_doc = False
+napoleon_include_private_with_doc = False
+napoleon_include_special_with_doc = False
+napoleon_use_admonition_for_examples = True
+napoleon_use_admonition_for_notes = False
+napoleon_use_admonition_for_references = False
+napoleon_use_ivar = True
+napoleon_use_param = True
+napoleon_use_rtype = False
 
 
 # -- Options for HTML output ---------------------------------------------------

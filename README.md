@@ -2,7 +2,7 @@
 
 [![Pypi](https://img.shields.io/pypi/v/kashgari.svg)](https://pypi.org/project/kashgari/)
 [![Python version](https://img.shields.io/pypi/pyversions/Kashgari.svg)](https://www.python.org/downloads/release/python-360/)
-![Travis (.com) branch](https://img.shields.io/travis/com/BrikerMan/Kashgari/tf.keras-version.svg)
+[![Travis (.com) branch](https://img.shields.io/travis/com/BrikerMan/Kashgari/tf.keras-version.svg)](https://travis-ci.com/BrikerMan/Kashgari/)
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FBrikerMan%2FKashgari.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2FBrikerMan%2FKashgari?ref=badge_shield)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?branch=tf.keras-version&project=BrikerMan_Kashgari&metric=coverage)](https://sonarcloud.io/dashboard?id=BrikerMan_Kashgari&branch=tf.keras-version)
 [![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?branch=tf.keras-version&project=BrikerMan_Kashgari&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=BrikerMan_Kashgari&branch=tf.keras-version)

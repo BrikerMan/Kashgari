@@ -8,6 +8,7 @@
 # time: 2019-05-20 11:34
 
 from kashgari.tasks.labeling.models import BLSTMModel
+from kashgari.tasks.labeling.models import CNNLSTMModel
 
 
 if __name__ == "__main__":
