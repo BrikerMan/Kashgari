@@ -9,7 +9,7 @@
 
 import logging
 import unittest
-from kashgari.pre_processors.pre_processor import PreProcessor
+from kashgari.pre_processors import PreProcessor
 
 logging.basicConfig(level=logging.DEBUG)
 
