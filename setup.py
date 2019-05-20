@@ -11,11 +11,29 @@
 @time: 2019-01-24 16:42
 
 """
+import codecs
+import os
 import pathlib
+import re
 
 from setuptools import find_packages, setup
 
-from kashgari.version import __version__
+HERE = pathlib.Path(__file__).parent
+
+
+def read(*parts):
+    with codecs.open(os.path.join(HERE, *parts), 'r') as fp:
+        return fp.read()
+
+
+def find_version(*file_paths):
+    version_file = read(*file_paths)
+    version_match = re.search(r"^__version__ = ['\"]([^'\"]*)['\"]",
+                              version_file, re.M)
+    if version_match:
+        return version_match.group(1)
+    raise RuntimeError("Unable to find version string.")
+
 
 __name__ = 'kashgari'
 __author__ = "BrikerMan"
@@ -31,8 +49,7 @@ __description__ = 'Simple, Keras-powered multilingual NLP framework,' \
                   ' part-of-speech tagging (PoS) and text classification tasks. ' \
                   'Includes BERT, GPT-2 and word2vec embedding.'
 
-
-HERE = pathlib.Path(__file__).parent
+__version__ = find_version('kashgari', 'version.py')
 README = (HERE / "README.md").read_text()
 
 required = [

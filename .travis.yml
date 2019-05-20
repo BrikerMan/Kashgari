@@ -19,6 +19,7 @@ install:
   - pip install tensorflow==1.13.1
   - pip install coverage
   - pip install nose
+  - python -c "import kashgari;print(f'kashgari version {kashgari.__version__}')"
 
 addons:
   sonarcloud:
