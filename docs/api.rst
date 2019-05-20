@@ -5,10 +5,16 @@ API Documentation
 
 Tada
 
-PreProcessor
-------------
+Embedding
+---------
 
-.. automodule:: kashgari.pre_processor
+.. automodule:: kashgari.tasks.labeling.models
+   :members:
+
+Labeling
+--------
+
+.. automodule:: kashgari.embeddings.bare_embedding
    :members:
 
 Corpus
