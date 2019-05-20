@@ -72,8 +72,7 @@ class TestPreProcessor(unittest.TestCase):
         old_p.prepare_labeling_dicts_if_need(LABELING_X_DATA, LABELING_Y_DATA)
         old_p.save_dicts('./saved_preprocessor')
 
-        p = PreProcessor()
-        p.load_cached_dicts('./saved_preprocessor')
+        p = PreProcessor.load_cached_processor('./saved_preprocessor')
 
         assert len(p.token2idx) == 100
         assert len(p.label2idx) == 3
