@@ -3,16 +3,16 @@
 API Documentation
 =================
 
-Tada
+Below please find the documentation for the public classes and functions of ``kashgari``.
 
-Embedding
----------
+Labeling Models
+---------------
 
 .. automodule:: kashgari.tasks.labeling.models
    :members:
 
-Labeling
---------
+Embedding
+---------
 
 .. automodule:: kashgari.embeddings.bare_embedding
    :members:

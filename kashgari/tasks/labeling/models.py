@@ -105,6 +105,24 @@ class BLSTMModel(object):
             epochs: int = 5,
             fit_kwargs: Dict = None,
             **kwargs):
+        """
+        Trains the model for a given number of epochs (iterations on a dataset).
+
+        Args:
+            x_train: Array of training data
+            y_train: Array of training data
+            x_validate: Array of validation data
+            y_validate: Array of validation data
+            batch_size: Number of samples per gradient update, default to 64.
+            epochs: Integer. Number of epochs to train the model. default 5.
+            fit_kwargs: fit_kwargs: additional arguments passed to ``fit_generator()`` function from
+                ``tensorflow.keras.Model`` -
+                https://www.tensorflow.org/api_docs/python/tf/keras/models/Model#fit_generator
+            **kwargs:
+
+        Returns:
+
+        """
         if self.embedding.token_count == 0:
             if x_validate is not None:
                 x_all = (x_train + x_validate).copy()
