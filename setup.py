@@ -61,7 +61,7 @@ required = [
     # 'download>=0.3.3',
     # 'seqeval >=0.0.3',
     # 'colorlog>=4.0.0',
-    # 'gensim>=3.5.0',
+    'gensim>=3.5.0',
     # # 'bz2file>=0.98',
     # 'sklearn',
     'pandas>=0.23.0',
