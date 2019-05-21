@@ -8,7 +8,7 @@
 # time: 2019-05-20 13:07
 
 
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any, List, Optional, Union, Tuple
 
 import numpy as np
 from tensorflow import keras
@@ -68,6 +68,18 @@ class BaseLabelingModel(object):
                            x_data,
                            y_data,
                            batch_size: int = 64):
+        """
+        data generator for fit_generator
+
+        Args:
+            x_data: Array of feature data (if the model has a single input),
+                or tuple of feature data array (if the model has multiple inputs)
+            y_data: Array of label data
+            batch_size: Number of samples per gradient update, default to 64.
+
+        Returns:
+            data generator
+        """
 
         index_list = np.arange(len(x_data[0]))
         page_count = len(x_data) // batch_size + 1
@@ -89,9 +101,9 @@ class BaseLabelingModel(object):
                 yield (x_tensor, y_tensor)
 
     def fit(self,
-            x_train: List[List[str]],
+            x_train: Union[Tuple[List[List[str]], ...], List[List[str]]],
             y_train: List[List[str]],
-            x_validate: List[List[str]] = None,
+            x_validate: Union[Tuple[List[List[str]], ...], List[List[str]]] = None,
             y_validate: List[List[str]] = None,
             batch_size: int = 64,
             epochs: int = 5,
@@ -101,15 +113,16 @@ class BaseLabelingModel(object):
         Trains the model for a given number of epochs (iterations on a dataset).
 
         Args:
-            x_train: Array of training data
-            y_train: Array of training data
-            x_validate: Array of validation data
-            y_validate: Array of validation data
+            x_train: Array of train feature data (if the model has a single input),
+                or tuple of train feature data array (if the model has multiple inputs)
+            y_train: Array of train label data
+            x_validate: Array of validation feature data (if the model has a single input),
+                or tuple of validation feature data array (if the model has multiple inputs)
+            y_validate: Array of validation label data
             batch_size: Number of samples per gradient update, default to 64.
             epochs: Integer. Number of epochs to train the model. default 5.
             fit_kwargs: fit_kwargs: additional arguments passed to ``fit_generator()`` function from
-                ``tensorflow.keras.Model`` -
-                https://www.tensorflow.org/api_docs/python/tf/keras/models/Model#fit_generator
+                ``tensorflow.keras.Model`` - https://www.tensorflow.org/api_docs/python/tf/keras/models/Model#fit_generator
             **kwargs:
 
         Returns:
@@ -130,7 +143,7 @@ class BaseLabelingModel(object):
             self.embedding.analyze_corpus(x_all, y_all)
 
         if self.tf_model is None:
-            self.prepare_model_arc()
+            self.build_model_arc()
             self.compile_model()
 
         train_generator = self.get_data_generator(x_train,
@@ -176,7 +189,7 @@ class BaseLabelingModel(object):
         self.tf_model.compile(**kwargs)
         self.tf_model.summary()
 
-    def prepare_model_arc(self):
+    def build_model_arc(self):
         raise NotImplementedError
 
 

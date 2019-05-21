@@ -23,6 +23,11 @@ class BLSTMModel(BaseLabelingModel):
 
     @classmethod
     def get_default_hyper_parameters(cls) -> Dict[str, Dict[str, Any]]:
+        """
+        Get hyper parameters of model
+        Returns:
+            hyper parameters dict
+        """
         return {
             'layer_blstm': {
                 'units': 128,
@@ -36,8 +41,10 @@ class BLSTMModel(BaseLabelingModel):
             }
         }
 
-    def prepare_model_arc(self):
-
+    def build_model_arc(self):
+        """
+        build model architectural
+        """
         output_dim = len(self.pre_processor.label2idx)
         config = self.hyper_parameters
         embed_model = self.embedding.embed_model
@@ -65,6 +72,11 @@ class CNNLSTMModel(BaseLabelingModel):
 
     @classmethod
     def get_default_hyper_parameters(cls) -> Dict[str, Dict[str, Any]]:
+        """
+        Get hyper parameters of model
+        Returns:
+            hyper parameters dict
+        """
         return {
             'layer_conv': {
                 'filters': 32,
@@ -84,7 +96,10 @@ class CNNLSTMModel(BaseLabelingModel):
             }
         }
 
-    def prepare_model_arc(self):
+    def build_model_arc(self):
+        """
+        build model architectural
+        """
         output_dim = len(self.pre_processor.label2idx)
         config = self.hyper_parameters
         embed_model = self.embedding.embed_model

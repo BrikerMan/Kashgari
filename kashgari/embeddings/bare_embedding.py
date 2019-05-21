@@ -43,9 +43,9 @@ class BareEmbedding(Embedding):
                                             embedding_size=embedding_size,
                                             processor=processor)
         if processor:
-            self.build_model()
+            self._build_model()
 
-    def build_model(self, **kwargs):
+    def _build_model(self, **kwargs):
         if self.token_count == 0:
             logging.debug('need to build after build_word2idx')
         else:
@@ -82,7 +82,7 @@ if __name__ == "__main__":
 
     embedding = BareEmbedding(task=kashgari.CLASSIFICATION,
                               sequence_length=12, processor=p)
-    embedding.build_model()
+    embedding._build_model()
     embedding.embed_model.summary()
     r = embedding.embed(x[:2])
     print(r)

@@ -47,7 +47,7 @@ class BaseProcessor(object):
 
     def analyze_corpus(self,
                        corpus: Union[Tuple[List[List[str]], ...], List[List[str]]],
-                       labels: List[str]):
+                       labels: Union[Tuple[List[List[str]], ...], Tuple[List[str], ...]]):
         corpus = utils.wrap_as_tuple(corpus)
         rec_seq_len = []
         for cor in corpus:
@@ -83,7 +83,7 @@ class BaseProcessor(object):
 
         return processor
 
-    def _build_token_dict(self, corpus: List[List[str]]):
+    def _build_token_dict(self, corpus: Tuple):
         """
         Build token index dictionary using corpus
 
@@ -119,7 +119,7 @@ class BaseProcessor(object):
         logging.debug(f"build token2idx dict finished, contains {len(self.token2idx)} tokens.")
         self.dataset_info['token_count'] = len(self.token2idx)
 
-    def _build_label_dict(self, corpus: List[List[str]]):
+    def _build_label_dict(self, corpus: Tuple):
         raise NotImplementedError
 
     def process_x_dataset(self,

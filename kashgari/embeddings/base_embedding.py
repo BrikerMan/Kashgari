@@ -47,10 +47,16 @@ class Embedding(object):
 
     @property
     def token_count(self) -> int:
+        """
+        corpus token count
+        """
         return len(self.processor.token2idx)
 
     @property
     def sequence_length(self) -> Tuple[int, ...]:
+        """
+        model sequence length
+        """
         return self._sequence_length
 
     @sequence_length.setter
@@ -66,12 +72,12 @@ class Embedding(object):
             val = (val,)
         self._sequence_length = val
 
-    def build_model(self, **kwargs):
+    def _build_model(self, **kwargs):
         raise NotImplementedError
 
     def analyze_corpus(self,
                        x: Union[Tuple[List[List[str]], ...], List[List[str]]],
-                       y: List[List[str]]):
+                       y: Union[List[List[str]], List[str]]):
         """
         Prepare embedding layer and pre-processor for labeling task
 
@@ -87,13 +93,31 @@ class Embedding(object):
         self.processor.analyze_corpus(x, y)
         if self.sequence_length == 'auto':
             self.sequence_length = self.processor.dataset_info['RECOMMEND_LEN']
-        self.build_model()
+        self._build_model()
 
     def embed_one(self, sentence: List[str]) -> np.array:
+        """
+        Convert one sentence to vector
+
+        Args:
+            sentence: target sentence, list of str
+
+        Returns:
+            vectorized sentence
+        """
         return self.embed([sentence])[0]
 
     def embed(self,
               sentence_list: Union[Tuple[List[List[str]], ...], List[List[str]]]) -> np.ndarray:
+        """
+        batch embed sentences
+
+        Args:
+            sentence_list: Sentence list to embed
+
+        Returns:
+            vectorized sentence list
+        """
         if len(sentence_list) == 1 or isinstance(sentence_list, list):
             sentence_list = (sentence_list,)
         x = self.processor.process_x_dataset(sentence_list,
@@ -108,11 +132,31 @@ class Embedding(object):
     def process_x_dataset(self,
                           data: Tuple[List[List[str]], ...],
                           subset: Optional[List[int]] = None) -> Tuple[np.ndarray, ...]:
+        """
+        batch process feature data while training
+
+        Args:
+            data: target dataset
+            subset: subset index list
+
+        Returns:
+            vectorized feature tensor
+        """
         return self.processor.process_x_dataset(data, self.sequence_length, subset)
 
     def process_y_dataset(self,
                           data: Tuple[List[List[str]], ...],
                           subset: Optional[List[int]] = None) -> Tuple[np.ndarray, ...]:
+        """
+        batch process labels data while training
+
+        Args:
+            data: target dataset
+            subset: subset index list
+
+        Returns:
+            vectorized feature tensor
+        """
         return self.processor.process_y_dataset(data, self.sequence_length, subset)
 
 

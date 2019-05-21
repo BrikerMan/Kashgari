@@ -58,7 +58,7 @@ class WordEmbedding(Embedding):
                                             processor=processor)
         if processor:
             self._build_token2idx_from_w2v()
-            self.build_model()
+            self._build_model()
 
     def _build_token2idx_from_w2v(self):
         w2v = KeyedVectors.load_word2vec_format(self.w2v_path, **self.w2v_kwargs)
@@ -92,7 +92,7 @@ class WordEmbedding(Embedding):
         logging.debug('Top 50 word  : {}'.format(self.w2v_top_words))
         logging.debug('------------------------------------------------')
 
-    def build_model(self, **kwargs):
+    def _build_model(self, **kwargs):
         if self.token_count == 0:
             logging.debug('need to build after build_word2idx')
         else:
@@ -122,6 +122,16 @@ class WordEmbedding(Embedding):
     def analyze_corpus(self,
                        x: Union[Tuple[List[List[str]], ...], List[List[str]]],
                        y: Union[List[List[Any]], List[Any]]):
+        """
+        Prepare embedding layer and pre-processor for labeling task
+
+        Args:
+            x:
+            y:
+
+        Returns:
+
+        """
         x = utils.wrap_as_tuple(x)
         y = utils.wrap_as_tuple(y)
         if not self.w2v_model_loaded:
@@ -145,7 +155,7 @@ if __name__ == "__main__":
                               w2v_path=w2v_path,
                               sequence_length=(12, 20))
     embedding.analyze_corpus((train_x, train_x), train_y)
-    embedding.build_model()
+    embedding._build_model()
     embedding.embed_model.summary()
     r = embedding.embed((train_x[:2], train_x[:2]))
     print(r)

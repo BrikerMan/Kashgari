@@ -25,7 +25,7 @@ L = keras.layers
 
 
 class BertEmbedding(Embedding):
-    """Pre-trained word2vec embedding"""
+    """Pre-trained BERT embedding"""
 
     def __init__(self,
                  bert_path: str,
@@ -65,7 +65,7 @@ class BertEmbedding(Embedding):
         self.bert_path = bert_path
         if processor:
             self._build_token2idx_from_bert()
-            self.build_model()
+            self._build_model()
 
     def _build_token2idx_from_bert(self):
         token2idx = {
@@ -85,7 +85,7 @@ class BertEmbedding(Embedding):
         self.processor.token2idx = self.bert_token2idx
         self.processor.idx2token = dict([(value, key) for key, value in token2idx.items()])
 
-    def build_model(self, **kwargs):
+    def _build_model(self, **kwargs):
         if self.token_count == 0:
             logging.debug('need to build after build_word2idx')
         else:
@@ -103,6 +103,16 @@ class BertEmbedding(Embedding):
     def analyze_corpus(self,
                        x: Union[Tuple[List[List[str]], ...], List[List[str]]],
                        y: Union[List[List[Any]], List[Any]]):
+        """
+        Prepare embedding layer and pre-processor for labeling task
+
+        Args:
+            x:
+            y:
+
+        Returns:
+
+        """
         x = utils.wrap_as_tuple(x)
         y = utils.wrap_as_tuple(y)
         if len(self.processor.token2idx) == 0:
@@ -111,6 +121,16 @@ class BertEmbedding(Embedding):
 
     def embed(self,
               sentence_list: Union[Tuple[List[List[str]], ...], List[List[str]]]) -> np.ndarray:
+        """
+        batch embed sentences
+
+        Args:
+            sentence_list: Sentence list to embed
+
+        Returns:
+            vectorized sentence list
+        """
+
         if len(sentence_list) == 1 or isinstance(sentence_list, list):
             sentence_list = (sentence_list,)
         x = self.processor.process_x_dataset(sentence_list,
@@ -137,8 +157,8 @@ if __name__ == "__main__":
 
     bert_path = os.path.join(utils.get_project_path(), 'tests/test-data/bert')
 
-    b = BertEmbedding(kashgari.CLASSIFICATION,
-                      bert_path,
+    b = BertEmbedding(task=kashgari.CLASSIFICATION,
+                      bert_path=bert_path,
                       sequence_length=(12, 12))
 
     from kashgari.corpus import SMP2018ECDTCorpus
