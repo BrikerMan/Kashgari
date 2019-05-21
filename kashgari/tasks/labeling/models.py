@@ -13,6 +13,8 @@ from typing import Dict, Any
 from tensorflow import keras
 
 from kashgari.tasks.labeling.base_model import BaseLabelingModel
+from kashgari.layers import UnifiedLSTM
+
 
 L = keras.layers
 
@@ -49,7 +51,7 @@ class BLSTMModel(BaseLabelingModel):
         config = self.hyper_parameters
         embed_model = self.embedding.embed_model
 
-        layer_blstm = L.Bidirectional(L.LSTM(**config['layer_blstm']),
+        layer_blstm = L.Bidirectional(UnifiedLSTM(**config['layer_blstm']),
                                       name='layer_blstm')
 
         layer_dropout = L.Dropout(**config['layer_dropout'],
@@ -106,8 +108,8 @@ class CNNLSTMModel(BaseLabelingModel):
 
         layer_conv = L.Conv1D(**config['layer_conv'],
                               name='layer_conv')
-        layer_lstm = L.LSTM(**config['layer_lstm'],
-                            name='layer_lstm')
+        layer_lstm = UnifiedLSTM(**config['layer_lstm'],
+                                 name='layer_lstm')
         layer_dropout = L.Dropout(**config['layer_dropout'],
                                   name='layer_dropout')
         layer_time_distributed = L.TimeDistributed(L.Dense(output_dim,

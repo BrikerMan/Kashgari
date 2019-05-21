@@ -13,6 +13,7 @@
 import os
 os.environ['TF_KERAS'] = '1'
 
+from kashgari import layers
 from kashgari import corpus
 from kashgari import embeddings
 from kashgari import macros

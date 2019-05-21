@@ -122,7 +122,8 @@ class BaseLabelingModel(object):
             batch_size: Number of samples per gradient update, default to 64.
             epochs: Integer. Number of epochs to train the model. default 5.
             fit_kwargs: fit_kwargs: additional arguments passed to ``fit_generator()`` function from
-                ``tensorflow.keras.Model`` - https://www.tensorflow.org/api_docs/python/tf/keras/models/Model#fit_generator
+                ``tensorflow.keras.Model``
+                - https://www.tensorflow.org/api_docs/python/tf/keras/models/Model#fit_generator
             **kwargs:
 
         Returns:
@@ -134,13 +135,13 @@ class BaseLabelingModel(object):
             x_validate = utils.wrap_as_tuple(x_validate)
             y_validate = utils.wrap_as_tuple(y_validate)
         if self.embedding.token_count == 0:
-            if x_validate is not None:
-                x_all = (x_train + x_validate)
-                y_all = (y_train + y_validate)
-            else:
-                x_all = x_train
-                y_all = y_train
-            self.embedding.analyze_corpus(x_all, y_all)
+            # if x_validate is not None:
+            #     y_all = (y_train + y_validate)
+            #     x_all = (x_train + x_validate)
+            # else:
+            #     x_all = x_train.copy()
+            #     y_all = y_train.copy()
+            self.embedding.analyze_corpus(x_train, y_train)
 
         if self.tf_model is None:
             self.build_model_arc()
@@ -158,8 +159,8 @@ class BaseLabelingModel(object):
                                                            batch_size)
 
             fit_kwargs['validation_data'] = validation_generator
-            fit_kwargs['validation_steps'] = len(x_validate) // batch_size
-
+            fit_kwargs['validation_steps'] = len(x_validate[0]) // batch_size
+        print(fit_kwargs)
         self.tf_model.fit_generator(train_generator,
                                     steps_per_epoch=len(x_train[0]) // batch_size,
                                     epochs=epochs,

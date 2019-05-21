@@ -33,7 +33,7 @@ class TestCNNLSTMModel(unittest.TestCase):
 
     def test_basic_use_build(self):
         model = self.model_class()
-        model.fit(valid_x, valid_y, epochs=1)
+        model.fit(valid_x, valid_y, valid_x, valid_y, epochs=1)
         assert True
 
     def test_w2v_model(self):
