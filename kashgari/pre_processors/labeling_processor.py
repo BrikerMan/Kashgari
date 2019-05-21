@@ -27,41 +27,6 @@ class LabelingProcessor(BaseProcessor):
     Corpus Pre Processor class
     """
 
-    def _build_token_dict(self, corpus: List[List[str]]):
-        """
-        Build token index dictionary using corpus
-
-        Args:
-            tokenized_corpus: List of tokenized sentences, like ``[['I', 'love', 'tf'], ...]``
-        """
-        token2idx = {
-            self.token_pad: 0,
-            self.token_unk: 1,
-            self.token_bos: 2,
-            self.token_eos: 3
-        }
-
-        token2count = {}
-        for item in corpus:
-            for sentence in item:
-                for token in sentence:
-                    count = token2count.get(token, 0)
-                    token2count[token] = count + 1
-
-        # 按照词频降序排序
-        sorted_token2count = sorted(token2count.items(),
-                                    key=operator.itemgetter(1),
-                                    reverse=True)
-        token2count = collections.OrderedDict(sorted_token2count)
-
-        for token in token2count.keys():
-            if token not in token2idx:
-                token2idx[token] = len(token2idx)
-
-        self.token2idx = token2idx
-        self.idx2token = dict([(value, key) for key, value in self.token2idx.items()])
-        logging.debug(f"build token2idx dict finished, contains {len(self.token2idx)} tokens.")
-
     def _build_label_dict(self,
                           label_list: List[List[str]]):
         """

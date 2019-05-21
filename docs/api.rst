@@ -24,7 +24,21 @@ Labeling Models
 Embedding
 ---------
 
+.. py:currentmodule:: kashgari.embeddings
+
+.. autosummary::
+   :nosignatures:
+
+   BareEmbedding
+   BertEmbedding
+   WordEmbedding
+
 .. autoclass:: kashgari.embeddings.BareEmbedding
+   :members:
+   :undoc-members:
+   :inherited-members:
+
+.. autoclass:: kashgari.embeddings.BertEmbedding
    :members:
    :undoc-members:
    :inherited-members:
