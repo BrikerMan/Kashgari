@@ -11,6 +11,7 @@ import unittest
 
 from tensorflow.python.keras import utils
 
+import kashgari
 from kashgari.corpus import ChineseDailyNerCorpus
 from kashgari.embeddings import WordEmbedding
 from kashgari.tasks.labeling import CNNLSTMModel, BLSTMModel
@@ -21,8 +22,8 @@ valid_x, valid_y = ChineseDailyNerCorpus.load_data('valid')
 
 sample_w2v_path = utils.get_file('sample_w2v.txt', SAMPLE_WORD2VEC_URL)
 
-w2v_embedding = WordEmbedding(sample_w2v_path)
-w2v_embedding_variable_len = WordEmbedding(sample_w2v_path, sequence_length='variable')
+w2v_embedding = WordEmbedding(sample_w2v_path, task=kashgari.LABELING)
+w2v_embedding_variable_len = WordEmbedding(sample_w2v_path, task=kashgari.LABELING, sequence_length='variable')
 
 
 class TestCNNLSTMModel(unittest.TestCase):
@@ -52,6 +53,10 @@ class TestCNNLSTMModel(unittest.TestCase):
                                  hyper_parameters=hyper_params)
         model.fit(valid_x, valid_y, epochs=1)
         assert True
+
+    def test_multi_input(self):
+        old_fashion_model = self.model_class()
+        old_fashion_model.fit((valid_x, valid_x), valid_y, epochs=1)
 
 
 class TestBLSTMModel(TestCNNLSTMModel):

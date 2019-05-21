@@ -11,12 +11,18 @@
 
 """
 import os
+from enum import Enum
 from pathlib import Path
-
 
 DATA_PATH = os.path.join(str(Path.home()), '.kashgari')
 
 Path(DATA_PATH).mkdir(exist_ok=True, parents=True)
+
+
+class TaskType(Enum):
+    CLASSIFICATION = 'classification'
+    LABELING = 'labeling'
+
 
 if __name__ == "__main__":
     print("Hello world")

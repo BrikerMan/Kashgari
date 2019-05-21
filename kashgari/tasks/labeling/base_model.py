@@ -10,8 +10,11 @@
 
 from typing import Dict, Any, List, Optional
 
+import numpy as np
 from tensorflow import keras
 
+import kashgari
+from kashgari import utils
 from kashgari.embeddings import BareEmbedding
 from kashgari.embeddings.base_embedding import Embedding
 
@@ -47,7 +50,7 @@ class BaseLabelingModel(object):
                 labeling_model.fit(x, y)
         """
         if embedding is None:
-            self.embedding = BareEmbedding()
+            self.embedding = BareEmbedding(task=kashgari.LABELING)
         else:
             self.embedding = embedding
 
@@ -60,6 +63,30 @@ class BaseLabelingModel(object):
 
         if hyper_parameters:
             self.hyper_parameters.update(hyper_parameters)
+
+    def get_data_generator(self,
+                           x_data,
+                           y_data,
+                           batch_size: int = 64):
+
+        index_list = np.arange(len(x_data[0]))
+        page_count = len(x_data) // batch_size + 1
+
+        while True:
+            np.random.shuffle(index_list)
+            for page in range(page_count):
+                start_index = page * batch_size
+                end_index = start_index + batch_size
+                target_index = index_list[start_index: end_index]
+
+                if len(target_index) == 0:
+                    target_index = index_list[0: batch_size]
+
+                x_tensor = self.embedding.process_x_dataset(x_data,
+                                                            target_index)
+                y_tensor = self.embedding.process_y_dataset(y_data,
+                                                            target_index)
+                yield (x_tensor, y_tensor)
 
     def fit(self,
             x_train: List[List[str]],
@@ -88,18 +115,42 @@ class BaseLabelingModel(object):
         Returns:
 
         """
+        x_train = utils.wrap_as_tuple(x_train)
+        y_train = utils.wrap_as_tuple(y_train)
+        if x_validate:
+            x_validate = utils.wrap_as_tuple(x_validate)
+            y_validate = utils.wrap_as_tuple(y_validate)
         if self.embedding.token_count == 0:
             if x_validate is not None:
-                x_all = (x_train + x_validate).copy()
-                y_all = (y_train + y_validate).copy()
+                x_all = (x_train + x_validate)
+                y_all = (y_train + y_validate)
             else:
-                x_all = x_train.copy()
-                y_all = y_train.copy()
-            self.embedding.prepare_for_labeling(x_all, y_all)
+                x_all = x_train
+                y_all = y_train
+            self.embedding.analyze_corpus(x_all, y_all)
 
         if self.tf_model is None:
             self.prepare_model_arc()
             self.compile_model()
+
+        train_generator = self.get_data_generator(x_train,
+                                                  y_train,
+                                                  batch_size)
+        if fit_kwargs is None:
+            fit_kwargs = {}
+
+        if x_validate:
+            validation_generator = self.get_data_generator(x_validate,
+                                                           y_validate,
+                                                           batch_size)
+
+            fit_kwargs['validation_data'] = validation_generator
+            fit_kwargs['validation_steps'] = len(x_validate) // batch_size
+
+        self.tf_model.fit_generator(train_generator,
+                                    steps_per_epoch=len(x_train[0]) // batch_size,
+                                    epochs=epochs,
+                                    **fit_kwargs)
 
     def compile_model(self, **kwargs):
         """Configures the model for training.

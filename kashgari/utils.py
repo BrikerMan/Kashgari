@@ -10,6 +10,8 @@
 @time: 2019-05-17 11:37
 
 """
+import os
+import pathlib
 import random
 from typing import List, Tuple, Optional, Any
 
@@ -32,5 +34,19 @@ def get_tuple_item(data: Optional[Tuple], index: int) -> Optional[Any]:
     else:
         return None
 
+
+def get_project_path() -> str:
+    here = pathlib.Path(__file__).parent
+    return os.path.abspath(os.path.join(here, '../'))
+
+
+def wrap_as_tuple(original) -> Tuple[Any]:
+    if isinstance(original, tuple):
+        return original
+    elif isinstance(original, list) or len(original) == 1:
+        return tuple([original])
+    return original
+
+
 if __name__ == "__main__":
-    print("Hello world")
+    print(get_project_path())

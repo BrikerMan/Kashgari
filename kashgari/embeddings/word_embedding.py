@@ -8,14 +8,16 @@
 # time: 2019-05-20 17:32
 
 import logging
-from typing import Union, Optional, Dict, Any, List
+from typing import Union, Optional, Dict, Any, List, Tuple
 
 import numpy as np
 from gensim.models import KeyedVectors
 from tensorflow import keras
 
+import kashgari.macros as k
+from kashgari import utils
 from kashgari.embeddings.base_embedding import Embedding
-from kashgari.pre_processors import PreProcessor
+from kashgari.pre_processors.base_processor import BaseProcessor
 
 L = keras.layers
 
@@ -25,12 +27,15 @@ class WordEmbedding(Embedding):
 
     def __init__(self,
                  w2v_path: str,
+                 task: k.TaskType = None,
                  w2v_kwargs: Dict[str, Any] = None,
-                 sequence_length: Union[int, str] = 'auto',
-                 processor: Optional[PreProcessor] = None,
+                 sequence_length: Union[Tuple[int, ...], str, int] = 'auto',
+                 processor: Optional[BaseProcessor] = None,
                  **kwargs):
         """
+
         Args:
+            task:
             w2v_path: word2vec file path
             w2v_kwargs: params pass to the ``load_word2vec_format()`` function of ``gensim.models.KeyedVectors`` -
                 https://radimrehurek.com/gensim/models/keyedvectors.html#module-gensim.models.keyedvectors
@@ -38,15 +43,22 @@ class WordEmbedding(Embedding):
                 as sequence length. When using ``'variable'``, model input shape will set to None, which can handle
                 various length of input, it will use the length of max sequence in every batch for sequence length.
                 If using an integer, let's say ``50``, the input output sequence length will set to 50.
+            processor:
+            **kwargs:
         """
-        super(WordEmbedding, self).__init__(sequence_length=sequence_length,
-                                            embedding_size=0,
-                                            processor=processor)
-
         if w2v_kwargs is None:
             w2v_kwargs = {}
         self.w2v_path = w2v_path
         self.w2v_kwargs = w2v_kwargs
+        self.w2v_model_loaded = False
+
+        super(WordEmbedding, self).__init__(task=task,
+                                            sequence_length=sequence_length,
+                                            embedding_size=0,
+                                            processor=processor)
+        if processor:
+            self._build_token2idx_from_w2v()
+            self.build_model()
 
     def _build_token2idx_from_w2v(self):
         w2v = KeyedVectors.load_word2vec_format(self.w2v_path, **self.w2v_kwargs)
@@ -58,21 +70,21 @@ class WordEmbedding(Embedding):
             self.processor.token_eos: 3
         }
 
-        # 我们遍历预训练词嵌入的词表，加入到我们的标记索引词典
         for token in w2v.index2word:
             token2idx[token] = len(token2idx)
 
-        # 初始化一个形状为 [标记总数，预训练向量维度] 的全 0 张量
         vector_matrix = np.zeros((len(token2idx), w2v.vector_size))
-        # 随机初始化 <UNK> 标记的张量
         vector_matrix[1] = np.random.rand(w2v.vector_size)
-        # 从索引 2 开始使用预训练的向量
         vector_matrix[4:] = w2v.vectors
+
         self.embedding_size = w2v.vector_size
         self.w2v_vector_matrix = vector_matrix
         self.w2v_token2idx = token2idx
         self.w2v_top_words = w2v.index2entity[:50]
+        self.w2v_model_loaded = True
 
+        self.processor.token2idx = self.w2v_token2idx
+        self.processor.idx2token = dict([(value, key) for key, value in self.w2v_token2idx.items()])
         logging.debug('------------------------------------------------')
         logging.debug('Loaded gensim word2vec model')
         logging.debug('model        : {}'.format(self.w2v_path))
@@ -84,41 +96,57 @@ class WordEmbedding(Embedding):
         if self.token_count == 0:
             logging.debug('need to build after build_word2idx')
         else:
-            input_tensor = L.Input(shape=(self.sequence_length,),
-                                   name='inputs')
-            layer_embedding = L.Embedding(self.token_count,
-                                          self.embedding_size,
-                                          weights=[self.w2v_vector_matrix],
-                                          trainable=False,
-                                          name='layer_embedding')
+            input_layers = []
+            output_layers = []
+            for index, seq_len in enumerate(self.sequence_length):
+                input_tensor = L.Input(shape=(seq_len,),
+                                       name=f'input_{index}')
+                layer_embedding = L.Embedding(self.token_count,
+                                              self.embedding_size,
+                                              weights=[self.w2v_vector_matrix],
+                                              trainable=False,
+                                              name=f'layer_embedding_{index}')
 
-            embedded_tensor = layer_embedding(input_tensor)
-            self.embed_model = keras.Model(input_tensor, embedded_tensor)
+                embedded_tensor = layer_embedding(input_tensor)
 
-    def prepare_for_labeling(self,
-                             x: List[List[str]],
-                             y: List[List[str]]):
-        if len(self.processor.token2idx) == 0:
+                input_layers.append(input_tensor)
+                output_layers.append(embedded_tensor)
+            if len(output_layers) > 1:
+                layer_concatenate = L.Concatenate(name='layer_concatenate')
+                output = layer_concatenate(output_layers)
+            else:
+                output = output_layers
+
+            self.embed_model = keras.Model(input_layers, output)
+
+    def analyze_corpus(self,
+                       x: Union[Tuple[List[List[str]], ...], List[List[str]]],
+                       y: Union[List[List[Any]], List[Any]]):
+        x = utils.wrap_as_tuple(x)
+        y = utils.wrap_as_tuple(y)
+        if not self.w2v_model_loaded:
             self._build_token2idx_from_w2v()
 
-            self.processor.token2idx = self.w2v_token2idx
-            self.processor.idx2token = dict([(v, k) for k, v in self.w2v_token2idx.items()])
-
-        super(WordEmbedding, self).prepare_for_labeling(x, y)
+        super(WordEmbedding, self).analyze_corpus(x, y)
 
 
 if __name__ == "__main__":
+    from kashgari.corpus import SMP2018ECDTCorpus
+    import kashgari
+    import os
+
     logging.basicConfig(level=logging.DEBUG)
 
-    from kashgari.corpus import SMP2018ECDTCorpus
+    train_x, train_y = SMP2018ECDTCorpus.load_data()
 
-    test_x, test_y = SMP2018ECDTCorpus.load_data('valid')
+    w2v_path = os.path.join(kashgari.utils.get_project_path(), 'tests/test-data/sample_w2v.txt')
 
-    path = 'http://storage.eliyar.biz/embedding/word2vec/sample_w2v.txt'
-    from tensorflow.python.keras.utils import get_file
-
-    print(get_file(path))
-    w = WordEmbedding(path, w2v_kwargs={'binary': True})
-    w.prepare_for_labeling(test_x, test_y)
-    w.embed_model.summary()
-    print("Hello world")
+    embedding = WordEmbedding(task=kashgari.CLASSIFICATION,
+                              w2v_path=w2v_path,
+                              sequence_length=(12, 20))
+    embedding.analyze_corpus((train_x, train_x), train_y)
+    embedding.build_model()
+    embedding.embed_model.summary()
+    r = embedding.embed((train_x[:2], train_x[:2]))
+    print(r)
+    print(r.shape)

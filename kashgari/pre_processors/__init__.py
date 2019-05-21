@@ -8,8 +8,5 @@
 # time: 2019-05-20 10:54
 
 
-from kashgari.pre_processors.default_processor import PreProcessor
-
-
-if __name__ == "__main__":
-    print("Hello world")
+from kashgari.pre_processors.classification_processor import ClassificationProcessor
+from kashgari.pre_processors.labeling_processor import LabelingProcessor

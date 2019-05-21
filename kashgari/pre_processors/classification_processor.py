@@ -1,37 +1,23 @@
 import collections
-import json
 import logging
 import operator
-import os
-import pathlib
-from typing import List, Dict, Tuple, Optional
+from typing import List, Tuple, Optional, Union
 
 import numpy as np
-from tensorflow.python.keras.utils import to_categorical
 from tensorflow.python.keras.preprocessing.sequence import pad_sequences
+from tensorflow.python.keras.utils import to_categorical
+
 from kashgari import utils
+from kashgari.pre_processors.base_processor import BaseProcessor
 
 
-class ClassifierProcessor(object):
+class ClassificationProcessor(BaseProcessor):
     """
     Corpus Pre Processor class
     """
 
     def __init__(self):
-        self.token2idx = {}
-        self.idx2token = {}
-
-        self.token2count = {}
-
-        self.label2idx = {}
-        self.idx2label = {}
-
-        self.token_pad = '<PAD>'
-        self.token_unk = '<UNK>'
-        self.token_bos = '<BOS>'
-        self.token_eos = '<EOS>'
-
-        self.dataset_info = {}
+        super(ClassificationProcessor, self).__init__()
 
     def _build_token_dict(self, corpus: List[List[str]]):
         """
@@ -48,10 +34,12 @@ class ClassifierProcessor(object):
         }
 
         token2count = {}
-        for sentence in corpus:
-            for token in sentence:
-                count = token2count.get(token, 0)
-                token2count[token] = count + 1
+        for item in corpus:
+            for sentence in item:
+                for token in sentence:
+                    count = token2count.get(token, 0)
+                    token2count[token] = count + 1
+
         # 按照词频降序排序
         sorted_token2count = sorted(token2count.items(),
                                     key=operator.itemgetter(1),
@@ -69,7 +57,10 @@ class ClassifierProcessor(object):
 
     def _build_label_dict(self,
                           labels: List[str]):
-        label_set = set(labels)
+        label_set = []
+        for item in labels:
+            label_set += list(set(item))
+        label_set = set(label_set)
         label2idx = {}
         for label in label_set:
             label2idx[label] = len(label2idx)
@@ -77,48 +68,13 @@ class ClassifierProcessor(object):
         self.idx2label = dict([(value, key) for key, value in self.label2idx.items()])
         self.dataset_info['label_count'] = len(self.label2idx)
 
-    def prepare_dicts_if_need(self,
-                              corpus: List[List[str]],
-                              labels: List[str]):
-        rec_seq_len = sorted([len(seq) for seq in corpus])[int(0.95 * len(corpus))]
-        self.dataset_info['recommend_seq_len'] = rec_seq_len
-
-        if not self.token2idx:
-            self._build_token_dict(corpus)
-        if not self.label2idx:
-            self._build_label_dict(labels)
-
-    def save_dicts(self, cache_dir: str):
-        pathlib.Path(cache_dir).mkdir(exist_ok=True, parents=True)
-        with open(os.path.join(cache_dir, 'token2idx.json'), 'w') as f:
-            f.write(json.dumps(self.token2idx, ensure_ascii=False, indent=2))
-
-        with open(os.path.join(cache_dir, 'label2idx.json'), 'w') as f:
-            f.write(json.dumps(self.label2idx, ensure_ascii=False, indent=2))
-        logging.debug(f"saved token2idx and label2idx to dir: {cache_dir}.")
-
-    @classmethod
-    def load_cached_processor(cls, cache_dir: str):
-        processor = cls()
-        with open(os.path.join(cache_dir, 'token2idx.json'), 'r') as f:
-            processor.token2idx = json.loads(f.read())
-            processor.idx2token = dict([(value, key) for key, value in processor.token2idx.items()])
-
-        with open(os.path.join(cache_dir, 'label2idx.json'), 'r') as f:
-            processor.label2idx = json.loads(f.read())
-            processor.idx2label = dict([(value, key) for key, value in processor.label2idx.items()])
-        logging.debug(f"loaded token2idx and label2idx from dir: {cache_dir}. "
-                      f"Contain {len(processor.token2idx)} tokens and {len(processor.label2idx)} labels.")
-
-        return processor
-
     def process_x_dataset(self,
                           data: Tuple[List[List[str]], ...],
                           maxlens: Optional[Tuple[int, ...]] = None,
-                          subset: Optional[List[int]] = None) -> Tuple[np.ndarray, ...]:
+                          subset: Optional[List[int]] = None) -> Union[Tuple[np.ndarray, ...], List[np.ndarray]]:
         result = []
         for index, dataset in enumerate(data):
-            if subset:
+            if subset is not None:
                 target = utils.get_list_subset(dataset, subset)
             else:
                 target = dataset
@@ -126,7 +82,10 @@ class ClassifierProcessor(object):
             target_maxlen = utils.get_tuple_item(maxlens, index)
             padded_target = pad_sequences(numezied_target, target_maxlen)
             result.append(padded_target)
-        return tuple(result)
+        if len(result) == 1:
+            return result[0]
+        else:
+            return tuple(result)
 
     def process_y_dataset(self,
                           data: Tuple[List[List[str]], ...],
@@ -141,7 +100,10 @@ class ClassifierProcessor(object):
             numezied_target = self.numerize_token_sequences(target)
             one_hot_result = to_categorical(numezied_target, len(self.label2idx))
             result.append(one_hot_result)
-        return tuple(result)
+        if len(result) == 1:
+            return result[0]
+        else:
+            return tuple(result)
 
     def numerize_token_sequences(self,
                                  sequences: List[List[str]]):
@@ -152,13 +114,13 @@ class ClassifierProcessor(object):
         return result
 
     def numerize_label_sequences(self,
-                                sequences: List[List[str]]) -> List[List[int]]:
+                                 sequences: List[List[str]]) -> List[List[int]]:
         """
         Convert label sequence to label-index sequence
         ``['O', 'O', 'B-ORG'] -> [0, 0, 2]``
 
         Args:
-            sequence: label sequence, list of str
+            sequences: label sequence, list of str
 
         Returns:
             label-index sequence, list of int
@@ -173,7 +135,7 @@ if __name__ == "__main__":
     from kashgari.corpus import SMP2018ECDTCorpus
 
     x, y = SMP2018ECDTCorpus.load_data()
-    p = ClassifierProcessor()
-    p.prepare_dicts_if_need(x, y)
-    r = p.process_x_dataset((x,), subset=[10, 12, 20], maxlens=(12,))
+    p = ClassificationProcessor()
+    p.analyze_corpus(x, y)
+    r = p.process_x_dataset((x, x), subset=[10, 12, 20], maxlens=(12, 20))
     print(r)

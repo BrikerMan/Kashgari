@@ -7,12 +7,13 @@
 # file: bare_embedding.py
 # time: 2019-05-20 10:36
 import logging
-from typing import Union, Optional
+from typing import Union, Optional, Tuple
 
 from tensorflow import keras
 
+import kashgari.macros as k
 from kashgari.embeddings.base_embedding import Embedding
-from kashgari.pre_processors import PreProcessor
+from kashgari.pre_processors.base_processor import BaseProcessor
 
 L = keras.layers
 
@@ -23,9 +24,10 @@ class BareEmbedding(Embedding):
     """Embedding layer without pre-training, train embedding layer while training model"""
 
     def __init__(self,
-                 sequence_length: Union[Tuple[int], str] = 'auto',
+                 task: k.TaskType = None,
+                 sequence_length: Union[Tuple[int, ...], str, int] = 'auto',
                  embedding_size: int = 100,
-                 processor: Optional[PreProcessor] = None):
+                 processor: Optional[BaseProcessor] = None):
         """
         Init bare embedding (embedding without pre-training)
 
@@ -36,23 +38,52 @@ class BareEmbedding(Embedding):
                 If using an integer, let's say ``50``, the input output sequence length will set to 50.
             embedding_size: Dimension of the dense embedding.
         """
-        super(BareEmbedding, self).__init__(sequence_length=sequence_length,
+        super(BareEmbedding, self).__init__(task=task,
+                                            sequence_length=sequence_length,
                                             embedding_size=embedding_size,
                                             processor=processor)
+        if processor:
+            self.build_model()
 
     def build_model(self, **kwargs):
         if self.token_count == 0:
             logging.debug('need to build after build_word2idx')
         else:
-            input_tensor = L.Input(shape=(self.sequence_length,),
-                                   name='inputs')
-            layer_embedding = L.Embedding(self.token_count,
-                                          self.embedding_size,
-                                          name='layer_embedding')
+            input_layers = []
+            output_layers = []
+            for index, seq_len in enumerate(self.sequence_length):
+                input_tensor = L.Input(shape=(seq_len,),
+                                       name=f'input_{index}')
+                layer_embedding = L.Embedding(self.token_count,
+                                              self.embedding_size,
+                                              name=f'layer_embedding_{index}')
 
-            embedded_tensor = layer_embedding(input_tensor)
-            self.embed_model = keras.Model(input_tensor, embedded_tensor)
+                embedded_tensor = layer_embedding(input_tensor)
+
+                input_layers.append(input_tensor)
+                output_layers.append(embedded_tensor)
+            if len(output_layers) > 1:
+                layer_concatenate = L.Concatenate(name='layer_concatenate')
+                output = layer_concatenate(output_layers)
+            else:
+                output = output_layers
+
+            self.embed_model = keras.Model(input_layers, output)
 
 
 if __name__ == "__main__":
-    pass
+    from kashgari.corpus import SMP2018ECDTCorpus
+    from kashgari.pre_processors import ClassificationProcessor
+    import kashgari
+
+    x, y = SMP2018ECDTCorpus.load_data()
+    p = ClassificationProcessor()
+    p.analyze_corpus(x, y)
+
+    embedding = BareEmbedding(task=kashgari.CLASSIFICATION,
+                              sequence_length=12, processor=p)
+    embedding.build_model()
+    embedding.embed_model.summary()
+    r = embedding.embed(x[:2])
+    print(r)
+    print(r.shape)

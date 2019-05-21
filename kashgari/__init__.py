@@ -19,3 +19,9 @@ from kashgari import macros
 from kashgari import pre_processors
 from kashgari import tasks
 from kashgari.version import __version__
+from kashgari import utils
+
+from kashgari.macros import TaskType
+
+CLASSIFICATION = TaskType.CLASSIFICATION
+LABELING = TaskType.LABELING

@@ -12,8 +12,6 @@ from typing import Dict, Any
 
 from tensorflow import keras
 
-from kashgari.embeddings import BareEmbedding
-from kashgari.pre_processors import PreProcessor
 from kashgari.tasks.labeling.base_model import BaseLabelingModel
 
 L = keras.layers
@@ -111,32 +109,29 @@ class CNNLSTMModel(BaseLabelingModel):
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)
-
+    import os
+    import kashgari
     from kashgari.corpus import ChineseDailyNerCorpus
+    from kashgari.embeddings import WordEmbedding
 
     x, y = ChineseDailyNerCorpus.load_data()
 
-    # Old fashion model
-    old_fashion_model = CNNLSTMModel()
-    old_fashion_model.fit(x, y)
+    # # Multi Input model
+    # old_fashion_model = CNNLSTMModel()
+    # old_fashion_model.fit((x, x), y, epochs=1)
+    #
+    # # Old fashion model
+    # old_fashion_model = CNNLSTMModel()
+    # old_fashion_model.fit(x, y, epochs=1)
 
     # Model For pros 1
-    embedding = BareEmbedding(sequence_length=20)
-    embedding.prepare_for_labeling(x, y)
-    embedding.processor.save_dicts('./cached_processor')
+    w2v_path = os.path.join(kashgari.utils.get_project_path(), 'tests/test-data/sample_w2v.txt')
 
-    print(embedding.embed_model.summary())
+    embedding = WordEmbedding(task=kashgari.LABELING,
+                              w2v_path=w2v_path,
+                              sequence_length='variable')
     labeling1 = BLSTMModel(embedding=embedding)
-    labeling1.prepare_model_arc()
-    labeling1.compile_model()
-
-    # Model For pros 1
-    processor = PreProcessor.load_cached_processor('./cached_processor')
-    embedding = BareEmbedding(sequence_length='variable', processor=processor)
-
-    labeling2 = BLSTMModel(embedding=embedding)
-    labeling2.prepare_model_arc()
-    labeling2.compile_model()
+    labeling1.fit((x, x), y)
 
     hyper_parameters = BLSTMModel.get_default_hyper_parameters()
     hyper_parameters['layer_blstm']['units'] = 12
