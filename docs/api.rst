@@ -8,11 +8,13 @@ Below please find the documentation for the public classes and functions of ``ka
 Labeling Models
 ---------------
 
+.. py:currentmodule:: kashgari.tasks.labeling
+
 .. autosummary::
    :nosignatures:
 
-   kashgari.tasks.labeling.BLSTMModel
-   kashgari.tasks.labeling.CNNLSTMModel
+   BLSTMModel
+   CNNLSTMModel
 
 .. automodule:: kashgari.tasks.labeling.models
    :members:
@@ -22,7 +24,12 @@ Labeling Models
 Embedding
 ---------
 
-.. automodule:: kashgari.embeddings.bare_embedding
+.. autoclass:: kashgari.embeddings.BareEmbedding
+   :members:
+   :undoc-members:
+   :inherited-members:
+
+.. autoclass:: kashgari.embeddings.WordEmbedding
    :members:
    :undoc-members:
    :inherited-members:

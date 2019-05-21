@@ -38,6 +38,8 @@ class PreProcessor(object):
         self.token_eos = '<EOS>'
         self.seq_length_95 = None
 
+        self.corpus_info = {}
+
     def _build_token2idx_dict(self, tokenized_corpus: List[List[str]]):
         """
         Build token index dictionary using corpus
@@ -70,7 +72,6 @@ class PreProcessor(object):
         self.token2idx = token2idx
         self.idx2token = dict([(value, key) for key, value in self.token2idx.items()])
         logging.debug(f"build token2idx dict finished, contains {len(self.token2idx)} tokens.")
-
 
     # def _build_classification_label2idx_dict(self,
     #                                          label_list: Union[List[str], List[List[str]]],

@@ -99,7 +99,7 @@ class SMP2018ECDTCorpus(object):
     def load_data(cls,
                   subset_name: str = 'train',
                   shuffle: bool = True,
-                  cutter: str = 'char') -> Tuple[List[List[str]], List[List[str]]]:
+                  cutter: str = 'char') -> Tuple[List[List[str]], List[str]]:
         """
         Load dataset as sequence classification format, char level tokenized
 

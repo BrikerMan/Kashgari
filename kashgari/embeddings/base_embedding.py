@@ -8,7 +8,7 @@
 # time: 2019-05-20 17:40
 
 import logging
-from typing import Union, List, Optional
+from typing import Union, List, Optional, Tuple
 
 import numpy as np
 from tensorflow import keras
@@ -23,7 +23,7 @@ class Embedding(object):
     """Base class for Embedding Model"""
 
     def __init__(self,
-                 sequence_length: Union[int, str] = 'auto',
+                 sequence_length: Union[Tuple[int], str] = 'auto',
                  embedding_size: int = 100,
                  processor: Optional[PreProcessor] = None):
 
@@ -46,7 +46,7 @@ class Embedding(object):
         return self._sequence_length
 
     @sequence_length.setter
-    def sequence_length(self, val: Union[str, int]):
+    def sequence_length(self, val: Union[Tuple[int], str]):
         if isinstance(val, str):
             if val is 'auto':
                 logging.warning("Sequence length will auto set at 95% of sequence length")
@@ -77,10 +77,10 @@ class Embedding(object):
             self.sequence_length = self.processor.seq_length_95
         self.build_model()
 
-    def embed(self, sentence: List[str]) -> np.array:
+    def embed_one(self, sentence: List[str]) -> np.array:
         return self.batch_embed([sentence])[0]
 
-    def batch_embed(self, sentence_list: List[List[str]]) -> np.ndarray:
+    def embed(self, sentence_list: List[List[str]]) -> np.ndarray:
         numerized_token = [self.processor.numerize_token_sequence(sen) for sen in sentence_list]
         padded_token = pad_sequences(numerized_token, self.sequence_length, padding='post', truncating='post')
         embed_results = self.embed_model.predict(padded_token)

@@ -10,6 +10,9 @@
 @time: 2019-05-17 11:15
 
 """
+import os
+os.environ['TF_KERAS'] = '1'
+
 from kashgari import corpus
 from kashgari import embeddings
 from kashgari import macros

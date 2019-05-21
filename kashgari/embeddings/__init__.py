@@ -9,6 +9,3 @@
 
 from kashgari.embeddings.bare_embedding import BareEmbedding
 from kashgari.embeddings.word_embedding import WordEmbedding
-
-if __name__ == "__main__":
-    print("Hello world")
