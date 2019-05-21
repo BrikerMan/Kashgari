@@ -159,6 +159,10 @@ class Embedding(object):
         """
         return self.processor.process_y_dataset(data, self.sequence_length, subset)
 
+    def reverse_numerize_label_sequences(self,
+                                         sequences,
+                                         lengths=None):
+        return self.processor.reverse_numerize_label_sequences(sequences, lengths)
 
 if __name__ == "__main__":
     print("Hello world")

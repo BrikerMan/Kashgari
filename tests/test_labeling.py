@@ -8,7 +8,7 @@
 # time: 2019-05-20 19:03
 
 import unittest
-
+import os
 from tensorflow.python.keras import utils
 
 import kashgari
@@ -16,11 +16,9 @@ from kashgari.corpus import ChineseDailyNerCorpus
 from kashgari.embeddings import WordEmbedding
 from kashgari.tasks.labeling import CNNLSTMModel, BLSTMModel
 
-SAMPLE_WORD2VEC_URL = 'http://storage.eliyar.biz/embedding/word2vec/sample_w2v.txt'
-
 valid_x, valid_y = ChineseDailyNerCorpus.load_data('valid')
 
-sample_w2v_path = utils.get_file('sample_w2v.txt', SAMPLE_WORD2VEC_URL)
+sample_w2v_path = os.path.join(kashgari.utils.get_project_path(), 'tests/test-data/sample_w2v.txt')
 
 w2v_embedding = WordEmbedding(sample_w2v_path, task=kashgari.LABELING)
 w2v_embedding_variable_len = WordEmbedding(sample_w2v_path, task=kashgari.LABELING, sequence_length='variable')
@@ -34,7 +32,11 @@ class TestCNNLSTMModel(unittest.TestCase):
     def test_basic_use_build(self):
         model = self.model_class()
         model.fit(valid_x, valid_y, valid_x, valid_y, epochs=1)
-        assert True
+        res = model.predict(valid_x[:5])
+        for i in range(5):
+            assert len(res[i]) == min(model.embedding.sequence_length[0], len(valid_x[i]))
+
+        model.evaluate(valid_x[:100], valid_y[:100])
 
     def test_w2v_model(self):
         model = self.model_class(embedding=w2v_embedding)

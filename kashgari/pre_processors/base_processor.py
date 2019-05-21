@@ -142,6 +142,9 @@ class BaseProcessor(object):
                                  sequences: List[List[str]]) -> List[List[int]]:
         raise NotImplementedError
 
+    def reverse_numerize_label_sequences(self, sequence, **kwargs):
+        raise NotImplemented
+
 
 if __name__ == "__main__":
     print("Hello world")

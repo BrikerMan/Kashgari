@@ -11,7 +11,11 @@
 from typing import Dict, Any, List, Optional, Union, Tuple
 
 import numpy as np
+import random
+import logging
 from tensorflow import keras
+from seqeval.metrics import classification_report
+from seqeval.metrics.sequence_labeling import get_entities
 
 import kashgari
 from kashgari import utils
@@ -190,9 +194,78 @@ class BaseLabelingModel(object):
         self.tf_model.compile(**kwargs)
         self.tf_model.summary()
 
+    def predict(self,
+                x_data,
+                batch_size=None,
+                debug_info=False):
+        """
+        Generates output predictions for the input samples.
+
+        Computation is done in batches.
+
+        Args:
+            x_data: The input data, as a Numpy array (or list of Numpy arrays if the model has multiple inputs).
+            batch_size: Integer. If unspecified, it will default to 32.
+            debug_info: Bool, Should print out the logging info
+
+        Returns:
+            array(s) of predictions.
+        """
+        lengths = [len(sen) for sen in x_data]
+        tensor = self.embedding.process_x_dataset(x_data)
+        pred = self.tf_model.predict(tensor, batch_size=batch_size)
+        res = self.embedding.reverse_numerize_label_sequences(pred.argmax(-1),
+                                                              lengths)
+        if debug_info:
+            logging.info('input: {}'.format(tensor))
+            logging.info('output: {}'.format(pred))
+            logging.info('output argmax: {}'.format(pred.argmax(-1)))
+        return res
+
+    def evaluate(self,
+                 x_data,
+                 y_data,
+                 batch_size=None,
+                 digits=4,
+                 debug_info=False) -> Tuple[float, float, Dict]:
+        """
+        Build a text report showing the main classification metrics.
+
+        Args:
+            x_data:
+            y_data:
+            batch_size:
+            digits:
+            debug_info:
+
+        Returns:
+
+        """
+        y_pred = self.predict(x_data, batch_size=batch_size)
+        y_true = [seq[:self.embedding.sequence_length[0]] for seq in y_data]
+
+        if debug_info:
+            for index in random.sample(list(range(len(x_data))), 5):
+                logging.debug('------ sample {} ------'.format(index))
+                logging.debug('x      : {}'.format(x_data[index]))
+                logging.debug('y_true : {}'.format(y_true[index]))
+                logging.debug('y_pred : {}'.format(y_pred[index]))
+        report = classification_report(y_true, y_pred, digits=digits)
+        print(classification_report(y_true, y_pred, digits=digits))
+        return report
+
     def build_model_arc(self):
         raise NotImplementedError
 
 
 if __name__ == "__main__":
+    from kashgari.tasks.labeling import CNNLSTMModel
+    from kashgari.corpus import ChineseDailyNerCorpus
+
+    train_x, train_y = ChineseDailyNerCorpus.load_data('valid')
+
+    model = CNNLSTMModel()
+    model.fit(train_x[:100], train_y[:100])
+    model.predict(train_x[:5])
+    model.evaluate(train_x[:20], train_y[:20])
     print("Hello world")

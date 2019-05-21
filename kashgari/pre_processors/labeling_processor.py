@@ -73,6 +73,20 @@ class LabelingProcessor(BaseProcessor):
             result.append([self.label2idx[label] for label in seq])
         return result
 
+    def reverse_numerize_label_sequences(self,
+                                sequences,
+                                lengths=None):
+        result = []
+
+        for index, seq in enumerate(sequences):
+            labels = []
+            for idx in seq:
+                labels.append(self.idx2label[idx])
+            if lengths:
+                labels = labels[:lengths[index]]
+            result.append(labels)
+        return result
+
     def prepare_dicts_if_need(self,
                               corpus: List[List[str]],
                               labels: List[List[str]]):
@@ -110,6 +124,7 @@ class LabelingProcessor(BaseProcessor):
                           maxlens: Optional[Tuple[int, ...]] = None,
                           subset: Optional[List[int]] = None) -> Union[Tuple[np.ndarray, ...], List[np.ndarray]]:
         result = []
+        data = utils.wrap_as_tuple(data)
         for index, dataset in enumerate(data):
             if subset is not None:
                 target = utils.get_list_subset(dataset, subset)

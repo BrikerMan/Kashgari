@@ -59,7 +59,7 @@ required = [
     # 'scikit-learn>=0.19.1',
     # 'numpy>=1.14.3',
     # 'download>=0.3.3',
-    # 'seqeval >=0.0.3',
+    'seqeval==0.0.10',
     # 'colorlog>=4.0.0',
     'gensim>=3.5.0',
     # # 'bz2file>=0.98',

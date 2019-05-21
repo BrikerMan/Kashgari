@@ -94,6 +94,9 @@ class ClassificationProcessor(BaseProcessor):
             result.append([self.label2idx[label] for label in sequence])
         return result
 
+    def reverse_numerize_label_sequences(self, sequence, **kwargs):
+        print(sequence)
+
 
 if __name__ == "__main__":
     from kashgari.corpus import SMP2018ECDTCorpus
