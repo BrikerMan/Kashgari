@@ -90,7 +90,6 @@ class BaseLabelingModel(BaseModel):
             weight_dict = {}
             for idx, label in idx2label.items():
                 weight_dict[label] = weight[idx]
-            logging.debug(f"label weights set to {idx2label}")
             logging.debug(f"label weights set to {weight_dict}")
             kwargs['loss'] = weighted_categorical_crossentropy(weight)
         super(BaseLabelingModel, self).compile_model(**kwargs)

@@ -20,12 +20,12 @@ class ClassificationProcessor(BaseProcessor):
                           labels: List[str]):
         label_set = []
         for item in labels:
-            label_set += list(set(item))
-        label_set = set(label_set)
-        label2idx = {}
-        for label in label_set:
-            label2idx[label] = len(label2idx)
-        self.label2idx = label2idx
+            label_set.extend(list(set(item)))
+
+        self.label2idx = {self.token_pad: 0, }
+        for idx, label in enumerate(label_set):
+            self.label2idx[label] = idx + 1
+
         self.idx2label = dict([(value, key) for key, value in self.label2idx.items()])
         self.dataset_info['label_count'] = len(self.label2idx)
 

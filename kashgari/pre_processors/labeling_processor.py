@@ -57,7 +57,7 @@ class LabelingProcessor(BaseProcessor):
 
         self.label2idx = label2idx
         self.idx2label = dict([(value, key) for key, value in self.label2idx.items()])
-        logging.debug(f"build label2idx dict finished, contains {len(self.token2idx)} labels.")
+        logging.debug(f"build label2idx dict finished, contains {len(self.label2idx)} labels.")
 
     def numerize_token_sequences(self,
                                  sequences: List[List[str]]):

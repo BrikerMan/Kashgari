@@ -84,7 +84,8 @@ class BaseModel(object):
     def get_data_generator(self,
                            x_data,
                            y_data,
-                           batch_size: int = 64):
+                           batch_size: int = 64,
+                           shuffle: bool = True):
         """
         data generator for fit_generator
 
@@ -93,6 +94,7 @@ class BaseModel(object):
                 or tuple of feature data array (if the model has multiple inputs)
             y_data: Array of label data
             batch_size: Number of samples per gradient update, default to 64.
+            shuffle:
 
         Returns:
             data generator
@@ -105,7 +107,8 @@ class BaseModel(object):
         page_count = len(x_data[0]) // batch_size + 1
 
         while True:
-            np.random.shuffle(index_list)
+            if shuffle:
+                np.random.shuffle(index_list)
             for page in range(page_count):
                 start_index = page * batch_size
                 end_index = start_index + batch_size
