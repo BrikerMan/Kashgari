@@ -109,7 +109,9 @@ class BERTEmbedding(Embedding):
                     else:
                         self.sequence_length = (bert_seq_len,)
             self.embedding_size = int(bert_model.output.shape[-1])
-            self.embed_model = bert_model
+            output_features = NonMaskingLayer()(bert_model.output)
+
+            self.embed_model = tf.keras.Model(bert_model.inputs, output_features)
 
     def analyze_corpus(self,
                        x: Union[Tuple[List[List[str]], ...], List[List[str]]],
