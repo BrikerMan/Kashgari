@@ -53,17 +53,10 @@ __version__ = find_version('kashgari', 'version.py')
 README = (HERE / "README.md").read_text()
 
 required = [
-    # 'Keras>=2.2.0',
-    # 'h5py>=2.7.1',
     'keras-bert==0.41.0',
-    # 'scikit-learn>=0.19.1',
-    # 'numpy>=1.14.3',
-    # 'download>=0.3.3',
     'seqeval==0.0.10',
-    # 'colorlog>=4.0.0',
     'gensim>=3.5.0',
-    # # 'bz2file>=0.98',
-    # 'sklearn',
+    'sklearn',
     'pandas>=0.23.0',
     # 'keras-gpt-2==0.7.0'
 ]
