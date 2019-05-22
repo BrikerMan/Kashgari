@@ -14,7 +14,6 @@ import numpy as np
 from gensim.models import KeyedVectors
 from tensorflow import keras
 
-import kashgari.macros as k
 from kashgari import utils
 from kashgari.embeddings.base_embedding import Embedding
 from kashgari.pre_processors.base_processor import BaseProcessor
@@ -27,7 +26,7 @@ class WordEmbedding(Embedding):
 
     def __init__(self,
                  w2v_path: str,
-                 task: k.TaskType = None,
+                 task: str = None,
                  w2v_kwargs: Dict[str, Any] = None,
                  sequence_length: Union[Tuple[int, ...], str, int] = 'auto',
                  processor: Optional[BaseProcessor] = None,
@@ -57,7 +56,8 @@ class WordEmbedding(Embedding):
                                             embedding_size=0,
                                             processor=processor)
         self._build_token2idx_from_w2v()
-        self._build_model()
+        if self.sequence_length != 'auto':
+            self._build_model()
 
     def _build_token2idx_from_w2v(self):
         w2v = KeyedVectors.load_word2vec_format(self.w2v_path, **self.w2v_kwargs)
@@ -152,10 +152,16 @@ if __name__ == "__main__":
 
     embedding = WordEmbedding(task=kashgari.CLASSIFICATION,
                               w2v_path=w2v_path,
-                              sequence_length=(12, 20))
-    embedding.analyze_corpus((train_x, train_x), train_y)
-    embedding._build_model()
+                              sequence_length=(12,))
     embedding.embed_model.summary()
+    r = embedding.embed((train_x[:2], train_x[:2]))
+    print(r)
+    print(r.shape)
+
+    embedding2 = WordEmbedding(task=kashgari.CLASSIFICATION,
+                               w2v_path=w2v_path)
+    embedding2.analyze_corpus((train_x, train_x), train_y)
+    embedding2.embed_model.summary()
     r = embedding.embed((train_x[:2], train_x[:2]))
     print(r)
     print(r.shape)

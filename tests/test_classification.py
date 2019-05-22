@@ -12,15 +12,24 @@ import os
 
 import kashgari
 from kashgari.corpus import SMP2018ECDTCorpus
-from kashgari.embeddings import WordEmbedding
+from kashgari.embeddings import WordEmbedding, BERTEmbedding
 from kashgari.tasks.classification import BLSTMModel
 
 valid_x, valid_y = SMP2018ECDTCorpus.load_data('valid')
 
 sample_w2v_path = os.path.join(kashgari.utils.get_project_path(), 'tests/test-data/sample_w2v.txt')
+bert_path = os.path.join(kashgari.utils.get_project_path(), 'tests/test-data/bert')
 
 w2v_embedding = WordEmbedding(sample_w2v_path, task=kashgari.CLASSIFICATION)
 w2v_embedding_variable_len = WordEmbedding(sample_w2v_path, task=kashgari.CLASSIFICATION, sequence_length='variable')
+
+
+class TestBertCNNLSTMModel(unittest.TestCase):
+    def test_w2v_model(self):
+        embedding = BERTEmbedding(bert_path, kashgari.CLASSIFICATION, sequence_length=100)
+        model = BLSTMModel(embedding=embedding)
+        model.fit(valid_x, valid_y, epochs=1)
+        assert True
 
 
 class TestCNNLSTMModel(unittest.TestCase):

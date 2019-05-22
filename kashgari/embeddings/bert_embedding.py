@@ -7,21 +7,21 @@
 # file: base_embedding.py
 # time: 2019-05-20 17:40
 
-import logging
 import os
+
+os.environ['TF_KERAS'] = '1'
+
+import logging
 from typing import Union, Optional, Any, List, Tuple
 
 import numpy as np
 import kashgari
-from tensorflow import keras
+import tensorflow as tf
 from kashgari import utils
+from kashgari.layers import NonMaskingLayer, L
 from kashgari.embeddings.base_embedding import Embedding
 from kashgari.pre_processors.base_processor import BaseProcessor
-
-os.environ['TF_KERAS'] = '1'
 import keras_bert
-
-L = keras.layers
 
 
 class BERTEmbedding(Embedding):
@@ -96,6 +96,14 @@ class BERTEmbedding(Embedding):
             bert_model = keras_bert.load_trained_model_from_checkpoint(config_path,
                                                                        check_point_path,
                                                                        seq_len=seq_len)
+
+            num_layers = len(bert_model.layers)
+            features_layers = [bert_model.get_layer(index=num_layers - 1 + idx * 8).output for idx in range(-3, 1)]
+            # embedding_layer = L.concatenate(bert_model.output)
+            # output_layer = NonMaskingLayer()(bert_model.output)
+            # output_layer = NonMaskingLayer()(model.output)
+            self._model = tf.keras.Model(bert_model.inputs, bert_model.output)
+
             self.embedding_size = bert_model.output.shape[-1]
             self.embed_model = bert_model
 
@@ -143,7 +151,6 @@ class BERTEmbedding(Embedding):
         if len(x) == 1:
             segments = np.zeros(x[0].shape)
             x = (x[0], segments)
-        print(x)
         embed_results = self.embed_model.predict(x)
         return embed_results
 

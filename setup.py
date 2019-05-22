@@ -58,7 +58,6 @@ required = [
     'gensim>=3.5.0',
     'sklearn',
     'pandas>=0.23.0',
-    # 'keras-gpt-2==0.7.0'
 ]
 
 setup(

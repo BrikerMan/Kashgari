@@ -75,14 +75,7 @@ class BaseModel(object):
         if x_validate:
             x_validate = utils.wrap_as_tuple(x_validate)
             y_validate = utils.wrap_as_tuple(y_validate)
-        if self.embedding.token_count == 0:
-            # if x_validate is not None:
-            #     y_all = (y_train + y_validate)
-            #     x_all = (x_train + x_validate)
-            # else:
-            #     x_all = x_train.copy()
-            #     y_all = y_train.copy()
-            self.embedding.analyze_corpus(x_train, y_train)
+        self.embedding.analyze_corpus(x_train, y_train)
 
         if self.tf_model is None:
             self.build_model_arc()
