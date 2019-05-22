@@ -39,9 +39,9 @@ class ClassificationProcessor(BaseProcessor):
                 target = utils.get_list_subset(dataset, subset)
             else:
                 target = dataset
-            numezied_target = self.numerize_token_sequences(target)
+            numerized_samples = self.numerize_token_sequences(target)
             target_maxlen = utils.get_tuple_item(maxlens, index)
-            padded_target = pad_sequences(numezied_target, target_maxlen)
+            padded_target = pad_sequences(numerized_samples, target_maxlen)
             result.append(padded_target)
         if len(result) == 1:
             return result[0]
@@ -58,8 +58,8 @@ class ClassificationProcessor(BaseProcessor):
                 target = utils.get_list_subset(dataset, subset)
             else:
                 target = dataset
-            numezied_target = self.numerize_label_sequences(target)
-            one_hot_result = to_categorical(numezied_target, len(self.label2idx))
+            numerized_samples = self.numerize_label_sequences(target)
+            one_hot_result = to_categorical(numerized_samples, len(self.label2idx))
             result.append(one_hot_result)
         if len(result) == 1:
             return result[0]

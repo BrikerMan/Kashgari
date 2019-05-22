@@ -132,9 +132,9 @@ class LabelingProcessor(BaseProcessor):
                 target = utils.get_list_subset(dataset, subset)
             else:
                 target = dataset
-            numezied_target = numerize_function(target)
+            numerized_samples = numerize_function(target)
             target_maxlen = utils.get_tuple_item(maxlens, index)
-            padded_target = pad_sequences(numezied_target, target_maxlen)
+            padded_target = pad_sequences(numerized_samples, target_maxlen)
             result.append(padded_target)
         if len(result) == 1:
             return result[0]
