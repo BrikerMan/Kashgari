@@ -8,5 +8,5 @@
 # time: 2019-05-20 11:21
 
 from kashgari.embeddings.bare_embedding import BareEmbedding
-from kashgari.embeddings.bert_embedding import BertEmbedding
+from kashgari.embeddings.bert_embedding import BERTEmbedding
 from kashgari.embeddings.word_embedding import WordEmbedding

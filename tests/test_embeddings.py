@@ -13,7 +13,7 @@ import unittest
 import kashgari
 from kashgari.corpus import ChineseDailyNerCorpus
 from kashgari.corpus import SMP2018ECDTCorpus
-from kashgari.embeddings import BareEmbedding, WordEmbedding, BertEmbedding
+from kashgari.embeddings import BareEmbedding, WordEmbedding, BERTEmbedding
 from kashgari.pre_processors import ClassificationProcessor
 
 
@@ -139,7 +139,7 @@ class TestWordEmbedding(TestBareEmbedding):
 class TestBertEmbedding(TestBareEmbedding):
     @classmethod
     def setUpClass(cls):
-        cls.embedding_class = BertEmbedding
+        cls.embedding_class = BERTEmbedding
         cls.config = {
             'bert_path': os.path.join(kashgari.utils.get_project_path(), 'tests/test-data/bert')
         }
@@ -175,7 +175,7 @@ class TestBertEmbedding(TestBareEmbedding):
         ]).shape == (3, 10, 4)
 
     def test_multi_input_embed(self):
-        embedding = BertEmbedding(task=kashgari.CLASSIFICATION,
+        embedding = BERTEmbedding(task=kashgari.CLASSIFICATION,
                                   sequence_length=(12, 12),
                                   **self.config)
 

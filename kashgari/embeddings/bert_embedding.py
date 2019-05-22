@@ -24,7 +24,7 @@ import keras_bert
 L = keras.layers
 
 
-class BertEmbedding(Embedding):
+class BERTEmbedding(Embedding):
     """Pre-trained BERT embedding"""
 
     def __init__(self,
@@ -52,7 +52,7 @@ class BertEmbedding(Embedding):
         if sequence_length == 'variable':
             raise ValueError('BERT only receive all')
 
-        super(BertEmbedding, self).__init__(task=task,
+        super(BERTEmbedding, self).__init__(task=task,
                                             sequence_length=sequence_length,
                                             embedding_size=0,
                                             processor=processor)
@@ -63,9 +63,8 @@ class BertEmbedding(Embedding):
         self.processor.token_eos = '[SEP]'
 
         self.bert_path = bert_path
-        if processor:
-            self._build_token2idx_from_bert()
-            self._build_model()
+        self._build_token2idx_from_bert()
+        self._build_model()
 
     def _build_token2idx_from_bert(self):
         token2idx = {
@@ -117,7 +116,7 @@ class BertEmbedding(Embedding):
         y = utils.wrap_as_tuple(y)
         if len(self.processor.token2idx) == 0:
             self._build_token2idx_from_bert()
-        super(BertEmbedding, self).analyze_corpus(x, y)
+        super(BERTEmbedding, self).analyze_corpus(x, y)
 
     def embed(self,
               sentence_list: Union[Tuple[List[List[str]], ...], List[List[str]]]) -> np.ndarray:
@@ -157,7 +156,7 @@ if __name__ == "__main__":
 
     bert_path = os.path.join(utils.get_project_path(), 'tests/test-data/bert')
 
-    b = BertEmbedding(task=kashgari.CLASSIFICATION,
+    b = BERTEmbedding(task=kashgari.CLASSIFICATION,
                       bert_path=bert_path,
                       sequence_length=(12, 12))
 
