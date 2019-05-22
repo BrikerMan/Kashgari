@@ -35,7 +35,9 @@ class LabelingProcessor(BaseProcessor):
         Args:
             label_list: corpus label list
         """
-        label2idx: Dict[str: int] = {}
+        label2idx: Dict[str: int] = {
+            self.token_pad: 0
+        }
 
         token2count = {}
         for label_set in label_list:
