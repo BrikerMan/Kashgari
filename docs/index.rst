@@ -10,6 +10,7 @@ Welcome to Kashgari's documentation!
    :maxdepth: 2
 
    corpus
+   tutorial/customize_multi_output_model
    api
 
 Corpus

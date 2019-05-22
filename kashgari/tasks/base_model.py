@@ -105,11 +105,11 @@ class BaseModel(object):
             data generator
         """
 
-        index_list = np.arange(len(x_data[0]))
-        page_count = len(x_data) // batch_size + 1
-
         x_data = utils.wrap_as_tuple(x_data)
         y_data = utils.wrap_as_tuple(y_data)
+
+        index_list = np.arange(len(x_data[0]))
+        page_count = len(x_data[0]) // batch_size + 1
 
         while True:
             np.random.shuffle(index_list)
@@ -180,7 +180,6 @@ class BaseModel(object):
             steps_per_epoch = len(x_train[0]) // batch_size + 1
         else:
             steps_per_epoch = len(x_train) // batch_size + 1
-
         self.tf_model.fit_generator(train_generator,
                                     steps_per_epoch=steps_per_epoch,
                                     epochs=epochs,
