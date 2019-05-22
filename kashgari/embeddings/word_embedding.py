@@ -56,9 +56,8 @@ class WordEmbedding(Embedding):
                                             sequence_length=sequence_length,
                                             embedding_size=0,
                                             processor=processor)
-        if processor:
-            self._build_token2idx_from_w2v()
-            self._build_model()
+        self._build_token2idx_from_w2v()
+        self._build_model()
 
     def _build_token2idx_from_w2v(self):
         w2v = KeyedVectors.load_word2vec_format(self.w2v_path, **self.w2v_kwargs)
