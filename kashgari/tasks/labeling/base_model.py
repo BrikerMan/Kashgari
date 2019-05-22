@@ -74,14 +74,17 @@ class BaseLabelingModel(BaseModel):
     def compile_model(self, **kwargs):
         if kwargs.get('loss') is None:
             idx2label = self.embedding.processor.idx2label
-            weight = np.full((len(idx2label),), 10)
+            weight = np.full((len(idx2label),), 50)
             for idx, label in idx2label.items():
                 if label == self.embedding.processor.token_pad:
                     weight[idx] = 0
                 if label in ['O']:
                     weight[idx] = 1
+            weight_dict = {}
+            for idx, label in idx2label.items():
+                weight_dict[label] = weight[idx]
+                logging.debug(f"label weights set to {weight_dict}")
             kwargs['loss'] = weighted_categorical_crossentropy(weight)
-        kwargs['weighted_metrics'] = ['categorical_accuracy']
         super(BaseLabelingModel, self).compile_model(**kwargs)
 
     def evaluate(self,
