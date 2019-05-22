@@ -109,7 +109,12 @@ class BERTEmbedding(Embedding):
                     else:
                         self.sequence_length = (bert_seq_len,)
             self.embedding_size = int(bert_model.output.shape[-1])
-            output_features = NonMaskingLayer()(bert_model.output)
+            num_layers = len(bert_model.layers)
+            bert_model.summary()
+            target_layer_idx = [num_layers - 1 + idx * 8 for idx in range(-3, 1)]
+            features_layers = [bert_model.get_layer(index=idx).output for idx in target_layer_idx]
+            embedding_layer = L.concatenate(features_layers)
+            output_features = NonMaskingLayer()(embedding_layer)
 
             self.embed_model = tf.keras.Model(bert_model.inputs, output_features)
 
