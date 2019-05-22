@@ -74,8 +74,8 @@ class LabelingProcessor(BaseProcessor):
         return result
 
     def reverse_numerize_label_sequences(self,
-                                sequences,
-                                lengths=None):
+                                         sequences,
+                                         lengths=None):
         result = []
 
         for index, seq in enumerate(sequences):

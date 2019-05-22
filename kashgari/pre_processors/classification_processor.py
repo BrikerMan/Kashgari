@@ -1,6 +1,3 @@
-import collections
-import logging
-import operator
 from typing import List, Tuple, Optional, Union
 
 import numpy as np
@@ -57,11 +54,11 @@ class ClassificationProcessor(BaseProcessor):
                           subset: Optional[List[int]] = None) -> Tuple[np.ndarray, ...]:
         result = []
         for index, dataset in enumerate(data):
-            if subset:
+            if subset is not None:
                 target = utils.get_list_subset(dataset, subset)
             else:
                 target = dataset
-            numezied_target = self.numerize_token_sequences(target)
+            numezied_target = self.numerize_label_sequences(target)
             one_hot_result = to_categorical(numezied_target, len(self.label2idx))
             result.append(one_hot_result)
         if len(result) == 1:
@@ -78,7 +75,7 @@ class ClassificationProcessor(BaseProcessor):
         return result
 
     def numerize_label_sequences(self,
-                                 sequences: List[List[str]]) -> List[List[int]]:
+                                 sequences: List[str]) -> List[int]:
         """
         Convert label sequence to label-index sequence
         ``['O', 'O', 'B-ORG'] -> [0, 0, 2]``
@@ -89,13 +86,10 @@ class ClassificationProcessor(BaseProcessor):
         Returns:
             label-index sequence, list of int
         """
-        result = []
-        for sequence in sequences:
-            result.append([self.label2idx[label] for label in sequence])
-        return result
+        return [self.label2idx[label] for label in sequences]
 
-    def reverse_numerize_label_sequences(self, sequence, **kwargs):
-        print(sequence)
+    def reverse_numerize_label_sequences(self, sequences, **kwargs):
+        return [self.idx2label[label] for label in sequences]
 
 
 if __name__ == "__main__":

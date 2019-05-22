@@ -9,7 +9,6 @@
 
 import unittest
 import os
-from tensorflow.python.keras import utils
 
 import kashgari
 from kashgari.corpus import ChineseDailyNerCorpus
@@ -60,7 +59,6 @@ class TestCNNLSTMModel(unittest.TestCase):
         old_fashion_model = self.model_class()
         old_fashion_model.fit((valid_x, valid_x), valid_y, epochs=1)
         old_fashion_model.predict((valid_x[:100], valid_x[:100]))
-        old_fashion_model.predict_entities((valid_x[:100], valid_x[:100]))
 
 
 class TestBLSTMModel(TestCNNLSTMModel):

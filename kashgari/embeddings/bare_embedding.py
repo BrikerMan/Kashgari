@@ -24,7 +24,7 @@ class BareEmbedding(Embedding):
     """Embedding layer without pre-training, train embedding layer while training model"""
 
     def __init__(self,
-                 task: k.TaskType = None,
+                 task: str = None,
                  sequence_length: Union[Tuple[int, ...], str, int] = 'auto',
                  embedding_size: int = 100,
                  processor: Optional[BaseProcessor] = None):

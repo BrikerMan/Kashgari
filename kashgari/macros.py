@@ -11,7 +11,6 @@
 
 """
 import os
-from enum import Enum
 from pathlib import Path
 
 DATA_PATH = os.path.join(str(Path.home()), '.kashgari')
@@ -19,7 +18,7 @@ DATA_PATH = os.path.join(str(Path.home()), '.kashgari')
 Path(DATA_PATH).mkdir(exist_ok=True, parents=True)
 
 
-class TaskType(Enum):
+class TaskType(object):
     CLASSIFICATION = 'classification'
     LABELING = 'labeling'
 

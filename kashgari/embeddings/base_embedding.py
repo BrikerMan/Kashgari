@@ -26,7 +26,7 @@ class Embedding(object):
     """Base class for Embedding Model"""
 
     def __init__(self,
-                 task: k.TaskType = None,
+                 task: str = None,
                  sequence_length: Union[Tuple[int, ...], str] = 'auto',
                  embedding_size: int = 100,
                  processor: Optional[BaseProcessor] = None):
@@ -162,7 +162,8 @@ class Embedding(object):
     def reverse_numerize_label_sequences(self,
                                          sequences,
                                          lengths=None):
-        return self.processor.reverse_numerize_label_sequences(sequences, lengths)
+        return self.processor.reverse_numerize_label_sequences(sequences, lengths=lengths)
+
 
 if __name__ == "__main__":
     print("Hello world")

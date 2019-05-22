@@ -29,7 +29,7 @@ class BertEmbedding(Embedding):
 
     def __init__(self,
                  bert_path: str,
-                 task: k.TaskType = None,
+                 task: str = None,
                  sequence_length: Union[Tuple[int, ...], str, int] = 'auto',
                  processor: Optional[BaseProcessor] = None,
                  **kwargs):
