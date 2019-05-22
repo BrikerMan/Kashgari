@@ -35,7 +35,7 @@ class TestCNNLSTMModel(unittest.TestCase):
         res = model.predict(valid_x[:5])
         for i in range(5):
             assert len(res[i]) == min(model.embedding.sequence_length[0], len(valid_x[i]))
-
+        model.predict_entities(valid_x[:5])
         model.evaluate(valid_x[:100], valid_y[:100])
 
     def test_w2v_model(self):
@@ -59,6 +59,8 @@ class TestCNNLSTMModel(unittest.TestCase):
     def test_multi_input(self):
         old_fashion_model = self.model_class()
         old_fashion_model.fit((valid_x, valid_x), valid_y, epochs=1)
+        old_fashion_model.predict((valid_x[:100], valid_x[:100]))
+        old_fashion_model.predict_entities((valid_x[:100], valid_x[:100]))
 
 
 class TestBLSTMModel(TestCNNLSTMModel):

@@ -68,6 +68,30 @@ class BaseLabelingModel(object):
         if hyper_parameters:
             self.hyper_parameters.update(hyper_parameters)
 
+    def build_model(self,
+                    x_train: Union[Tuple[List[List[str]], ...], List[List[str]]],
+                    y_train: List[List[str]],
+                    x_validate: Union[Tuple[List[List[str]], ...], List[List[str]]] = None,
+                    y_validate: List[List[str]] = None,
+                    **kwargs):
+        x_train = utils.wrap_as_tuple(x_train)
+        y_train = utils.wrap_as_tuple(y_train)
+        if x_validate:
+            x_validate = utils.wrap_as_tuple(x_validate)
+            y_validate = utils.wrap_as_tuple(y_validate)
+        if self.embedding.token_count == 0:
+            # if x_validate is not None:
+            #     y_all = (y_train + y_validate)
+            #     x_all = (x_train + x_validate)
+            # else:
+            #     x_all = x_train.copy()
+            #     y_all = y_train.copy()
+            self.embedding.analyze_corpus(x_train, y_train)
+
+        if self.tf_model is None:
+            self.build_model_arc()
+            self.compile_model()
+
     def get_data_generator(self,
                            x_data,
                            y_data,
@@ -97,7 +121,6 @@ class BaseLabelingModel(object):
 
                 if len(target_index) == 0:
                     target_index = index_list[0: batch_size]
-
                 x_tensor = self.embedding.process_x_dataset(x_data,
                                                             target_index)
                 y_tensor = self.embedding.process_y_dataset(y_data,
@@ -133,23 +156,7 @@ class BaseLabelingModel(object):
         Returns:
 
         """
-        x_train = utils.wrap_as_tuple(x_train)
-        y_train = utils.wrap_as_tuple(y_train)
-        if x_validate:
-            x_validate = utils.wrap_as_tuple(x_validate)
-            y_validate = utils.wrap_as_tuple(y_validate)
-        if self.embedding.token_count == 0:
-            # if x_validate is not None:
-            #     y_all = (y_train + y_validate)
-            #     x_all = (x_train + x_validate)
-            # else:
-            #     x_all = x_train.copy()
-            #     y_all = y_train.copy()
-            self.embedding.analyze_corpus(x_train, y_train)
-
-        if self.tf_model is None:
-            self.build_model_arc()
-            self.compile_model()
+        self.build_model(x_train, y_train, x_validate, y_validate, **kwargs)
 
         train_generator = self.get_data_generator(x_train,
                                                   y_train,
@@ -162,11 +169,21 @@ class BaseLabelingModel(object):
                                                            y_validate,
                                                            batch_size)
 
+            if isinstance(x_validate, tuple):
+                validation_steps = len(x_validate[0]) // batch_size + 1
+            else:
+                validation_steps = len(x_validate) // batch_size + 1
+
             fit_kwargs['validation_data'] = validation_generator
-            fit_kwargs['validation_steps'] = len(x_validate[0]) // batch_size
-        print(fit_kwargs)
+            fit_kwargs['validation_steps'] = validation_steps
+
+        if isinstance(x_validate, tuple):
+            steps_per_epoch = len(x_train[0]) // batch_size + 1
+        else:
+            steps_per_epoch = len(x_train) // batch_size + 1
+
         self.tf_model.fit_generator(train_generator,
-                                    steps_per_epoch=len(x_train[0]) // batch_size,
+                                    steps_per_epoch=steps_per_epoch,
                                     epochs=epochs,
                                     **fit_kwargs)
 
@@ -206,12 +223,13 @@ class BaseLabelingModel(object):
         Args:
             x_data: The input data, as a Numpy array (or list of Numpy arrays if the model has multiple inputs).
             batch_size: Integer. If unspecified, it will default to 32.
-            debug_info: Bool, Should print out the logging info
+            debug_info: Bool, Should print out the logging info.
 
         Returns:
             array(s) of predictions.
         """
-        lengths = [len(sen) for sen in x_data]
+        x_data = utils.wrap_as_tuple(x_data)
+        lengths = [len(sen) for sen in x_data[0]]
         tensor = self.embedding.process_x_dataset(x_data)
         pred = self.tf_model.predict(tensor, batch_size=batch_size)
         res = self.embedding.reverse_numerize_label_sequences(pred.argmax(-1),
@@ -221,6 +239,44 @@ class BaseLabelingModel(object):
             logging.info('output: {}'.format(pred))
             logging.info('output argmax: {}'.format(pred.argmax(-1)))
         return res
+
+    def predict_entities(self,
+                         x_data,
+                         batch_size=None,
+                         debug_info=False):
+        """Gets entities from sequence.
+
+        Args:
+            x_data: The input data, as a Numpy array (or list of Numpy arrays if the model has multiple inputs).
+            batch_size: Integer. If unspecified, it will default to 32.
+            debug_info: Bool, Should print out the logging info.
+
+        Returns:
+            list: list of entity.
+
+        Example:
+            >>> from seqeval.metrics.sequence_labeling import get_entities
+            >>> seq = 'President Obama is speaking at the White House.'
+            >>> model.predict_entities([seq])
+            [[
+            {'entity': 'PER', 'start': 0, 'end': 1, 'value': ['President', 'Obama']},
+            {'entity': 'LOC', 'start': 6, 'end': 7, 'value': ['White', 'House']}
+            ]]
+        """
+        res = self.predict(x_data, batch_size, debug_info)
+        new_res = [get_entities(seq) for seq in res]
+        final_res = []
+        for index, seq in enumerate(new_res):
+            seq_data = []
+            for entity in seq:
+                seq_data.append({
+                    "entity": entity[0],
+                    "start": entity[1],
+                    "end": entity[2],
+                    "value": x_data[index][entity[1]:entity[2] + 1],
+                })
+            final_res.append(seq_data)
+        return final_res
 
     def evaluate(self,
                  x_data,
@@ -241,6 +297,7 @@ class BaseLabelingModel(object):
         Returns:
 
         """
+        x_data = utils.wrap_as_tuple(x_data)
         y_pred = self.predict(x_data, batch_size=batch_size)
         y_true = [seq[:self.embedding.sequence_length[0]] for seq in y_data]
 
@@ -265,7 +322,10 @@ if __name__ == "__main__":
     train_x, train_y = ChineseDailyNerCorpus.load_data('valid')
 
     model = CNNLSTMModel()
-    model.fit(train_x[:100], train_y[:100])
-    model.predict(train_x[:5])
-    model.evaluate(train_x[:20], train_y[:20])
+    model.build_model(train_x[:100], train_y[:100])
+    r = model.predict_entities(train_x[:5])
+    import pprint
+
+    pprint.pprint(r)
+    # model.evaluate(train_x[:20], train_y[:20])
     print("Hello world")
