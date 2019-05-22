@@ -14,8 +14,6 @@ L = keras.layers
 
 if tf.test.is_gpu_available(cuda_only=True):
     L.LSTM = L.CuDNNLSTM
-else:
-    L.LSTM = L.LSTM
 
 if __name__ == "__main__":
     print("Hello world")

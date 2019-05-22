@@ -26,9 +26,6 @@ class BaseProcessor(object):
     Corpus Pre Processor class
     """
 
-    class DataInfo(Enum):
-        RECOMMEND_LEN = 'RECOMMEND_LEN'
-
     def __init__(self):
         self.token2idx = {}
         self.idx2token = {}
@@ -52,7 +49,7 @@ class BaseProcessor(object):
         rec_seq_len = []
         for cor in corpus:
             rec_seq_len.append(sorted([len(seq) for seq in cor])[int(0.95 * len(cor))])
-        self.dataset_info[self.DataInfo.RECOMMEND_LEN.value] = tuple(rec_seq_len)
+        self.dataset_info['RECOMMEND_LEN'] = tuple(rec_seq_len)
 
         if not self.token2idx:
             self._build_token_dict(corpus)
