@@ -12,9 +12,9 @@ import os
 from typing import Union, Optional, Any, List, Tuple
 
 import numpy as np
+import kashgari
 from tensorflow import keras
-
-import kashgari.macros as k
+from kashgari import utils
 from kashgari.embeddings.base_embedding import Embedding
 from kashgari.pre_processors.base_processor import BaseProcessor
 
@@ -149,9 +149,6 @@ class BERTEmbedding(Embedding):
 
 
 if __name__ == "__main__":
-    import os
-    import kashgari
-    from kashgari import utils
     logging.basicConfig(level=logging.DEBUG)
 
     bert_path = os.path.join(utils.get_project_path(), 'tests/test-data/bert')
