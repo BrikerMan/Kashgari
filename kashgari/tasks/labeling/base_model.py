@@ -74,10 +74,12 @@ class BaseLabelingModel(BaseModel):
     def compile_model(self, **kwargs):
         if kwargs.get('loss') is None:
             idx2label = self.embedding.processor.idx2label
-            weight = np.ones(shape=(len(idx2label, )))
+            weight = np.full(10, shape=(len(idx2label, )))
             for idx, label in idx2label.items():
                 if label == self.embedding.processor.token_pad:
                     weight[idx] = 0
+                if label in ['O']:
+                    weight[idx] = 1
 
             kwargs['loss'] = weighted_categorical_crossentropy(weight)
         kwargs['weighted_metrics'] = ['categorical_accuracy']
@@ -123,6 +125,7 @@ class BaseLabelingModel(BaseModel):
 if __name__ == "__main__":
     from kashgari.tasks.labeling import CNNLSTMModel
     from kashgari.corpus import ChineseDailyNerCorpus
+    import sklearn
 
     train_x, train_y = ChineseDailyNerCorpus.load_data('valid')
 
