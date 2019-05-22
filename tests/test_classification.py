@@ -24,12 +24,12 @@ w2v_embedding = WordEmbedding(sample_w2v_path, task=kashgari.CLASSIFICATION)
 w2v_embedding_variable_len = WordEmbedding(sample_w2v_path, task=kashgari.CLASSIFICATION, sequence_length='variable')
 
 
-# class TestBertCNNLSTMModel(unittest.TestCase):
-#     def test_w2v_model(self):
-#         embedding = BERTEmbedding(bert_path, kashgari.CLASSIFICATION, sequence_length=100)
-#         model = BLSTMModel(embedding=embedding)
-#         model.fit(valid_x, valid_y, epochs=1)
-#         assert True
+class TestBertCNNLSTMModel(unittest.TestCase):
+    def test_bert_model(self):
+        embedding = BERTEmbedding(bert_path, kashgari.CLASSIFICATION, sequence_length=100)
+        model = BLSTMModel(embedding=embedding)
+        model.fit(valid_x, valid_y, epochs=1)
+        assert True
 
 
 class TestCNNLSTMModel(unittest.TestCase):

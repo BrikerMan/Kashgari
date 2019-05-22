@@ -131,23 +131,35 @@ if __name__ == "__main__":
     x, y = ChineseDailyNerCorpus.load_data()
 
     # # Multi Input model
-    # old_fashion_model = CNNLSTMModel()
-    # old_fashion_model.fit((x, x), y, epochs=1)
+    old_fashion_model = CNNLSTMModel()
+
+    import numpy as np
+
+
+    def demo_acc(y_true, y_pred):
+        print(np.array(y_true))
+        print(np.array(y_true))
+        return np.random.rand(len(y_pred))
+
+
+    old_fashion_model.build_model(x, y)
+    old_fashion_model.compile_model(metrics=['acc', demo_acc])
+    old_fashion_model.fit(x, y, epochs=1)
     #
     # # Old fashion model
     # old_fashion_model = CNNLSTMModel()
     # old_fashion_model.fit(x, y, epochs=1)
 
     # Model For pros 1
-    w2v_path = os.path.join(kashgari.utils.get_project_path(), 'tests/test-data/sample_w2v.txt')
-
-    embedding = WordEmbedding(task=kashgari.LABELING,
-                              w2v_path=w2v_path,
-                              sequence_length='variable')
-    labeling1 = BLSTMModel(embedding=embedding)
-    labeling1.fit((x, x), y)
-
-    hyper_parameters = BLSTMModel.get_default_hyper_parameters()
-    hyper_parameters['layer_blstm']['units'] = 12
-    labeling_model = BLSTMModel(hyper_parameters=hyper_parameters)
-    labeling_model.fit(x, y)
+    # w2v_path = os.path.join(kashgari.utils.get_project_path(), 'tests/test-data/sample_w2v.txt')
+    #
+    # embedding = WordEmbedding(task=kashgari.LABELING,
+    #                           w2v_path=w2v_path,
+    #                           sequence_length='variable')
+    # labeling1 = BLSTMModel(embedding=embedding)
+    # labeling1.fit((x, x), y)
+    #
+    # hyper_parameters = BLSTMModel.get_default_hyper_parameters()
+    # hyper_parameters['layer_blstm']['units'] = 12
+    # labeling_model = BLSTMModel(hyper_parameters=hyper_parameters)
+    # labeling_model.fit(x, y)

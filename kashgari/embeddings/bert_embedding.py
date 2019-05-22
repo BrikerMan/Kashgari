@@ -87,24 +87,28 @@ class BERTEmbedding(Embedding):
     def _build_model(self, **kwargs):
         if self.token_count == 0:
             logging.debug('need to build after build_word2idx')
-        else:
+        elif self.embed_model is None:
             seq_len = self.sequence_length
             if isinstance(seq_len, tuple):
                 seq_len = seq_len[0]
+            if isinstance(seq_len, str):
+                return
             config_path = os.path.join(self.bert_path, 'bert_config.json')
             check_point_path = os.path.join(self.bert_path, 'bert_model.ckpt')
             bert_model = keras_bert.load_trained_model_from_checkpoint(config_path,
                                                                        check_point_path,
                                                                        seq_len=seq_len)
 
-            num_layers = len(bert_model.layers)
-            features_layers = [bert_model.get_layer(index=num_layers - 1 + idx * 8).output for idx in range(-3, 1)]
-            # embedding_layer = L.concatenate(bert_model.output)
-            # output_layer = NonMaskingLayer()(bert_model.output)
-            # output_layer = NonMaskingLayer()(model.output)
             self._model = tf.keras.Model(bert_model.inputs, bert_model.output)
-
-            self.embedding_size = bert_model.output.shape[-1]
+            bert_seq_len = int(bert_model.output.shape[1])
+            if bert_seq_len < seq_len:
+                logging.warning(f"Sequence length limit set to {bert_seq_len} by pre-trained model")
+                if isinstance(self.sequence_length, tuple):
+                    if len(self.sequence_length) == 2:
+                        self.sequence_length = (bert_seq_len, bert_seq_len)
+                    else:
+                        self.sequence_length = (bert_seq_len,)
+            self.embedding_size = int(bert_model.output.shape[-1])
             self.embed_model = bert_model
 
     def analyze_corpus(self,
@@ -153,6 +157,28 @@ class BERTEmbedding(Embedding):
             x = (x[0], segments)
         embed_results = self.embed_model.predict(x)
         return embed_results
+
+    def process_x_dataset(self,
+                          data: Tuple[List[List[str]], ...],
+                          subset: Optional[List[int]] = None) -> Tuple[np.ndarray, ...]:
+        """
+        batch process feature data while training
+
+        Args:
+            data: target dataset
+            subset: subset index list
+
+        Returns:
+            vectorized feature tensor
+        """
+        x = self.processor.process_x_dataset(data, self.sequence_length, subset)
+        if not isinstance(x, tuple):
+            x = (x,)
+
+        if len(x) == 1:
+            segments = np.zeros(x[0].shape)
+            x = (x[0], segments)
+        return x
 
 
 if __name__ == "__main__":

@@ -12,6 +12,8 @@ from typing import Dict, Any, Tuple
 
 import random
 import logging
+import numpy as np
+from kashgari.loss import weighted_categorical_crossentropy
 from seqeval.metrics import classification_report
 from seqeval.metrics.sequence_labeling import get_entities
 
@@ -68,6 +70,19 @@ class BaseLabelingModel(BaseModel):
             final_res.append(seq_data)
         return final_res
 
+    # Todo: Better way to do this, too
+    def compile_model(self, **kwargs):
+        if kwargs.get('loss') is None:
+            idx2label = self.embedding.processor.idx2label
+            weight = np.ones(shape=(len(idx2label, )))
+            for idx, label in idx2label.items():
+                if label == self.embedding.processor.token_pad:
+                    weight[idx] = 0
+
+            kwargs['loss'] = weighted_categorical_crossentropy(weight)
+        kwargs['weighted_metrics'] = ['categorical_accuracy']
+        super(BaseLabelingModel, self).compile_model(**kwargs)
+
     def evaluate(self,
                  x_data,
                  y_data,
@@ -113,6 +128,7 @@ if __name__ == "__main__":
 
     model = CNNLSTMModel()
     model.build_model(train_x[:100], train_y[:100])
+    model.fit(train_x, train_y, epochs=20)
     r = model.predict_entities(train_x[:5])
     import pprint
 

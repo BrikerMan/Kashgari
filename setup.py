@@ -53,7 +53,7 @@ __version__ = find_version('kashgari', 'version.py')
 README = (HERE / "README.md").read_text()
 
 required = [
-    'keras-bert==0.41.0',
+    'keras-bert>=0.50.0',
     'seqeval==0.0.10',
     'gensim>=3.5.0',
     'sklearn',
