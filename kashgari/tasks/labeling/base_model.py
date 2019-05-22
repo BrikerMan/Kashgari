@@ -33,12 +33,14 @@ class BaseLabelingModel(BaseModel):
     def predict_entities(self,
                          x_data,
                          batch_size=None,
+                         join_chunk=' ',
                          debug_info=False):
         """Gets entities from sequence.
 
         Args:
             x_data: The input data, as a Numpy array (or list of Numpy arrays if the model has multiple inputs).
             batch_size: Integer. If unspecified, it will default to 32.
+            join_chunk: str or False,
             debug_info: Bool, Should print out the logging info.
 
         Returns:
@@ -61,11 +63,16 @@ class BaseLabelingModel(BaseModel):
         for index, seq in enumerate(new_res):
             seq_data = []
             for entity in seq:
+                if join_chunk is False:
+                    value = x_data[index][entity[1]:entity[2] + 1],
+                else:
+                    value = join_chunk.join(x_data[index][entity[1]:entity[2] + 1])
+
                 seq_data.append({
                     "entity": entity[0],
                     "start": entity[1],
                     "end": entity[2],
-                    "value": x_data[index][entity[1]:entity[2] + 1],
+                    "value": value,
                 })
             final_res.append(seq_data)
         return final_res
