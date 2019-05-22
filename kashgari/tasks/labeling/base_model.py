@@ -74,15 +74,16 @@ class BaseLabelingModel(BaseModel):
     def compile_model(self, **kwargs):
         if kwargs.get('loss') is None:
             idx2label = self.embedding.processor.idx2label
-            weight = np.full((len(idx2label),), 50)
+            weight = np.full((len(idx2label),), 10)
             for idx, label in idx2label.items():
                 if label == self.embedding.processor.token_pad:
-                    weight[idx] = 0.1
-                if label in ['O']:
                     weight[idx] = 1
+                if label in ['O']:
+                    weight[idx] = 5
             weight_dict = {}
             for idx, label in idx2label.items():
                 weight_dict[label] = weight[idx]
+            logging.debug(f"label weights set to {idx2label}")
             logging.debug(f"label weights set to {weight_dict}")
             kwargs['loss'] = weighted_categorical_crossentropy(weight)
         super(BaseLabelingModel, self).compile_model(**kwargs)
@@ -129,11 +130,14 @@ if __name__ == "__main__":
     from kashgari.tasks.labeling import CNNLSTMModel
     from kashgari.corpus import ChineseDailyNerCorpus
 
-    train_x, train_y = ChineseDailyNerCorpus.load_data('valid')
+    train_x, train_y = ChineseDailyNerCorpus.load_data('train')
+    valid_x, valid_y = ChineseDailyNerCorpus.load_data('valid')
+
+    train_x, train_y = train_x[:5120], train_y[:5120]
 
     model = CNNLSTMModel()
     model.build_model(train_x[:100], train_y[:100])
-    model.fit(train_x, train_y, epochs=20)
+    model.fit(train_x, train_y, valid_x, valid_y, epochs=20)
     r = model.predict_entities(train_x[:5])
     import pprint
 
