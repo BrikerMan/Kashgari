@@ -151,13 +151,13 @@ class TestBertEmbedding(TestBareEmbedding):
         valid_x, valid_y = SMP2018ECDTCorpus.load_data('valid')
         embedding.analyze_corpus(valid_x, valid_y)
 
-        assert embedding.embed_one(['我', '想', '看']).shape == (15, embedding.embedding_size)
+        assert embedding.embed_one(['我', '想', '看']).shape == (15, 16)
 
         assert embedding.embed([
             ['我', '想', '看'],
             ['我', '想', '看', '权力的游戏'],
             ['Hello', 'world']
-        ]).shape == (3, 15, embedding.embedding_size)
+        ]).shape == (3, 15, 16)
 
         embedding = self.embedding_class(task=kashgari.LABELING,
                                          sequence_length=10,
@@ -166,13 +166,13 @@ class TestBertEmbedding(TestBareEmbedding):
         valid_x, valid_y = ChineseDailyNerCorpus.load_data('valid')
         embedding.analyze_corpus(valid_x, valid_y)
 
-        assert embedding.embed_one(['我', '想', '看']).shape == (10, 4)
+        assert embedding.embed_one(['我', '想', '看']).shape == (10, 16)
 
         assert embedding.embed([
             ['我', '想', '看'],
             ['我', '想', '看', '权力的游戏'],
             ['Hello', 'world']
-        ]).shape == (3, 10, 4)
+        ]).shape == (3, 10, 16)
 
     def test_multi_input_embed(self):
         embedding = BERTEmbedding(task=kashgari.CLASSIFICATION,
@@ -196,7 +196,10 @@ class TestBertEmbedding(TestBareEmbedding):
 
         embed_res = embedding.embed((data1, data2))
         assert embed_res[0].shape == embed_res[1].shape
-        assert embed_res[0].shape == (12, 4)
+        if self.embedding_class == BERTEmbedding:
+            assert embedding.embed_one(['我', '想', '看']).shape == (12, 16)
+        else:
+            assert embedding.embed_one(['我', '想', '看']).shape == (11, 4)
 
     def test_variable_length_embed(self):
         with self.assertRaises(Exception) as context:
@@ -214,7 +217,10 @@ class TestBertEmbedding(TestBareEmbedding):
                                          processor=processor,
                                          **self.config)
         embedding.analyze_corpus(valid_x, valid_y)
-        assert embedding.embed_one(['我', '想', '看']).shape == (11, 4)
+        if self.embedding_class == BERTEmbedding:
+            assert embedding.embed_one(['我', '想', '看']).shape == (11, 16)
+        else:
+            assert embedding.embed_one(['我', '想', '看']).shape == (11, 4)
 
 
 if __name__ == "__main__":
