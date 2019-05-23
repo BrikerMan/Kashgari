@@ -29,7 +29,7 @@ class ClassificationProcessor(BaseProcessor):
         self.label2idx = {self.token_pad: 0, }
         for idx, label in enumerate(label_set):
             self.label2idx[label] = idx + 1
-        print(self.idx2label)
+
         self.idx2label = dict([(value, key) for key, value in self.label2idx.items()])
         self.dataset_info['label_count'] = len(self.label2idx)
 

@@ -14,8 +14,6 @@ import numpy as np
 from tensorflow import keras
 
 import kashgari
-import kashgari.macros as k
-from kashgari import utils
 from kashgari.processors import ClassificationProcessor, LabelingProcessor
 from kashgari.processors.base_processor import BaseProcessor
 
@@ -59,14 +57,14 @@ class Embedding(object):
         return len(self.processor.token2idx)
 
     @property
-    def sequence_length(self) -> Tuple[int, ...]:
+    def sequence_length(self) -> Union[int, str]:
         """
         model sequence length
         """
         return self._sequence_length
 
     @sequence_length.setter
-    def sequence_length(self, val: Union[Tuple[int], str]):
+    def sequence_length(self, val: Union[int, str]):
         if isinstance(val, str):
             if val is 'auto':
                 logging.warning("Sequence length will auto set at 95% of sequence length")
@@ -80,7 +78,7 @@ class Embedding(object):
         raise NotImplementedError
 
     def analyze_corpus(self,
-                       x: Union[Tuple[List[List[str]], ...], List[List[str]]],
+                       x: List[List[str]],
                        y: Union[List[List[str]], List[str]]):
         """
         Prepare embedding layer and pre-processor for labeling task
@@ -97,7 +95,7 @@ class Embedding(object):
             self.sequence_length = self.processor.dataset_info['RECOMMEND_LEN']
         self._build_model()
 
-    def embed_one(self, sentence: List[str]) -> np.array:
+    def embed_one(self, sentence: Union[List[str], List[int]]) -> np.array:
         """
         Convert one sentence to vector
 
@@ -110,29 +108,27 @@ class Embedding(object):
         return self.embed([sentence])[0]
 
     def embed(self,
-              sentence_list: Union[Tuple[List[List[str]], ...], List[List[str]]]) -> np.ndarray:
+              sentence_list: Union[List[List[str]], List[List[int]]],
+              debug: bool = False) -> np.ndarray:
         """
         batch embed sentences
 
         Args:
             sentence_list: Sentence list to embed
-
+            debug: show debug info
         Returns:
             vectorized sentence list
         """
-        if len(sentence_list) == 1 or isinstance(sentence_list, list):
-            sentence_list = (sentence_list,)
-        x = self.process_x_dataset(sentence_list)
+        tensor_x = self.process_x_dataset(sentence_list)
 
-        if isinstance(x, tuple) and len(x) == 1:
-            x = x[0]
-
-        embed_results = self.embed_model.predict(x)
+        if debug:
+            logging.debug(f'sentence tensor: {tensor_x}')
+        embed_results = self.embed_model.predict(tensor_x)
         return embed_results
 
     def process_x_dataset(self,
-                          data: Tuple[List[List[str]], ...],
-                          subset: Optional[List[int]] = None) -> Tuple[np.ndarray, ...]:
+                          data: List[List[str]],
+                          subset: Optional[List[int]] = None) -> np.ndarray:
         """
         batch process feature data while training
 
@@ -146,8 +142,8 @@ class Embedding(object):
         return self.processor.process_x_dataset(data, self.sequence_length, subset)
 
     def process_y_dataset(self,
-                          data: Tuple[List[List[str]], ...],
-                          subset: Optional[List[int]] = None) -> Tuple[np.ndarray, ...]:
+                          data: List[List[str]],
+                          subset: Optional[List[int]] = None) -> np.ndarray:
         """
         batch process labels data while training
 
@@ -166,7 +162,7 @@ class Embedding(object):
         return self.processor.reverse_numerize_label_sequences(sequences, lengths=lengths)
 
     def __repr__(self):
-        return f"<Embedding seq_len: {self.sequence_length}>"
+        return f"<{self.__class__} seq_len: {self.sequence_length}>"
 
     def __str__(self):
         return self.__repr__()

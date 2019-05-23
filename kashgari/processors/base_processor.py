@@ -149,6 +149,12 @@ class BaseProcessor(object):
     def reverse_numerize_label_sequences(self, sequence, **kwargs):
         raise NotImplemented
 
+    def __repr__(self):
+        return f"<{self.__class__}>"
+
+    def __str__(self):
+        return self.__repr__()
+
 
 if __name__ == "__main__":
     print("Hello world")

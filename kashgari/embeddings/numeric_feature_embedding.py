@@ -55,8 +55,7 @@ class NumericFeaturesEmbedding(Embedding):
         self._build_model()
 
     def _build_model(self, **kwargs):
-        seq_len = self.sequence_length[0]
-        input_tensor = L.Input(shape=(seq_len,),
+        input_tensor = L.Input(shape=(self.sequence_length,),
                                name=f'input_{self.feature_name}')
         layer_embedding = L.Embedding(self.feature_count + 1,
                                       self.embedding_size,
@@ -71,7 +70,7 @@ class NumericFeaturesEmbedding(Embedding):
         pass
 
     def process_x_dataset(self,
-                          data: Tuple[List[List[str]], ...],
+                          data: List[List[str]],
                           subset: Optional[List[int]] = None) -> Tuple[np.ndarray, ...]:
         """
         batch process feature data while training
@@ -83,19 +82,12 @@ class NumericFeaturesEmbedding(Embedding):
         Returns:
             vectorized feature tensor
         """
-        result = []
-        for index, dataset in enumerate(data):
-            if subset is not None:
-                numerized_samples = kashgari.utils.get_list_subset(dataset, subset)
-            else:
-                numerized_samples = dataset
-            target_maxlen = kashgari.utils.get_tuple_item(self.sequence_length, index)
-            padded_target = pad_sequences(numerized_samples, target_maxlen, padding='post', truncating='post')
-            result.append(padded_target)
-        if len(result) == 1:
-            return result[0]
+        if subset is not None:
+            numerized_samples = kashgari.utils.get_list_subset(data, subset)
         else:
-            return tuple(result)
+            numerized_samples = data
+
+        return pad_sequences(numerized_samples, self.sequence_length, padding='post', truncating='post')
 
 
 if __name__ == "__main__":

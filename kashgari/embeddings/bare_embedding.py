@@ -11,7 +11,6 @@ from typing import Union, Optional, Tuple
 
 from tensorflow import keras
 
-import kashgari.macros as k
 from kashgari.embeddings.base_embedding import Embedding
 from kashgari.processors.base_processor import BaseProcessor
 
@@ -60,18 +59,4 @@ class BareEmbedding(Embedding):
 
 
 if __name__ == "__main__":
-    from kashgari.corpus import SMP2018ECDTCorpus
-    from kashgari.processors import ClassificationProcessor
-    import kashgari
-
-    x, y = SMP2018ECDTCorpus.load_data()
-    p = ClassificationProcessor()
-    p.analyze_corpus(x, y)
-
-    embedding = BareEmbedding(task=kashgari.CLASSIFICATION,
-                              sequence_length=12, processor=p)
-    embedding._build_model()
-    embedding.embed_model.summary()
-    r = embedding.embed(x[:2])
-    print(r)
-    print(r.shape)
+    print('hello world')

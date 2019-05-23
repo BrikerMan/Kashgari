@@ -105,9 +105,9 @@ class BERTEmbedding(Embedding):
                 logging.warning(f"Sequence length limit set to {bert_seq_len} by pre-trained model")
                 if isinstance(self.sequence_length, tuple):
                     if len(self.sequence_length) == 2:
-                        self.sequence_length = (bert_seq_len, bert_seq_len)
+                        self.sequence_length = 16
                     else:
-                        self.sequence_length = (bert_seq_len,)
+                        self.sequence_length = 16
             self.embedding_size = int(bert_model.output.shape[-1])
             num_layers = len(bert_model.layers)
             bert_model.summary()
@@ -131,42 +131,31 @@ class BERTEmbedding(Embedding):
         Returns:
 
         """
-        x = utils.wrap_as_tuple(x)
-        y = utils.wrap_as_tuple(y)
         if len(self.processor.token2idx) == 0:
             self._build_token2idx_from_bert()
         super(BERTEmbedding, self).analyze_corpus(x, y)
 
     def embed(self,
-              sentence_list: Union[Tuple[List[List[str]], ...], List[List[str]]]) -> np.ndarray:
+              sentence_list: Union[Tuple[List[List[str]], ...], List[List[str]]],
+              debug: bool = False) -> np.ndarray:
         """
         batch embed sentences
 
         Args:
             sentence_list: Sentence list to embed
-
+            debug: show debug log
         Returns:
             vectorized sentence list
         """
 
-        if len(sentence_list) == 1 or isinstance(sentence_list, list):
-            sentence_list = (sentence_list,)
-        x = self.processor.process_x_dataset(sentence_list,
-                                             maxlens=self.sequence_length, )
-        if isinstance(x, tuple) and len(x) == 1:
-            x = x[0]
-
-        if not isinstance(x, tuple):
-            x = (x,)
-
-        if len(x) == 1:
-            segments = np.zeros(x[0].shape)
-            x = (x[0], segments)
-        embed_results = self.embed_model.predict(x)
+        tensor_x = self.process_x_dataset(sentence_list)
+        if debug:
+            logging.debug(f'sentence tensor: {tensor_x}')
+        embed_results = self.embed_model.predict(tensor_x)
         return embed_results
 
     def process_x_dataset(self,
-                          data: Tuple[List[List[str]], ...],
+                          data: Union[Tuple[List[List[str]], ...], List[List[str]]],
                           subset: Optional[List[int]] = None) -> Tuple[np.ndarray, ...]:
         """
         batch process feature data while training
@@ -178,31 +167,36 @@ class BERTEmbedding(Embedding):
         Returns:
             vectorized feature tensor
         """
-        x = self.processor.process_x_dataset(data, self.sequence_length, subset)
-        if not isinstance(x, tuple):
-            x = (x,)
-
-        if len(x) == 1:
-            segments = np.zeros(x[0].shape)
-            x = (x[0], segments)
-        return x
+        x1 = None
+        if isinstance(data, tuple):
+            if len(data) == 2:
+                x0 = self.processor.process_x_dataset(data[0], self.sequence_length, subset)
+                x1 = self.processor.process_x_dataset(data[1], self.sequence_length, subset)
+            else:
+                x0 = self.processor.process_x_dataset(data[0], self.sequence_length, subset)
+        else:
+            x0 = self.processor.process_x_dataset(data, self.sequence_length, subset)
+        if x1 is None:
+            x1 = np.zeros(x0.shape, dtype=np.int32)
+        return x0, x1
 
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)
 
-    bert_path = os.path.join(utils.get_project_path(), 'tests/test-data/bert')
+    # bert_model_path = os.path.join(utils.get_project_path(), 'tests/test-data/bert')
 
     b = BERTEmbedding(task=kashgari.CLASSIFICATION,
-                      bert_path=bert_path,
-                      sequence_length=(12, 12))
+                      bert_path='/Users/brikerman/.kashgari/embedding/bert/chinese_L-12_H-768_A-12',
+                      sequence_length=12)
 
     from kashgari.corpus import SMP2018ECDTCorpus
 
     test_x, test_y = SMP2018ECDTCorpus.load_data('valid')
 
     b.analyze_corpus(test_x, test_y)
-    data = list('我想你啊啊啊啊啊啊啊啊')
-    r = b.embed(([data], [data]))
+    data = 'all work and no play makes'.split(' ')
+    data2 = '你 好 啊'.split(' ')
+    r = b.embed([data], True)
     print(r)
     print(r.shape)

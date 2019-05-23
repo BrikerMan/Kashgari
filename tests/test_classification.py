@@ -63,11 +63,6 @@ class TestCNNLSTMModel(unittest.TestCase):
         model.fit(valid_x, valid_y, epochs=1)
         assert True
 
-    def test_multi_input(self):
-        old_fashion_model = self.model_class()
-        old_fashion_model.fit((valid_x, valid_x), valid_y, epochs=1)
-        old_fashion_model.predict((valid_x[:100], valid_x[:100]))
-
 
 if __name__ == "__main__":
     print("Hello world")

@@ -14,7 +14,6 @@ import numpy as np
 from gensim.models import KeyedVectors
 from tensorflow import keras
 
-from kashgari import utils
 from kashgari.embeddings.base_embedding import Embedding
 from kashgari.processors.base_processor import BaseProcessor
 
@@ -29,8 +28,7 @@ class WordEmbedding(Embedding):
                  task: str = None,
                  w2v_kwargs: Dict[str, Any] = None,
                  sequence_length: Union[Tuple[int, ...], str, int] = 'auto',
-                 processor: Optional[BaseProcessor] = None,
-                 **kwargs):
+                 processor: Optional[BaseProcessor] = None):
         """
 
         Args:
@@ -43,7 +41,6 @@ class WordEmbedding(Embedding):
                 various length of input, it will use the length of max sequence in every batch for sequence length.
                 If using an integer, let's say ``50``, the input output sequence length will set to 50.
             processor:
-            **kwargs:
         """
         if w2v_kwargs is None:
             w2v_kwargs = {}
@@ -95,28 +92,16 @@ class WordEmbedding(Embedding):
         if self.token_count == 0:
             logging.debug('need to build after build_word2idx')
         else:
-            input_layers = []
-            output_layers = []
-            for index, seq_len in enumerate(self.sequence_length):
-                input_tensor = L.Input(shape=(seq_len,),
-                                       name=f'input_{index}')
-                layer_embedding = L.Embedding(self.token_count,
-                                              self.embedding_size,
-                                              weights=[self.w2v_vector_matrix],
-                                              trainable=False,
-                                              name=f'layer_embedding_{index}')
+            input_tensor = L.Input(shape=(self.sequence_length,),
+                                   name=f'input')
+            layer_embedding = L.Embedding(self.token_count,
+                                          self.embedding_size,
+                                          weights=[self.w2v_vector_matrix],
+                                          trainable=False,
+                                          name=f'layer_embedding')
 
-                embedded_tensor = layer_embedding(input_tensor)
-
-                input_layers.append(input_tensor)
-                output_layers.append(embedded_tensor)
-            if len(output_layers) > 1:
-                layer_concatenate = L.Concatenate(name='layer_concatenate')
-                output = layer_concatenate(output_layers)
-            else:
-                output = output_layers
-
-            self.embed_model = keras.Model(input_layers, output)
+            embedded_tensor = layer_embedding(input_tensor)
+            self.embed_model = keras.Model(input_tensor, embedded_tensor)
 
     def analyze_corpus(self,
                        x: Union[Tuple[List[List[str]], ...], List[List[str]]],
@@ -131,8 +116,6 @@ class WordEmbedding(Embedding):
         Returns:
 
         """
-        x = utils.wrap_as_tuple(x)
-        y = utils.wrap_as_tuple(y)
         if not self.w2v_model_loaded:
             self._build_token2idx_from_w2v()
 
@@ -140,28 +123,4 @@ class WordEmbedding(Embedding):
 
 
 if __name__ == "__main__":
-    from kashgari.corpus import SMP2018ECDTCorpus
-    import kashgari
-    import os
-
-    logging.basicConfig(level=logging.DEBUG)
-
-    train_x, train_y = SMP2018ECDTCorpus.load_data()
-
-    w2v_path = os.path.join(kashgari.utils.get_project_path(), 'tests/test-data/sample_w2v.txt')
-
-    embedding = WordEmbedding(task=kashgari.CLASSIFICATION,
-                              w2v_path=w2v_path,
-                              sequence_length=(12,))
-    embedding.embed_model.summary()
-    r = embedding.embed((train_x[:2], train_x[:2]))
-    print(r)
-    print(r.shape)
-
-    embedding2 = WordEmbedding(task=kashgari.CLASSIFICATION,
-                               w2v_path=w2v_path)
-    embedding2.analyze_corpus((train_x, train_x), train_y)
-    embedding2.embed_model.summary()
-    r = embedding.embed((train_x[:2], train_x[:2]))
-    print(r)
-    print(r.shape)
+    print('hello world')

@@ -83,11 +83,6 @@ class BaseModel(object):
                     x_validate: Union[Tuple[List[List[str]], ...], List[List[str]]] = None,
                     y_validate: List[List[str]] = None,
                     **kwargs):
-        x_train = utils.wrap_as_tuple(x_train)
-        y_train = utils.wrap_as_tuple(y_train)
-        if x_validate:
-            x_validate = utils.wrap_as_tuple(x_validate)
-            y_validate = utils.wrap_as_tuple(y_validate)
         self.embedding.analyze_corpus(x_train, y_train)
 
         if self.tf_model is None:
@@ -112,10 +107,6 @@ class BaseModel(object):
         Returns:
             data generator
         """
-
-        x_data = utils.wrap_as_tuple(x_data)
-        y_data = utils.wrap_as_tuple(y_data)
-
         index_list = np.arange(len(x_data[0]))
         page_count = len(x_data[0]) // batch_size + 1
 

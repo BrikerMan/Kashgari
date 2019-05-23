@@ -72,9 +72,10 @@ class LabelingProcessor(BaseProcessor):
         if subset is not None:
             target = utils.get_list_subset(data, subset)
         else:
-            target = data
+            target = data[:]
         numerized_samples = self.numerize_label_sequences(target)
-        return pad_sequences(numerized_samples, max_len, padding='post', truncating='post')
+        padded_seq = pad_sequences(numerized_samples, max_len, padding='post', truncating='post')
+        return to_categorical(padded_seq, len(self.label2idx))
 
     def numerize_token_sequences(self,
                                  sequences: List[List[str]]):

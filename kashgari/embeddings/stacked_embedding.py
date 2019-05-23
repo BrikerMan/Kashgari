@@ -24,7 +24,6 @@ class StackedEmbedding(Embedding):
 
     def __init__(self,
                  embeddings: List[Embedding],
-                 embedding_size: int = 100,
                  processor: Optional[BaseProcessor] = None):
         """
         Init bare embedding (embedding without pre-training)
@@ -37,14 +36,14 @@ class StackedEmbedding(Embedding):
             embedding_size: Dimension of the dense embedding.
         """
         task = kashgari.CLASSIFICATION
-        if all(isinstance(embed.sequence_length, tuple) for embed in embeddings):
-            sequence_length = tuple([embed.sequence_length[0] for embed in embeddings])
+        if all(isinstance(embed.sequence_length, int) for embed in embeddings):
+            sequence_length = [embed.sequence_length for embed in embeddings]
         else:
             raise ValueError('Need to set sequence length for all embeddings while using stacked embedding')
 
         super(StackedEmbedding, self).__init__(task=task,
-                                               sequence_length=sequence_length,
-                                               embedding_size=embedding_size,
+                                               sequence_length=sequence_length[0],
+                                               embedding_size=100,
                                                processor=processor)
         self.embeddings = embeddings
         self.processor = embeddings[0].processor
@@ -80,85 +79,14 @@ class StackedEmbedding(Embedding):
         """
         result = []
         for index, dataset in enumerate(data):
-            result.append(self.embeddings[index].process_x_dataset((dataset,), subset))
+            result.append(self.embeddings[index].process_x_dataset(dataset, subset))
         return tuple(result)
+
+    def process_y_dataset(self,
+                          data: List[List[str]],
+                          subset: Optional[List[int]] = None) -> np.ndarray:
+        return self.embeddings[0].process_y_dataset(data, subset)
 
 
 if __name__ == "__main__":
-    from kashgari.corpus import SMP2018ECDTCorpus
-    from kashgari.embeddings import BareEmbedding, NumericFeaturesEmbedding
-
-    text, label = SMP2018ECDTCorpus.load_data()
-    is_bold = np.random.randint(1, 3, (len(text), 12))
-
-    text_embedding = BareEmbedding(task=kashgari.CLASSIFICATION,
-                                   sequence_length=12)
-    num_feature_embedding = NumericFeaturesEmbedding(2,
-                                                     'is_bold',
-                                                     sequence_length=12)
-
-    stack_embedding = StackedEmbedding([text_embedding, num_feature_embedding])
-    stack_embedding.analyze_corpus((text, is_bold), label)
-
-    r = stack_embedding.embed((text[:3], is_bold[:3]))
-    print(r)
-    print(r.shape)
-
-    import kashgari
-    from kashgari.embeddings import NumericFeaturesEmbedding, BareEmbedding, StackedEmbedding
-
-    text = ['NLP', 'Projects', 'Project', 'Name', ':']
-    start_of_p = [1, 2, 1, 2, 2]
-    bold = [1, 1, 1, 1, 2]
-    center = [1, 1, 2, 2, 2]
-    label = ['B-Category', 'I-Category', 'B-ProjectName', 'I-ProjectName', 'I-ProjectName']
-
-    text_list = [text] * 100
-    start_of_p_list = [start_of_p] * 100
-    bold_list = [bold] * 100
-    center_list = [center] * 100
-    label_list = [label] * 100
-
-    # You can use WordEmbedding or BERTEmbedding for your text embedding
-    SEQUENCE_LEN = 100
-    text_embedding = BareEmbedding(task=kashgari.LABELING, sequence_length=SEQUENCE_LEN)
-    start_of_p_embedding = NumericFeaturesEmbedding(feature_count=2,
-                                                    feature_name='start_of_p',
-                                                    sequence_length=SEQUENCE_LEN)
-
-    bold_embedding = NumericFeaturesEmbedding(feature_count=2,
-                                              feature_name='bold',
-                                              sequence_length=SEQUENCE_LEN)
-
-    center_embedding = NumericFeaturesEmbedding(feature_count=2,
-                                                feature_name='center',
-                                                sequence_length=SEQUENCE_LEN)
-
-    # first one must be the text, embedding
-    stack_embedding = StackedEmbedding([
-        text_embedding,
-        start_of_p_embedding,
-        bold_embedding,
-        center_embedding
-    ])
-
-    x = (text_list, start_of_p_list, bold_list, center_list)
-    y = label_list
-    stack_embedding.analyze_corpus(x, y)
-
-    # Now we can embed with this stacked embedding layer
-    print(stack_embedding.embed(x))
-
-    # We can build any labeling model with this embedding
-
-    from kashgari.tasks.labeling import BLSTMModel
-
-    model = BLSTMModel(embedding=stack_embedding)
-    model.fit(x, y, epochs=1)
-
-    print(model.predict(x))
-    print(model.predict_entities(x))
-
-    from tensorflow.python import keras
-
-    keras.utils.plot_model(model.tf_model, to_file='model.png', show_shapes=True)
+    pass
