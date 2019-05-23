@@ -30,20 +30,12 @@ Embedding
    :nosignatures:
 
    BareEmbedding
-   BertEmbedding
+   BERTEmbedding
    WordEmbedding
+   NumericFeaturesEmbedding
+   StackedEmbedding
 
-.. autoclass:: kashgari.embeddings.BareEmbedding
-   :members:
-   :undoc-members:
-   :inherited-members:
-
-.. autoclass:: kashgari.embeddings.BertEmbedding
-   :members:
-   :undoc-members:
-   :inherited-members:
-
-.. autoclass:: kashgari.embeddings.WordEmbedding
+.. automodule:: kashgari.embeddings
    :members:
    :undoc-members:
    :inherited-members:

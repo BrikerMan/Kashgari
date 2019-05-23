@@ -120,8 +120,7 @@ class Embedding(object):
         """
         if len(sentence_list) == 1 or isinstance(sentence_list, list):
             sentence_list = (sentence_list,)
-        x = self.processor.process_x_dataset(sentence_list,
-                                             maxlens=self.sequence_length)
+        x = self.process_x_dataset(sentence_list)
 
         if isinstance(x, tuple) and len(x) == 1:
             x = x[0]
@@ -163,6 +162,12 @@ class Embedding(object):
                                          sequences,
                                          lengths=None):
         return self.processor.reverse_numerize_label_sequences(sequences, lengths=lengths)
+
+    def __repr__(self):
+        return f"<Embedding seq_len: {self.sequence_length}>"
+
+    def __str__(self):
+        return self.__repr__()
 
 
 if __name__ == "__main__":

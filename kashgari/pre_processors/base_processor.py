@@ -80,7 +80,7 @@ class BaseProcessor(object):
 
         return processor
 
-    def _build_token_dict(self, corpus: Tuple):
+    def _build_token_dict(self, corpus: Optional[Tuple]):
         """
         Build token index dictionary using corpus
 

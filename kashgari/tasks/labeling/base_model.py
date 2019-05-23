@@ -56,7 +56,9 @@ class BaseLabelingModel(BaseModel):
             ]]
         """
         if isinstance(x_data, tuple):
-            raise ValueError('predict_entities not support multi input yet')
+            text_seq = x_data[0]
+        else:
+            text_seq = x_data
         res = self.predict(x_data, batch_size, debug_info)
         new_res = [get_entities(seq) for seq in res]
         final_res = []
@@ -64,9 +66,9 @@ class BaseLabelingModel(BaseModel):
             seq_data = []
             for entity in seq:
                 if join_chunk is False:
-                    value = x_data[index][entity[1]:entity[2] + 1],
+                    value = text_seq[index][entity[1]:entity[2] + 1],
                 else:
-                    value = join_chunk.join(x_data[index][entity[1]:entity[2] + 1])
+                    value = join_chunk.join(text_seq[index][entity[1]:entity[2] + 1])
 
                 seq_data.append({
                     "entity": entity[0],
