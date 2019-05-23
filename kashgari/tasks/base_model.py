@@ -176,10 +176,11 @@ class BaseModel(object):
             steps_per_epoch = len(x_train[0]) // batch_size + 1
         else:
             steps_per_epoch = len(x_train) // batch_size + 1
-        self.tf_model.fit_generator(train_generator,
-                                    steps_per_epoch=steps_per_epoch,
-                                    epochs=epochs,
-                                    **fit_kwargs)
+        with utils.custom_object_scope():
+            self.tf_model.fit_generator(train_generator,
+                                        steps_per_epoch=steps_per_epoch,
+                                        epochs=epochs,
+                                        **fit_kwargs)
 
     def compile_model(self, **kwargs):
         """Configures the model for training.
@@ -222,16 +223,17 @@ class BaseModel(object):
         Returns:
             array(s) of predictions.
         """
-        x_data = utils.wrap_as_tuple(x_data)
-        lengths = [len(sen) for sen in x_data[0]]
-        tensor = self.embedding.process_x_dataset(x_data)
-        pred = self.tf_model.predict(tensor, batch_size=batch_size)
-        res = self.embedding.reverse_numerize_label_sequences(pred.argmax(-1),
-                                                              lengths)
-        if debug_info:
-            logging.info('input: {}'.format(tensor))
-            logging.info('output: {}'.format(pred))
-            logging.info('output argmax: {}'.format(pred.argmax(-1)))
+        with utils.custom_object_scope():
+            x_data = utils.wrap_as_tuple(x_data)
+            lengths = [len(sen) for sen in x_data[0]]
+            tensor = self.embedding.process_x_dataset(x_data)
+            pred = self.tf_model.predict(tensor, batch_size=batch_size)
+            res = self.embedding.reverse_numerize_label_sequences(pred.argmax(-1),
+                                                                  lengths)
+            if debug_info:
+                logging.info('input: {}'.format(tensor))
+                logging.info('output: {}'.format(pred))
+                logging.info('output argmax: {}'.format(pred.argmax(-1)))
         return res
 
     def evaluate(self,

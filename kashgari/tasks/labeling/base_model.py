@@ -145,8 +145,13 @@ if __name__ == "__main__":
 
     model = CNNLSTMModel()
     model.build_model(train_x[:100], train_y[:100])
-    model.fit(train_x, train_y, valid_x, valid_y, epochs=20)
-    r = model.predict_entities(train_x[:5])
+
+    import keras_bert
+    import tensorflow as tf
+
+    with tf.keras.utils.custom_object_scope(keras_bert.get_custom_objects()):
+        model.fit(train_x, train_y, valid_x, valid_y, epochs=20)
+        r = model.predict_entities(train_x[:5], join_chunk='')
     import pprint
 
     pprint.pprint(r)
