@@ -5,6 +5,8 @@
 
 trigger:
 - master
+- develop
+- tf.keras-version
 
 pool:
   vmImage: 'ubuntu-latest'
@@ -32,6 +34,6 @@ steps:
   displayName: 'Install dependencies'
 
 - script: |
-    pip install pytest pytest-azurepipelines pytest-cov
-    pytest tests/ --cov kashgari --cov-report html
-  displayName: 'pytest'
+    nosetests --with-xunit --with-coverage --cover-html --cover-html-dir=htmlcov --cover-package="kashgari" tests
+    coverage xml -i
+  displayName: 'nosetests'
