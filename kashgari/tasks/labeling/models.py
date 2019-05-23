@@ -99,7 +99,7 @@ class BLSTMCRFModel(BaseLabelingModel):
                                       name='layer_blstm')
 
         layer_dense = L.Dense(output_dim, **config['layer_dense'], name='layer_dense')
-        layer_crf = CRF(output_dim)
+        layer_crf = CRF(output_dim, mode='pad')
 
         tensor = layer_blstm(embed_model.output)
         tensor = layer_dense(tensor)
