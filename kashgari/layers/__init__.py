@@ -10,7 +10,7 @@
 import tensorflow as tf
 from tensorflow.python import keras
 from kashgari.layers.non_masking_layer import NonMaskingLayer
-from kashgari.layers.crf import CRF, crf_accuracy
+from kashgari.layers.crf import CRF
 
 L = keras.layers
 

@@ -3,7 +3,7 @@
 import os
 import logging
 import pandas as pd
-import kashgari.macros as k
+from kashgari import macros as k
 from typing import Tuple, List
 from tensorflow.python.keras.utils import get_file
 from kashgari import utils

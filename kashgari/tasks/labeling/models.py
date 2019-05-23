@@ -13,8 +13,8 @@ from typing import Dict, Any
 from tensorflow import keras
 
 from kashgari.tasks.labeling.base_model import BaseLabelingModel
-from kashgari.layers import L, CRF, crf_accuracy
-from kashgari.loss import crf_loss
+from kashgari.layers import L
+from kashgari.layers.crf import CRF
 
 
 class BLSTMModel(BaseLabelingModel):
@@ -83,7 +83,6 @@ class BLSTMCRFModel(BaseLabelingModel):
                 'return_sequences': True
             },
             'layer_dense': {
-                'units': 128,
                 'activation': 'tanh'
             }
         }
@@ -99,22 +98,21 @@ class BLSTMCRFModel(BaseLabelingModel):
         layer_blstm = L.Bidirectional(L.LSTM(**config['layer_blstm']),
                                       name='layer_blstm')
 
-        layer_dense = L.Dense(**config['layer_dense'],
-                              name='layer_dense')
-
-        layer_crf = CRF(output_dim, sparse_target=False)
+        layer_dense = L.Dense(output_dim, **config['layer_dense'], name='layer_dense')
+        layer_crf = CRF(output_dim)
 
         tensor = layer_blstm(embed_model.output)
         tensor = layer_dense(tensor)
         output_tensor = layer_crf(tensor)
 
+        self.layer_crf = layer_crf
         self.tf_model = keras.Model(embed_model.inputs, output_tensor)
 
     def compile_model(self, **kwargs):
         if kwargs.get('loss') is None:
-            kwargs['loss'] = crf_loss
+            kwargs['loss'] = self.layer_crf.loss
         if kwargs.get('metrics') is None:
-            kwargs['metrics'] = [crf_accuracy]
+            kwargs['metrics'] = ['acc']
         super(BLSTMCRFModel, self).compile_model(**kwargs)
 
 

@@ -8,7 +8,6 @@
 # time: 2019-05-22 16:09
 
 from tensorflow.python.keras import backend as K
-from kashgari.layers.crf import crf_loss
 
 
 def weighted_categorical_crossentropy(weights):

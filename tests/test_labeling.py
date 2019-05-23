@@ -13,7 +13,7 @@ import os
 import kashgari
 from kashgari.corpus import ChineseDailyNerCorpus
 from kashgari.embeddings import WordEmbedding
-from kashgari.tasks.labeling import CNNLSTMModel, BLSTMModel
+from kashgari.tasks.labeling import CNNLSTMModel, BLSTMModel, BLSTMCRFModel
 
 valid_x, valid_y = ChineseDailyNerCorpus.load_data('valid')
 
@@ -61,6 +61,13 @@ class TestBLSTMModel(TestCNNLSTMModel):
     def setUpClass(cls):
         cls.epochs = 3
         cls.model_class = BLSTMModel
+
+
+class TestCRFModel(TestCNNLSTMModel):
+    @classmethod
+    def setUpClass(cls):
+        cls.epochs = 3
+        cls.model_class = BLSTMCRFModel
 
 
 if __name__ == "__main__":
