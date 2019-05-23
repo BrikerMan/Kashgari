@@ -176,7 +176,7 @@ class BaseModel(object):
             fit_kwargs['validation_data'] = validation_generator
             fit_kwargs['validation_steps'] = validation_steps
 
-        if isinstance(x_validate, tuple):
+        if isinstance(x_train, tuple):
             steps_per_epoch = len(x_train[0]) // batch_size + 1
         else:
             steps_per_epoch = len(x_train) // batch_size + 1
