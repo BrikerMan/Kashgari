@@ -228,8 +228,10 @@ class BaseModel(object):
             array(s) of predictions.
         """
         with utils.custom_object_scope():
-            x_data = utils.wrap_as_tuple(x_data)
-            lengths = [len(sen) for sen in x_data[0]]
+            if isinstance(x_data, tuple):
+                lengths = [len(sen) for sen in x_data[0]]
+            else:
+                lengths = [len(sen) for sen in x_data]
             tensor = self.embedding.process_x_dataset(x_data)
             pred = self.tf_model.predict(tensor, batch_size=batch_size)
             res = self.embedding.reverse_numerize_label_sequences(pred.argmax(-1),

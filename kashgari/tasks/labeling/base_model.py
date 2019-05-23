@@ -115,9 +115,8 @@ class BaseLabelingModel(BaseModel):
         Returns:
 
         """
-        x_data = utils.wrap_as_tuple(x_data)
         y_pred = self.predict(x_data, batch_size=batch_size)
-        y_true = [seq[:self.embedding.sequence_length[0]] for seq in y_data]
+        y_true = [seq[:self.embedding.sequence_length] for seq in y_data]
 
         if debug_info:
             for index in random.sample(list(range(len(x_data))), 5):

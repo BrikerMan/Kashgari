@@ -93,7 +93,6 @@ class MultiOutputModel(BaseClassificationModel):
                 batch_size=None,
                 debug_info=False,
                 threshold=0.5):
-        x_data = kashgari.utils.wrap_as_tuple(x_data)
         tensor = self.embedding.process_x_dataset(x_data)
         pred = self.tf_model.predict(tensor, batch_size=batch_size)
 
@@ -116,7 +115,7 @@ class TestCustomMultiOutputModel(unittest.TestCase):
         embedding = BareEmbedding(processor=processor)
         m = MultiOutputModel(embedding=embedding)
         m.build_model(train_x, (output_1, output_2))
-        # m.fit(train_x, (output_1, output_2))
+        m.fit(train_x, (output_1, output_2), epochs=2)
         res = m.predict(train_x[:10])
         assert len(res) == 2
         assert res[0].shape == (10, 3)

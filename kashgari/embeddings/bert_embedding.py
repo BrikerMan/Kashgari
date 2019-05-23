@@ -103,11 +103,7 @@ class BERTEmbedding(Embedding):
             bert_seq_len = int(bert_model.output.shape[1])
             if bert_seq_len < seq_len:
                 logging.warning(f"Sequence length limit set to {bert_seq_len} by pre-trained model")
-                if isinstance(self.sequence_length, tuple):
-                    if len(self.sequence_length) == 2:
-                        self.sequence_length = 16
-                    else:
-                        self.sequence_length = 16
+                self.sequence_length = bert_seq_len
             self.embedding_size = int(bert_model.output.shape[-1])
             num_layers = len(bert_model.layers)
             bert_model.summary()
@@ -117,6 +113,7 @@ class BERTEmbedding(Embedding):
             output_features = NonMaskingLayer()(embedding_layer)
 
             self.embed_model = tf.keras.Model(bert_model.inputs, output_features)
+            logging.warning(f'seq_len: {self.sequence_length}')
 
     def analyze_corpus(self,
                        x: Union[Tuple[List[List[str]], ...], List[List[str]]],

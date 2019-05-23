@@ -33,7 +33,7 @@ class TestCNNLSTMModel(unittest.TestCase):
         model.fit(valid_x, valid_y, valid_x, valid_y, epochs=1)
         res = model.predict(valid_x[:5])
         for i in range(5):
-            assert len(res[i]) == min(model.embedding.sequence_length[0], len(valid_x[i]))
+            assert len(res[i]) == min(model.embedding.sequence_length, len(valid_x[i]))
         model.predict_entities(valid_x[:5])
         model.evaluate(valid_x[:100], valid_y[:100])
 
@@ -54,11 +54,6 @@ class TestCNNLSTMModel(unittest.TestCase):
                                  hyper_parameters=hyper_params)
         model.fit(valid_x, valid_y, epochs=1)
         assert True
-
-    def test_multi_input(self):
-        old_fashion_model = self.model_class()
-        old_fashion_model.fit((valid_x, valid_x), valid_y, epochs=1)
-        old_fashion_model.predict((valid_x[:100], valid_x[:100]))
 
 
 class TestBLSTMModel(TestCNNLSTMModel):

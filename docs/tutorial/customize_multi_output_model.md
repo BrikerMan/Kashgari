@@ -98,7 +98,6 @@ class MultiOutputModel(BaseClassificationModel):
                 batch_size=None,
                 debug_info=False,
                 threshold=0.5):
-        x_data = kashgari.utils.wrap_as_tuple(x_data)
         tensor = self.embedding.process_x_dataset(x_data)
         pred = self.tf_model.predict(tensor, batch_size=batch_size)
 
