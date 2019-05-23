@@ -10,6 +10,10 @@
 
 from typing import Dict, Any, List, Optional, Union, Tuple
 
+import os
+import json
+import pickle
+import pathlib
 import logging
 import numpy as np
 from tensorflow import keras
@@ -28,6 +32,15 @@ class BaseModel(object):
     @classmethod
     def get_default_hyper_parameters(cls) -> Dict[str, Dict[str, Any]]:
         raise NotImplementedError
+
+    def info(self):
+        return {
+            'hyper_parameters': self.hyper_parameters,
+            'embedding': self.embedding.info(),
+            'architect_name': self.__architect_name__,
+            'task': self.__task__,
+            'module': self.__module__
+        }
 
     def __init__(self,
                  embedding: Optional[Embedding] = None,
@@ -247,6 +260,18 @@ class BaseModel(object):
     def build_model_arc(self):
         raise NotImplementedError
 
+    def save(self, model_path: str):
+        pathlib.Path(model_path).mkdir(exist_ok=True, parents=True)
+
+        with open(os.path.join(model_path, 'processor.pickle'), 'wb') as f:
+            f.write(pickle.dumps(self.embedding.processor))
+
+        with open(os.path.join(model_path, 'model_info.json'), 'w') as f:
+            f.write(json.dumps(self.info(), indent=2, ensure_ascii=False))
+
+        self.tf_model.save(os.path.join(model_path, 'model.h5'))
+        logging.info('model saved to {}'.format(os.path.abspath(model_path)))
+
 
 if __name__ == "__main__":
     from kashgari.tasks.labeling import CNNLSTMModel
@@ -257,8 +282,11 @@ if __name__ == "__main__":
     model = CNNLSTMModel()
     model.build_model(train_x[:100], train_y[:100])
     r = model.predict_entities(train_x[:5])
+    model.save('./res')
     import pprint
 
     pprint.pprint(r)
-    # model.evaluate(train_x[:20], train_y[:20])
+    model.evaluate(train_x[:20], train_y[:20])
     print("Hello world")
+
+    print(model.predict(train_x[:20]))

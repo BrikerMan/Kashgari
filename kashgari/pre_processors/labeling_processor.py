@@ -18,6 +18,7 @@ import numpy as np
 from tensorflow.python.keras.preprocessing.sequence import pad_sequences
 from tensorflow.python.keras.utils import to_categorical
 
+import kashgari
 from kashgari import utils
 from kashgari.pre_processors.base_processor import BaseProcessor
 
@@ -26,6 +27,11 @@ class LabelingProcessor(BaseProcessor):
     """
     Corpus Pre Processor class
     """
+
+    def info(self):
+        return {
+            'task': kashgari.LABELING
+        }
 
     def _build_label_dict(self,
                           label_list: List[List[str]]):

@@ -13,7 +13,8 @@ from typing import Dict, Any
 from tensorflow import keras
 
 from kashgari.tasks.labeling.base_model import BaseLabelingModel
-from kashgari.layers import L
+from kashgari.layers import L, CRF, crf_accuracy
+from kashgari.loss import crf_loss
 
 
 class BLSTMModel(BaseLabelingModel):
@@ -65,9 +66,61 @@ class BLSTMModel(BaseLabelingModel):
         self.tf_model = keras.Model(embed_model.inputs, output_tensor)
 
 
+class BLSTMCRFModel(BaseLabelingModel):
+    """Bidirectional LSTM Sequence Labeling Model"""
+    __architect_name__ = 'BLSTMCRFModel'
+
+    @classmethod
+    def get_default_hyper_parameters(cls) -> Dict[str, Dict[str, Any]]:
+        """
+        Get hyper parameters of model
+        Returns:
+            hyper parameters dict
+        """
+        return {
+            'layer_blstm': {
+                'units': 256,
+                'return_sequences': True
+            },
+            'layer_dense': {
+                'units': 128,
+                'activation': 'tanh'
+            }
+        }
+
+    def build_model_arc(self):
+        """
+        build model architectural
+        """
+        output_dim = len(self.pre_processor.label2idx)
+        config = self.hyper_parameters
+        embed_model = self.embedding.embed_model
+
+        layer_blstm = L.Bidirectional(L.LSTM(**config['layer_blstm']),
+                                      name='layer_blstm')
+
+        layer_dense = L.Dense(**config['layer_dense'],
+                              name='layer_dense')
+
+        layer_crf = CRF(output_dim, sparse_target=False)
+
+        tensor = layer_blstm(embed_model.output)
+        tensor = layer_dense(tensor)
+        output_tensor = layer_crf(tensor)
+
+        self.tf_model = keras.Model(embed_model.inputs, output_tensor)
+
+    def compile_model(self, **kwargs):
+        if kwargs.get('loss') is None:
+            kwargs['loss'] = crf_loss
+        if kwargs.get('metrics') is None:
+            kwargs['metrics'] = [crf_accuracy]
+        super(BLSTMCRFModel, self).compile_model(**kwargs)
+
+
 class CNNLSTMModel(BaseLabelingModel):
     """CNN LSTM Sequence Labeling Model"""
-    __architect_name__ = 'BLSTMModel'
+    __architect_name__ = 'CNNLSTMModel'
 
     @classmethod
     def get_default_hyper_parameters(cls) -> Dict[str, Dict[str, Any]]:

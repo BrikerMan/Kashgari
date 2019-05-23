@@ -4,8 +4,8 @@
 # contact: eliyar917@gmail.com
 # blog: https://eliyar.biz
 
-# file: layers.py
-# time: 2019-05-21 18:55
+# file: non_masking_layer.py
+# time: 2019-05-23 14:05
 
 import tensorflow as tf
 from tensorflow.python import keras

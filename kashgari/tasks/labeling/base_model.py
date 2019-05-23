@@ -135,7 +135,7 @@ class BaseLabelingModel(BaseModel):
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)
-    from kashgari.tasks.labeling import CNNLSTMModel
+    from kashgari.tasks.labeling import BLSTMCRFModel
     from kashgari.corpus import ChineseDailyNerCorpus
 
     train_x, train_y = ChineseDailyNerCorpus.load_data('train')
@@ -143,15 +143,12 @@ if __name__ == "__main__":
 
     train_x, train_y = train_x[:5120], train_y[:5120]
 
-    model = CNNLSTMModel()
+    model = BLSTMCRFModel()
     model.build_model(train_x[:100], train_y[:100])
 
-    import keras_bert
-    import tensorflow as tf
+    model.fit(train_x, train_y, valid_x, valid_y, epochs=20)
+    r = model.predict_entities(train_x[:5], join_chunk='')
 
-    with tf.keras.utils.custom_object_scope(keras_bert.get_custom_objects()):
-        model.fit(train_x, train_y, valid_x, valid_y, epochs=20)
-        r = model.predict_entities(train_x[:5], join_chunk='')
     import pprint
 
     pprint.pprint(r)

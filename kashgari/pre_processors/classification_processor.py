@@ -4,6 +4,7 @@ import numpy as np
 from tensorflow.python.keras.preprocessing.sequence import pad_sequences
 from tensorflow.python.keras.utils import to_categorical
 
+import kashgari
 from kashgari import utils
 from kashgari.pre_processors.base_processor import BaseProcessor
 
@@ -15,6 +16,11 @@ class ClassificationProcessor(BaseProcessor):
 
     def __init__(self):
         super(ClassificationProcessor, self).__init__()
+
+    def info(self):
+        return {
+            'task': kashgari.CLASSIFICATION
+        }
 
     def _build_label_dict(self,
                           labels: List[str]):

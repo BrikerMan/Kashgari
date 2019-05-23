@@ -57,7 +57,8 @@ required = [
     'seqeval==0.0.10',
     'gensim>=3.5.0',
     'sklearn',
-    'pandas>=0.23.0',
+    'h5py',
+    'pandas>=0.23.0'
 ]
 
 setup(
@@ -81,7 +82,6 @@ setup(
         'Programming Language :: Python :: Implementation :: PyPy'
     ],
 )
-
 
 if __name__ == "__main__":
     print("Hello world")

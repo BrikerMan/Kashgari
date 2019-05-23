@@ -9,6 +9,7 @@
 
 from kashgari.tasks.labeling.models import BLSTMModel
 from kashgari.tasks.labeling.models import CNNLSTMModel
+from kashgari.tasks.labeling.models import BLSTMCRFModel
 
 
 if __name__ == "__main__":

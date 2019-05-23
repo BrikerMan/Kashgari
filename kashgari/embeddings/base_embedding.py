@@ -25,6 +25,12 @@ L = keras.layers
 class Embedding(object):
     """Base class for Embedding Model"""
 
+    def info(self):
+        return {
+            'sequence_length': self.sequence_length,
+            'processor': self.processor.info()
+        }
+
     def __init__(self,
                  task: str = None,
                  sequence_length: Union[Tuple[int, ...], str] = 'auto',

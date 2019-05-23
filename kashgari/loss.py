@@ -8,6 +8,7 @@
 # time: 2019-05-22 16:09
 
 from tensorflow.python.keras import backend as K
+from kashgari.layers.crf import crf_loss
 
 
 def weighted_categorical_crossentropy(weights):
@@ -25,7 +26,7 @@ def weighted_categorical_crossentropy(weights):
 
     weights = K.variable(weights)
 
-    def loss(y_true, y_pred):
+    def categorical_crossentropy(y_true, y_pred):
         # scale predictions so that the class probas of each sample sum to 1
         y_pred /= K.sum(y_pred, axis=-1, keepdims=True)
         # clip to prevent NaN's and Inf's
@@ -35,7 +36,7 @@ def weighted_categorical_crossentropy(weights):
         loss = -K.sum(loss, -1)
         return loss
 
-    return loss
+    return categorical_crossentropy
 
 
 if __name__ == "__main__":

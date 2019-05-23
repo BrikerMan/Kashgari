@@ -11,10 +11,14 @@
 
 """
 import os
+import json
+import pickle
 import random
 import pathlib
 import keras_bert
+from pydoc import locate
 import tensorflow as tf
+from kashgari.tasks.base_model import BaseModel
 from typing import List, Tuple, Optional, Any
 
 
@@ -56,6 +60,24 @@ def get_custom_objects():
 
 def custom_object_scope():
     return tf.keras.utils.custom_object_scope(get_custom_objects())
+
+
+def load_model(model_path: str) -> BaseModel:
+    with open(os.path.join(model_path, 'model_info.json'), 'r') as f:
+        config = json.load(f)
+
+    processor_path = os.path.join(model_path, 'processor.pickle')
+    processor = pickle.load(open(processor_path, "rb"))
+
+    from kashgari.embeddings import BareEmbedding
+    embedding = BareEmbedding(processor=processor,
+                              sequence_length=tuple(config['embedding']['sequence_length']))
+
+    task_module = locate(f"{config['module']}.{config['architect_name']}")
+    model: BaseModel = task_module(embedding=embedding, hyper_parameters=config['hyper_parameters'])
+    model.tf_model = tf.keras.models.load_model(os.path.join(model_path, 'model.h5'),
+                                                custom_objects=get_custom_objects())
+    return model
 
 
 if __name__ == "__main__":

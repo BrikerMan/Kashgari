@@ -42,6 +42,11 @@ class BaseProcessor(object):
 
         self.dataset_info = {}
 
+    def info(self):
+        return {
+            'task': ''
+        }
+
     def analyze_corpus(self,
                        corpus: Union[Tuple[List[List[str]], ...], List[List[str]]],
                        labels: Union[Tuple[List[List[str]], ...], Tuple[List[str], ...]]):
