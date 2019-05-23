@@ -61,24 +61,25 @@ def custom_object_scope():
 
 def convert_to_tpu_model(model: BaseModel,
                          strategy: tf.contrib.distribute.TPUStrategy) -> BaseModel:
-    tpu_model = tf.contrib.tpu.keras_to_tpu_model(model.tf_model, strategy=strategy)
-    model.tf_model = tpu_model
-    model.compile_model(optimizer=tf.train.AdamOptimizer())
-    return model
+    with custom_object_scope():
+        tpu_model = tf.contrib.tpu.keras_to_tpu_model(model.tf_model, strategy=strategy)
+        model.tf_model = tpu_model
+        model.compile_model(optimizer=tf.train.AdamOptimizer())
+        return model
 
 
 def convert_to_multi_gpu_model(model: BaseModel,
                                gpus: int,
                                cpu_merge: bool,
                                cpu_relocation: bool):
-
-    multi_gpu_model = tf.keras.utils.multi_gpu_model(model.tf_model,
-                                                     gpus,
-                                                     cpu_merge=cpu_merge,
-                                                     cpu_relocation=cpu_relocation)
-    model.tf_model = multi_gpu_model
-    model.compile_model()
-    return model
+    with custom_object_scope():
+        multi_gpu_model = tf.keras.utils.multi_gpu_model(model.tf_model,
+                                                         gpus,
+                                                         cpu_merge=cpu_merge,
+                                                         cpu_relocation=cpu_relocation)
+        model.tf_model = multi_gpu_model
+        model.compile_model()
+        return model
 
 
 if __name__ == "__main__":
