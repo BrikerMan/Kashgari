@@ -16,7 +16,7 @@ from tensorflow import keras
 import kashgari
 import numpy as np
 from kashgari.embeddings.base_embedding import Embedding
-from kashgari.pre_processors.base_processor import BaseProcessor
+from kashgari.processors.base_processor import BaseProcessor
 from tensorflow.python.keras.preprocessing.sequence import pad_sequences
 
 L = keras.layers

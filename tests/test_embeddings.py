@@ -14,7 +14,7 @@ import kashgari
 from kashgari.corpus import ChineseDailyNerCorpus
 from kashgari.corpus import SMP2018ECDTCorpus
 from kashgari.embeddings import BareEmbedding, WordEmbedding, BERTEmbedding
-from kashgari.pre_processors import ClassificationProcessor
+from kashgari.processors import ClassificationProcessor
 
 
 class TestBareEmbedding(unittest.TestCase):

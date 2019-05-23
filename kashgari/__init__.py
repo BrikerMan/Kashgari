@@ -17,7 +17,7 @@ from kashgari import layers
 from kashgari import corpus
 from kashgari import embeddings
 from kashgari import macros
-from kashgari import pre_processors
+from kashgari import processors
 from kashgari import tasks
 from kashgari.version import __version__
 from kashgari import utils

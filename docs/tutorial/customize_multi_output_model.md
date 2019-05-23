@@ -34,7 +34,7 @@ Then you need to create a customized processor inhered from the `ClassificationP
 import kashgari
 import numpy as np
 from typing import Tuple, List, Optional, Dict, Any
-from kashgari.pre_processors.classification_processor import ClassificationProcessor
+from kashgari.processors.classification_processor import ClassificationProcessor
 
 class MultiOutputProcessor(ClassificationProcessor):
     def process_y_dataset(self,

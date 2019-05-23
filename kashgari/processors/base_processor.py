@@ -13,12 +13,11 @@ import logging
 import pathlib
 import operator
 import collections
-from enum import Enum
 from typing import List, Tuple, Optional, Union
-
-import numpy as np
+from tensorflow.python.keras.preprocessing.sequence import pad_sequences
 
 from kashgari import utils
+import numpy as np
 
 
 class BaseProcessor(object):
@@ -48,36 +47,34 @@ class BaseProcessor(object):
         }
 
     def analyze_corpus(self,
-                       corpus: Union[Tuple[List[List[str]], ...], List[List[str]]],
-                       labels: Union[Tuple[List[List[str]], ...], Tuple[List[str], ...]]):
-        corpus = utils.wrap_as_tuple(corpus)
-        rec_seq_len = []
-        for cor in corpus:
-            rec_seq_len.append(sorted([len(seq) for seq in cor])[int(0.95 * len(cor))])
-        self.dataset_info['RECOMMEND_LEN'] = tuple(rec_seq_len)
+                       corpus: Union[List[List[str]]],
+                       labels: Union[List[List[str]], List[str]],
+                       force: bool = False):
+        rec_len = sorted([len(seq) for seq in corpus])[int(0.95 * len(corpus))]
+        self.dataset_info['RECOMMEND_LEN'] = rec_len
 
-        if not self.token2idx:
+        if not self.token2idx or force:
             self._build_token_dict(corpus)
-        if not self.label2idx:
+        if not self.label2idx or force:
             self._build_label_dict(labels)
 
     def save_dicts(self, cache_dir: str):
         pathlib.Path(cache_dir).mkdir(exist_ok=True, parents=True)
-        with open(os.path.join(cache_dir, 'token2idx.json'), 'w') as f:
+        with open(os.path.join(cache_dir, 'token2idx.json'), 'w', encoding='utf-8') as f:
             f.write(json.dumps(self.token2idx, ensure_ascii=False, indent=2))
 
-        with open(os.path.join(cache_dir, 'label2idx.json'), 'w') as f:
+        with open(os.path.join(cache_dir, 'label2idx.json'), 'w', encoding='utf-8') as f:
             f.write(json.dumps(self.label2idx, ensure_ascii=False, indent=2))
         logging.debug(f"saved token2idx and label2idx to dir: {cache_dir}.")
 
     @classmethod
     def load_cached_processor(cls, cache_dir: str):
         processor = cls()
-        with open(os.path.join(cache_dir, 'token2idx.json'), 'r') as f:
+        with open(os.path.join(cache_dir, 'token2idx.json'), 'r', encoding='utf-8') as f:
             processor.token2idx = json.loads(f.read())
             processor.idx2token = dict([(value, key) for key, value in processor.token2idx.items()])
 
-        with open(os.path.join(cache_dir, 'label2idx.json'), 'r') as f:
+        with open(os.path.join(cache_dir, 'label2idx.json'), 'r', encoding='utf-8') as f:
             processor.label2idx = json.loads(f.read())
             processor.idx2label = dict([(value, key) for key, value in processor.label2idx.items()])
         logging.debug(f"loaded token2idx and label2idx from dir: {cache_dir}. "
@@ -85,7 +82,7 @@ class BaseProcessor(object):
 
         return processor
 
-    def _build_token_dict(self, corpus: Optional[Tuple]):
+    def _build_token_dict(self, corpus: List[List[str]]):
         """
         Build token index dictionary using corpus
 
@@ -100,11 +97,10 @@ class BaseProcessor(object):
         }
 
         token2count = {}
-        for item in corpus:
-            for sentence in item:
-                for token in sentence:
-                    count = token2count.get(token, 0)
-                    token2count[token] = count + 1
+        for sentence in corpus:
+            for token in sentence:
+                count = token2count.get(token, 0)
+                token2count[token] = count + 1
 
         # 按照词频降序排序
         sorted_token2count = sorted(token2count.items(),
@@ -125,15 +121,21 @@ class BaseProcessor(object):
         raise NotImplementedError
 
     def process_x_dataset(self,
-                          data: Tuple[List[List[str]], ...],
-                          maxlens: Optional[Tuple[int, ...]] = None,
-                          subset: Optional[List[int]] = None) -> Tuple[np.ndarray, ...]:
-        raise NotImplementedError
+                          data: List[List[str]],
+                          max_len: Optional[int] = None,
+                          subset: Optional[List[int]] = None) -> np.ndarray:
+        if subset is not None:
+            target = utils.get_list_subset(data, subset)
+        else:
+            target = data
+        numerized_samples = self.numerize_token_sequences(target)
+
+        return pad_sequences(numerized_samples, max_len, padding='post', truncating='post')
 
     def process_y_dataset(self,
-                          data: Tuple[List[List[str]], ...],
-                          maxlens: Optional[Tuple[int, ...]] = None,
-                          subset: Optional[List[int]] = None) -> Tuple[np.ndarray, ...]:
+                          data: Union[List[List[str]], List[str]],
+                          max_len: Optional[int],
+                          subset: Optional[List[int]] = None) -> np.ndarray:
         raise NotImplementedError
 
     def numerize_token_sequences(self,

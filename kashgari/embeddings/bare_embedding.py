@@ -13,7 +13,7 @@ from tensorflow import keras
 
 import kashgari.macros as k
 from kashgari.embeddings.base_embedding import Embedding
-from kashgari.pre_processors.base_processor import BaseProcessor
+from kashgari.processors.base_processor import BaseProcessor
 
 L = keras.layers
 
@@ -25,7 +25,7 @@ class BareEmbedding(Embedding):
 
     def __init__(self,
                  task: str = None,
-                 sequence_length: Union[Tuple[int, ...], str, int] = 'auto',
+                 sequence_length: Union[int, str] = 'auto',
                  embedding_size: int = 100,
                  processor: Optional[BaseProcessor] = None):
         """
@@ -46,34 +46,22 @@ class BareEmbedding(Embedding):
             self._build_model()
 
     def _build_model(self, **kwargs):
-        if self.token_count == 0:
+        if self.sequence_length == 0 or self.sequence_length == 'auto':
             logging.debug('need to build after build_word2idx')
         else:
-            input_layers = []
-            output_layers = []
-            for index, seq_len in enumerate(self.sequence_length):
-                input_tensor = L.Input(shape=(seq_len,),
-                                       name=f'input_{index}')
-                layer_embedding = L.Embedding(self.token_count,
-                                              self.embedding_size,
-                                              name=f'layer_embedding_{index}')
+            input_tensor = L.Input(shape=(self.sequence_length,),
+                                   name=f'input')
+            layer_embedding = L.Embedding(self.token_count,
+                                          self.embedding_size,
+                                          name=f'layer_embedding')
 
-                embedded_tensor = layer_embedding(input_tensor)
-
-                input_layers.append(input_tensor)
-                output_layers.append(embedded_tensor)
-            if len(output_layers) > 1:
-                layer_concatenate = L.Concatenate(name='layer_concatenate')
-                output = layer_concatenate(output_layers)
-            else:
-                output = output_layers
-
-            self.embed_model = keras.Model(input_layers, output)
+            embedded_tensor = layer_embedding(input_tensor)
+            self.embed_model = keras.Model(input_tensor, embedded_tensor)
 
 
 if __name__ == "__main__":
     from kashgari.corpus import SMP2018ECDTCorpus
-    from kashgari.pre_processors import ClassificationProcessor
+    from kashgari.processors import ClassificationProcessor
     import kashgari
 
     x, y = SMP2018ECDTCorpus.load_data()

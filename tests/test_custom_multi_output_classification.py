@@ -13,7 +13,7 @@ import numpy as np
 import tensorflow as tf
 from typing import Tuple, List, Optional, Dict, Any
 from kashgari.layers import L
-from kashgari.pre_processors.classification_processor import ClassificationProcessor
+from kashgari.processors.classification_processor import ClassificationProcessor
 from kashgari.tasks.classification.base_model import BaseClassificationModel
 from kashgari.corpus import SMP2018ECDTCorpus
 from tensorflow.python.keras.utils import to_categorical

@@ -16,8 +16,8 @@ from tensorflow import keras
 import kashgari
 import kashgari.macros as k
 from kashgari import utils
-from kashgari.pre_processors import ClassificationProcessor, LabelingProcessor
-from kashgari.pre_processors.base_processor import BaseProcessor
+from kashgari.processors import ClassificationProcessor, LabelingProcessor
+from kashgari.processors.base_processor import BaseProcessor
 
 L = keras.layers
 
@@ -33,7 +33,7 @@ class Embedding(object):
 
     def __init__(self,
                  task: str = None,
-                 sequence_length: Union[Tuple[int, ...], str] = 'auto',
+                 sequence_length: Union[int, str] = 'auto',
                  embedding_size: int = 100,
                  processor: Optional[BaseProcessor] = None):
 
@@ -71,11 +71,9 @@ class Embedding(object):
             if val is 'auto':
                 logging.warning("Sequence length will auto set at 95% of sequence length")
             elif val == 'variable':
-                val = (None,)
+                val = None
             else:
                 raise ValueError("sequence_length must be an int or 'auto' or 'variable'")
-        elif isinstance(val, int):
-            val = (val,)
         self._sequence_length = val
 
     def _build_model(self, **kwargs):
@@ -94,8 +92,6 @@ class Embedding(object):
         Returns:
 
         """
-        x = utils.wrap_as_tuple(x)
-        y = utils.wrap_as_tuple(y)
         self.processor.analyze_corpus(x, y)
         if self.sequence_length == 'auto':
             self.sequence_length = self.processor.dataset_info['RECOMMEND_LEN']

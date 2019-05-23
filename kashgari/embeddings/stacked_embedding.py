@@ -14,7 +14,7 @@ import tensorflow as tf
 
 import kashgari
 from kashgari.embeddings.base_embedding import Embedding
-from kashgari.pre_processors.base_processor import BaseProcessor
+from kashgari.processors.base_processor import BaseProcessor
 from kashgari.layers import L
 
 

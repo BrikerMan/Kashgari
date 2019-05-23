@@ -20,7 +20,7 @@ import tensorflow as tf
 from kashgari import utils
 from kashgari.layers import NonMaskingLayer, L
 from kashgari.embeddings.base_embedding import Embedding
-from kashgari.pre_processors.base_processor import BaseProcessor
+from kashgari.processors.base_processor import BaseProcessor
 import keras_bert
 
 

@@ -6,7 +6,7 @@ from tensorflow.python.keras.utils import to_categorical
 
 import kashgari
 from kashgari import utils
-from kashgari.pre_processors.base_processor import BaseProcessor
+from kashgari.processors.base_processor import BaseProcessor
 
 
 class ClassificationProcessor(BaseProcessor):
@@ -24,53 +24,25 @@ class ClassificationProcessor(BaseProcessor):
 
     def _build_label_dict(self,
                           labels: List[str]):
-        label_set = []
-        for item in labels:
-            label_set.extend(list(set(item)))
+        label_set = list(set(labels))
 
         self.label2idx = {self.token_pad: 0, }
         for idx, label in enumerate(label_set):
             self.label2idx[label] = idx + 1
-
+        print(self.idx2label)
         self.idx2label = dict([(value, key) for key, value in self.label2idx.items()])
         self.dataset_info['label_count'] = len(self.label2idx)
 
-    def process_x_dataset(self,
-                          data: Tuple[List[List[str]], ...],
-                          maxlens: Optional[Tuple[int, ...]] = None,
-                          subset: Optional[List[int]] = None) -> Union[Tuple[np.ndarray, ...], List[np.ndarray]]:
-        result = []
-        for index, dataset in enumerate(data):
-            if subset is not None:
-                target = utils.get_list_subset(dataset, subset)
-            else:
-                target = dataset
-            numerized_samples = self.numerize_token_sequences(target)
-            target_maxlen = utils.get_tuple_item(maxlens, index)
-            padded_target = pad_sequences(numerized_samples, target_maxlen, padding='post', truncating='post')
-            result.append(padded_target)
-        if len(result) == 1:
-            return result[0]
-        else:
-            return tuple(result)
-
     def process_y_dataset(self,
-                          data: Tuple[List[List[str]], ...],
-                          maxlens: Optional[Tuple[int, ...]] = None,
-                          subset: Optional[List[int]] = None) -> Tuple[np.ndarray, ...]:
-        result = []
-        for index, dataset in enumerate(data):
-            if subset is not None:
-                target = utils.get_list_subset(dataset, subset)
-            else:
-                target = dataset
-            numerized_samples = self.numerize_label_sequences(target)
-            one_hot_result = to_categorical(numerized_samples, len(self.label2idx))
-            result.append(one_hot_result)
-        if len(result) == 1:
-            return result[0]
+                          data: List[str],
+                          max_len: Optional[int] = None,
+                          subset: Optional[List[int]] = None) -> np.ndarray:
+        if subset is not None:
+            target = utils.get_list_subset(data, subset)
         else:
-            return tuple(result)
+            target = data
+        numerized_samples = self.numerize_label_sequences(target)
+        return to_categorical(numerized_samples, len(self.label2idx))
 
     def numerize_token_sequences(self,
                                  sequences: List[List[str]]):
