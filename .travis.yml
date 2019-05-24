@@ -15,7 +15,7 @@ before_install:
 install:
   - pip install jieba
   - pip install python-coveralls
-  - pip install .
+  - pip install -e .
   - pip install tensorflow==1.13.1
   - pip install coverage
   - pip install nose
