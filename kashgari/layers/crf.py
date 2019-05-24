@@ -14,9 +14,15 @@
 # limitations under the License.
 # ******************************************************************************
 import tensorflow as tf
+import numpy as np
 from tensorflow import convert_to_tensor, keras
 from tensorflow.python.keras.backend import argmax
 from tensorflow.python.keras.metrics import categorical_accuracy
+
+
+@tf.contrib.eager.defun
+def count_nonzero(tensor):
+    return tf.map_fn(tf.count_nonzero, tensor)
 
 
 class CRF(keras.layers.Layer):
@@ -35,6 +41,8 @@ class CRF(keras.layers.Layer):
     Input shape:
         'reg' mode - nD tensor with shape `(batch_size, sentence length, num_classes)`.
         'pad' mode - tuple of `(batch_size, sentence length, num_classes)`, `(batch_size, 1)`
+        'pad_zero' mode - nD tensor with shape `(batch_size, sentence length, num_classes)`.
+            Auto count non zero items count as sequence length.
     Output shape:
         nD tensor with shape: `(batch_size, sentence length, num_classes)`.
     """
@@ -47,7 +55,7 @@ class CRF(keras.layers.Layer):
         if self.mode == 'pad':
             self.input_spec = [keras.layers.InputSpec(min_ndim=3),
                                keras.layers.InputSpec(min_ndim=2)]
-        elif self.mode == 'reg':
+        elif self.mode in ['reg', 'pad_zero']:
             self.input_spec = keras.layers.InputSpec(min_ndim=3)
         else:
             raise ValueError
@@ -95,6 +103,11 @@ class CRF(keras.layers.Layer):
         if self.mode == 'pad':
             sequences = convert_to_tensor(inputs[0], dtype=self.dtype)
             self.sequence_lengths = tf.keras.backend.flatten(inputs[-1])
+        elif self.mode == 'pad_zero':
+            # TODO: Check crf sequence lengths logic
+            sequences = convert_to_tensor(inputs, dtype=self.dtype)
+            count_nonzero = tf.count_nonzero(inputs, axis=2)
+            self.sequence_lengths = tf.cast(tf.count_nonzero(count_nonzero, axis=1), dtype=tf.int32)  # [batch_size,]
         else:
             sequences = convert_to_tensor(inputs, dtype=self.dtype)
             shape = tf.shape(inputs)
