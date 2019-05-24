@@ -34,6 +34,6 @@ steps:
   displayName: 'Install dependencies'
 
 - script: |
-    nosetests --with-xunit --with-coverage --cover-html --cover-html-dir=htmlcov --cover-package="kashgari" tests
-    coverage xml -i
-  displayName: 'nosetests'
+    pip install pytest pytest-azurepipelines pytest-cov
+    pytest tests/ --cov kashgari --cov-report html
+  displayName: 'pytest'

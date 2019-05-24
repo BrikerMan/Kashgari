@@ -10,10 +10,14 @@
 import unittest
 import os
 
+import tensorflow as tf
+tf.enable_eager_execution()
+
 import kashgari
 from kashgari.corpus import ChineseDailyNerCorpus
 from kashgari.embeddings import WordEmbedding
 from kashgari.tasks.labeling import CNNLSTMModel, BLSTMModel, BLSTMCRFModel
+from kashgari.tasks.labeling.experimental import BLSTMAttentionModel, SeqSelfAttentionModel
 
 valid_x, valid_y = ChineseDailyNerCorpus.load_data('valid')
 
@@ -69,6 +73,28 @@ class TestCRFModel(TestCNNLSTMModel):
         cls.epochs = 3
         cls.model_class = BLSTMCRFModel
 
+    def test_variable_length_model(self):
+        pass
+
+
+class TestSeqSelfAttentionModel(TestCNNLSTMModel):
+    @classmethod
+    def setUpClass(cls):
+        cls.epochs = 3
+        cls.model_class = SeqSelfAttentionModel
+
+    def test_variable_length_model(self):
+        pass
+
+
+class TestBLSTMAttentionModel(TestCNNLSTMModel):
+    @classmethod
+    def setUpClass(cls):
+        cls.epochs = 3
+        cls.model_class = BLSTMAttentionModel
+
+    def test_variable_length_model(self):
+        pass
 
 if __name__ == "__main__":
     print("Hello world")

@@ -11,7 +11,9 @@
 
 """
 import os
+import tensorflow as tf
 os.environ['TF_KERAS'] = '1'
+tf.enable_eager_execution()
 
 from kashgari import layers
 from kashgari import corpus
@@ -26,3 +28,5 @@ from kashgari.macros import TaskType
 
 CLASSIFICATION = TaskType.CLASSIFICATION
 LABELING = TaskType.LABELING
+
+
