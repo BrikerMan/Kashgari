@@ -42,6 +42,9 @@ def get_tuple_item(data: Optional[Tuple], index: int) -> Optional[Any]:
 
 
 def get_project_path() -> str:
+    env_path = os.environ.get('KASHGARI_PROJECT_DIR')
+    if env_path:
+        return env_path
     here = pathlib.Path(__file__).parent
     return os.path.abspath(os.path.join(here, '../'))
 

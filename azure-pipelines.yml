@@ -32,9 +32,12 @@ steps:
     pip install tensorflow==1.13.1
     pip install coverage
     pip install nose
+    export KASHGARI_PROJECT_DIR=`pwd`
   displayName: 'Install dependencies'
 
 - script: |
+    - script: |
+    echo $KASHGARI_PROJECT_DIR
     pip install pytest pytest-azurepipelines pytest-cov
     pytest tests/ --cov kashgari --cov-report html
   displayName: 'pytest'
