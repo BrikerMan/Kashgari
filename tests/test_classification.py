@@ -48,11 +48,11 @@ class TestCNNLSTMModel(unittest.TestCase):
         assert len(res) == 5
         model.evaluate(valid_x[:100], valid_y[:100])
 
-        model_path = os.path.join('./models/', model.info()['task'], self.model_class.__architect_name__)
-        model.save(model_path)
-        new_model = kashgari.utils.load_model(model_path)
-        new_res = new_model.predict(valid_x[:5])
-        assert np.array_equal(new_res, res)
+        # model_path = os.path.join('./models/', model.info()['task'], self.model_class.__architect_name__)
+        # model.save(model_path)
+        # new_model = kashgari.utils.load_model(model_path)
+        # new_res = new_model.predict(valid_x[:5])
+        # assert np.array_equal(new_res, res)
 
     def test_w2v_model(self):
         model = self.model_class(embedding=w2v_embedding)
