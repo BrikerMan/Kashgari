@@ -8,7 +8,7 @@
 # time: 2019-05-20 17:40
 
 import logging
-from typing import Union, List, Optional, Tuple
+from typing import Union, List, Optional
 
 import numpy as np
 from tensorflow import keras

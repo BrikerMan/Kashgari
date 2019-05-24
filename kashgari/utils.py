@@ -16,10 +16,10 @@ import pickle
 import random
 import pathlib
 import keras_bert
-from pydoc import locate
+import pydoc
 import tensorflow as tf
 from kashgari.tasks.base_model import BaseModel
-from typing import List, Tuple, Optional, Any
+from typing import List
 
 
 def unison_shuffled_copies(a, b):
@@ -34,27 +34,9 @@ def get_list_subset(target: List, index_list: List[int]) -> List:
     return [target[i] for i in index_list if i < len(target)]
 
 
-def get_tuple_item(data: Optional[Tuple], index: int) -> Optional[Any]:
-    if data and len(data) > index:
-        return data[index]
-    else:
-        return None
-
-
 def get_project_path() -> str:
-    env_path = os.environ.get('KASHGARI_PROJECT_DIR')
-    if env_path:
-        return env_path
     here = pathlib.Path(__file__).parent
     return os.path.abspath(os.path.join(here, '../'))
-
-
-def wrap_as_tuple(original) -> Tuple[Any]:
-    if isinstance(original, tuple):
-        return original
-    elif isinstance(original, list) or len(original) == 1:
-        return tuple([original])
-    return original
 
 
 def get_custom_objects():
@@ -74,9 +56,9 @@ def load_model(model_path: str) -> BaseModel:
 
     from kashgari.embeddings import BareEmbedding
     embedding = BareEmbedding(processor=processor,
-                              sequence_length=tuple(config['embedding']['sequence_length']))
+                              sequence_length=config['embedding']['sequence_length'])
 
-    task_module = locate(f"{config['module']}.{config['architect_name']}")
+    task_module = pydoc.locate(f"{config['module']}.{config['architect_name']}")
     model: BaseModel = task_module(embedding=embedding, hyper_parameters=config['hyper_parameters'])
     model.tf_model = tf.keras.models.load_model(os.path.join(model_path, 'model.h5'),
                                                 custom_objects=get_custom_objects())

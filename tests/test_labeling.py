@@ -6,12 +6,9 @@
 
 # file: test_labeling.py
 # time: 2019-05-20 19:03
-
-import unittest
 import os
-
-import tensorflow as tf
-tf.enable_eager_execution()
+import unittest
+import numpy as np
 
 import kashgari
 from kashgari.corpus import ChineseDailyNerCorpus
@@ -40,6 +37,12 @@ class TestCNNLSTMModel(unittest.TestCase):
             assert len(res[i]) == min(model.embedding.sequence_length, len(valid_x[i]))
         model.predict_entities(valid_x[:5])
         model.evaluate(valid_x[:100], valid_y[:100])
+
+        model_path = os.path.join('./models/', model.info()['task'], self.model_class.__architect_name__)
+        model.save(model_path)
+        new_model = kashgari.utils.load_model(model_path)
+        new_res = new_model.predict(valid_x[:5])
+        assert np.array_equal(new_res, res)
 
     def test_w2v_model(self):
         model = self.model_class(embedding=w2v_embedding)

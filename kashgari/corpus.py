@@ -126,7 +126,8 @@ class SMP2018ECDTCorpus(object):
                                untar=True)
 
         if cutter not in ['char', 'jieba', 'none']:
-            raise ValueError('cutter error, please use one onf the {char, jeiba}')
+            raise ValueError(
+                'cutter error, please use one onf the {char, jieba}')
 
         df_path = os.path.join(corpus_path, f'{subset_name}.csv')
         df = pd.read_csv(df_path)
@@ -134,7 +135,8 @@ class SMP2018ECDTCorpus(object):
             try:
                 import jieba
             except ModuleNotFoundError:
-                raise ModuleNotFoundError("please install jieba, `$ pip install jieba`")
+                raise ModuleNotFoundError(
+                    "please install jieba, `$ pip install jieba`")
             x_data = [list(jieba.cut(item)) for item in df['query'].to_list()]
         elif 'char':
             x_data = [list(item) for item in df['query'].to_list()]
@@ -149,7 +151,4 @@ class SMP2018ECDTCorpus(object):
 
 
 if __name__ == "__main__":
-    x, y = ChineseDailyNerCorpus.load_data('train')
-    print(x[:3])
-    print(y[:3])
     print("Hello world")

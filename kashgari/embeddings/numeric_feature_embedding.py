@@ -8,16 +8,15 @@
 # time: 2019-05-23 09:04
 
 
-import logging
-from typing import Union, Optional, Tuple, Dict, List
+from typing import Union, Optional, Tuple, List
 
+import numpy as np
 from tensorflow import keras
+from tensorflow.python.keras.preprocessing.sequence import pad_sequences
 
 import kashgari
-import numpy as np
 from kashgari.embeddings.base_embedding import Embedding
 from kashgari.processors.base_processor import BaseProcessor
-from tensorflow.python.keras.preprocessing.sequence import pad_sequences
 
 L = keras.layers
 

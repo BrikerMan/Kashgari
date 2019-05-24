@@ -1,7 +1,6 @@
-from typing import List, Tuple, Optional, Union
+from typing import List, Optional
 
 import numpy as np
-from tensorflow.python.keras.preprocessing.sequence import pad_sequences
 from tensorflow.python.keras.utils import to_categorical
 
 import kashgari
@@ -76,5 +75,3 @@ if __name__ == "__main__":
     x, y = SMP2018ECDTCorpus.load_data()
     p = ClassificationProcessor()
     p.analyze_corpus(x, y)
-    r = p.process_x_dataset((x, x), subset=[10, 12, 20], maxlens=(12, 20))
-    print(r)

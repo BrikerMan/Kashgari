@@ -29,15 +29,12 @@ class NonMaskingLayer(L.Layer):
     def build(self, input_shape):
         pass
 
-    def compute_mask(self, input, input_mask=None):
+    def compute_mask(self, inputs, input_mask=None):
         # do not pass the mask to the next layers
         return None
 
     def call(self, x, mask=None):
         return x
-
-    def get_output_shape_for(self, input_shape):
-        return input_shape
 
 
 if __name__ == "__main__":

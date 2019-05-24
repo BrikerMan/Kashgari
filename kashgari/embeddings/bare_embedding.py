@@ -7,7 +7,7 @@
 # file: bare_embedding.py
 # time: 2019-05-20 10:36
 import logging
-from typing import Union, Optional, Tuple
+from typing import Union, Optional
 
 from tensorflow import keras
 

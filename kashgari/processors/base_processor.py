@@ -13,7 +13,7 @@ import logging
 import pathlib
 import operator
 import collections
-from typing import List, Tuple, Optional, Union
+from typing import List, Optional, Union
 from tensorflow.python.keras.preprocessing.sequence import pad_sequences
 
 from kashgari import utils
@@ -72,11 +72,13 @@ class BaseProcessor(object):
         processor = cls()
         with open(os.path.join(cache_dir, 'token2idx.json'), 'r', encoding='utf-8') as f:
             processor.token2idx = json.loads(f.read())
-            processor.idx2token = dict([(value, key) for key, value in processor.token2idx.items()])
+            processor.idx2token = dict(
+                [(value, key) for key, value in processor.token2idx.items()])
 
         with open(os.path.join(cache_dir, 'label2idx.json'), 'r', encoding='utf-8') as f:
             processor.label2idx = json.loads(f.read())
-            processor.idx2label = dict([(value, key) for key, value in processor.label2idx.items()])
+            processor.idx2label = dict(
+                [(value, key) for key, value in processor.label2idx.items()])
         logging.debug(f"loaded token2idx and label2idx from dir: {cache_dir}. "
                       f"Contain {len(processor.token2idx)} tokens and {len(processor.label2idx)} labels.")
 
@@ -113,11 +115,12 @@ class BaseProcessor(object):
                 token2idx[token] = len(token2idx)
 
         self.token2idx = token2idx
-        self.idx2token = dict([(value, key) for key, value in self.token2idx.items()])
+        self.idx2token = dict([(value, key)
+                               for key, value in self.token2idx.items()])
         logging.debug(f"build token2idx dict finished, contains {len(self.token2idx)} tokens.")
         self.dataset_info['token_count'] = len(self.token2idx)
 
-    def _build_label_dict(self, corpus: Tuple):
+    def _build_label_dict(self, corpus: Union[List[List[str]], List[str]]):
         raise NotImplementedError
 
     def process_x_dataset(self,

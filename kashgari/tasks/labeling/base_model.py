@@ -17,7 +17,6 @@ from kashgari.loss import weighted_categorical_crossentropy
 from seqeval.metrics import classification_report
 from seqeval.metrics.sequence_labeling import get_entities
 
-from kashgari import utils
 from kashgari.tasks.base_model import BaseModel
 
 

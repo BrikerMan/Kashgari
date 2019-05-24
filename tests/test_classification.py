@@ -7,8 +7,10 @@
 # file: classification.py
 # time: 2019-05-22 12:39
 
-import unittest
 import os
+import logging
+import unittest
+import numpy as np
 
 import kashgari
 from kashgari.corpus import SMP2018ECDTCorpus
@@ -22,6 +24,8 @@ bert_path = os.path.join(kashgari.utils.get_project_path(), 'tests/test-data/ber
 
 w2v_embedding = WordEmbedding(sample_w2v_path, task=kashgari.CLASSIFICATION)
 w2v_embedding_variable_len = WordEmbedding(sample_w2v_path, task=kashgari.CLASSIFICATION, sequence_length='variable')
+
+logging.basicConfig(level=logging.DEBUG)
 
 
 class TestBertCNNLSTMModel(unittest.TestCase):
@@ -37,12 +41,18 @@ class TestCNNLSTMModel(unittest.TestCase):
     def setUpClass(cls):
         cls.model_class = BLSTMModel
 
-    def test_basic_use_build(self):
+    def test_basic_use(self):
         model = self.model_class()
         model.fit(valid_x, valid_y, valid_x, valid_y, epochs=1)
         res = model.predict(valid_x[:5])
         assert len(res) == 5
         model.evaluate(valid_x[:100], valid_y[:100])
+
+        model_path = os.path.join('./models/', model.info()['task'], self.model_class.__architect_name__)
+        model.save(model_path)
+        new_model = kashgari.utils.load_model(model_path)
+        new_res = new_model.predict(valid_x[:5])
+        assert np.array_equal(new_res, res)
 
     def test_w2v_model(self):
         model = self.model_class(embedding=w2v_embedding)

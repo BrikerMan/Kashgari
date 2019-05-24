@@ -12,7 +12,7 @@
 import collections
 import logging
 import operator
-from typing import List, Dict, Tuple, Optional, Callable, Union
+from typing import List, Dict, Optional
 
 import numpy as np
 from tensorflow.python.keras.preprocessing.sequence import pad_sequences
@@ -62,7 +62,8 @@ class LabelingProcessor(BaseProcessor):
                 label2idx[token] = len(label2idx)
 
         self.label2idx = label2idx
-        self.idx2label = dict([(value, key) for key, value in self.label2idx.items()])
+        self.idx2label = dict([(value, key)
+                               for key, value in self.label2idx.items()])
         logging.debug(f"build label2idx dict finished, contains {len(self.label2idx)} labels.")
 
     def process_y_dataset(self,
@@ -74,7 +75,8 @@ class LabelingProcessor(BaseProcessor):
         else:
             target = data[:]
         numerized_samples = self.numerize_label_sequences(target)
-        padded_seq = pad_sequences(numerized_samples, max_len, padding='post', truncating='post')
+        padded_seq = pad_sequences(
+            numerized_samples, max_len, padding='post', truncating='post')
         return to_categorical(padded_seq, len(self.label2idx))
 
     def numerize_token_sequences(self,
@@ -83,7 +85,8 @@ class LabelingProcessor(BaseProcessor):
         result = []
         for seq in sequences:
             unk_index = self.token2idx[self.token_unk]
-            result.append([self.token2idx.get(token, unk_index) for token in seq])
+            result.append([self.token2idx.get(token, unk_index)
+                           for token in seq])
         return result
 
     def numerize_label_sequences(self,

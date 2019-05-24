@@ -79,10 +79,9 @@ class BaseModel(object):
 
     def build_model(self,
                     x_train: Union[Tuple[List[List[str]], ...], List[List[str]]],
-                    y_train: List[List[str]],
+                    y_train: Union[List[List[str]], List[str]],
                     x_validate: Union[Tuple[List[List[str]], ...], List[List[str]]] = None,
-                    y_validate: List[List[str]] = None,
-                    **kwargs):
+                    y_validate: Union[List[List[str]], List[str]] = None):
         self.embedding.analyze_corpus(x_train, y_train)
 
         if self.tf_model is None:
@@ -128,13 +127,12 @@ class BaseModel(object):
 
     def fit(self,
             x_train: Union[Tuple[List[List[str]], ...], List[List[str]]],
-            y_train: List[List[str]],
+            y_train: Union[List[List[str]], List[str]],
             x_validate: Union[Tuple[List[List[str]], ...], List[List[str]]] = None,
-            y_validate: List[List[str]] = None,
+            y_validate: Union[List[List[str]], List[str]] = None,
             batch_size: int = 64,
             epochs: int = 5,
-            fit_kwargs: Dict = None,
-            **kwargs):
+            fit_kwargs: Dict = None):
         """
         Trains the model for a given number of epochs (iterations on a dataset).
 
@@ -150,12 +148,11 @@ class BaseModel(object):
             fit_kwargs: fit_kwargs: additional arguments passed to ``fit_generator()`` function from
                 ``tensorflow.keras.Model``
                 - https://www.tensorflow.org/api_docs/python/tf/keras/models/Model#fit_generator
-            **kwargs:
 
         Returns:
 
         """
-        self.build_model(x_train, y_train, x_validate, y_validate, **kwargs)
+        self.build_model(x_train, y_train, x_validate, y_validate)
 
         train_generator = self.get_data_generator(x_train,
                                                   y_train,
@@ -258,9 +255,11 @@ class BaseModel(object):
 
         with open(os.path.join(model_path, 'processor.pickle'), 'wb') as f:
             f.write(pickle.dumps(self.embedding.processor))
+            f.close()
 
         with open(os.path.join(model_path, 'model_info.json'), 'w') as f:
             f.write(json.dumps(self.info(), indent=2, ensure_ascii=False))
+            f.close()
 
         self.tf_model.save(os.path.join(model_path, 'model.h5'))
         logging.info('model saved to {}'.format(os.path.abspath(model_path)))

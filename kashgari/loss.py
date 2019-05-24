@@ -7,7 +7,7 @@
 # file: loss.py
 # time: 2019-05-22 16:09
 
-from tensorflow.python.keras import backend as K
+from tensorflow.python.keras import backend
 
 
 def weighted_categorical_crossentropy(weights):
@@ -23,16 +23,16 @@ def weighted_categorical_crossentropy(weights):
         model.compile(loss=loss,optimizer='adam')
     """
 
-    weights = K.variable(weights)
+    weights = backend.variable(weights)
 
     def categorical_crossentropy(y_true, y_pred):
         # scale predictions so that the class probas of each sample sum to 1
-        y_pred /= K.sum(y_pred, axis=-1, keepdims=True)
+        y_pred /= backend.sum(y_pred, axis=-1, keepdims=True)
         # clip to prevent NaN's and Inf's
-        y_pred = K.clip(y_pred, K.epsilon(), 1 - K.epsilon())
+        y_pred = backend.clip(y_pred, backend.epsilon(), 1 - backend.epsilon())
         # calc
-        loss = y_true * K.log(y_pred) * weights
-        loss = -K.sum(loss, -1)
+        loss = y_true * backend.log(y_pred) * weights
+        loss = -backend.sum(loss, -1)
         return loss
 
     return categorical_crossentropy

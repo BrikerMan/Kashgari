@@ -14,15 +14,9 @@
 # limitations under the License.
 # ******************************************************************************
 import tensorflow as tf
-import numpy as np
 from tensorflow import convert_to_tensor, keras
 from tensorflow.python.keras.backend import argmax
 from tensorflow.python.keras.metrics import categorical_accuracy
-
-
-@tf.contrib.eager.defun
-def count_nonzero(tensor):
-    return tf.map_fn(tf.count_nonzero, tensor)
 
 
 class CRF(keras.layers.Layer):

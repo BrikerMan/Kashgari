@@ -17,7 +17,6 @@ from typing import Union, Optional, Any, List, Tuple
 import numpy as np
 import kashgari
 import tensorflow as tf
-from kashgari import utils
 from kashgari.layers import NonMaskingLayer, L
 from kashgari.embeddings.base_embedding import Embedding
 from kashgari.processors.base_processor import BaseProcessor
@@ -31,8 +30,7 @@ class BERTEmbedding(Embedding):
                  bert_path: str,
                  task: str = None,
                  sequence_length: Union[Tuple[int, ...], str, int] = 'auto',
-                 processor: Optional[BaseProcessor] = None,
-                 **kwargs):
+                 processor: Optional[BaseProcessor] = None):
         """
 
         Args:
@@ -40,7 +38,6 @@ class BERTEmbedding(Embedding):
             bert_path:
             sequence_length:
             processor:
-            **kwargs:
         """
         if isinstance(sequence_length, tuple):
             if len(sequence_length) > 2:
@@ -192,8 +189,8 @@ if __name__ == "__main__":
     test_x, test_y = SMP2018ECDTCorpus.load_data('valid')
 
     b.analyze_corpus(test_x, test_y)
-    data = 'all work and no play makes'.split(' ')
+    data1 = 'all work and no play makes'.split(' ')
     data2 = '你 好 啊'.split(' ')
-    r = b.embed([data], True)
+    r = b.embed([data1], True)
     print(r)
     print(r.shape)

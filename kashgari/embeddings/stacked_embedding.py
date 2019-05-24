@@ -26,14 +26,10 @@ class StackedEmbedding(Embedding):
                  embeddings: List[Embedding],
                  processor: Optional[BaseProcessor] = None):
         """
-        Init bare embedding (embedding without pre-training)
 
         Args:
-            sequence_length: ``'auto'``, ``'variable'`` or integer. When using ``'auto'``, use the 95% of corpus length
-                as sequence length. When using ``'variable'``, model input shape will set to None, which can handle
-                various length of input, it will use the length of max sequence in every batch for sequence length.
-                If using an integer, let's say ``50``, the input output sequence length will set to 50.
-            embedding_size: Dimension of the dense embedding.
+            embeddings:
+            processor:
         """
         task = kashgari.CLASSIFICATION
         if all(isinstance(embed.sequence_length, int) for embed in embeddings):
