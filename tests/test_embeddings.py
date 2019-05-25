@@ -128,7 +128,8 @@ class TestBERTEmbedding(TestBareEmbedding):
         cls.embedding_class = BERTEmbedding
         bert_path = get_file('bert_sample_model',
                              "https://storage.googleapis.com/kashgari/bert_sample_model.tar.bz2",
-                             cache_dir=DATA_PATH)
+                             cache_dir=DATA_PATH,
+                             untar=True)
         cls.config = {
             'bert_path': bert_path
         }

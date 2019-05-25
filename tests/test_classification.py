@@ -19,13 +19,14 @@ from tensorflow.python.keras.utils import get_file
 
 valid_x, valid_y = SMP2018ECDTCorpus.load_data('valid')
 
+bert_path = get_file('bert_sample_model',
+                     "https://storage.googleapis.com/kashgari/bert_sample_model.tar.bz2",
+                     cache_dir=DATA_PATH,
+                     untar=True)
+
 sample_w2v_path = get_file('sample_w2v.txt',
                            "https://storage.googleapis.com/kashgari/sample_w2v.txt",
                            cache_dir=DATA_PATH)
-
-bert_path = get_file('bert_sample_model',
-                     "https://storage.googleapis.com/kashgari/bert_sample_model.tar.bz2",
-                     cache_dir=DATA_PATH)
 
 w2v_embedding = WordEmbedding(sample_w2v_path, task=kashgari.CLASSIFICATION)
 w2v_embedding_variable_len = WordEmbedding(sample_w2v_path, task=kashgari.CLASSIFICATION, sequence_length='variable')
