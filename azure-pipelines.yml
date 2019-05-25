@@ -32,7 +32,8 @@ steps:
     pip install tensorflow==1.13.1
     pip install coverage
     pip install nose
-    pip install flake8 flake8-docstrings flake8-builtins
+    pip install flake8 flake8-builtins
+    # pip install flake8-docstrings
   displayName: 'Install dependencies'
 
 - script: |
