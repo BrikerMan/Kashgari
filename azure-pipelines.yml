@@ -56,7 +56,8 @@ steps:
 
 - script: |
     - script: |
-    pytest tests/ --cov kashgari --cov-report xml --cov-report html --junitxml=pytest-report.xml
+    pytest tests/test_corpus.py --cov kashgari --cov-report xml --cov-report html --junitxml=pytest-report.xml
+    coverage xml -i
   displayName: 'pytest'
 
 - task: SonarSource.sonarcloud.ce096e50-6155-4de8-8800-4221aaeed4a1.SonarCloudAnalyze@1
