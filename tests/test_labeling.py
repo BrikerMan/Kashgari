@@ -6,19 +6,23 @@
 
 # file: test_labeling.py
 # time: 2019-05-20 19:03
-import os
+
 import unittest
-import numpy as np
 
 import kashgari
 from kashgari.corpus import ChineseDailyNerCorpus
 from kashgari.embeddings import WordEmbedding
 from kashgari.tasks.labeling import CNNLSTMModel, BLSTMModel, BLSTMCRFModel
 from kashgari.tasks.labeling.experimental import BLSTMAttentionModel, SeqSelfAttentionModel
+from kashgari.macros import DATA_PATH
+
+from tensorflow.python.keras.utils import get_file
 
 valid_x, valid_y = ChineseDailyNerCorpus.load_data('valid')
 
-sample_w2v_path = os.path.join(kashgari.utils.get_project_path(), 'tests/test-data/sample_w2v.txt')
+sample_w2v_path = get_file('sample_w2v.txt',
+                                   "https://storage.googleapis.com/kashgari/sample_w2v.txt",
+                                   cache_dir=DATA_PATH)
 
 w2v_embedding = WordEmbedding(sample_w2v_path, task=kashgari.LABELING)
 w2v_embedding_variable_len = WordEmbedding(sample_w2v_path, task=kashgari.LABELING, sequence_length='variable')

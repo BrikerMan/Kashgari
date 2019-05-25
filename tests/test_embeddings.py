@@ -7,9 +7,7 @@
 # file: test_bare_embeddings.py
 # time: 2019-05-20 18:54
 
-import os
 import unittest
-
 import numpy as np
 
 import kashgari
@@ -19,6 +17,9 @@ from kashgari.embeddings import BareEmbedding, WordEmbedding, BERTEmbedding
 from kashgari.embeddings import NumericFeaturesEmbedding, StackedEmbedding
 from kashgari.processors import ClassificationProcessor, LabelingProcessor
 from kashgari.tasks.labeling import BLSTMModel
+from kashgari.macros import DATA_PATH
+
+from tensorflow.python.keras.utils import get_file
 
 
 class TestBareEmbedding(unittest.TestCase):
@@ -97,9 +98,14 @@ class TestBareEmbedding(unittest.TestCase):
 class TestWordEmbedding(TestBareEmbedding):
     @classmethod
     def setUpClass(cls):
+        sample_w2v_path = get_file('sample_w2v.txt',
+                                   "https://storage.googleapis.com/kashgari/sample_w2v.txt",
+                                   cache_dir=DATA_PATH)
+
         cls.embedding_class = WordEmbedding
+
         cls.config = {
-            'w2v_path': os.path.join(kashgari.utils.get_project_path(), 'tests/test-data/sample_w2v.txt')
+            'w2v_path': sample_w2v_path
         }
         cls.embedding_size = 100
 
@@ -120,8 +126,11 @@ class TestBERTEmbedding(TestBareEmbedding):
     @classmethod
     def setUpClass(cls):
         cls.embedding_class = BERTEmbedding
+        bert_path = get_file('bert_sample_model',
+                             "/Users/brikerman/.kashgari/datasets/bert_sample_model/",
+                             cache_dir=DATA_PATH)
         cls.config = {
-            'bert_path': os.path.join(kashgari.utils.get_project_path(), 'tests/test-data/bert')
+            'bert_path': bert_path
         }
 
     def test_embed(self):

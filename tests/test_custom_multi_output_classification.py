@@ -121,15 +121,18 @@ class TestCustomMultiOutputModel(unittest.TestCase):
         assert res[0].shape == (10, 3)
 
     def test_build_with_BERT_and_fit(self):
-        import os
-        import kashgari
         from kashgari.embeddings import BERTEmbedding
+        from tensorflow.python.keras.utils import get_file
+        from kashgari.macros import DATA_PATH
 
-        bert_path = os.path.join(kashgari.utils.get_project_path(), 'tests/test-data/bert')
+        sample_bert_path = get_file('bert_sample_model',
+                                    "https://storage.googleapis.com/kashgari/bert_sample_model.tar.bz2",
+                                    cache_dir=DATA_PATH,
+                                    untar=True)
 
         processor = MultiOutputProcessor()
         embedding = BERTEmbedding(
-            bert_path=bert_path,
+            bert_path=sample_bert_path,
             processor=processor)
         m = MultiOutputModel(embedding=embedding)
         m.build_model(train_x, (output_1, output_2))

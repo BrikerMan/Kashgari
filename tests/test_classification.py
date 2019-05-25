@@ -7,20 +7,25 @@
 # file: classification.py
 # time: 2019-05-22 12:39
 
-import os
 import logging
 import unittest
-import numpy as np
 
 import kashgari
 from kashgari.corpus import SMP2018ECDTCorpus
 from kashgari.embeddings import WordEmbedding, BERTEmbedding
 from kashgari.tasks.classification import BLSTMModel
+from kashgari.macros import DATA_PATH
+from tensorflow.python.keras.utils import get_file
 
 valid_x, valid_y = SMP2018ECDTCorpus.load_data('valid')
 
-sample_w2v_path = os.path.join(kashgari.utils.get_project_path(), 'tests/test-data/sample_w2v.txt')
-bert_path = os.path.join(kashgari.utils.get_project_path(), 'tests/test-data/bert')
+sample_w2v_path = get_file('sample_w2v.txt',
+                           "https://storage.googleapis.com/kashgari/sample_w2v.txt",
+                           cache_dir=DATA_PATH)
+
+bert_path = get_file('bert_sample_model',
+                            "/Users/brikerman/.kashgari/datasets/bert_sample_model/",
+                            cache_dir=DATA_PATH)
 
 w2v_embedding = WordEmbedding(sample_w2v_path, task=kashgari.CLASSIFICATION)
 w2v_embedding_variable_len = WordEmbedding(sample_w2v_path, task=kashgari.CLASSIFICATION, sequence_length='variable')
