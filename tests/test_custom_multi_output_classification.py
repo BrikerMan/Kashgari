@@ -8,9 +8,9 @@
 # time: 2019-05-22 13:36
 
 import unittest
-import kashgari
 import numpy as np
 import tensorflow as tf
+import kashgari
 from typing import Tuple, List, Optional, Dict, Any
 from kashgari.layers import L
 from kashgari.processors.classification_processor import ClassificationProcessor
@@ -113,6 +113,24 @@ class TestCustomMultiOutputModel(unittest.TestCase):
         from kashgari.embeddings import BareEmbedding
         processor = MultiOutputProcessor()
         embedding = BareEmbedding(processor=processor)
+        m = MultiOutputModel(embedding=embedding)
+        m.build_model(train_x, (output_1, output_2))
+        m.fit(train_x, (output_1, output_2), epochs=2)
+        res = m.predict(train_x[:10])
+        assert len(res) == 2
+        assert res[0].shape == (10, 3)
+
+    def test_build_with_BERT_and_fit(self):
+        import os
+        import kashgari
+        from kashgari.embeddings import BERTEmbedding
+
+        bert_path = os.path.join(kashgari.utils.get_project_path(), 'tests/test-data/bert')
+
+        processor = MultiOutputProcessor()
+        embedding = BERTEmbedding(
+            bert_path=bert_path,
+            processor=processor)
         m = MultiOutputModel(embedding=embedding)
         m.build_model(train_x, (output_1, output_2))
         m.fit(train_x, (output_1, output_2), epochs=2)
