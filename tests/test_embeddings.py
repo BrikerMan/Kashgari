@@ -127,7 +127,7 @@ class TestBERTEmbedding(TestBareEmbedding):
     def setUpClass(cls):
         cls.embedding_class = BERTEmbedding
         bert_path = get_file('bert_sample_model',
-                             "/Users/brikerman/.kashgari/datasets/bert_sample_model/",
+                             "https://storage.googleapis.com/kashgari/bert_sample_model.tar.bz2",
                              cache_dir=DATA_PATH)
         cls.config = {
             'bert_path': bert_path
