@@ -32,8 +32,12 @@ steps:
     pip install tensorflow==1.13.1
     pip install coverage
     pip install nose
-    export KASHGARI_PROJECT_DIR=`pwd`
+    pip install flake8 flake8-docstrings flake8-builtins
   displayName: 'Install dependencies'
+
+- script: |
+    flake8 kashgari
+  displayName: 'Flake 8 Style check'
 
 - task: SonarSource.sonarcloud.14d9cde6-c1da-4d55-aa01-2965cd301255.SonarCloudPrepare@1
   displayName: 'Prepare analysis on SonarCloud'
