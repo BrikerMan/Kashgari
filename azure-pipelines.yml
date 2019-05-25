@@ -48,7 +48,7 @@ steps:
      # Additional properties that will be passed to the scanner, 
      # Put one key=value per line, example:
      # sonar.exclusions=**/*.bin
-     sonar.python.coverage.reportPath=$(System.DefaultWorkingDirectory)/coverage.xml
+     sonar.python.coverage.reportPaths=$(System.DefaultWorkingDirectory)/test-cov.xml
 
 - script: |
     flake8 kashgari
@@ -57,6 +57,7 @@ steps:
 - script: |
     - script: |
     pytest tests/ --cov kashgari --cov-report xml --cov-report html
+    head test-cov.xml
   displayName: 'pytest'
 
 - task: SonarSource.sonarcloud.ce096e50-6155-4de8-8800-4221aaeed4a1.SonarCloudAnalyze@1
