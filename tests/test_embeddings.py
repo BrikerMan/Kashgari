@@ -155,7 +155,7 @@ class TestBERTEmbedding(TestBareEmbedding):
         ]).shape == (3, 10, 16)
 
     def test_variable_length_embed(self):
-        with self.assertRaises(Exception) as context:
+        with self.assertRaises(Exception):
             self.embedding_class(task=kashgari.CLASSIFICATION,
                                  sequence_length='variable',
                                  **self.config)

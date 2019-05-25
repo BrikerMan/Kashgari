@@ -66,7 +66,7 @@ class Embedding(object):
     @sequence_length.setter
     def sequence_length(self, val: Union[int, str]):
         if isinstance(val, str):
-            if val is 'auto':
+            if val == 'auto':
                 logging.warning("Sequence length will auto set at 95% of sequence length")
             elif val == 'variable':
                 val = None

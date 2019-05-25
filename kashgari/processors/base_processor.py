@@ -150,7 +150,7 @@ class BaseProcessor(object):
         raise NotImplementedError
 
     def reverse_numerize_label_sequences(self, sequence, **kwargs):
-        raise NotImplemented
+        raise NotImplementedError
 
     def __repr__(self):
         return f"<{self.__class__}>"

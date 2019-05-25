@@ -99,5 +99,6 @@ class TestBLSTMAttentionModel(TestCNNLSTMModel):
     def test_variable_length_model(self):
         pass
 
+
 if __name__ == "__main__":
     print("Hello world")
