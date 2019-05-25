@@ -24,7 +24,7 @@ sample_w2v_path = get_file('sample_w2v.txt',
                            cache_dir=DATA_PATH)
 
 bert_path = get_file('bert_sample_model',
-                     "https://storage.googleapis.com/kashgari/bert_sample_model.tar.gz",
+                     "https://storage.googleapis.com/kashgari/bert_sample_model.tar.bz2",
                      cache_dir=DATA_PATH)
 
 w2v_embedding = WordEmbedding(sample_w2v_path, task=kashgari.CLASSIFICATION)
