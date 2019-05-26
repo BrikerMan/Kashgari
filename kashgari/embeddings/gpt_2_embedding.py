@@ -208,9 +208,9 @@ class GPT2Embedding(Embedding):
         for filename in ['checkpoint', 'encoder.json', 'hparams.json', 'model.ckpt.data-00000-of-00001',
                          'model.ckpt.index', 'model.ckpt.meta', 'vocab.bpe']:
             url = "https://storage.googleapis.com/gpt-2/models/" + model_name + "/" + filename
-            file = get_file(os.path.join(f'gpt2-{model_name}', filename),
-                            url,
-                            cache_dir=kashgari.macros.DATA_PATH)
+            get_file(os.path.join(f'gpt2-{model_name}', filename),
+                     url,
+                     cache_dir=kashgari.macros.DATA_PATH)
         return str(model_folder)
 
 
