@@ -106,6 +106,8 @@ class LabelingProcessor(BaseProcessor):
 
         for index, seq in enumerate(sequences):
             labels = []
+            if self.add_bos_eos:
+                seq = seq[1:]
             for idx in seq:
                 labels.append(self.idx2label[idx])
             if lengths is not None:
