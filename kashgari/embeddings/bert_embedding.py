@@ -5,7 +5,7 @@
 # blog: https://eliyar.biz
 
 # file: base_embedding.py
-# time: 2019-05-20 17:40
+# time: 2019-05-25 17:40
 
 import os
 
@@ -29,13 +29,13 @@ class BERTEmbedding(Embedding):
     def info(self):
         info = super(BERTEmbedding, self).info()
         info['config'] = {
-            'bert_path': self.bert_path,
+            'model_folder': self.model_folder,
             'sequence_length': self.sequence_length
         }
         return info
 
     def __init__(self,
-                 bert_path: str,
+                 model_folder: str,
                  task: str = None,
                  sequence_length: Union[Tuple[int, ...], str, int] = 'auto',
                  processor: Optional[BaseProcessor] = None,
@@ -44,7 +44,7 @@ class BERTEmbedding(Embedding):
 
         Args:
             task:
-            bert_path:
+            model_folder:
             sequence_length:
             processor:
             from_saved_model:
@@ -71,7 +71,7 @@ class BERTEmbedding(Embedding):
         self.processor.token_eos = '[SEP]'
 
         if not from_saved_model:
-            self.bert_path = bert_path
+            self.bert_path = model_folder
             self._build_token2idx_from_bert()
             self._build_model()
 
@@ -193,7 +193,7 @@ if __name__ == "__main__":
     # bert_model_path = os.path.join(utils.get_project_path(), 'tests/test-data/bert')
 
     b = BERTEmbedding(task=kashgari.CLASSIFICATION,
-                      bert_path='/Users/brikerman/.kashgari/embedding/bert/chinese_L-12_H-768_A-12',
+                      model_folder='/Users/brikerman/.kashgari/embedding/bert/chinese_L-12_H-768_A-12',
                       sequence_length=12)
 
     from kashgari.corpus import SMP2018ECDTCorpus

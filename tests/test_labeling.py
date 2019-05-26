@@ -10,6 +10,7 @@
 import unittest
 
 import os
+import time
 import numpy as np
 import kashgari
 from kashgari.corpus import ChineseDailyNerCorpus
@@ -48,7 +49,8 @@ class TestCNNLSTMModel(unittest.TestCase):
             assert len(res[i]) == min(model.embedding.sequence_length, len(valid_x[i]))
         model_path = os.path.join('./saved_models/',
                                   model.__class__.__module__,
-                                  model.__class__.__name__)
+                                  model.__class__.__name__,
+                                  str(time.time()))
         model.save(model_path)
 
         new_model = kashgari.utils.load_model(model_path)

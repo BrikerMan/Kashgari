@@ -11,6 +11,7 @@ import logging
 import unittest
 import numpy as np
 
+import time
 import kashgari
 from kashgari.corpus import SMP2018ECDTCorpus
 from kashgari.embeddings import WordEmbedding, BERTEmbedding
@@ -45,7 +46,8 @@ class TestBertCNNLSTMModel(unittest.TestCase):
 
         model_path = os.path.join('./saved_models/',
                                   model.__class__.__module__,
-                                  model.__class__.__name__)
+                                  model.__class__.__name__,
+                                  str(time.time()))
         model.save(model_path)
 
         new_model = kashgari.utils.load_model(model_path)

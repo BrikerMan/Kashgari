@@ -12,3 +12,4 @@ from kashgari.embeddings.bert_embedding import BERTEmbedding
 from kashgari.embeddings.word_embedding import WordEmbedding
 from kashgari.embeddings.numeric_feature_embedding import NumericFeaturesEmbedding
 from kashgari.embeddings.stacked_embedding import StackedEmbedding
+from kashgari.embeddings.gpt_2_embedding import GPT2Embedding

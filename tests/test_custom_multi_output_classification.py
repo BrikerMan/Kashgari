@@ -132,7 +132,7 @@ class TestCustomMultiOutputModel(unittest.TestCase):
 
         processor = MultiOutputProcessor()
         embedding = BERTEmbedding(
-            bert_path=sample_bert_path,
+            model_folder=sample_bert_path,
             processor=processor)
         m = MultiOutputModel(embedding=embedding)
         m.build_model(train_x, (output_1, output_2))
