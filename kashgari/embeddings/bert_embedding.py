@@ -83,7 +83,7 @@ class BERTEmbedding(Embedding):
             self.processor.token_eos: 3
         }
 
-        dict_path = os.path.join(self.bert_path, 'vocab.txt')
+        dict_path = os.path.join(self.model_folder, 'vocab.txt')
 
         with open(dict_path, 'r', encoding='utf-8') as f:
             words = f.read().splitlines()
@@ -102,8 +102,8 @@ class BERTEmbedding(Embedding):
                 seq_len = seq_len[0]
             if isinstance(seq_len, str):
                 return
-            config_path = os.path.join(self.bert_path, 'bert_config.json')
-            check_point_path = os.path.join(self.bert_path, 'bert_model.ckpt')
+            config_path = os.path.join(self.model_folder, 'bert_config.json')
+            check_point_path = os.path.join(self.model_folder, 'bert_model.ckpt')
             bert_model = keras_bert.load_trained_model_from_checkpoint(config_path,
                                                                        check_point_path,
                                                                        seq_len=seq_len)
