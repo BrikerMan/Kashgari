@@ -70,8 +70,8 @@ class BERTEmbedding(Embedding):
         self.processor.token_bos = '[CLS]'
         self.processor.token_eos = '[SEP]'
 
+        self.model_folder = model_folder
         if not from_saved_model:
-            self.bert_path = model_folder
             self._build_token2idx_from_bert()
             self._build_model()
 
