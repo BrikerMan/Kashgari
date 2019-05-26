@@ -12,13 +12,13 @@
 """
 import os
 import json
-import pickle
 import random
 import pathlib
-import keras_bert
 import pydoc
 import tensorflow as tf
+from kashgari import custom_objects
 from kashgari.tasks.base_model import BaseModel
+from kashgari.embeddings.base_embedding import Embedding
 from typing import List
 
 
@@ -39,29 +39,28 @@ def get_project_path() -> str:
     return os.path.abspath(os.path.join(here, '../'))
 
 
-def get_custom_objects():
-    return keras_bert.get_custom_objects()
-
-
 def custom_object_scope():
-    return tf.keras.utils.custom_object_scope(get_custom_objects())
+    return tf.keras.utils.custom_object_scope(custom_objects)
 
 
 def load_model(model_path: str) -> BaseModel:
     with open(os.path.join(model_path, 'model_info.json'), 'r') as f:
-        config = json.load(f)
+        model_info = json.load(f)
 
-    processor_path = os.path.join(model_path, 'processor.pickle')
-    processor = pickle.load(open(processor_path, "rb"))
+    model_class = pydoc.locate(f"{model_info['module']}.{model_info['class_name']}")
+    model_json_str = json.dumps(model_info['tf_model'])
 
-    from kashgari.embeddings import BareEmbedding
-    embedding = BareEmbedding(processor=processor,
-                              sequence_length=config['embedding']['sequence_length'])
+    model: BaseModel = model_class()
+    model.tf_model = tf.keras.models.model_from_json(model_json_str, custom_objects)
+    model.tf_model.load_weights(os.path.join(model_path, 'model.h5'))
 
-    task_module = pydoc.locate(f"{config['module']}.{config['architect_name']}")
-    model: BaseModel = task_module(embedding=embedding, hyper_parameters=config['hyper_parameters'])
-    model.tf_model = tf.keras.models.load_model(os.path.join(model_path, 'model.h5'),
-                                                custom_objects=get_custom_objects())
+    embed_info = model_info['embedding']
+    embed_class = pydoc.locate(f"{embed_info['module']}.{embed_info['class_name']}")
+    embedding: Embedding = embed_class._load_saved_instance(embed_info,
+                                                            model_path,
+                                                            model.tf_model)
+
+    model.embedding = embedding
     return model
 
 
@@ -89,4 +88,6 @@ def convert_to_multi_gpu_model(model: BaseModel,
 
 
 if __name__ == "__main__":
+    path = '/Users/brikerman/Desktop/python/Kashgari/tests/saved_models/kashgari.tasks.classification.models/BLSTMModel'
+    load_model(path)
     print(get_project_path())

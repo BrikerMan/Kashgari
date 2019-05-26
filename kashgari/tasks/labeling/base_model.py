@@ -22,8 +22,8 @@ from kashgari.tasks.base_model import BaseModel
 
 class BaseLabelingModel(BaseModel):
     """Base Sequence Labeling Model"""
-    __architect_name__ = 'BLSTMModel'
-    __task__ = "labeling"
+
+    __task__ = 'labeling'
 
     @classmethod
     def get_default_hyper_parameters(cls) -> Dict[str, Dict[str, Any]]:

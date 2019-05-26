@@ -26,7 +26,8 @@ class BareEmbedding(Embedding):
                  task: str = None,
                  sequence_length: Union[int, str] = 'auto',
                  embedding_size: int = 100,
-                 processor: Optional[BaseProcessor] = None):
+                 processor: Optional[BaseProcessor] = None,
+                 from_saved_model: bool = False):
         """
         Init bare embedding (embedding without pre-training)
 
@@ -40,12 +41,15 @@ class BareEmbedding(Embedding):
         super(BareEmbedding, self).__init__(task=task,
                                             sequence_length=sequence_length,
                                             embedding_size=embedding_size,
-                                            processor=processor)
-        if processor:
+                                            processor=processor,
+                                            from_saved_model=from_saved_model)
+        if not from_saved_model:
             self._build_model()
 
     def _build_model(self, **kwargs):
-        if self.sequence_length == 0 or self.sequence_length == 'auto':
+        if self.sequence_length == 0 or \
+                self.sequence_length == 'auto' or \
+                self.token_count == 0:
             logging.debug('need to build after build_word2idx')
         else:
             input_tensor = L.Input(shape=(self.sequence_length,),

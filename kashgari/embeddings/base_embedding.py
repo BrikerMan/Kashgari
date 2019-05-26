@@ -7,8 +7,10 @@
 # file: base_embedding.py
 # time: 2019-05-20 17:40
 
+import json
+import pydoc
 import logging
-from typing import Union, List, Optional
+from typing import Union, List, Optional, Dict
 
 import numpy as np
 from tensorflow import keras
@@ -25,20 +27,48 @@ class Embedding(object):
 
     def info(self):
         return {
-            'sequence_length': self.sequence_length,
-            'processor': self.processor.info()
+            'processor': self.processor.info(),
+            'class_name': self.__class__.__name__,
+            'module': self.__class__.__module__,
+            'config': {
+                'sequence_length': self.sequence_length,
+                'embedding_size': self.embedding_size,
+            },
+            'embed_model': json.loads(self.embed_model.to_json()),
         }
+
+    @classmethod
+    def _load_saved_instance(cls,
+                             config_dict: Dict,
+                             model_path: str,
+                             tf_model: keras.Model):
+
+        processor_info = config_dict['processor']
+        processor_class = pydoc.locate(f"{processor_info['module']}.{processor_info['class_name']}")
+        processor = processor_class(**processor_info['config'])
+
+        instance = cls(processor=processor,
+                       from_saved_model=True, **config_dict['config'])
+
+        embed_model_json_str = json.dumps(config_dict['embed_model'])
+        instance.embed_model = keras.models.model_from_json(embed_model_json_str,
+                                                            custom_objects=kashgari.custom_objects)
+
+        # Load Weights from model
+        for layer in instance.embed_model.layers:
+            layer: keras.layers.Layer = layer
+            layer.set_weights(tf_model.get_layer(layer.name).get_weights())
+        return instance
 
     def __init__(self,
                  task: str = None,
                  sequence_length: Union[int, str] = 'auto',
                  embedding_size: int = 100,
-                 processor: Optional[BaseProcessor] = None):
-
+                 processor: Optional[BaseProcessor] = None,
+                 from_saved_model: bool = False):
         self.embedding_size = embedding_size
         self.sequence_length: Union[int, str] = sequence_length
         self.embed_model: Optional[keras.Model] = None
-
         if processor is None:
             if task == kashgari.CLASSIFICATION:
                 self.processor = ClassificationProcessor()

@@ -15,7 +15,6 @@ from kashgari.tasks.classification.base_model import BaseClassificationModel
 
 
 class BLSTMModel(BaseClassificationModel):
-    __architect_name__ = 'BLSTMModel'
 
     @classmethod
     def get_default_hyper_parameters(cls) -> Dict[str, Dict[str, Any]]:

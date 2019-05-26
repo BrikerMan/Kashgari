@@ -12,7 +12,6 @@ from typing import Dict, Any, List, Optional, Union, Tuple
 
 import os
 import json
-import pickle
 import pathlib
 import logging
 import numpy as np
@@ -26,8 +25,6 @@ L = keras.layers
 
 class BaseModel(object):
     """Base Sequence Labeling Model"""
-    __architect_name__ = 'BLSTMModel'
-    __task__ = "labeling"
 
     @classmethod
     def get_default_hyper_parameters(cls) -> Dict[str, Dict[str, Any]]:
@@ -35,11 +32,13 @@ class BaseModel(object):
 
     def info(self):
         return {
-            'hyper_parameters': self.hyper_parameters,
+            'config': {
+                'hyper_parameters': self.hyper_parameters,
+            },
+            'tf_model': json.loads(self.tf_model.to_json()),
             'embedding': self.embedding.info(),
-            'architect_name': self.__architect_name__,
-            'task': self.__task__,
-            'module': self.__module__
+            'class_name': self.__class__.__name__,
+            'module': self.__class__.__module__
         }
 
     def __init__(self,
@@ -69,8 +68,6 @@ class BaseModel(object):
 
         self.tf_model: Optional[keras.Model] = None
         self.hyper_parameters = self.get_default_hyper_parameters()
-        self._label2idx = {}
-        self._idx2label = {}
         self.model_info = {}
         self.pre_processor = self.embedding.processor
 
@@ -253,15 +250,15 @@ class BaseModel(object):
     def save(self, model_path: str):
         pathlib.Path(model_path).mkdir(exist_ok=True, parents=True)
 
-        with open(os.path.join(model_path, 'processor.pickle'), 'wb') as f:
-            f.write(pickle.dumps(self.embedding.processor))
-            f.close()
+        # with open(os.path.join(model_path, 'processor.pickle'), 'wb') as f:
+        #     f.write(pickle.dumps(self.embedding.processor))
+        #     f.close()
 
         with open(os.path.join(model_path, 'model_info.json'), 'w') as f:
-            f.write(json.dumps(self.info(), indent=2, ensure_ascii=False))
+            f.write(json.dumps(self.info(), indent=2, ensure_ascii=True))
             f.close()
 
-        self.tf_model.save(os.path.join(model_path, 'model.h5'))
+        self.tf_model.save_weights(os.path.join(model_path, 'model.h5'))
         logging.info('model saved to {}'.format(os.path.abspath(model_path)))
 
 

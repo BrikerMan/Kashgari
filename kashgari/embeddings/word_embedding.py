@@ -23,12 +23,22 @@ L = keras.layers
 class WordEmbedding(Embedding):
     """Pre-trained word2vec embedding"""
 
+    def info(self):
+        info = super(WordEmbedding, self).info()
+        info['config'] = {
+            'w2v_path': self.w2v_path,
+            'w2v_kwargs': self.w2v_kwargs,
+            'sequence_length': self.sequence_length
+        }
+        return info
+
     def __init__(self,
                  w2v_path: str,
                  task: str = None,
                  w2v_kwargs: Dict[str, Any] = None,
                  sequence_length: Union[Tuple[int, ...], str, int] = 'auto',
-                 processor: Optional[BaseProcessor] = None):
+                 processor: Optional[BaseProcessor] = None,
+                 from_saved_model: bool = False):
         """
 
         Args:
@@ -51,10 +61,12 @@ class WordEmbedding(Embedding):
         super(WordEmbedding, self).__init__(task=task,
                                             sequence_length=sequence_length,
                                             embedding_size=0,
-                                            processor=processor)
-        self._build_token2idx_from_w2v()
-        if self.sequence_length != 'auto':
-            self._build_model()
+                                            processor=processor,
+                                            from_saved_model=from_saved_model)
+        if not from_saved_model:
+            self._build_token2idx_from_w2v()
+            if self.sequence_length != 'auto':
+                self._build_model()
 
     def _build_token2idx_from_w2v(self):
         w2v = KeyedVectors.load_word2vec_format(self.w2v_path, **self.w2v_kwargs)

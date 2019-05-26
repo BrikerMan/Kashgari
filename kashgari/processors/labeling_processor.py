@@ -29,9 +29,9 @@ class LabelingProcessor(BaseProcessor):
     """
 
     def info(self):
-        return {
-            'task': kashgari.LABELING
-        }
+        info = super(LabelingProcessor, self).info()
+        info['task'] = kashgari.LABELING
+        return info
 
     def _build_label_dict(self,
                           label_list: List[List[str]]):

@@ -7,6 +7,7 @@
 # file: non_masking_layer.py
 # time: 2019-05-23 14:05
 
+import kashgari
 import tensorflow as tf
 from tensorflow.python import keras
 
@@ -16,7 +17,7 @@ if tf.test.is_gpu_available(cuda_only=True):
     L.LSTM = L.CuDNNLSTM
 
 
-class NonMaskingLayer(L.Layer):
+class NonMaskingLayer(keras.layers.Layer):
     """
     fix convolutional 1D can't receive masked input, detail: https://github.com/keras-team/keras/issues/4978
     thanks for https://github.com/jacoxu
@@ -35,6 +36,9 @@ class NonMaskingLayer(L.Layer):
 
     def call(self, x, mask=None):
         return x
+
+
+kashgari.custom_objects['NonMaskingLayer'] = NonMaskingLayer
 
 
 if __name__ == "__main__":

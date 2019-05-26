@@ -9,6 +9,8 @@
 
 import unittest
 
+import os
+import numpy as np
 import kashgari
 from kashgari.corpus import ChineseDailyNerCorpus
 from kashgari.embeddings import WordEmbedding
@@ -36,17 +38,22 @@ class TestCNNLSTMModel(unittest.TestCase):
     def test_basic_use_build(self):
         model = self.model_class()
         model.fit(valid_x, valid_y, valid_x, valid_y, epochs=1)
-        res = model.predict(valid_x[:5])
-        for i in range(5):
-            assert len(res[i]) == min(model.embedding.sequence_length, len(valid_x[i]))
         model.predict_entities(valid_x[:5])
         model.evaluate(valid_x[:100], valid_y[:100])
 
-        # model_path = os.path.join('./models/', model.info()['task'], self.model_class.__architect_name__)
-        # model.save(model_path)
-        # new_model = kashgari.utils.load_model(model_path)
-        # new_res = new_model.predict(valid_x[:5])
-        # assert np.array_equal(new_res, res)
+        res = model.predict(valid_x[:20])
+        assert len(res) == 20
+
+        for i in range(5):
+            assert len(res[i]) == min(model.embedding.sequence_length, len(valid_x[i]))
+        model_path = os.path.join('./saved_models/',
+                                  model.__class__.__module__,
+                                  model.__class__.__name__)
+        model.save(model_path)
+
+        new_model = kashgari.utils.load_model(model_path)
+        new_res = new_model.predict(valid_x[:20])
+        assert np.array_equal(new_res, res)
 
     def test_w2v_model(self):
         model = self.model_class(embedding=w2v_embedding)

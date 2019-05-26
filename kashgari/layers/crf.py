@@ -18,6 +18,8 @@ from tensorflow import convert_to_tensor, keras
 from tensorflow.python.keras.backend import argmax
 from tensorflow.python.keras.metrics import categorical_accuracy
 
+import kashgari
+
 
 class CRF(keras.layers.Layer):
     """
@@ -139,3 +141,7 @@ class CRF(keras.layers.Layer):
             return categorical_accuracy(y_true, output)
         accuracy.func_name = 'viterbi_accuracy'
         return accuracy
+
+
+kashgari.custom_objects['CRF'] = CRF
+kashgari.custom_objects['viterbi_accuracy'] = CRF(12).viterbi_accuracy

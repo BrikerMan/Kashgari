@@ -13,13 +13,10 @@ class ClassificationProcessor(BaseProcessor):
     Corpus Pre Processor class
     """
 
-    def __init__(self):
-        super(ClassificationProcessor, self).__init__()
-
     def info(self):
-        return {
-            'task': kashgari.CLASSIFICATION
-        }
+        info = super(ClassificationProcessor, self).info()
+        info['task'] = kashgari.CLASSIFICATION
+        return info
 
     def _build_label_dict(self,
                           labels: List[str]):

@@ -25,12 +25,23 @@ L = keras.layers
 class NumericFeaturesEmbedding(Embedding):
     """Embedding layer without pre-training, train embedding layer while training model"""
 
+    def info(self):
+        info = super(NumericFeaturesEmbedding, self).info()
+        info['config'] = {
+            'feature_count': self.feature_count,
+            'feature_name': self.feature_name,
+            'sequence_length': self.sequence_length,
+            'embedding_size': self.embedding_size
+        }
+        return info
+
     def __init__(self,
                  feature_count: int,
                  feature_name: str,
-                 sequence_length: Union[Tuple[int, ...], str, int] = 'auto',
+                 sequence_length: Union[str, int] = 'auto',
                  embedding_size: int = None,
-                 processor: Optional[BaseProcessor] = None):
+                 processor: Optional[BaseProcessor] = None,
+                 from_saved_model: bool = False):
         """
         Init bare embedding (embedding without pre-training)
 
@@ -48,10 +59,12 @@ class NumericFeaturesEmbedding(Embedding):
         super(NumericFeaturesEmbedding, self).__init__(task=task,
                                                        sequence_length=sequence_length,
                                                        embedding_size=embedding_size,
-                                                       processor=processor)
+                                                       processor=processor,
+                                                       from_saved_model=from_saved_model)
         self.feature_count = feature_count
         self.feature_name = feature_name
-        self._build_model()
+        if not from_saved_model:
+            self._build_model()
 
     def _build_model(self, **kwargs):
         input_tensor = L.Input(shape=(self.sequence_length,),

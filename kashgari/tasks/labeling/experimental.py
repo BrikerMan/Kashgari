@@ -11,6 +11,7 @@ from typing import Dict, Any
 
 from tensorflow import keras
 
+import kashgari
 from kashgari.tasks.labeling.base_model import BaseLabelingModel
 from kashgari.layers import L
 
@@ -19,7 +20,6 @@ from keras_self_attention import SeqSelfAttention
 
 class BLSTMAttentionModel(BaseLabelingModel):
     """Bidirectional LSTM Self Attention Sequence Labeling Model"""
-    __architect_name__ = 'BLSTMAttentionModel'
 
     @classmethod
     def get_default_hyper_parameters(cls) -> Dict[str, Dict[str, Any]]:
@@ -73,7 +73,6 @@ class BLSTMAttentionModel(BaseLabelingModel):
 
 class SeqSelfAttentionModel(BaseLabelingModel):
     """Bidirectional LSTM Self Attention Sequence Labeling Model"""
-    __architect_name__ = 'SeqSelfAttentionModel'
 
     @classmethod
     def get_default_hyper_parameters(cls) -> Dict[str, Dict[str, Any]]:
@@ -125,6 +124,9 @@ class SeqSelfAttentionModel(BaseLabelingModel):
 
         self.tf_model = keras.Model(embed_model.inputs, output_tensor)
 
+
+# Register custom layer
+kashgari.custom_objects['SeqSelfAttention'] = SeqSelfAttention
 
 if __name__ == "__main__":
     print("Hello world")

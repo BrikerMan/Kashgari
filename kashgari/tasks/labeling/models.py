@@ -19,7 +19,6 @@ from kashgari.layers.crf import CRF
 
 class BLSTMModel(BaseLabelingModel):
     """Bidirectional LSTM Sequence Labeling Model"""
-    __architect_name__ = 'BLSTMModel'
 
     @classmethod
     def get_default_hyper_parameters(cls) -> Dict[str, Dict[str, Any]]:
@@ -68,7 +67,6 @@ class BLSTMModel(BaseLabelingModel):
 
 class BLSTMCRFModel(BaseLabelingModel):
     """Bidirectional LSTM Sequence Labeling Model"""
-    __architect_name__ = 'BLSTMCRFModel'
 
     @classmethod
     def get_default_hyper_parameters(cls) -> Dict[str, Dict[str, Any]]:
@@ -118,7 +116,6 @@ class BLSTMCRFModel(BaseLabelingModel):
 
 class CNNLSTMModel(BaseLabelingModel):
     """CNN LSTM Sequence Labeling Model"""
-    __architect_name__ = 'CNNLSTMModel'
 
     @classmethod
     def get_default_hyper_parameters(cls) -> Dict[str, Dict[str, Any]]:

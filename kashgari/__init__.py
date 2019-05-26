@@ -13,7 +13,11 @@
 import os
 import tensorflow as tf
 os.environ['TF_KERAS'] = '1'
-tf.enable_eager_execution()
+
+import keras_bert
+
+
+custom_objects = keras_bert.get_custom_objects()
 
 from kashgari import layers
 from kashgari import corpus

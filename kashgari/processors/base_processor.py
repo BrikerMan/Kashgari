@@ -13,7 +13,7 @@ import logging
 import pathlib
 import operator
 import collections
-from typing import List, Optional, Union
+from typing import List, Optional, Union, Dict, Any
 from tensorflow.python.keras.preprocessing.sequence import pad_sequences
 
 from kashgari import utils
@@ -25,25 +25,35 @@ class BaseProcessor(object):
     Corpus Pre Processor class
     """
 
-    def __init__(self):
-        self.token2idx = {}
-        self.idx2token = {}
+    def __init__(self, **kwargs):
+        self.token2idx: Dict[str, int] = kwargs.get('token2idx', {})
+        self.idx2token: Dict[int, str] = dict([(v, k) for (k, v) in self.token2idx.items()])
 
-        self.token2count = {}
+        self.token2count: Dict = {}
 
-        self.label2idx = {}
-        self.idx2label = {}
+        self.label2idx: Dict[str, int] = kwargs.get('label2idx', {})
+        self.idx2label: Dict[int, str] = dict([(v, k) for (k, v) in self.label2idx.items()])
 
-        self.token_pad = '<PAD>'
-        self.token_unk = '<UNK>'
-        self.token_bos = '<BOS>'
-        self.token_eos = '<EOS>'
+        self.token_pad: str = kwargs.get('token_pad', '<PAD>')
+        self.token_unk: str = kwargs.get('token_unk', '<UNK>')
+        self.token_bos: str = kwargs.get('token_bos', '<BOS>')
+        self.token_eos: str = kwargs.get('token_eos', '<EOS>')
 
-        self.dataset_info = {}
+        self.dataset_info: Dict[str, Any] = kwargs.get('dataset_info', {})
 
     def info(self):
         return {
-            'task': ''
+            'class_name': self.__class__.__name__,
+            'config': {
+                'label2idx': self.label2idx,
+                'token2idx': self.token2idx,
+                'token_pad': self.token_pad,
+                'token_unk': self.token_unk,
+                'token_bos': self.token_bos,
+                'token_eos': self.token_eos,
+                'dataset_info': self.dataset_info,
+            },
+            'module': self.__class__.__module__,
         }
 
     def analyze_corpus(self,
@@ -53,9 +63,9 @@ class BaseProcessor(object):
         rec_len = sorted([len(seq) for seq in corpus])[int(0.95 * len(corpus))]
         self.dataset_info['RECOMMEND_LEN'] = rec_len
 
-        if not self.token2idx or force:
+        if len(self.token2idx) == 0 or force:
             self._build_token_dict(corpus)
-        if not self.label2idx or force:
+        if len(self.label2idx) == 0 or force:
             self._build_label_dict(labels)
 
     def save_dicts(self, cache_dir: str):

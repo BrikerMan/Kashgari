@@ -15,7 +15,8 @@ from sklearn import metrics
 
 
 class BaseClassificationModel(BaseModel):
-    __task__ = "classification"
+
+    __task__ = 'classification'
 
     @classmethod
     def get_default_hyper_parameters(cls) -> Dict[str, Dict[str, Any]]:

@@ -7,10 +7,11 @@
 # file: stacked_embedding.py
 # time: 2019-05-23 09:18
 
-from typing import Union, Optional, Tuple, List
+from typing import Union, Optional, Tuple, List, Dict
 
 import numpy as np
 import tensorflow as tf
+from tensorflow.python import keras
 
 import kashgari
 from kashgari.embeddings.base_embedding import Embedding
@@ -22,9 +23,23 @@ from kashgari.layers import L
 class StackedEmbedding(Embedding):
     """Embedding layer without pre-training, train embedding layer while training model"""
 
+    @classmethod
+    def _load_saved_instance(cls,
+                             config_dict: Dict,
+                             model_path: str,
+                             tf_model: keras.Model):
+        pass
+
+    def info(self):
+        info = super(StackedEmbedding, self).info()
+        info['embeddings'] = [embed.info() for embed in self.embeddings]
+        info['config'] = []
+        return info
+
     def __init__(self,
                  embeddings: List[Embedding],
-                 processor: Optional[BaseProcessor] = None):
+                 processor: Optional[BaseProcessor] = None,
+                 from_saved_model: bool = False):
         """
 
         Args:
@@ -40,10 +55,13 @@ class StackedEmbedding(Embedding):
         super(StackedEmbedding, self).__init__(task=task,
                                                sequence_length=sequence_length[0],
                                                embedding_size=100,
-                                               processor=processor)
-        self.embeddings = embeddings
-        self.processor = embeddings[0].processor
-        self._build_model()
+                                               processor=processor,
+                                               from_saved_model=from_saved_model)
+
+        if not from_saved_model:
+            self.embeddings = embeddings
+            self.processor = embeddings[0].processor
+            self._build_model()
 
     def _build_model(self, **kwargs):
         if self.embed_model is None and all(embed.embed_model is not None for embed in self.embeddings):

@@ -26,11 +26,20 @@ import keras_bert
 class BERTEmbedding(Embedding):
     """Pre-trained BERT embedding"""
 
+    def info(self):
+        info = super(BERTEmbedding, self).info()
+        info['config'] = {
+            'bert_path': self.bert_path,
+            'sequence_length': self.sequence_length
+        }
+        return info
+
     def __init__(self,
                  bert_path: str,
                  task: str = None,
                  sequence_length: Union[Tuple[int, ...], str, int] = 'auto',
-                 processor: Optional[BaseProcessor] = None):
+                 processor: Optional[BaseProcessor] = None,
+                 from_saved_model: bool = False):
         """
 
         Args:
@@ -38,6 +47,7 @@ class BERTEmbedding(Embedding):
             bert_path:
             sequence_length:
             processor:
+            from_saved_model:
         """
         if isinstance(sequence_length, tuple):
             if len(sequence_length) > 2:
@@ -52,16 +62,18 @@ class BERTEmbedding(Embedding):
         super(BERTEmbedding, self).__init__(task=task,
                                             sequence_length=sequence_length,
                                             embedding_size=0,
-                                            processor=processor)
+                                            processor=processor,
+                                            from_saved_model=from_saved_model)
 
         self.processor.token_pad = '[PAD]'
         self.processor.token_unk = '[UNK]'
         self.processor.token_bos = '[CLS]'
         self.processor.token_eos = '[SEP]'
 
-        self.bert_path = bert_path
-        self._build_token2idx_from_bert()
-        self._build_model()
+        if not from_saved_model:
+            self.bert_path = bert_path
+            self._build_token2idx_from_bert()
+            self._build_model()
 
     def _build_token2idx_from_bert(self):
         token2idx = {
