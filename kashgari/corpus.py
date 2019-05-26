@@ -76,6 +76,55 @@ class ChineseDailyNerCorpus(object):
         return x_data, y_data
 
 
+class CONLL2003_EN_CORPUS(object):
+    __corpus_name__ = 'conll2003_en'
+    __zip_file__name = 'https://storage.googleapis.com/kashgari/conll2003_en.tar.gz'
+
+    @classmethod
+    def load_data(cls,
+                  subset_name: str = 'train',
+                  task_name: str = 'ner',
+                  shuffle: bool = True) -> Tuple[List[List[str]], List[List[str]]]:
+        """
+
+        """
+        corpus_path = get_file(cls.__corpus_name__,
+                               cls.__zip_file__name,
+                               cache_dir=k.DATA_PATH,
+                               untar=True)
+
+        if subset_name not in {'train', 'test', 'valid'}:
+            raise ValueError()
+
+        file_path = os.path.join(corpus_path, f'{subset_name}.txt')
+
+        if task_name not in {'pos', 'chunking', 'ner'}:
+            raise ValueError()
+
+        data_index = ['pos', 'chunking', 'ner'].index(task_name) + 1
+
+        x_data, y_data = [], []
+        with open(file_path, 'r', encoding='utf-8') as f:
+            lines = f.read().splitlines()
+            x, y = [], []
+            for line in lines:
+                rows = line.split(' ')
+                if len(rows) == 1:
+                    x_data.append(x)
+                    y_data.append(y)
+                    x = []
+                    y = []
+                else:
+                    x.append(rows[0])
+                    y.append(rows[data_index])
+        if shuffle:
+            x_data, y_data = utils.unison_shuffled_copies(x_data, y_data)
+        logging.debug(f"loaded {len(x_data)} samples from {file_path}. Sample:\n"
+                      f"x[0]: {x_data[0]}\n"
+                      f"y[0]: {y_data[0]}")
+        return x_data, y_data
+
+
 class SMP2018ECDTCorpus(object):
     """
     https://worksheets.codalab.org/worksheets/0x27203f932f8341b79841d50ce0fd684f/
@@ -151,4 +200,7 @@ class SMP2018ECDTCorpus(object):
 
 
 if __name__ == "__main__":
+    a, b = CONLL2003_EN_CORPUS.load_data()
+    print(a[:2])
+    print(b[:2])
     print("Hello world")
