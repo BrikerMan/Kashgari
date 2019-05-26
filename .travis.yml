@@ -7,9 +7,14 @@ python:
 
 cache: pip
 # command to install dependencies
-#env:
-#  - TEST_FILE=tests/test_corpus.py
-#  - TEST_FILE=tests/test_pre_processor.py
+env:
+  - TEST_FILE=tests/test_corpus.py
+  - TEST_FILE=tests/test_classification.py
+  - TEST_FILE=tests/test_custom_multi_output_classification.py
+  - TEST_FILE=tests/test_embeddings.py
+  - TEST_FILE=tests/test_labeling.py
+  - TEST_FILE=tests/test_processor.py
+
 before_install:
   - export BOTO_CONFIG=/dev/null
 install:
@@ -32,9 +37,4 @@ addons:
 script:
   - git fetch --unshallow --quiet
   - flake8 kashgari
-  - pytest tests/ --cov kashgari --cov-report html
-  - coverage xml -i
-  - sonar-scanner
-
-after_success:
-  - coveralls
+  - nosetests --with-coverage --cover-html --cover-html-dir=htmlcov --cover-xml --cover-xml-file=coverage.xml --with-xunit --cover-package="kashgari" tests/test_corpus.py
