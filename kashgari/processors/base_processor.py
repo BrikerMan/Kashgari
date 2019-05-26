@@ -41,6 +41,8 @@ class BaseProcessor(object):
 
         self.dataset_info: Dict[str, Any] = kwargs.get('dataset_info', {})
 
+        self.add_bos_eos: bool = kwargs.get('add_bos_eos', False)
+
     def info(self):
         return {
             'class_name': self.__class__.__name__,
@@ -52,6 +54,7 @@ class BaseProcessor(object):
                 'token_bos': self.token_bos,
                 'token_eos': self.token_eos,
                 'dataset_info': self.dataset_info,
+                'add_bos_eos': self.add_bos_eos
             },
             'module': self.__class__.__module__,
         }

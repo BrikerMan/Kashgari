@@ -84,15 +84,18 @@ class LabelingProcessor(BaseProcessor):
 
         result = []
         for seq in sequences:
+            if self.add_bos_eos:
+                seq = [self.token_bos] + seq + [self.token_bos]
             unk_index = self.token2idx[self.token_unk]
-            result.append([self.token2idx.get(token, unk_index)
-                           for token in seq])
+            result.append([self.token2idx.get(token, unk_index) for token in seq])
         return result
 
     def numerize_label_sequences(self,
                                  sequences: List[List[str]]) -> List[List[int]]:
         result = []
         for seq in sequences:
+            if self.add_bos_eos:
+                seq = [self.token_pad] + seq + [self.token_pad]
             result.append([self.label2idx[label] for label in seq])
         return result
 

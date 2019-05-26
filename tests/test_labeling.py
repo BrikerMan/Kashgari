@@ -83,14 +83,17 @@ class TestBLSTMModel(TestCNNLSTMModel):
         cls.model_class = BLSTMModel
 
 
-class TestCRFModel(TestCNNLSTMModel):
-    @classmethod
-    def setUpClass(cls):
-        cls.epochs = 3
-        cls.model_class = BLSTMCRFModel
-
-    def test_variable_length_model(self):
-        pass
+# class TestCRFModel(TestCNNLSTMModel):
+#     @classmethod
+#     def setUpClass(cls):
+#         cls.epochs = 3
+#         cls.model_class = BLSTMCRFModel
+#
+#     def test_variable_length_model(self):
+#         pass
+#
+#     def test_basic_use_build(self):
+#         super(TestCRFModel, self).test_basic_use_build()
 
 
 class TestSeqSelfAttentionModel(TestCNNLSTMModel):

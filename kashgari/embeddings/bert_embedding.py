@@ -70,6 +70,8 @@ class BERTEmbedding(Embedding):
         self.processor.token_bos = '[CLS]'
         self.processor.token_eos = '[SEP]'
 
+        self.processor.add_bos_eos = True
+
         self.model_folder = model_folder
         if not from_saved_model:
             self._build_token2idx_from_bert()
@@ -87,8 +89,8 @@ class BERTEmbedding(Embedding):
 
         with open(dict_path, 'r', encoding='utf-8') as f:
             words = f.read().splitlines()
-        for idx, word in enumerate(words):
-            token2idx[word] = idx
+        for _, word in enumerate(words):
+            token2idx[word] = len(token2idx)
         self.bert_token2idx = token2idx
         self.processor.token2idx = self.bert_token2idx
         self.processor.idx2token = dict([(value, key) for key, value in token2idx.items()])
