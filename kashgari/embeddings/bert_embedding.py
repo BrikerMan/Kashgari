@@ -78,12 +78,7 @@ class BERTEmbedding(Embedding):
             self._build_model()
 
     def _build_token2idx_from_bert(self):
-        token2idx = {
-            self.processor.token_pad: 0,
-            self.processor.token_unk: 1,
-            self.processor.token_bos: 2,
-            self.processor.token_eos: 3
-        }
+        token2idx = {}
 
         dict_path = os.path.join(self.model_folder, 'vocab.txt')
 
@@ -91,6 +86,7 @@ class BERTEmbedding(Embedding):
             words = f.read().splitlines()
         for _, word in enumerate(words):
             token2idx[word] = len(token2idx)
+
         self.bert_token2idx = token2idx
         self.processor.token2idx = self.bert_token2idx
         self.processor.idx2token = dict([(value, key) for key, value in token2idx.items()])
