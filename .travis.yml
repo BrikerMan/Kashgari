@@ -37,4 +37,4 @@ addons:
 script:
   - git fetch --unshallow --quiet
   - flake8 kashgari
-  - nosetests --with-coverage --cover-html --cover-html-dir=htmlcov --cover-xml --cover-xml-file=coverage.xml --with-xunit --cover-package="kashgari" tests/test_corpus.py
+  - nosetests --with-coverage --cover-html --cover-html-dir=htmlcov --cover-xml --cover-xml-file=coverage.xml --with-xunit --cover-package="kashgari" $TEST_FILE
