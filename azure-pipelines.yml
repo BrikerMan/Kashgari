@@ -57,7 +57,7 @@ steps:
 
 - script: |
     - script: |
-    nosetests --with-coverage --cover-html --cover-html-dir=htmlcov --cover-xml --cover-xml-file=coverage.xml --with-xunit --cover-package="kashgari" tests/test_corpus.py
+    nosetests --with-coverage --cover-html --cover-html-dir=htmlcov --cover-xml --cover-xml-file=coverage.xml --with-xunit --cover-package="kashgari" tests/
   displayName: 'nosetests'
 
 - task: SonarSource.sonarcloud.ce096e50-6155-4de8-8800-4221aaeed4a1.SonarCloudAnalyze@1

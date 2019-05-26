@@ -56,7 +56,6 @@ class Embedding(object):
 
         # Load Weights from model
         for layer in instance.embed_model.layers:
-            layer: keras.layers.Layer = layer
             layer.set_weights(tf_model.get_layer(layer.name).get_weights())
         return instance
 
