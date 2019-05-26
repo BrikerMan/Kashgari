@@ -33,6 +33,7 @@ steps:
     # CI dependencies
     pip install python-coveralls coverage flake8 flake8-builtins
     pip install pytest pytest-azurepipelines pytest-cov
+    pip install nose
     # pip install flake8-docstrings
   displayName: 'Install dependencies'
 
@@ -56,10 +57,8 @@ steps:
 
 - script: |
     - script: |
-    pytest tests/test_corpus.py --cov kashgari --cov-report xml --cov-report html --junitxml=pytest-report.xml
-    coverage xml -i
-    cat coverage.xml
-  displayName: 'pytest'
+    nosetests --with-coverage --cover-html --cover-html-dir=htmlcov --cover-xml --cover-xml-file=coverage.xml --with-xunit --cover-package="kashgari" tests/test_corpus.py
+  displayName: 'nosetests'
 
 - task: SonarSource.sonarcloud.ce096e50-6155-4de8-8800-4221aaeed4a1.SonarCloudAnalyze@1
   displayName: 'Run Code Analysis'
