@@ -68,8 +68,8 @@ class BLSTMAttentionModel(BaseLabelingModel):
         tensor = layer_blstm(embed_model.output)
         tensor = layer_self_attention(tensor)
         tensor = layer_dropout(tensor)
-        tensor = layer_activation(tensor)
-        output_tensor = layer_time_distributed(tensor)
+        tensor = layer_time_distributed(tensor)
+        output_tensor = layer_activation(tensor)
 
         self.tf_model = keras.Model(embed_model.inputs, output_tensor)
 
