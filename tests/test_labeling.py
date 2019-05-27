@@ -81,7 +81,9 @@ class TestBLSTMModel(TestCNNLSTMModel):
     def setUpClass(cls):
         cls.epochs = 3
         cls.model_class = BLSTMModel
-
+    
+    def test_basic_use_build(self):
+        super(TestBLSTMModel, self).test_basic_use_build()
 
 # class TestCRFModel(TestCNNLSTMModel):
 #     @classmethod

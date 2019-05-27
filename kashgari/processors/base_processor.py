@@ -62,12 +62,13 @@ class BaseProcessor(object):
     def analyze_corpus(self,
                        corpus: Union[List[List[str]]],
                        labels: Union[List[List[str]], List[str]],
+                       min_count: int = 3,
                        force: bool = False):
         rec_len = sorted([len(seq) for seq in corpus])[int(0.95 * len(corpus))]
         self.dataset_info['RECOMMEND_LEN'] = rec_len
 
         if len(self.token2idx) == 0 or force:
-            self._build_token_dict(corpus)
+            self._build_token_dict(corpus, min_count)
         if len(self.label2idx) == 0 or force:
             self._build_label_dict(labels)
 
@@ -97,12 +98,13 @@ class BaseProcessor(object):
 
         return processor
 
-    def _build_token_dict(self, corpus: List[List[str]]):
+    def _build_token_dict(self, corpus: List[List[str]], min_count: int = 3):
         """
         Build token index dictionary using corpus
 
         Args:
             corpus: List of tokenized sentences, like ``[['I', 'love', 'tf'], ...]``
+            min_count:
         """
         token2idx = {
             self.token_pad: 0,
@@ -123,8 +125,8 @@ class BaseProcessor(object):
                                     reverse=True)
         token2count = collections.OrderedDict(sorted_token2count)
 
-        for token in token2count.keys():
-            if token not in token2idx:
+        for token, token_count in token2count.items():
+            if token not in token2idx and token_count > min_count:
                 token2idx[token] = len(token2idx)
 
         self.token2idx = token2idx

@@ -79,7 +79,13 @@ class BaseModel(object):
                     y_train: Union[List[List[str]], List[str]],
                     x_validate: Union[Tuple[List[List[str]], ...], List[List[str]]] = None,
                     y_validate: Union[List[List[str]], List[str]] = None):
-        self.embedding.analyze_corpus(x_train, y_train)
+        all_x_data = x_train.copy()
+        all_y_data = y_train.copy()
+        if x_validate is not None:
+            all_x_data += x_validate.copy()
+            all_y_data += y_validate.copy()
+
+        self.embedding.analyze_corpus(all_x_data, all_y_data)
 
         if self.tf_model is None:
             self.build_model_arc()

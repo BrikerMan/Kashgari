@@ -20,7 +20,6 @@ idna==2.8
 jieba==0.39
 jmespath==0.9.4
 joblib==0.13.2
-kashgari==0.4.0
 Keras==2.2.4
 Keras-Applications==1.0.7
 keras-bert==0.53.0
