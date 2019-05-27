@@ -13,6 +13,7 @@ Welcome to Kashgari's documentation!
    tutorial/customize_multi_output_model
    tutorial/deal_with_numeric_features
    api
+   CHANGELOG
 
 Corpus
 ======
