@@ -141,7 +141,8 @@ class CNNLSTMModel(BaseLabelingModel):
             'layer_dropout': {
                 'rate': 0.4
             },
-            'layer_time_distributed': {
+            'layer_time_distributed': {},
+            'layer_activation': {
                 'activation': 'softmax'
             }
         }
@@ -163,11 +164,13 @@ class CNNLSTMModel(BaseLabelingModel):
         layer_time_distributed = L.TimeDistributed(L.Dense(output_dim,
                                                            **config['layer_time_distributed']),
                                                    name='layer_time_distributed')
+        layer_activation = L.Activation(**config['layer_activation'])
 
         tensor = layer_conv(embed_model.output)
         tensor = layer_lstm(tensor)
         tensor = layer_dropout(tensor)
-        output_tensor = layer_time_distributed(tensor)
+        tensor = layer_time_distributed(tensor)
+        output_tensor = layer_activation(tensor)
 
         self.tf_model = keras.Model(embed_model.inputs, output_tensor)
 
