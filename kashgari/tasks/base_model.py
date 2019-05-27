@@ -149,7 +149,33 @@ class BaseModel(object):
 
         """
         self.build_model(x_train, y_train)
+        tensor_x = self.embedding.process_x_dataset(x_train)
+        tensor_y = self.embedding.process_y_dataset(y_train)
 
+        validation_data = None
+        if x_validate is not None:
+            tensor_valid_x = self.embedding.process_x_dataset(x_validate)
+            tensor_valid_y = self.embedding.process_y_dataset(y_validate)
+            validation_data = (tensor_valid_x, tensor_valid_y)
+
+        if fit_kwargs is None:
+            fit_kwargs = {}
+
+        with utils.custom_object_scope():
+            self.tf_model.fit(tensor_x, tensor_y,
+                              validation_data=validation_data,
+                              epochs=epochs,
+                              batch_size=batch_size,
+                              **fit_kwargs)
+
+    def fit_with_generator(self,
+                           x_train: Union[Tuple[List[List[str]], ...], List[List[str]]],
+                           y_train: Union[List[List[str]], List[str]],
+                           x_validate: Union[Tuple[List[List[str]], ...], List[List[str]]] = None,
+                           y_validate: Union[List[List[str]], List[str]] = None,
+                           batch_size: int = 64,
+                           epochs: int = 5,
+                           fit_kwargs: Dict = None):
         train_generator = self.get_data_generator(x_train,
                                                   y_train,
                                                   batch_size)
