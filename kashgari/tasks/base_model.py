@@ -75,17 +75,10 @@ class BaseModel(object):
             self.hyper_parameters.update(hyper_parameters)
 
     def build_model(self,
-                    x_train: Union[Tuple[List[List[str]], ...], List[List[str]]],
-                    y_train: Union[List[List[str]], List[str]],
-                    x_validate: Union[Tuple[List[List[str]], ...], List[List[str]]] = None,
-                    y_validate: Union[List[List[str]], List[str]] = None):
-        all_x_data = x_train.copy()
-        all_y_data = y_train.copy()
-        if x_validate is not None:
-            all_x_data += x_validate.copy()
-            all_y_data += y_validate.copy()
+                    x_data: Union[Tuple[List[List[str]], ...], List[List[str]]],
+                    y_data: Union[List[List[str]], List[str]]):
 
-        self.embedding.analyze_corpus(all_x_data, all_y_data)
+        self.embedding.analyze_corpus(x_data, y_data)
 
         if self.tf_model is None:
             self.build_model_arc()
@@ -155,7 +148,7 @@ class BaseModel(object):
         Returns:
 
         """
-        self.build_model(x_train, y_train, x_validate, y_validate)
+        self.build_model(x_train, y_train)
 
         train_generator = self.get_data_generator(x_train,
                                                   y_train,
