@@ -15,9 +15,11 @@ import tensorflow as tf
 os.environ['TF_KERAS'] = '1'
 
 import keras_bert
-
+from kashgari.macros import TaskType
 
 custom_objects = keras_bert.get_custom_objects()
+CLASSIFICATION = TaskType.CLASSIFICATION
+LABELING = TaskType.LABELING
 
 from kashgari import layers
 from kashgari import corpus
@@ -27,10 +29,3 @@ from kashgari import processors
 from kashgari import tasks
 from kashgari.version import __version__
 from kashgari import utils
-
-from kashgari.macros import TaskType
-
-CLASSIFICATION = TaskType.CLASSIFICATION
-LABELING = TaskType.LABELING
-
-

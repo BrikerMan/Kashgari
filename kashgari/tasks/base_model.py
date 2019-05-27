@@ -66,7 +66,7 @@ class BaseModel(object):
         else:
             self.embedding = embedding
 
-        self.tf_model: Optional[keras.Model] = None
+        self.tf_model: keras.Model = None
         self.hyper_parameters = self.get_default_hyper_parameters()
         self.model_info = {}
         self.pre_processor = self.embedding.processor
@@ -163,6 +163,8 @@ class BaseModel(object):
         if fit_kwargs is None:
             fit_kwargs = {}
 
+        validation_generator = None
+        validation_steps = None
         if x_validate:
             validation_generator = self.get_data_generator(x_validate,
                                                            y_validate,
@@ -173,9 +175,6 @@ class BaseModel(object):
             else:
                 validation_steps = len(x_validate) // batch_size + 1
 
-            fit_kwargs['validation_data'] = validation_generator
-            fit_kwargs['validation_steps'] = validation_steps
-
         if isinstance(x_train, tuple):
             steps_per_epoch = len(x_train[0]) // batch_size + 1
         else:
@@ -184,6 +183,8 @@ class BaseModel(object):
             self.tf_model.fit_generator(train_generator,
                                         steps_per_epoch=steps_per_epoch,
                                         epochs=epochs,
+                                        validation_data=validation_generator,
+                                        validation_steps=validation_steps,
                                         **fit_kwargs)
 
     def compile_model(self, **kwargs):

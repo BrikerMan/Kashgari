@@ -52,15 +52,8 @@ __description__ = 'Simple, Keras-powered multilingual NLP framework,' \
 __version__ = find_version('kashgari', 'version.py')
 README = (HERE / "README.md").read_text()
 
-required = [
-    'keras-bert>=0.50.0',
-    'keras-gpt-2==0.8.0',
-    'seqeval==0.0.10',
-    'gensim>=3.5.0',
-    'sklearn',
-    'h5py',
-    'pandas>=0.23.0'
-]
+with codecs.open('requirements.txt', 'r', 'utf8') as reader:
+    install_requires = list(map(lambda x: x.strip(), reader.readlines()))
 
 setup(
     name=__name__,
@@ -72,7 +65,7 @@ setup(
     author_email=__email__,
     url=__url__,
     packages=find_packages(exclude=('tests',)),
-    install_requires=required,
+    install_requires=install_requires,
     include_package_data=True,
     license=__license__,
     classifiers=[
