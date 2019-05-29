@@ -12,6 +12,7 @@ from typing import Dict, Any, Tuple
 
 import random
 import logging
+import json
 import numpy as np
 from kashgari.loss import weighted_categorical_crossentropy
 from seqeval.metrics import classification_report
@@ -75,7 +76,11 @@ class BaseLabelingModel(BaseModel):
                     "end": entity[2],
                     "value": value,
                 })
-            final_res.append(seq_data)
+            final_res.append({
+                'text': join_chunk.join(text_seq[index]),
+                'text_raw': text_seq[index],
+                'labels': seq_data
+            })
         return final_res
 
     # Todo: Better way to do this, too
@@ -133,19 +138,20 @@ class BaseLabelingModel(BaseModel):
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)
-    from kashgari.tasks.labeling import BLSTMCRFModel
+    from kashgari.tasks.labeling import BLSTMModel
     from kashgari.corpus import ChineseDailyNerCorpus
+    from kashgari.utils import load_model
 
-    train_x, train_y = ChineseDailyNerCorpus.load_data('train')
+    train_x, train_y = ChineseDailyNerCorpus.load_data('train', shuffle=False)
     valid_x, valid_y = ChineseDailyNerCorpus.load_data('valid')
 
     train_x, train_y = train_x[:5120], train_y[:5120]
 
-    model = BLSTMCRFModel()
-    model.build_model(train_x[:100], train_y[:100])
+    model = load_model('/Users/brikerman/Desktop/blstm_model')
+    # model.build_model(train_x[:100], train_y[:100])
 
-    model.fit(train_x, train_y, valid_x, valid_y, epochs=20)
-    r = model.predict_entities(train_x[:5], join_chunk='')
+    # model.fit(train_x[:1000], train_y[:1000], epochs=10)
+    r = model.predict_doccano(train_x[:1000], 'result.json', join_chunk='')
 
     import pprint
 
