@@ -17,7 +17,7 @@ from typing import Union, Optional, Any, List, Tuple
 import numpy as np
 import kashgari
 import tensorflow as tf
-from kashgari.layers import NonMaskingLayer, L
+from kashgari.layers import NonMaskingLayer
 from kashgari.embeddings.base_embedding import Embedding
 from kashgari.processors.base_processor import BaseProcessor
 import keras_bert
@@ -92,13 +92,12 @@ class BERTEmbedding(Embedding):
         self.processor.idx2token = dict([(value, key) for key, value in token2idx.items()])
 
     def _build_model(self, **kwargs):
-        if self.token_count == 0:
-            logging.debug('need to build after build_word2idx')
-        elif self.embed_model is None:
+        if self.embed_model is None:
             seq_len = self.sequence_length
             if isinstance(seq_len, tuple):
                 seq_len = seq_len[0]
             if isinstance(seq_len, str):
+                logging.warning(f"Will build model after have specific sequence length")
                 return
             config_path = os.path.join(self.model_folder, 'bert_config.json')
             check_point_path = os.path.join(self.model_folder, 'bert_model.ckpt')
@@ -112,13 +111,7 @@ class BERTEmbedding(Embedding):
                 logging.warning(f"Sequence length limit set to {bert_seq_len} by pre-trained model")
                 self.sequence_length = bert_seq_len
             self.embedding_size = int(bert_model.output.shape[-1])
-            # num_layers = len(bert_model.layers)
-            # bert_model.summary()
-            # target_layer_idx = [num_layers - 1 + idx * 8 for idx in range(-3, 1)]
-            # features_layers = [bert_model.get_layer(index=idx).output for idx in target_layer_idx]
-            # embedding_layer = L.concatenate(features_layers)
-            output_features = L.Lambda(lambda t: t, output_shape=lambda s: s)(bert_model.output)
-
+            output_features = NonMaskingLayer()(bert_model.output)
             self.embed_model = tf.keras.Model(bert_model.inputs, output_features)
             logging.warning(f'seq_len: {self.sequence_length}')
 
@@ -151,6 +144,8 @@ class BERTEmbedding(Embedding):
         Returns:
             vectorized sentence list
         """
+        if self.embed_model is None:
+            raise ValueError('need to build model for embed sentence')
 
         tensor_x = self.process_x_dataset(sentence_list)
         if debug:

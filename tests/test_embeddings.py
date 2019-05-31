@@ -93,7 +93,12 @@ class TestBareEmbedding(unittest.TestCase):
         embedding = self.embedding_class(sequence_length=20,
                                          processor=processor,
                                          **self.config)
-        assert embedding.embed_one(['我', '想', '看']).shape == (20, 55)
+        if self.embedding_class is BERTEmbedding:
+            seq_len = 16
+        else:
+            seq_len = 20
+
+        assert embedding.embed_one(['我', '想', '看']).shape == (seq_len, embedding.embedding_size)
 
 
 class TestWordEmbedding(TestBareEmbedding):
@@ -135,56 +140,11 @@ class TestBERTEmbedding(TestBareEmbedding):
             'model_folder': bert_path
         }
 
-    def test_embed(self):
-        embedding = self.embedding_class(task=kashgari.CLASSIFICATION,
-                                         **self.config)
-
-        valid_x, valid_y = SMP2018ECDTCorpus.load_data('valid')
-        embedding.analyze_corpus(valid_x, valid_y)
-
-        assert embedding.embed_one(['我', '想', '看']).shape == (15, 16)
-
-        assert embedding.embed([
-            ['我', '想', '看'],
-            ['我', '想', '看', '权力的游戏'],
-            ['Hello', 'world']
-        ]).shape == (3, 15, 16)
-
-        embedding = self.embedding_class(task=kashgari.LABELING,
-                                         sequence_length=10,
-                                         **self.config)
-
-        valid_x, valid_y = ChineseDailyNerCorpus.load_data('valid')
-        embedding.analyze_corpus(valid_x, valid_y)
-
-        assert embedding.embed_one(['我', '想', '看']).shape == (10, 16)
-
-        assert embedding.embed([
-            ['我', '想', '看'],
-            ['我', '想', '看', '权力的游戏'],
-            ['Hello', 'world']
-        ]).shape == (3, 10, 16)
-
     def test_variable_length_embed(self):
         with self.assertRaises(Exception):
             self.embedding_class(task=kashgari.CLASSIFICATION,
                                  sequence_length='variable',
                                  **self.config)
-
-    def test_init_with_processor(self):
-        valid_x, valid_y = ChineseDailyNerCorpus.load_data('valid')
-
-        processor = LabelingProcessor()
-        processor.analyze_corpus(valid_x, valid_y)
-
-        embedding = self.embedding_class(sequence_length=11,
-                                         processor=processor,
-                                         **self.config)
-        embedding.analyze_corpus(valid_x, valid_y)
-        if self.embedding_class == BERTEmbedding:
-            assert embedding.embed_one(['我', '想', '看']).shape == (11, 16)
-        else:
-            assert embedding.embed_one(['我', '想', '看']).shape == (11, 4)
 
 
 class TestGPT2Embedding(TestBareEmbedding):
