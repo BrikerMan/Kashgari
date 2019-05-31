@@ -4,8 +4,8 @@
 # contact: eliyar917@gmail.com
 # blog: https://eliyar.biz
 
-# file: test_labeling.py
-# time: 2019-05-20 19:03
+# file: test_cnn_lstm_model.py
+# time: 2019-05-31 19:05
 
 import unittest
 
@@ -15,8 +15,7 @@ import numpy as np
 import kashgari
 from kashgari.corpus import ChineseDailyNerCorpus
 from kashgari.embeddings import WordEmbedding
-from kashgari.tasks.labeling import CNNLSTMModel, BLSTMModel, BLSTMCRFModel
-from kashgari.tasks.labeling.experimental import BLSTMAttentionModel, SeqSelfAttentionModel
+from kashgari.tasks.labeling import CNNLSTMModel
 from kashgari.macros import DATA_PATH
 
 from tensorflow.python.keras.utils import get_file
@@ -24,8 +23,8 @@ from tensorflow.python.keras.utils import get_file
 valid_x, valid_y = ChineseDailyNerCorpus.load_data('valid')
 
 sample_w2v_path = get_file('sample_w2v.txt',
-                                   "https://storage.googleapis.com/kashgari/sample_w2v.txt",
-                                   cache_dir=DATA_PATH)
+                           "https://storage.googleapis.com/kashgari/sample_w2v.txt",
+                           cache_dir=DATA_PATH)
 
 w2v_embedding = WordEmbedding(sample_w2v_path, task=kashgari.LABELING)
 w2v_embedding_variable_len = WordEmbedding(sample_w2v_path, task=kashgari.LABELING, sequence_length='variable')
@@ -74,49 +73,3 @@ class TestCNNLSTMModel(unittest.TestCase):
                                  hyper_parameters=hyper_params)
         model.fit(valid_x, valid_y, epochs=1)
         assert True
-
-
-class TestBLSTMModel(TestCNNLSTMModel):
-    @classmethod
-    def setUpClass(cls):
-        cls.epochs = 3
-        cls.model_class = BLSTMModel
-    
-    def test_basic_use_build(self):
-        super(TestBLSTMModel, self).test_basic_use_build()
-
-# class TestCRFModel(TestCNNLSTMModel):
-#     @classmethod
-#     def setUpClass(cls):
-#         cls.epochs = 3
-#         cls.model_class = BLSTMCRFModel
-#
-#     def test_variable_length_model(self):
-#         pass
-#
-#     def test_basic_use_build(self):
-#         super(TestCRFModel, self).test_basic_use_build()
-
-
-class TestSeqSelfAttentionModel(TestCNNLSTMModel):
-    @classmethod
-    def setUpClass(cls):
-        cls.epochs = 3
-        cls.model_class = SeqSelfAttentionModel
-
-    def test_variable_length_model(self):
-        pass
-
-
-class TestBLSTMAttentionModel(TestCNNLSTMModel):
-    @classmethod
-    def setUpClass(cls):
-        cls.epochs = 3
-        cls.model_class = BLSTMAttentionModel
-
-    def test_variable_length_model(self):
-        pass
-
-
-if __name__ == "__main__":
-    print("Hello world")

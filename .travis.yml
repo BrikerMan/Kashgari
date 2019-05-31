@@ -12,7 +12,10 @@ env:
   - TEST_FILE=tests/test_classification.py
   - TEST_FILE=tests/test_custom_multi_output_classification.py
   - TEST_FILE=tests/test_embeddings.py
-  - TEST_FILE=tests/test_labeling.py
+  - TEST_FILE=tests/labeling/test_blstm_attention_model.py
+  - TEST_FILE=tests/labeling/test_blstm_model.py
+  - TEST_FILE=tests/labeling/test_cnn_lstm_model.py
+  - TEST_FILE=tests/labeling/test_seq_self_attenion_model.py
   - TEST_FILE=tests/test_processor.py
 
 before_install:
