@@ -30,7 +30,7 @@ class NonMaskingLayer(keras.layers.Layer):
     def build(self, input_shape):
         pass
 
-    def compute_mask(self, input, input_mask=None):
+    def compute_mask(self, inputs, input_mask=None):
         # do not pass the mask to the next layers
         return None
 

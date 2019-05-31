@@ -87,10 +87,9 @@ def convert_to_multi_gpu_model(model: BaseModel,
         return model
 
 
-def convert_labeling_to_doccano(
-                    semantic_data,
-                    to_file=None,
-                    join_chunk=' '):
+def convert_labeling_to_doccano(semantic_data,
+                                to_file=None,
+                                join_chunk=' '):
     data_list = []
     for index, seq_data in enumerate(semantic_data):
         labels = []

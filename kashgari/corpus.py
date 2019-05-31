@@ -87,7 +87,7 @@ class ChineseDailyNerCorpus(object):
         else:
             file_path = os.path.join(corpus_path, 'example.dev')
 
-        x_data, y_data = DataReader.read_conll_format_file(file_path, 1)
+        x_data, y_data = DataReader.read_conll_format_file(file_path)
         if shuffle:
             x_data, y_data = utils.unison_shuffled_copies(x_data, y_data)
         logging.debug(f"loaded {len(x_data)} samples from {file_path}. Sample:\n"
@@ -123,7 +123,7 @@ class CONLL2003_EN_CORPUS(object):
 
         data_index = ['pos', 'chunking', 'ner'].index(task_name) + 1
 
-        x_data, y_data = DataReader.read_conll_format_file(file_path, data_index)
+        x_data, y_data = DataReader.read_conll_format_file(file_path, label_index=data_index)
         if shuffle:
             x_data, y_data = utils.unison_shuffled_copies(x_data, y_data)
         logging.debug(f"loaded {len(x_data)} samples from {file_path}. Sample:\n"

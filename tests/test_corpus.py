@@ -19,6 +19,7 @@ class TestChineseDailyNerCorpus(unittest.TestCase):
         train_x, train_y = ChineseDailyNerCorpus.load_data()
         assert len(train_x) == len(train_y)
         assert len(train_x) > 0
+        assert train_x[:5] != train_y[:5]
 
         test_x, test_y = ChineseDailyNerCorpus.load_data('test')
         assert len(test_x) == len(test_y)
@@ -35,6 +36,7 @@ class TestCONLL2003_EN_CORPUS(unittest.TestCase):
         train_x, train_y = CONLL2003_EN_CORPUS.load_data()
         assert len(train_x) == len(train_y)
         assert len(train_x) > 0
+        assert train_x[:5] != train_y[:5]
 
         test_x, test_y = CONLL2003_EN_CORPUS.load_data('test')
         assert len(test_x) == len(test_y)
@@ -51,6 +53,7 @@ class TestSMP2018ECDTCorpus(unittest.TestCase):
         train_x, train_y = SMP2018ECDTCorpus.load_data()
         assert len(train_x) == len(train_y)
         assert len(train_x) > 0
+        assert train_x[:5] != train_y[:5]
 
         test_x, test_y = SMP2018ECDTCorpus.load_data('test')
         assert len(test_x) == len(test_y)
