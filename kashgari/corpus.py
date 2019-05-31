@@ -11,6 +11,39 @@ from kashgari import utils
 CORPUS_PATH = os.path.join(k.DATA_PATH, 'corpus')
 
 
+class DataReader(object):
+
+    @staticmethod
+    def read_conll_format_file(file_path: str,
+                               text_index: int = 0,
+                               label_index: int = 1) -> Tuple[List[List[str]], List[List[str]]]:
+        """
+        Read conll format data_file
+        Args:
+            file_path: path of target file
+            text_index: index of text data, default 0
+            label_index: index of label data, default 1
+
+        Returns:
+
+        """
+        x_data, y_data = [], []
+        with open(file_path, 'r', encoding='utf-8') as f:
+            lines = f.read().splitlines()
+            x, y = [], []
+            for line in lines:
+                rows = line.split(' ')
+                if len(rows) == 1:
+                    x_data.append(x)
+                    y_data.append(y)
+                    x = []
+                    y = []
+                else:
+                    x.append(rows[text_index])
+                    y.append(rows[label_index])
+        return x_data, y_data
+
+
 class ChineseDailyNerCorpus(object):
     """
     Chinese Daily New New Corpus
@@ -54,20 +87,7 @@ class ChineseDailyNerCorpus(object):
         else:
             file_path = os.path.join(corpus_path, 'example.dev')
 
-        x_data, y_data = [], []
-        with open(file_path, 'r', encoding='utf-8') as f:
-            lines = f.read().splitlines()
-            x, y = [], []
-            for line in lines:
-                rows = line.split(' ')
-                if len(rows) == 1:
-                    x_data.append(x)
-                    y_data.append(y)
-                    x = []
-                    y = []
-                else:
-                    x.append(rows[0])
-                    y.append(rows[1])
+        x_data, y_data = DataReader.read_conll_format_file(file_path, 1)
         if shuffle:
             x_data, y_data = utils.unison_shuffled_copies(x_data, y_data)
         logging.debug(f"loaded {len(x_data)} samples from {file_path}. Sample:\n"
@@ -103,20 +123,7 @@ class CONLL2003_EN_CORPUS(object):
 
         data_index = ['pos', 'chunking', 'ner'].index(task_name) + 1
 
-        x_data, y_data = [], []
-        with open(file_path, 'r', encoding='utf-8') as f:
-            lines = f.read().splitlines()
-            x, y = [], []
-            for line in lines:
-                rows = line.split(' ')
-                if len(rows) == 1:
-                    x_data.append(x)
-                    y_data.append(y)
-                    x = []
-                    y = []
-                else:
-                    x.append(rows[0])
-                    y.append(rows[data_index])
+        x_data, y_data = DataReader.read_conll_format_file(file_path, data_index)
         if shuffle:
             x_data, y_data = utils.unison_shuffled_copies(x_data, y_data)
         logging.debug(f"loaded {len(x_data)} samples from {file_path}. Sample:\n"
@@ -175,8 +182,7 @@ class SMP2018ECDTCorpus(object):
                                untar=True)
 
         if cutter not in ['char', 'jieba', 'none']:
-            raise ValueError(
-                'cutter error, please use one onf the {char, jieba}')
+            raise ValueError('cutter error, please use one onf the {char, jieba}')
 
         df_path = os.path.join(corpus_path, f'{subset_name}.csv')
         df = pd.read_csv(df_path)
