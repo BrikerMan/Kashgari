@@ -13,10 +13,10 @@ from kashgari.corpus import SMP2018ECDTCorpus
 from kashgari.embeddings import GPT2Embedding
 from kashgari.processors import LabelingProcessor
 
-from tests.embedding.test_bare_embedding import TestBareEmbedding
+import tests.embedding.test_bare_embedding as base
 
 
-class TestGPT2Embedding(TestBareEmbedding):
+class TestGPT2Embedding(base.TestBareEmbedding):
     @classmethod
     def setUpClass(cls):
         cls.embedding_class = GPT2Embedding

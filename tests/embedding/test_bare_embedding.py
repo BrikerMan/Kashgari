@@ -7,9 +7,7 @@
 # file: test_bare_embedding.py
 # time: 2019-05-31 19:29
 
-import os
 import unittest
-import numpy as np
 
 import kashgari
 from kashgari.corpus import ChineseDailyNerCorpus

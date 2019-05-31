@@ -6,26 +6,17 @@
 
 # file: test_word_embedding.py
 # time: 2019-05-31 19:31
-import os
-import unittest
-import numpy as np
-
-import kashgari
-from kashgari.corpus import ChineseDailyNerCorpus
-from kashgari.corpus import SMP2018ECDTCorpus
-from kashgari.embeddings import BareEmbedding, WordEmbedding
-from kashgari.embeddings import BERTEmbedding, GPT2Embedding
-from kashgari.embeddings import NumericFeaturesEmbedding, StackedEmbedding
-from kashgari.processors import ClassificationProcessor, LabelingProcessor
-from kashgari.tasks.labeling import BLSTMModel
-from kashgari.macros import DATA_PATH
 
 from tensorflow.python.keras.utils import get_file
 
-from tests.embedding.test_bare_embedding import TestBareEmbedding
+from kashgari.corpus import SMP2018ECDTCorpus
+from kashgari.embeddings import WordEmbedding
+from kashgari.macros import DATA_PATH
+from kashgari.processors import ClassificationProcessor
+import tests.embedding.test_bare_embedding as base
 
 
-class TestWordEmbedding(TestBareEmbedding):
+class TestWordEmbedding(base.TestBareEmbedding):
     @classmethod
     def setUpClass(cls):
         sample_w2v_path = get_file('sample_w2v.txt',

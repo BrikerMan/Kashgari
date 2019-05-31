@@ -12,10 +12,10 @@ from kashgari.macros import DATA_PATH
 
 from tensorflow.python.keras.utils import get_file
 
-from tests.embedding.test_bare_embedding import TestBareEmbedding
+import tests.embedding.test_bare_embedding as base
 
 
-class TestBERTEmbedding(TestBareEmbedding):
+class TestBERTEmbedding(base.TestBareEmbedding):
     @classmethod
     def setUpClass(cls):
         cls.embedding_class = BERTEmbedding

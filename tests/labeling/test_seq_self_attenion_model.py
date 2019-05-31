@@ -7,11 +7,11 @@
 # file: test_seq_self_attenion_model.py
 # time: 2019-05-31 19:15
 
-from tests.labeling.test_cnn_lstm_model import TestCNNLSTMModel
+from tests.labeling import test_cnn_lstm_model as base
 from kashgari.tasks.labeling.experimental import SeqSelfAttentionModel
 
 
-class TestSeqSelfAttentionModel(TestCNNLSTMModel):
+class TestSeqSelfAttentionModel(base.TestCNNLSTMModel):
     @classmethod
     def setUpClass(cls):
         cls.epochs = 3
