@@ -38,7 +38,7 @@ logging.basicConfig(level=logging.DEBUG)
 
 class TestBertCNNLSTMModel(unittest.TestCase):
     def test_bert_model(self):
-        embedding = BERTEmbedding(bert_path, kashgari.CLASSIFICATION, sequence_length=100)
+        embedding = BERTEmbedding(bert_path, task=kashgari.CLASSIFICATION, sequence_length=100)
         model = BLSTMModel(embedding=embedding)
         model.fit(valid_x, valid_y, epochs=1)
         res = model.predict(valid_x[:20])
