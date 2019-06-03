@@ -293,6 +293,39 @@ class BERTEmbedding(BaseEmbedding):
                                    'chinese_L-12_H-768_A-12.zip',
     }
 
+
+    def __init__(self,
+                 name_or_path: str,
+                 sequence_length: int = None,
+                 embedding_size: int = None,
+                 layer_nums: int = 4,
+                 trainable: bool = False,
+                 **kwargs,):
+        """
+        init a WordEmbedding
+        :param name_or_path: model name as `sgns.weibo.bigram` or model path like '/home/brikerman/w2v.model
+        :param sequence_length: length of max sequence, all embedding is shaped as (sequence_length, embedding_size)
+        :param embedding_size: embedding vector size, only need to set when using a CustomEmbedding
+        :param layer_nums: number of layers whose outputs will be concatenated as a single output.
+                           default `4`, the last 4 hidden layers
+        :param trainable: whether if the model is trainable, default `False` and do not set it to `True` by now
+        :param kwargs: kwargs to pass to the method, func: `BaseEmbedding.build`
+        """
+        self.layer_nums = layer_nums
+        self.trainable = trainable
+        self.training = self.trainable
+        if self.trainable:
+            reassure = ''
+            while len(reassure) == 0:
+                reassure = input('`trainable` is set to `True`, which may lead to unpredictable result, are you sure to keep this setting? (Y)es/(N)o')
+                if reassure.lower() in ['n', 'no']:
+                    self.trainable = self.training = False
+                    break
+                elif reassure.lower() in ['y', 'yes']:
+                    break
+        super(BERTEmbedding, self).__init__(name_or_path, sequence_length, embedding_size, **kwargs)
+
+
     def build(self):
         self.embedding_type = 'bert'
         url = self.pre_trained_models.get(self.model_key_map.get(self.name, self.name))
@@ -305,13 +338,17 @@ class BERTEmbedding(BaseEmbedding):
         logging.info('loading bert model from {}\n'.format(self.model_path))
         model = keras_bert.load_trained_model_from_checkpoint(config_path,
                                                               check_point_path,
-                                                              seq_len=self.sequence_length)
-        num_layers = len(model.layers)
-        features_layers = [model.get_layer(index=num_layers-1+idx*8).output\
-                            for idx in range(-3, 1)]
-        embedding_layer = concatenate(features_layers)
-        output_layer = NonMaskingLayer()(embedding_layer)
-        #output_layer = NonMaskingLayer()(model.output)
+                                                              seq_len=self.sequence_length,
+                                                              output_layer_num=self.layer_nums,
+                                                              training=self.training,
+                                                              trainable=self.trainable
+                                                              )
+        #num_layers = len(model.layers)
+        #features_layers = [model.get_layer(index=num_layers-1+idx*8).output\
+        #                    for idx in range(-3, 1)]
+        #embedding_layer = concatenate(features_layers)
+        #output_layer = NonMaskingLayer()(embedding_layer)
+        output_layer = NonMaskingLayer()(model.output)
         self._model = Model(model.inputs, output_layer)
 
         self.embedding_size = self.model.output_shape[-1]
