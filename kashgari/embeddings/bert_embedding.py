@@ -36,6 +36,8 @@ class BERTEmbedding(Embedding):
 
     def __init__(self,
                  model_folder: str,
+                 layer_nums: int = 4,
+                 trainable: bool = False,
                  task: str = None,
                  sequence_length: Union[Tuple[int, ...], str, int] = 'auto',
                  processor: Optional[BaseProcessor] = None,
@@ -45,10 +47,16 @@ class BERTEmbedding(Embedding):
         Args:
             task:
             model_folder:
+            layer_nums: number of layers whose outputs will be concatenated as a single output.
+                           default `4`, the last 4 hidden layers
+            trainable: whether if the model is trainable, default `False` and do not set it to `True` by now
             sequence_length:
             processor:
             from_saved_model:
         """
+        self.training = trainable
+        self.trainable = trainable
+        self.layer_nums = layer_nums
         if isinstance(sequence_length, tuple):
             if len(sequence_length) > 2:
                 raise ValueError('BERT only more 2')
@@ -103,7 +111,10 @@ class BERTEmbedding(Embedding):
             check_point_path = os.path.join(self.model_folder, 'bert_model.ckpt')
             bert_model = keras_bert.load_trained_model_from_checkpoint(config_path,
                                                                        check_point_path,
-                                                                       seq_len=seq_len)
+                                                                       seq_len=seq_len,
+                                                                       output_layer_num=self.layer_nums,
+                                                                       training=self.training,
+                                                                       trainable=self.trainable)
 
             self._model = tf.keras.Model(bert_model.inputs, bert_model.output)
             bert_seq_len = int(bert_model.output.shape[1])
