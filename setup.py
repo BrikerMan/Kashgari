@@ -50,7 +50,7 @@ __description__ = 'Simple, Keras-powered multilingual NLP framework,' \
                   'Includes BERT, GPT-2 and word2vec embedding.'
 
 __version__ = find_version('kashgari', 'version.py')
-README = (HERE / "README.md").read_text()
+README = (HERE / "README.md").read_text(encoding='utf-8')
 
 with codecs.open('requirements.txt', 'r', 'utf8') as reader:
     install_requires = list(map(lambda x: x.strip(), reader.readlines()))
