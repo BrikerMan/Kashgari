@@ -308,21 +308,12 @@ class BERTEmbedding(BaseEmbedding):
         :param embedding_size: embedding vector size, only need to set when using a CustomEmbedding
         :param layer_nums: number of layers whose outputs will be concatenated as a single output.
                            default `4`, the last 4 hidden layers
-        :param trainable: whether if the model is trainable, default `False` and do not set it to `True` by now
+        :param trainable: whether if the output feature layer is trainable, default `False` and set it to `True` for finetune
         :param kwargs: kwargs to pass to the method, func: `BaseEmbedding.build`
         """
         self.layer_nums = layer_nums
         self.trainable = trainable
-        self.training = self.trainable
-        if self.trainable:
-            reassure = ''
-            while len(reassure) == 0:
-                reassure = input('`trainable` is set to `True`, which may lead to unpredictable result, are you sure to keep this setting? (Y)es/(N)o')
-                if reassure.lower() in ['n', 'no']:
-                    self.trainable = self.training = False
-                    break
-                elif reassure.lower() in ['y', 'yes']:
-                    break
+        self.training = False # We do not need to train the whole bert model so set it to `False`
         super(BERTEmbedding, self).__init__(name_or_path, sequence_length, embedding_size, **kwargs)
 
 
