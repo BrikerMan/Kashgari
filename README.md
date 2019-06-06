@@ -47,11 +47,12 @@ Kashgare is:
 
 ## Performance
 
-| Task                     | Language | Dataset                   | Score          | Detail                                                                         |
-| ------------------------ | -------- | ------------------------- | -------------- | ------------------------------------------------------------------------------ |
+| Task                     | Language | Dataset                   | Score          | Detail                                                                   |
+| ------------------------ | -------- | ------------------------- | -------------- | ------------------------------------------------------------------------ |
 | Named Entity Recognition | Chinese  | People's Daily Ner Corpus | **92.20** (F1) | [基于 BERT 的中文命名实体识别](https://eliyar.biz/nlp_chinese_bert_ner/) |
 
 ## Roadmap
+
 * [ ] **[Migrate to tf.keras](https://github.com/BrikerMan/Kashgari/issues/77)**
 * [ ] ELMo Embedding
 * [ ] Pre-trained models
@@ -160,7 +161,7 @@ from kashgari.embeddings import BERTEmbedding
 from kashgari.tasks.classification import CNNLSTMModel
 from kashgari.corpus import SMP2017ECDTClassificationCorpus
 
-bert_embedding = BERTEmbedding('bert-base-chinese', sequence_length=30)                                   
+bert_embedding = BERTEmbedding('<bert-model-folder>', sequence_length=30)                                   
 model = CNNLSTMModel(bert_embedding)
 
 train_x, train_y = SMP2017ECDTClassificationCorpus.get_classification_data()
