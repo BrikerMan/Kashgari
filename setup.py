@@ -53,7 +53,7 @@ __version__ = find_version('kashgari', 'version.py')
 required = [
     'Keras>=2.2.0',
     'h5py>=2.7.1',
-    'keras-bert==0.57.0',
+    'keras-bert==0.57.1',
     'scikit-learn>=0.19.1',
     'numpy>=1.14.3',
     'download>=0.3.3',
@@ -63,7 +63,7 @@ required = [
     # 'bz2file>=0.98',
     'sklearn',
     'pandas>=0.23.0',
-    'keras-gpt-2==0.10.0'
+    'keras-gpt-2==0.11.1'
 ]
 
 # long_description = ""
