@@ -11,6 +11,7 @@ import os
 
 os.environ['TF_KERAS'] = '1'
 
+import codecs
 import logging
 from typing import Union, Optional, Any, List, Tuple
 
@@ -39,7 +40,7 @@ class BERTEmbedding(Embedding):
                  layer_nums: int = 4,
                  trainable: bool = False,
                  task: str = None,
-                 sequence_length: Union[Tuple[int, ...], str, int] = 'auto',
+                 sequence_length: Union[str, int] = 'auto',
                  processor: Optional[BaseProcessor] = None,
                  from_saved_model: bool = False):
         """
@@ -84,14 +85,13 @@ class BERTEmbedding(Embedding):
             self._build_model()
 
     def _build_token2idx_from_bert(self):
-        token2idx = {}
-
         dict_path = os.path.join(self.model_folder, 'vocab.txt')
 
-        with open(dict_path, 'r', encoding='utf-8') as f:
-            words = f.read().splitlines()
-        for _, word in enumerate(words):
-            token2idx[word] = len(token2idx)
+        token2idx = {}
+        with codecs.open(dict_path, 'r', 'utf8') as reader:
+            for line in reader:
+                token = line.strip()
+                token2idx[token] = len(token2idx)
 
         self.bert_token2idx = token2idx
         self.processor.token2idx = self.bert_token2idx
@@ -103,7 +103,7 @@ class BERTEmbedding(Embedding):
             if isinstance(seq_len, tuple):
                 seq_len = seq_len[0]
             if isinstance(seq_len, str):
-                logging.warning(f"Model wull be built until sequence length is determined")
+                logging.warning(f"Model will be built until sequence length is determined")
                 return
             config_path = os.path.join(self.model_folder, 'bert_config.json')
             check_point_path = os.path.join(self.model_folder, 'bert_model.ckpt')
