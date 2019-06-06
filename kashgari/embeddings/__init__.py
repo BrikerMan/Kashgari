@@ -15,4 +15,5 @@ from .embeddings import BaseEmbedding
 from .embeddings import CustomEmbedding
 from .embeddings import WordEmbeddings
 from .embeddings import TwoHeadEmbedding
+from .embeddings import GPT2Embedding
 

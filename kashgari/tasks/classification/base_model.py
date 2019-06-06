@@ -184,6 +184,7 @@ class ClassificationModel(BaseModel):
                     target_x.append(x[start_index: end_index])
                 target_y = y_data[start_index: end_index]
                 if len(target_x[0]) == 0:
+                    target_x.pop()
                     for x in x_data:
                         target_x.append(x[0: batch_size])
                     target_y = y_data[0: batch_size]
