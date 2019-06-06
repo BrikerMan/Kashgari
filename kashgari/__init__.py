@@ -19,6 +19,7 @@ from kashgari.tasks import seq_labeling
 
 from kashgari.macros import config
 
+from kashgari.version import __version__
 
 if __name__ == "__main__":
     print("Hello world")

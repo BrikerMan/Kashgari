@@ -11,11 +11,29 @@
 @time: 2019-01-24 16:42
 
 """
+import os
+import re
+import codecs
 import pathlib
 
 from setuptools import find_packages, setup
 
-from version import __version__
+HERE = pathlib.Path(__file__).parent
+
+
+def read(*parts):
+    with codecs.open(os.path.join(HERE, *parts), 'r') as fp:
+        return fp.read()
+
+
+def find_version(*file_paths):
+    version_file = read(*file_paths)
+    version_match = re.search(r"^__version__ = ['\"]([^'\"]*)['\"]",
+                              version_file, re.M)
+    if version_match:
+        return version_match.group(1)
+    raise RuntimeError("Unable to find version string.")
+
 
 # Package meta-data.
 NAME = 'kashgari'
@@ -28,13 +46,14 @@ EMAIL = 'eliyar917@gmail.com'
 AUTHOR = 'BrikerMan'
 LICENSE = 'Apache License 2.0'
 
-HERE = pathlib.Path(__file__).parent
 README = (HERE / "README.md").read_text()
+
+__version__ = find_version('kashgari', 'version.py')
 
 required = [
     'Keras>=2.2.0',
     'h5py>=2.7.1',
-    'keras-bert==0.41.0',
+    'keras-bert==0.57.1',
     'scikit-learn>=0.19.1',
     'numpy>=1.14.3',
     'download>=0.3.3',
@@ -44,7 +63,7 @@ required = [
     # 'bz2file>=0.98',
     'sklearn',
     'pandas>=0.23.0',
-    'keras-gpt-2==0.7.0'
+    'keras-gpt-2==0.11.1'
 ]
 
 # long_description = ""
