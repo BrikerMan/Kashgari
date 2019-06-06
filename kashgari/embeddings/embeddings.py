@@ -347,9 +347,8 @@ class BERTEmbedding(BaseEmbedding):
         word2idx = {}
         with open(dict_path, 'r', encoding='utf-8') as f:
             words = f.read().splitlines()
-        for idx, word in enumerate(words):
-            word2idx[word] = idx
-            #word2idx[word] = len(word2idx)
+        for word in words:
+            word2idx[word] = len(word2idx)
         for key, value in self.special_tokens.items():
             word2idx[key] = word2idx[value]
 
