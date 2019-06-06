@@ -47,25 +47,23 @@ class BERTEmbedding(Embedding):
         Args:
             task:
             model_folder:
-            layer_nums: number of layers whose outputs will be concatenated as a single output.
-                           default `4`, the last 4 hidden layers
-            trainable: whether if the model is trainable, default `False` and do not set it to `True` by now
+            layer_nums: number of layers whose outputs will be concatenated into a single tensor,
+                           default `4`, output the last 4 hidden layers as the thesis suggested
+            trainable: whether if the model is trainable, default `False` and set it to `True`
+                        for fine-tune this embedding layer during your training
             sequence_length:
             processor:
             from_saved_model:
         """
-        self.training = trainable
         self.trainable = trainable
+        # Do not need to train the whole bert model if just to use its feature output
+        self.training = False
         self.layer_nums = layer_nums
         if isinstance(sequence_length, tuple):
-            if len(sequence_length) > 2:
-                raise ValueError('BERT only more 2')
-            else:
-                if not all([s == sequence_length[0] for s in sequence_length]):
-                    raise ValueError('BERT only receive all')
+            raise ValueError('BERT embedding only accept `int` type `sequence_length`')
 
         if sequence_length == 'variable':
-            raise ValueError('BERT only receive all')
+            raise ValueError('BERT embedding only accept sequences in equal length')
 
         super(BERTEmbedding, self).__init__(task=task,
                                             sequence_length=sequence_length,
@@ -105,7 +103,7 @@ class BERTEmbedding(Embedding):
             if isinstance(seq_len, tuple):
                 seq_len = seq_len[0]
             if isinstance(seq_len, str):
-                logging.warning(f"Will build model after have specific sequence length")
+                logging.warning(f"Model wull be built until sequence length is determined")
                 return
             config_path = os.path.join(self.model_folder, 'bert_config.json')
             check_point_path = os.path.join(self.model_folder, 'bert_model.ckpt')
