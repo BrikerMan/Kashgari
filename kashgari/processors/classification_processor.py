@@ -44,6 +44,8 @@ class ClassificationProcessor(BaseProcessor):
                                  sequences: List[List[str]]):
         result = []
         for seq in sequences:
+            if self.add_bos_eos:
+                seq = [self.token_bos] + seq + [self.token_eos]
             unk_index = self.token2idx[self.token_unk]
             result.append([self.token2idx.get(token, unk_index) for token in seq])
         return result
