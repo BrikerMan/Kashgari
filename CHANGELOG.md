@@ -1,6 +1,6 @@
 ## v0.2.4 (2019.06.06)
 
-* Add BERT output feature layer finetune support. Discussion: #103
+* Add BERT output feature layer fine-tune support. Discussion: #103
 * Add BERT output feature layer number selection, default 4 according to BERT paper.
 * Fix BERT embedding token index offset issue #104.
 
