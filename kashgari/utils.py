@@ -19,7 +19,7 @@ import tensorflow as tf
 from kashgari import custom_objects
 from kashgari.tasks.base_model import BaseModel
 from kashgari.embeddings.base_embedding import Embedding
-from typing import List
+from typing import List, Union
 
 
 def unison_shuffled_copies(a, b):
@@ -75,9 +75,13 @@ def convert_to_tpu_model(model: BaseModel,
 
 def convert_to_multi_gpu_model(model: BaseModel,
                                gpus: int,
-                               cpu_merge: bool,
-                               cpu_relocation: bool):
+                               x: List[List[str]],
+                               y: Union[List[List[str]], List[str]],
+                               cpu_merge: bool = True,
+                               cpu_relocation: bool = False):
+    model.embedding.analyze_corpus(x, y)
     with custom_object_scope():
+        model.build_model_arc()
         multi_gpu_model = tf.keras.utils.multi_gpu_model(model.tf_model,
                                                          gpus,
                                                          cpu_merge=cpu_merge,
