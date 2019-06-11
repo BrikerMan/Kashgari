@@ -120,7 +120,7 @@ class BaseLabelingModel(BaseModel):
 
         """
         y_pred = self.predict(x_data, batch_size=batch_size)
-        y_true = [seq[:self.embedding.sequence_length] for seq in y_data]
+        y_true = [seq[:len(y_pred[index])] for index, seq in enumerate(y_data)]
 
         if debug_info:
             for index in random.sample(list(range(len(x_data))), 5):
