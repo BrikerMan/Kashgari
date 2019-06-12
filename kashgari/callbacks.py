@@ -18,7 +18,7 @@ class EvalCallBack(keras.callbacks.Callback):
 
     def __init__(self, kash_model: BaseModel, valid_x, valid_y, step=5, batch_size=256):
         """
-        Sequence Labeling Evaluate callback, calculate precision, recall and f1
+        Evaluate callback, calculate precision, recall and f1
         Args:
             kash_model: the kashgari model to evaluate
             valid_x: feature data
@@ -36,7 +36,7 @@ class EvalCallBack(keras.callbacks.Callback):
 
     def on_epoch_end(self, epoch, logs=None):
         if (epoch + 1) % self.step == 0:
-            y_pred = self.predict(self.valid_x, batch_size=self.batch_size)
+            y_pred = self.kash_model.predict(self.valid_x, batch_size=self.batch_size)
 
             if self.kash_model.task == macros.TaskType.LABELING:
                 y_true = [seq[:len(y_pred[index])] for index, seq in enumerate(self.valid_y)]
