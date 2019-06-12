@@ -34,6 +34,8 @@ class EvalCallBack(keras.callbacks.Callback):
         self.batch_size = batch_size
         self.logs = {}
 
+        self.average = 'weighted'
+
     def on_epoch_end(self, epoch, logs=None):
         if (epoch + 1) % self.step == 0:
             y_pred = self.kash_model.predict(self.valid_x, batch_size=self.batch_size)
@@ -45,14 +47,14 @@ class EvalCallBack(keras.callbacks.Callback):
                 f1 = seq_metrics.f1_score(y_true, y_pred)
             else:
                 y_true = self.valid_y
-                precision = metrics.precision_score(y_true, y_pred)
-                recall = metrics.recall_score(y_true, y_pred)
-                f1 = metrics.f1_score(y_true, y_pred)
+                precision = metrics.precision_score(y_true, y_pred, average=self.average)
+                recall = metrics.recall_score(y_true, y_pred, average=self.average)
+                f1 = metrics.f1_score(y_true, y_pred, average=self.average)
 
             self.logs[epoch] = {
                 'precision': precision,
                 'recall': recall,
-                'f1_score': f1
+                'f1': f1
             }
             print(f"\nepoch: {epoch} precision: {precision:.6f}, recall: {recall:.6f}, f1: {f1:.6f}")
 
