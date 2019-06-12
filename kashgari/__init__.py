@@ -29,3 +29,4 @@ from kashgari import processors
 from kashgari import tasks
 from kashgari.version import __version__
 from kashgari import utils
+from kashgari import callbacks

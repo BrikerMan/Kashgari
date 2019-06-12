@@ -30,7 +30,7 @@ class BLSTMAttentionModel(BaseLabelingModel):
         """
         return {
             'layer_blstm': {
-                'units': 128,
+                'units': 64,
                 'return_sequences': True
             },
             'layer_self_attention': {

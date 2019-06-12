@@ -65,6 +65,7 @@ class Embedding(object):
                  embedding_size: int = 100,
                  processor: Optional[BaseProcessor] = None,
                  from_saved_model: bool = False):
+        self.task = task
         self.embedding_size = embedding_size
         self.sequence_length: Union[int, str] = sequence_length
         self.embed_model: Optional[keras.Model] = None

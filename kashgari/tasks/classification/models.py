@@ -20,7 +20,7 @@ class BLSTMModel(BaseClassificationModel):
     def get_default_hyper_parameters(cls) -> Dict[str, Dict[str, Any]]:
         return {
             'layer_bi_lstm': {
-                'units': 256,
+                'units': 128,
                 'return_sequences': False
             },
             'layer_dense': {

@@ -29,7 +29,7 @@ class BLSTMModel(BaseLabelingModel):
         """
         return {
             'layer_blstm': {
-                'units': 256,
+                'units': 128,
                 'return_sequences': True
             },
             'layer_dropout': {
@@ -80,7 +80,7 @@ class BLSTMCRFModel(BaseLabelingModel):
         """
         return {
             'layer_blstm': {
-                'units': 256,
+                'units': 128,
                 'return_sequences': True
             },
             'layer_dense': {

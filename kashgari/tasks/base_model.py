@@ -75,6 +75,10 @@ class BaseModel(object):
         if hyper_parameters:
             self.hyper_parameters.update(hyper_parameters)
 
+    @property
+    def task(self):
+        return self.embedding.task
+
     def build_model(self,
                     x_data: Union[Tuple[List[List[str]], ...], List[List[str]]],
                     y_data: Union[List[List[str]], List[str]]):
@@ -129,6 +133,7 @@ class BaseModel(object):
             y_validate: Union[List[List[str]], List[str]] = None,
             batch_size: int = 64,
             epochs: int = 5,
+            callbacks: List[keras.callbacks.Callback] = None,
             fit_kwargs: Dict = None):
         """
         Trains the model for a given number of epochs (iterations on a dataset).
@@ -142,6 +147,7 @@ class BaseModel(object):
             y_validate: Array of validation label data
             batch_size: Number of samples per gradient update, default to 64.
             epochs: Integer. Number of epochs to train the model. default 5.
+            callbacks:
             fit_kwargs: fit_kwargs: additional arguments passed to ``fit_generator()`` function from
                 ``tensorflow.keras.Model``
                 - https://www.tensorflow.org/api_docs/python/tf/keras/models/Model#fit_generator
@@ -162,12 +168,15 @@ class BaseModel(object):
         if fit_kwargs is None:
             fit_kwargs = {}
 
+        if callbacks and 'callbacks' not in fit_kwargs:
+            fit_kwargs['callbacks'] = callbacks
+
         with utils.custom_object_scope():
-            self.tf_model.fit(tensor_x, tensor_y,
-                              validation_data=validation_data,
-                              epochs=epochs,
-                              batch_size=batch_size,
-                              **fit_kwargs)
+            return self.tf_model.fit(tensor_x, tensor_y,
+                                     validation_data=validation_data,
+                                     epochs=epochs,
+                                     batch_size=batch_size,
+                                     **fit_kwargs)
 
     def fit_with_generator(self,
                            x_train: Union[Tuple[List[List[str]], ...], List[List[str]]],
@@ -176,6 +185,7 @@ class BaseModel(object):
                            y_validate: Union[List[List[str]], List[str]] = None,
                            batch_size: int = 64,
                            epochs: int = 5,
+                           callbacks: List[keras.callbacks.Callback] = None,
                            fit_kwargs: Dict = None):
         train_generator = self.get_data_generator(x_train,
                                                   y_train,
@@ -200,12 +210,13 @@ class BaseModel(object):
         else:
             steps_per_epoch = len(x_train) // batch_size + 1
         with utils.custom_object_scope():
-            self.tf_model.fit_generator(train_generator,
-                                        steps_per_epoch=steps_per_epoch,
-                                        epochs=epochs,
-                                        validation_data=validation_generator,
-                                        validation_steps=validation_steps,
-                                        **fit_kwargs)
+            return self.tf_model.fit_generator(train_generator,
+                                               steps_per_epoch=steps_per_epoch,
+                                               epochs=epochs,
+                                               validation_data=validation_generator,
+                                               validation_steps=validation_steps,
+                                               callbacks=callbacks,
+                                               **fit_kwargs)
 
     def compile_model(self, **kwargs):
         """Configures the model for training.
