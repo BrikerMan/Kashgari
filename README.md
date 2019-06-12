@@ -1,19 +1,36 @@
-# Kashgari
+<h1 align="center">
+    Kashgari
+</h1>
 
-[![Pypi](https://img.shields.io/pypi/v/kashgari.svg)](https://pypi.org/project/kashgari/)
-[![Python version](https://img.shields.io/pypi/pyversions/Kashgari.svg)](https://www.python.org/downloads/release/python-360/)
-[![Travis (.com) branch](https://img.shields.io/travis/com/BrikerMan/Kashgari/tf.keras-version.svg)](https://travis-ci.com/BrikerMan/Kashgari/)
-[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FBrikerMan%2FKashgari.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2FBrikerMan%2FKashgari?ref=badge_shield)
-[![Coverage](https://sonarcloud.io/api/project_badges/measure?branch=tf.keras-version&project=BrikerMan_Kashgari&metric=coverage)](https://sonarcloud.io/dashboard?id=BrikerMan_Kashgari&branch=tf.keras-version)
-[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?branch=tf.keras-version&project=BrikerMan_Kashgari&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=BrikerMan_Kashgari&branch=tf.keras-version)
-[![Issues](https://img.shields.io/github/issues/BrikerMan/Kashgari.svg)](https://github.com/BrikerMan/Kashgari/issues)
-[![Contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg)](CONTRIBUTING.md)
-![](https://img.shields.io/pypi/l/kashgari.svg?style=flat)
-[![](https://img.shields.io/pypi/dm/kashgari.svg)](https://pypi.org/project/kashgari/)
+<p align="center">
+    <a href="https://github.com/BrikerMan/kashgari/blob/master/LICENSE">
+        <img alt="GitHub" src="https://img.shields.io/github/license/BrikerMan/kashgari.svg?color=blue&style=popout">
+    </a>
+    <a href="https://kashgari.readthedocs.io/">
+        <img alt="Website" src="https://sonarcloud.io/api/project_badges/measure?project=BrikerMan_Kashgari&metric=coverage">
+    </a>
+    <a href="https://kashgari.readthedocs.io/">
+        <img alt="Reliability" src="https://sonarcloud.io/api/project_badges/measure?project=BrikerMan_Kashgari&metric=reliability_rating">
+    </a>
+    <a href="https://pepy.tech/project/kashgari">
+        <img src="https://pepy.tech/badge/kashgari"/>
+    </a>
+    <a href="https://pypi.org/project/kashgari/">
+        <img alt="PyPI" src="https://img.shields.io/pypi/v/kashgari.svg">
+    </a>
+</p>
 
-Simple and powerful NLP framework, build your state-of-art model in 5 minutes for named entity recognition (NER), part-of-speech tagging (PoS) and text classification tasks.
+<h4 align="center">
+    <a href="#overview">Overview</a> |
+    <a href="#performance">Performance</a> |
+    <a href="#quick-start">Quick start</a> |
+    <a href="https://kashgari.readthedocs.io/">Documentation</a> |
+    <a href="https://kashgari.readthedocs.io/">Contributing</a>
+</h4>
 
-Kashgare is:
+## Overview
+
+Kashgare is simple and powerful NLP framework, build your state-of-art model in 5 minutes for named entity recognition (NER), part-of-speech tagging (PoS) and text classification tasks.
 
 - **Human-friendly**. Kashgare's code is straightforward, well documented and tested, which makes it very easy to understand and modify.
 - **Powerful and simple**. Kashgare allows you to apply state-of-the-art natural language processing (NLP) models to your text, such as named entity recognition (NER), part-of-speech tagging (PoS) and classification.
@@ -31,8 +48,6 @@ Kashgare is:
 
 Here is a set of quick tutorials to get you started with the library:
 
-- [Tutorial 1: Word Embeddings](docs/Tutorial_1_Embedding.md)
-- [Tutorial 2: Classification Model](docs/Tutorial_2_Classification.md)
 - [Tutorial 3: Sequence labeling Model](./tutorial/sequence_labeling_model.md)
 
 There are also articles and posts that illustrate how to use Kashgari:

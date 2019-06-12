@@ -1,4 +1,6 @@
-# Kashgari
+<h1 align="center">
+    Kashgari
+</h1>
 
 <p align="center">
     <a href="https://github.com/BrikerMan/kashgari/blob/master/LICENSE">
