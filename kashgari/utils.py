@@ -66,6 +66,15 @@ def load_model(model_path: str) -> BaseModel:
 
 def convert_to_tpu_model(model: BaseModel,
                          strategy: tf.contrib.distribute.TPUStrategy) -> BaseModel:
+    """
+
+    Args:
+        model:
+        strategy:
+
+    Returns:
+
+    """
     with custom_object_scope():
         tpu_model = tf.contrib.tpu.keras_to_tpu_model(model.tf_model, strategy=strategy)
         model.tf_model = tpu_model
@@ -75,13 +84,22 @@ def convert_to_tpu_model(model: BaseModel,
 
 def convert_to_multi_gpu_model(model: BaseModel,
                                gpus: int,
-                               x: List[List[str]],
-                               y: Union[List[List[str]], List[str]],
                                cpu_merge: bool = True,
                                cpu_relocation: bool = False):
-    model.embedding.analyze_corpus(x, y)
+    """
+
+    Args:
+        model:
+        gpus:
+        cpu_merge:
+        cpu_relocation:
+
+    Returns:
+
+    """
+    if model.tf_model is None:
+        raise ValueError('Must build model using `model.build_model` function before convert to multi_gpu model')
     with custom_object_scope():
-        model.build_model_arc()
         multi_gpu_model = tf.keras.utils.multi_gpu_model(model.tf_model,
                                                          gpus,
                                                          cpu_merge=cpu_merge,

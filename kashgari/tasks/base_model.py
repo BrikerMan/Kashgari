@@ -81,9 +81,14 @@ class BaseModel(object):
 
     def build_model(self,
                     x_data: Union[Tuple[List[List[str]], ...], List[List[str]]],
-                    y_data: Union[List[List[str]], List[str]]):
+                    y_data: Union[List[List[str]], List[str]],
+                    x_validate: Union[Tuple[List[List[str]], ...], List[List[str]]] = None,
+                    y_validate: Union[List[List[str]], List[str]] = None):
 
-        self.embedding.analyze_corpus(x_data, y_data)
+        if x_data is not None and not isinstance(x_data, tuple):
+            self.embedding.analyze_corpus(x_data + x_validate, y_data + y_validate)
+        else:
+            self.embedding.analyze_corpus(x_data, y_data)
 
         if self.tf_model is None:
             self.build_model_arc()
