@@ -19,6 +19,4 @@ formats: all
 python:
   version: 3.7
   install:
-    - method: pip
-      path: tensorflow
     - requirements: requirements.dev.txt
