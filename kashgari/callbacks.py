@@ -37,13 +37,14 @@ class EvalCallBack(keras.callbacks.Callback):
     def on_epoch_end(self, epoch, logs=None):
         if (epoch + 1) % self.step == 0:
             y_pred = self.predict(self.valid_x, batch_size=self.batch_size)
-            y_true = [seq[:len(y_pred[index])] for index, seq in enumerate(self.valid_y)]
 
             if self.kash_model.task == macros.TaskType.LABELING:
+                y_true = [seq[:len(y_pred[index])] for index, seq in enumerate(self.valid_y)]
                 precision = seq_metrics.precision_score(y_true, y_pred)
                 recall = seq_metrics.recall_score(y_true, y_pred)
                 f1 = seq_metrics.f1_score(y_true, y_pred)
             else:
+                y_true = self.valid_y
                 precision = metrics.precision_score(y_true, y_pred)
                 recall = metrics.recall_score(y_true, y_pred)
                 f1 = metrics.f1_score(y_true, y_pred)
