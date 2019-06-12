@@ -7,7 +7,7 @@ position in text and more. Kashgari provides `NumericFeaturesEmbedding` and `Sta
 
 If you have a dataset like this.
 
-```log
+```python
 token=NLP	start_of_p=True 	bold=True	center=True	B-Category
 token=Projects	start_of_p=False	bold=True	center=True	I-Category
 token=Project	start_of_p=True	        bold=True	center=False	B-Project-name

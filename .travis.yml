@@ -19,10 +19,11 @@ env:
   - TEST_FILE=tests/embedding/test_bare_embedding.py
   - TEST_FILE=tests/embedding/test_word_embedding.py
   # Labeling
-  - TEST_FILE=tests/labeling/test_blstm_attention_model.py
-  - TEST_FILE=tests/labeling/test_blstm_model.py
-  - TEST_FILE=tests/labeling/test_cnn_lstm_model.py
-  - TEST_FILE=tests/labeling/test_seq_self_attenion_model.py
+  - TEST_FILE=tests/labeling/
+  #  - TEST_FILE=tests/labeling/test_blstm_model.py
+  #  - TEST_FILE=tests/labeling/test_cnn_lstm_model.py
+  #  - TEST_FILE=tests/labeling/test_seq_self_attenion_model.py
+  #  - TEST_FILE=tests/labeling/test_blstm_crf_model.py
   - TEST_FILE=tests/test_processor.py
 
 before_install:

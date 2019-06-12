@@ -10,6 +10,7 @@ Welcome to Kashgari's documentation!
    :maxdepth: 2
 
    corpus
+   tutorial/labeling
    tutorial/customize_multi_output_model
    tutorial/deal_with_numeric_features
    api
