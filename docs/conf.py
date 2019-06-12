@@ -14,6 +14,7 @@ import os
 import sys
 
 from recommonmark.transform import AutoStructify
+from recommonmark.parser import CommonMarkParser
 
 sys.path.insert(0, os.path.abspath('.'))
 sys.path.insert(0, os.path.abspath('../'))
@@ -26,6 +27,10 @@ author = 'BrikerMan'
 
 # -- General configuration ---------------------------------------------------
 source_suffix = ['.rst', '.md']
+
+# source_parsers = {
+#     '.md': CommonMarkParser,
+# }
 
 extensions = [
     'sphinx.ext.autodoc',
@@ -40,8 +45,9 @@ extensions = [
     'sphinx.ext.viewcode',
     'sphinx.ext.napoleon',
     'sphinx.ext.doctest',
-    'recommonmark',
-    'sphinx.ext.autosummary'
+    # 'recommonmark',
+    'sphinx_markdown_tables',
+    'm2r'
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -119,7 +125,7 @@ release = version
 
 def setup(app):
     app.add_config_value('recommonmark_config', {
-        #'url_resolver': lambda url: github_doc_root + url,
+        # 'url_resolver': lambda url: github_doc_root + url,
         'auto_toc_tree_section': 'Contents',
         'enable_eval_rst': True,
     }, True)

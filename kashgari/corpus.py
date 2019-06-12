@@ -96,7 +96,7 @@ class ChineseDailyNerCorpus(object):
         return x_data, y_data
 
 
-class CONLL2003_EN_CORPUS(object):
+class CONLL2003ENCorpus(object):
     __corpus_name__ = 'conll2003_en'
     __zip_file__name = 'https://storage.googleapis.com/kashgari/conll2003_en.tar.gz'
 

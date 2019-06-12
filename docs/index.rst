@@ -6,25 +6,39 @@
 Welcome to Kashgari's documentation!
 ====================================
 
-.. toctree::
-   :maxdepth: 2
+.. mdinclude:: main.md
 
-   corpus
-   tutorial/labeling
+
+.. toctree::
+    :titlesonly:
+    :hidden:
+    :maxdepth: 0
+  
+    main
+
+
+.. toctree::
+   :hidden:
+   :maxdepth: 1
+   :caption: Tutorial
+
+   tutorial/text_classification_model
+   tutorial/sequence_labeling_model
+   tutorial/language_modeling.md
+
+.. toctree::
+   :hidden:
+   :maxdepth: 1
+   :caption: Advanced use
+   
    tutorial/customize_multi_output_model
    tutorial/deal_with_numeric_features
-   api
-   CHANGELOG
 
-Corpus
-======
+.. toctree::
+  :hidden:
+  :maxdepth: 2
+  :caption: API
 
-Kashgari rovides xxxx
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+  corpus
+  api
+  CHANGELOG

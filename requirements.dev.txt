@@ -17,3 +17,4 @@ nose
 sphinx
 sphinx_rtd_theme
 sphinx_markdown_tables
+m2r
