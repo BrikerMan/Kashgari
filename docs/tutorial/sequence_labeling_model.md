@@ -9,7 +9,7 @@ Available model list:
 | --------------------- | -------------------------------------- | :------: | ------- | :--------: |
 | BLSTMModel            | `kashgari.tasks.labeling`              |  0.7479  | 557,152 |    10s     |
 | BLSTMCRFModel         | `kashgari.tasks.labeling`              |  0.5999  | 558,240 |    212s    |
-| CNNLSTMModel          | `kashgari.tasks.labeling`              |          | 414,208 |     6s     |
+| CNNLSTMModel          | `kashgari.tasks.labeling`              |  0.7328  | 414,208 |     6s     |
 | BLSTMAttentionModel   | `kashgari.tasks.labeling.experimental` |  0.5591  | 414,881 |    10s     |
 | SeqSelfAttentionModel | `kashgari.tasks.labeling.experimental` |  0.1205  | 334,338 |     7s     |
 
