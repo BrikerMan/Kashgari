@@ -16,6 +16,10 @@ from kashgari.tasks.labeling.base_model import BaseLabelingModel
 from kashgari.layers import L
 from kashgari.layers.crf import CRF
 
+from kashgari.utils import custom_objects
+
+custom_objects['CRF'] = CRF
+
 
 class BLSTMModel(BaseLabelingModel):
     """Bidirectional LSTM Sequence Labeling Model"""
@@ -100,7 +104,7 @@ class BLSTMCRFModel(BaseLabelingModel):
                                       name='layer_blstm')
 
         layer_dense = L.Dense(output_dim, **config['layer_dense'], name='layer_dense')
-        layer_crf = CRF(output_dim, sparse_target=True)
+        layer_crf = CRF(output_dim)
 
         tensor = layer_blstm(embed_model.output)
         tensor = layer_dense(tensor)

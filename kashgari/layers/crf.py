@@ -14,14 +14,9 @@
 # limitations under the License.
 # ******************************************************************************
 import tensorflow as tf
-from tensorflow import convert_to_tensor, keras
-from tensorflow.python.keras.backend import argmax
-from tensorflow.python.keras.metrics import categorical_accuracy
-
-import kashgari
 
 
-class CRF(keras.layers.Layer):
+class CRF(tf.keras.layers.Layer):
     """
     Conditional Random Field layer (tf.keras)
     `CRF` can be used as the last layer in a network (as a classifier). Input shape (features)
@@ -31,37 +26,29 @@ class CRF(keras.layers.Layer):
     as the classification of sequences are used with the layers internal weights.
     Args:
         num_labels (int): the number of labels to tag each temporal input.
-        mode (string, optional): operation mode, 'reg' for regular full sequence learning (all
-            sequences have equal length), or 'pad' for using with supplied sequence lengths (useful
-            for padded sequences)
     Input shape:
-        'reg' mode - nD tensor with shape `(batch_size, sentence length, num_classes)`.
-        'pad' mode - tuple of `(batch_size, sentence length, num_classes)`, `(batch_size, 1)`
-        'pad_zero' mode - nD tensor with shape `(batch_size, sentence length, num_classes)`.
-            Auto count non zero items count as sequence length.
+        nD tensor with shape `(batch_size, sentence length, num_classes)`.
     Output shape:
         nD tensor with shape: `(batch_size, sentence length, num_classes)`.
     """
-    def __init__(self, num_classes, mode='reg', **kwargs):
-        self.transitions = None
+
+    def __init__(self,
+                 output_dim,
+                 supports_masking=False,
+                 sequence_lengths=None,
+                 transitions=None,
+                 **kwargs):
+        self.transitions = transitions
         super(CRF, self).__init__(**kwargs)
         # num of output labels
-        self.output_dim = int(num_classes)
-        self.mode = mode
-        if self.mode == 'pad':
-            self.input_spec = [keras.layers.InputSpec(min_ndim=3),
-                               keras.layers.InputSpec(min_ndim=2)]
-        elif self.mode in ['reg', 'pad_zero']:
-            self.input_spec = keras.layers.InputSpec(min_ndim=3)
-        else:
-            raise ValueError
-        self.supports_masking = True
-        self.sequence_lengths = None
+        self.output_dim = int(output_dim)
+        self.input_spec = tf.keras.layers.InputSpec(min_ndim=3)
+        self.supports_masking = supports_masking
+        self.sequence_lengths = sequence_lengths
 
     def get_config(self):
         config = {
             'output_dim': self.output_dim,
-            'mode': self.mode,
             'supports_masking': self.supports_masking,
             'transitions': tf.keras.backend.eval(self.transitions)
         }
@@ -69,22 +56,13 @@ class CRF(keras.layers.Layer):
         return dict(list(base_config.items()) + list(config.items()))
 
     def build(self, input_shape):
-        if self.mode == 'pad':
-            assert len(input_shape) == 2
-            assert len(input_shape[0]) == 3
-            assert len(input_shape[1]) == 2
-            f_shape = tf.TensorShape(input_shape[0])
-            input_spec = [keras.layers.InputSpec(min_ndim=3, axes={-1: f_shape[-1]}),
-                          keras.layers.InputSpec(min_ndim=2, axes={-1: 1}, dtype=tf.int32)]
-        else:
-            assert len(input_shape) == 3
-            f_shape = tf.TensorShape(input_shape)
-            input_spec = keras.layers.InputSpec(min_ndim=3, axes={-1: f_shape[-1]})
+        assert len(input_shape) == 3
+        f_shape = tf.TensorShape(input_shape)
+        input_spec = tf.keras.layers.InputSpec(min_ndim=3, axes={-1: f_shape[-1]})
 
         if f_shape[-1] is None:
             raise ValueError('The last dimension of the inputs to `CRF` '
                              'should be defined. Found `None`.')
-
         if f_shape[-1] != self.output_dim:
             raise ValueError('The last dimension of the input shape must be equal to output'
                              ' shape. Use a linear layer if needed.')
@@ -95,40 +73,37 @@ class CRF(keras.layers.Layer):
                                            trainable=True)
         self.built = True
 
-    def call(self, inputs, **kwargs):
-        if self.mode == 'pad':
-            sequences = convert_to_tensor(inputs[0], dtype=self.dtype)
-            self.sequence_lengths = tf.keras.backend.flatten(inputs[-1])
-        elif self.mode == 'pad_zero':
-            # TODO: Check crf sequence lengths logic
-            sequences = convert_to_tensor(inputs, dtype=self.dtype)
-            count_nonzero = tf.count_nonzero(inputs, axis=2)
-            self.sequence_lengths = tf.cast(tf.count_nonzero(count_nonzero, axis=1), dtype=tf.int32)  # [batch_size,]
+    # pylint: disable=arguments-differ
+    def call(self, inputs, sequence_lengths=None, **kwargs):
+        sequences = tf.convert_to_tensor(inputs, dtype=self.dtype)
+        if sequence_lengths is not None:
+            assert len(sequence_lengths.shape) == 2
+            assert tf.convert_to_tensor(sequence_lengths).dtype == 'int32'
+            seq_len_shape = tf.convert_to_tensor(sequence_lengths).get_shape().as_list()
+            assert seq_len_shape[1] == 1
+            self.sequence_lengths = tf.keras.backend.flatten(sequence_lengths)
         else:
-            sequences = convert_to_tensor(inputs, dtype=self.dtype)
-            shape = tf.shape(inputs)
-            self.sequence_lengths = tf.ones(shape[0], dtype=tf.int32) * (shape[1])
+            self.sequence_lengths = tf.ones(tf.shape(inputs)[0], dtype=tf.int32) * \
+                (tf.shape(inputs)[1])
+
         viterbi_sequence, _ = tf.contrib.crf.crf_decode(sequences, self.transitions,
                                                         self.sequence_lengths)
-        output = keras.backend.one_hot(viterbi_sequence, self.output_dim)
-        return keras.backend.in_train_phase(sequences, output)
+        output = tf.keras.backend.one_hot(viterbi_sequence, self.output_dim)
+        return tf.keras.backend.in_train_phase(sequences, output)
 
     def loss(self, y_true, y_pred):
-        y_pred = convert_to_tensor(y_pred, dtype=self.dtype)
+        y_pred = tf.convert_to_tensor(y_pred, dtype=self.dtype)
         log_likelihood, self.transitions = \
             tf.contrib.crf.crf_log_likelihood(y_pred,
-                                              tf.cast(argmax(y_true), dtype=tf.int32),
+                                              tf.cast(tf.keras.backend.argmax(y_true),
+                                                      dtype=tf.int32),
                                               self.sequence_lengths,
                                               transition_params=self.transitions)
         return tf.reduce_mean(-log_likelihood)
 
     def compute_output_shape(self, input_shape):
-        if self.mode == 'pad':
-            data_shape = input_shape[0]
-        else:
-            data_shape = input_shape
-        tf.TensorShape(data_shape).assert_has_rank(3)
-        return data_shape[:2] + (self.output_dim,)
+        tf.TensorShape(input_shape).assert_has_rank(3)
+        return input_shape[:2] + (self.output_dim,)
 
     @property
     def viterbi_accuracy(self):
@@ -137,11 +112,7 @@ class CRF(keras.layers.Layer):
             sequence_lengths = tf.ones(shape[0], dtype=tf.int32) * (shape[1])
             viterbi_sequence, _ = tf.contrib.crf.crf_decode(y_pred, self.transitions,
                                                             sequence_lengths)
-            output = keras.backend.one_hot(viterbi_sequence, self.output_dim)
-            return categorical_accuracy(y_true, output)
+            output = tf.keras.backend.one_hot(viterbi_sequence, self.output_dim)
+            return tf.keras.metrics.categorical_accuracy(y_true, output)
         accuracy.func_name = 'viterbi_accuracy'
         return accuracy
-
-
-kashgari.custom_objects['CRF'] = CRF
-kashgari.custom_objects['viterbi_accuracy'] = CRF(12).viterbi_accuracy
