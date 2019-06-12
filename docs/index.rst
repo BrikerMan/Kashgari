@@ -10,10 +10,9 @@ Welcome to Kashgari's documentation!
 
 
 .. toctree::
-    :titlesonly:
     :hidden:
     :maxdepth: 0
-  
+
     main
 
 

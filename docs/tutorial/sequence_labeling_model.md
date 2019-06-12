@@ -36,7 +36,16 @@ from kashgari.corpus import CONLL2003ENCorpus
 train_x, train_y = CONLL2003ENCorpus.load_data('train')
 valid_x, valid_y = CONLL2003ENCorpus.load_data('valid')
 test_x, test_y = CONLL2003ENCorpus.load_data('test')
+```
 
+Or use your own corpus, it needs to be tokenized like this.
+
+```python
+>>> print(train_x[0])
+['海', '钓', '比', '赛', '地', '点', '在', '厦', '门', '与', '金', '门', '之', '间', '的', '海', '域', '。']
+
+>>> print(train_y[0])
+['O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-LOC', 'I-LOC', 'O', 'B-LOC', 'I-LOC', 'O', 'O', 'O', 'O', 'O', 'O']
 ```
 
 Then train our first model. All models provided some APIs, so you could use any labeling model here.
