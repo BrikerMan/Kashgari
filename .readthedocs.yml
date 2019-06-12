@@ -20,6 +20,5 @@ python:
   version: 3.7
   install:
     - method: pip
-        extra_requirements:
-          - tensorflow
+      path: tensorflow
     - requirements: requirements.dev.txt
