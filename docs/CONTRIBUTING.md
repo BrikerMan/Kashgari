@@ -8,8 +8,6 @@ New models can be of two basic types:
 * New classification model
 * New sequence labeling model
 
-The new model must inherit from the `ClassificationModel` or `SequenceLabelingModel`. Here is an [example](docs/Tutorial_2_Classification.md#customize-your-own-model) to get you started
-
 ### Documentation and Tutorials
 
 * Check current documents and tutorials for any mistakes

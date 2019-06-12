@@ -29,7 +29,7 @@ Welcome to Kashgari's documentation!
    :hidden:
    :maxdepth: 1
    :caption: Advanced use
-   
+
    tutorial/customize_multi_output_model
    tutorial/deal_with_numeric_features
 
@@ -40,4 +40,5 @@ Welcome to Kashgari's documentation!
 
   corpus
   api
+  CONTRIBUTING
   CHANGELOG
