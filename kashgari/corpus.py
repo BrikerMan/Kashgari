@@ -206,7 +206,7 @@ class SMP2018ECDTCorpus(object):
 
 
 if __name__ == "__main__":
-    a, b = CONLL2003_EN_CORPUS.load_data()
+    a, b = CONLL2003ENCorpus.load_data()
     print(a[:2])
     print(b[:2])
     print("Hello world")

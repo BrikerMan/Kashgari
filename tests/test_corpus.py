@@ -9,7 +9,7 @@
 
 import unittest
 from kashgari.corpus import ChineseDailyNerCorpus
-from kashgari.corpus import CONLL2003_EN_CORPUS
+from kashgari.corpus import CONLL2003ENCorpus
 from kashgari.corpus import SMP2018ECDTCorpus
 
 
@@ -30,19 +30,19 @@ class TestChineseDailyNerCorpus(unittest.TestCase):
         assert len(test_x) > 0
 
 
-class TestCONLL2003_EN_CORPUS(unittest.TestCase):
+class TestCONLL2003ENCorpus(unittest.TestCase):
 
     def test_load_data(self):
-        train_x, train_y = CONLL2003_EN_CORPUS.load_data()
+        train_x, train_y = CONLL2003ENCorpus.load_data()
         assert len(train_x) == len(train_y)
         assert len(train_x) > 0
         assert train_x[:5] != train_y[:5]
 
-        test_x, test_y = CONLL2003_EN_CORPUS.load_data('test')
+        test_x, test_y = CONLL2003ENCorpus.load_data('test')
         assert len(test_x) == len(test_y)
         assert len(test_x) > 0
 
-        test_x, test_y = CONLL2003_EN_CORPUS.load_data('valid')
+        test_x, test_y = CONLL2003ENCorpus.load_data('valid')
         assert len(test_x) == len(test_y)
         assert len(test_x) > 0
 
