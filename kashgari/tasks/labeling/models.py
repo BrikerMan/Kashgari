@@ -190,7 +190,6 @@ class BGRUCRFModel(BaseLabelingModel):
                 'return_sequences': True
             },
             'layer_dense': {
-                'units': 128,
                 'activation': 'tanh'
             }
         }
@@ -206,7 +205,7 @@ class BGRUCRFModel(BaseLabelingModel):
         layer_blstm = L.Bidirectional(L.GRU(**config['layer_bgru']),
                                       name='layer_bgru')
 
-        layer_dense = L.Dense(**config['layer_dense'], name='layer_dense')
+        layer_dense = L.Dense(output_dim, **config['layer_dense'], name='layer_dense')
         layer_crf = CRF(output_dim)
 
         tensor = layer_blstm(embed_model.output)
