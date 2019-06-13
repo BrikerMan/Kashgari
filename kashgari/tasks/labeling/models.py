@@ -107,7 +107,7 @@ class BLSTMCRFModel(BaseLabelingModel):
                                       name='layer_blstm')
 
         layer_dense = L.Dense(**config['layer_dense'], name='layer_dense')
-        layer_crf = LagecyCRF(output_dim)
+        layer_crf = LagecyCRF(output_dim, name='layer_crf')
 
         tensor = layer_blstm(embed_model.output)
         tensor = layer_dense(tensor)
@@ -208,7 +208,7 @@ class BGRUCRFModel(BaseLabelingModel):
                                       name='layer_bgru')
 
         layer_dense = L.Dense(**config['layer_dense'], name='layer_dense')
-        layer_crf = LagecyCRF(output_dim)
+        layer_crf = LagecyCRF(output_dim, name='layer_crf')
 
         tensor = layer_blstm(embed_model.output)
         tensor = layer_dense(tensor)
