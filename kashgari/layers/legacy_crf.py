@@ -6,6 +6,8 @@
 
 # file: legacy_crf.py
 # time: 2019-06-13 14:18
+# flake8: noqa
+
 from __future__ import absolute_import
 from __future__ import division
 
