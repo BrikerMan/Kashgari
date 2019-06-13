@@ -90,6 +90,7 @@ class BLSTMCRFModel(BaseLabelingModel):
                 'return_sequences': True
             },
             'layer_dense': {
+                'units': 64,
                 'activation': 'tanh'
             }
         }
@@ -105,8 +106,8 @@ class BLSTMCRFModel(BaseLabelingModel):
         layer_blstm = L.Bidirectional(L.LSTM(**config['layer_blstm']),
                                       name='layer_blstm')
 
-        layer_dense = L.Dense(output_dim, **config['layer_dense'], name='layer_dense')
-        layer_crf = CRF(output_dim)
+        layer_dense = L.Dense(**config['layer_dense'], name='layer_dense')
+        layer_crf = LagecyCRF(output_dim)
 
         tensor = layer_blstm(embed_model.output)
         tensor = layer_dense(tensor)
@@ -117,7 +118,7 @@ class BLSTMCRFModel(BaseLabelingModel):
 
     def compile_model(self, **kwargs):
         if kwargs.get('loss') is None:
-            kwargs['loss'] = self.layer_crf.loss
+            kwargs['loss'] = crf_loss
         # if kwargs.get('metrics') is None:
         #     kwargs['metrics'] = [crf_accuracy]
         super(BLSTMCRFModel, self).compile_model(**kwargs)
@@ -190,6 +191,7 @@ class BGRUCRFModel(BaseLabelingModel):
                 'return_sequences': True
             },
             'layer_dense': {
+                'units': 64,
                 'activation': 'tanh'
             }
         }
@@ -205,8 +207,8 @@ class BGRUCRFModel(BaseLabelingModel):
         layer_blstm = L.Bidirectional(L.GRU(**config['layer_bgru']),
                                       name='layer_bgru')
 
-        layer_dense = L.Dense(output_dim, **config['layer_dense'], name='layer_dense')
-        layer_crf = CRF(output_dim)
+        layer_dense = L.Dense(**config['layer_dense'], name='layer_dense')
+        layer_crf = LagecyCRF(output_dim)
 
         tensor = layer_blstm(embed_model.output)
         tensor = layer_dense(tensor)
@@ -217,7 +219,7 @@ class BGRUCRFModel(BaseLabelingModel):
 
     def compile_model(self, **kwargs):
         if kwargs.get('loss') is None:
-            kwargs['loss'] = self.layer_crf.loss
+            kwargs['loss'] = crf_loss
         # if kwargs.get('metrics') is None:
         #     kwargs['metrics'] = [crf_accuracy]
         super(BGRUCRFModel, self).compile_model(**kwargs)
