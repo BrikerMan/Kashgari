@@ -48,7 +48,7 @@ class TestStackedEmbedding(unittest.TestCase):
         is_bold = np.random.randint(1, 3, (len(text), 12))
 
         bert_path = get_file('bert_sample_model',
-                             "https://storage.googleapis.com/kashgari/bert_sample_model.tar.bz2",
+                             "http://s3.bmio.net/kashgari/bert_sample_model.tar.bz2",
                              cache_dir=DATA_PATH,
                              untar=True)
 

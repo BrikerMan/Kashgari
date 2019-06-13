@@ -98,7 +98,7 @@ class ChineseDailyNerCorpus(object):
 
 class CONLL2003ENCorpus(object):
     __corpus_name__ = 'conll2003_en'
-    __zip_file__name = 'https://storage.googleapis.com/kashgari/conll2003_en.tar.gz'
+    __zip_file__name = 'http://s3.bmio.net/kashgari/conll2003_en.tar.gz'
 
     @classmethod
     def load_data(cls,
@@ -149,7 +149,7 @@ class SMP2018ECDTCorpus(object):
     """
 
     __corpus_name__ = 'SMP2018ECDTCorpus'
-    __zip_file__name = 'https://storage.googleapis.com/kashgari/SMP2018ECDTCorpus.tar.gz'
+    __zip_file__name = 'http://s3.bmio.net/kashgari/SMP2018ECDTCorpus.tar.gz'
 
     @classmethod
     def load_data(cls,

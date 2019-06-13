@@ -20,7 +20,7 @@ class TestWordEmbedding(base.TestBareEmbedding):
     @classmethod
     def setUpClass(cls):
         sample_w2v_path = get_file('sample_w2v.txt',
-                                   "https://storage.googleapis.com/kashgari/sample_w2v.txt",
+                                   "http://s3.bmio.net/kashgari/sample_w2v.txt",
                                    cache_dir=DATA_PATH)
 
         cls.embedding_class = WordEmbedding

@@ -23,7 +23,7 @@ from tensorflow.python.keras.utils import get_file
 valid_x, valid_y = ChineseDailyNerCorpus.load_data('valid')
 
 sample_w2v_path = get_file('sample_w2v.txt',
-                           "https://storage.googleapis.com/kashgari/sample_w2v.txt",
+                           "http://s3.bmio.net/kashgari/sample_w2v.txt",
                            cache_dir=DATA_PATH)
 
 w2v_embedding = WordEmbedding(sample_w2v_path, task=kashgari.LABELING)
