@@ -149,7 +149,7 @@ class SMP2018ECDTCorpus(object):
     """
 
     __corpus_name__ = 'SMP2018ECDTCorpus'
-    __zip_file__name = 'http://storage.eliyar.biz/corpus/SMP2018ECDTCorpus.tar.gz'
+    __zip_file__name = 'https://storage.googleapis.com/kashgari/SMP2018ECDTCorpus.tar.gz'
 
     @classmethod
     def load_data(cls,
