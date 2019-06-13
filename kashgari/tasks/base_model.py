@@ -85,7 +85,7 @@ class BaseModel(object):
                     x_validate: Union[Tuple[List[List[str]], ...], List[List[str]]] = None,
                     y_validate: Union[List[List[str]], List[str]] = None):
 
-        if x_data is not None and not isinstance(x_data, tuple):
+        if x_validate is not None and not isinstance(x_validate, tuple):
             self.embedding.analyze_corpus(x_data + x_validate, y_data + y_validate)
         else:
             self.embedding.analyze_corpus(x_data, y_data)

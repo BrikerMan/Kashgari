@@ -2,6 +2,8 @@
 
 **This feature is a experimental feature**
 
+https://github.com/BrikerMan/Kashgari/issues/90
+
 Some time, except the text, we have some additional features like text formatting (italic, bold, centered), 
 position in text and more. Kashgari provides `NumericFeaturesEmbedding` and `StackedEmbedding` for this kine data. Here is the details.
 
