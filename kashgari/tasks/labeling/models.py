@@ -90,7 +90,6 @@ class BLSTMCRFModel(BaseLabelingModel):
                 'return_sequences': True
             },
             'layer_dense': {
-                'units': 128,
                 'activation': 'tanh'
             }
         }
@@ -106,8 +105,8 @@ class BLSTMCRFModel(BaseLabelingModel):
         layer_blstm = L.Bidirectional(L.LSTM(**config['layer_blstm']),
                                       name='layer_blstm')
 
-        layer_dense = L.Dense(**config['layer_dense'], name='layer_dense')
-        layer_crf = LagecyCRF(output_dim)
+        layer_dense = L.Dense(output_dim, **config['layer_dense'], name='layer_dense')
+        layer_crf = CRF(output_dim)
 
         tensor = layer_blstm(embed_model.output)
         tensor = layer_dense(tensor)
@@ -118,10 +117,111 @@ class BLSTMCRFModel(BaseLabelingModel):
 
     def compile_model(self, **kwargs):
         if kwargs.get('loss') is None:
-            kwargs['loss'] = crf_loss
-        if kwargs.get('metrics') is None:
-            kwargs['metrics'] = [crf_accuracy]
+            kwargs['loss'] = self.layer_crf.loss
+        # if kwargs.get('metrics') is None:
+        #     kwargs['metrics'] = [crf_accuracy]
         super(BLSTMCRFModel, self).compile_model(**kwargs)
+
+
+class BGRUModel(BaseLabelingModel):
+    """Bidirectional GRU Sequence Labeling Model"""
+
+    @classmethod
+    def get_default_hyper_parameters(cls) -> Dict[str, Dict[str, Any]]:
+        """
+        Get hyper parameters of model
+        Returns:
+            hyper parameters dict
+        """
+        return {
+            'layer_bgru': {
+                'units': 128,
+                'return_sequences': True
+            },
+            'layer_dropout': {
+                'rate': 0.4
+            },
+            'layer_time_distributed': {},
+            'layer_activation': {
+                'activation': 'softmax'
+            }
+        }
+
+    def build_model_arc(self):
+        """
+        build model architectural
+        """
+        output_dim = len(self.pre_processor.label2idx)
+        config = self.hyper_parameters
+        embed_model = self.embedding.embed_model
+
+        layer_blstm = L.Bidirectional(L.GRU(**config['layer_bgru']),
+                                      name='layer_bgru')
+
+        layer_dropout = L.Dropout(**config['layer_dropout'],
+                                  name='layer_dropout')
+
+        layer_time_distributed = L.TimeDistributed(L.Dense(output_dim,
+                                                           **config['layer_time_distributed']),
+                                                   name='layer_time_distributed')
+        layer_activation = L.Activation(**config['layer_activation'])
+
+        tensor = layer_blstm(embed_model.output)
+        tensor = layer_dropout(tensor)
+        tensor = layer_time_distributed(tensor)
+        output_tensor = layer_activation(tensor)
+
+        self.tf_model = keras.Model(embed_model.inputs, output_tensor)
+
+
+class BGRUCRFModel(BaseLabelingModel):
+    """Bidirectional GRU Sequence Labeling Model"""
+
+    @classmethod
+    def get_default_hyper_parameters(cls) -> Dict[str, Dict[str, Any]]:
+        """
+        Get hyper parameters of model
+        Returns:
+            hyper parameters dict
+        """
+        return {
+            'layer_bgru': {
+                'units': 128,
+                'return_sequences': True
+            },
+            'layer_dense': {
+                'units': 128,
+                'activation': 'tanh'
+            }
+        }
+
+    def build_model_arc(self):
+        """
+        build model architectural
+        """
+        output_dim = len(self.pre_processor.label2idx)
+        config = self.hyper_parameters
+        embed_model = self.embedding.embed_model
+
+        layer_blstm = L.Bidirectional(L.GRU(**config['layer_bgru']),
+                                      name='layer_bgru')
+
+        layer_dense = L.Dense(**config['layer_dense'], name='layer_dense')
+        layer_crf = CRF(output_dim)
+
+        tensor = layer_blstm(embed_model.output)
+        tensor = layer_dense(tensor)
+        output_tensor = layer_crf(tensor)
+
+        self.layer_crf = layer_crf
+        self.tf_model = keras.Model(embed_model.inputs, output_tensor)
+
+    def compile_model(self, **kwargs):
+        if kwargs.get('loss') is None:
+            kwargs['loss'] = self.layer_crf.loss
+        # if kwargs.get('metrics') is None:
+        #     kwargs['metrics'] = [crf_accuracy]
+        super(BGRUCRFModel, self).compile_model(**kwargs)
 
 
 class CNNLSTMModel(BaseLabelingModel):
