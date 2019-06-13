@@ -54,7 +54,8 @@ def crf_nll(y_true, y_pred):
     # TODO: kashgari fix mask in tf.keras
     mask = None
     nloglik = crf.get_negative_log_likelihood(y_true, X, mask)
-    return nloglik
+
+    return tf.math.abs(nloglik)
 
 
 def crf_loss(y_true, y_pred):

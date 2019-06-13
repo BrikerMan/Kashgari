@@ -90,6 +90,7 @@ class BLSTMCRFModel(BaseLabelingModel):
                 'return_sequences': True
             },
             'layer_dense': {
+                'units': 128,
                 'activation': 'tanh'
             }
         }
@@ -105,7 +106,7 @@ class BLSTMCRFModel(BaseLabelingModel):
         layer_blstm = L.Bidirectional(L.LSTM(**config['layer_blstm']),
                                       name='layer_blstm')
 
-        layer_dense = L.Dense(output_dim, **config['layer_dense'], name='layer_dense')
+        layer_dense = L.Dense(**config['layer_dense'], name='layer_dense')
         layer_crf = LagecyCRF(output_dim)
 
         tensor = layer_blstm(embed_model.output)
@@ -185,8 +186,8 @@ if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)
     from kashgari.corpus import ChineseDailyNerCorpus
 
-    valid_x, valid_y = ChineseDailyNerCorpus.load_data('valid')
+    valid_x, valid_y = ChineseDailyNerCorpus.load_data('train')
 
-    model = LegacyBLSTMCRFModel()
+    model = BLSTMCRFModel()
     model.fit(valid_x, valid_y, epochs=50, batch_size=64)
     model.evaluate(valid_x, valid_y)
