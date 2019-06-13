@@ -13,9 +13,11 @@ import numpy as np
 import kashgari
 from kashgari.embeddings import StackedEmbedding
 from kashgari.tasks.labeling import BLSTMModel
-
+from kashgari.macros import DATA_PATH
 from kashgari.corpus import ChineseDailyNerCorpus
-from kashgari.embeddings import BareEmbedding, NumericFeaturesEmbedding
+from kashgari.embeddings import BareEmbedding, NumericFeaturesEmbedding, BERTEmbedding
+
+from tensorflow.python.keras.utils import get_file
 
 
 class TestStackedEmbedding(unittest.TestCase):
@@ -40,6 +42,34 @@ class TestStackedEmbedding(unittest.TestCase):
         print(stack_embedding.embed_model.summary())
         r = stack_embedding.embed((text[:3], is_bold[:3]))
         assert r.shape == (3, 12, 116)
+
+    def test_bert_embedding(self):
+        text, label = ChineseDailyNerCorpus.load_data()
+        is_bold = np.random.randint(1, 3, (len(text), 12))
+
+        bert_path = get_file('bert_sample_model',
+                             "https://storage.googleapis.com/kashgari/bert_sample_model.tar.bz2",
+                             cache_dir=DATA_PATH,
+                             untar=True)
+
+        text_embedding = BERTEmbedding(bert_path,
+                                       task=kashgari.LABELING,
+                                       sequence_length=12)
+        num_feature_embedding = NumericFeaturesEmbedding(2,
+                                                         'is_bold',
+                                                         sequence_length=12)
+
+        stack_embedding = StackedEmbedding([text_embedding, num_feature_embedding])
+        stack_embedding.analyze_corpus((text, is_bold), label)
+
+        tensor = stack_embedding.process_x_dataset((text[:3], is_bold[:3]))
+        print(tensor[0][0].shape)
+        print(tensor[0][1].shape)
+        print(tensor[1].shape)
+        print(stack_embedding.embed_model.input_shape)
+        print(stack_embedding.embed_model.summary())
+        r = stack_embedding.embed((text[:3], is_bold[:3]))
+        assert r.shape == (3, 12, 24)
 
     def test_training(self):
         text = ['NLP', 'Projects', 'Project', 'Name', ':']

@@ -66,7 +66,15 @@ class StackedEmbedding(Embedding):
     def _build_model(self, **kwargs):
         if self.embed_model is None and all(embed.embed_model is not None for embed in self.embeddings):
             layer_concatenate = L.Concatenate(name='layer_concatenate')
-            inputs = [embed.embed_model.input for embed in self.embeddings]
+
+            inputs = []
+
+            for embed in self.embeddings:
+                inputs += embed.embed_model.inputs
+                print(embed.embed_model.input)
+                print(embed.embed_model.inputs)
+
+            # inputs = [embed.embed_model.inputs for embed in self.embeddings]
             outputs = layer_concatenate([embed.embed_model.output for embed in self.embeddings])
 
             self.embed_model = tf.keras.Model(inputs, outputs)
@@ -93,7 +101,11 @@ class StackedEmbedding(Embedding):
         """
         result = []
         for index, dataset in enumerate(data):
-            result.append(self.embeddings[index].process_x_dataset(dataset, subset))
+            x = self.embeddings[index].process_x_dataset(dataset, subset)
+            if isinstance(x, tuple):
+                result += list(x)
+            else:
+                result.append(x)
         return tuple(result)
 
     def process_y_dataset(self,
