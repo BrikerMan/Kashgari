@@ -8,6 +8,7 @@ python:
 cache: pip
 # command to install dependencies
 env:
+  - COVERALLS_PARALLEL=true
   - TEST_FILE=tests/test_corpus.py
   - TEST_FILE=tests/test_classification.py
   - TEST_FILE=tests/test_custom_multi_output_classification.py
@@ -52,3 +53,6 @@ script:
 
 after_script:
   - sonar-scanner
+
+notifications:
+  webhooks: https://coveralls.io/webhook
