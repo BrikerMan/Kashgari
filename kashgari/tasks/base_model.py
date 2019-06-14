@@ -32,11 +32,15 @@ class BaseModel(object):
         raise NotImplementedError
 
     def info(self):
+        model_json_str = self.tf_model.to_json()
+        model_json_str = model_json_str.replace('"class_name": "CuDNNLSTM"', '"class_name": "LSTM"')
+        model_json_str = model_json_str.replace('"class_name": "CuDNNGRU"', '"class_name": "GRU"')
+
         return {
             'config': {
                 'hyper_parameters': self.hyper_parameters,
             },
-            'tf_model': json.loads(self.tf_model.to_json()),
+            'tf_model': json.loads(model_json_str),
             'embedding': self.embedding.info(),
             'class_name': self.__class__.__name__,
             'module': self.__class__.__module__
@@ -322,12 +326,12 @@ class BaseModel(object):
 
 
 if __name__ == "__main__":
-    from kashgari.tasks.labeling import CNNLSTMModel
+    from kashgari.tasks.labeling import CNN_LSTM_Model
     from kashgari.corpus import ChineseDailyNerCorpus
 
     train_x, train_y = ChineseDailyNerCorpus.load_data('valid')
 
-    model = CNNLSTMModel()
+    model = CNN_LSTM_Model()
     model.build_model(train_x[:100], train_y[:100])
     r = model.predict_entities(train_x[:5])
     model.save('./res')

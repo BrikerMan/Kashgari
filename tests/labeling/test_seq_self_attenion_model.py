@@ -11,7 +11,7 @@ from tests.labeling import test_cnn_lstm_model as base
 from kashgari.tasks.labeling.experimental import SeqSelfAttentionModel
 
 
-class TestSeqSelfAttentionModel(base.TestCNNLSTMModel):
+class TestSeqSelfAttentionModel(base.TestCNN_LSTM_Model):
     @classmethod
     def setUpClass(cls):
         cls.epochs = 3

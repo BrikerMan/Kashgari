@@ -7,13 +7,13 @@
 # file: __init__.py
 # time: 2019-05-20 11:34
 
-from kashgari.tasks.labeling.models import CNNLSTMModel
+from kashgari.tasks.labeling.models import CNN_LSTM_Model
 
-from kashgari.tasks.labeling.models import BLSTMModel
-from kashgari.tasks.labeling.models import BLSTMCRFModel
+from kashgari.tasks.labeling.models import BiLSTM_Model
+from kashgari.tasks.labeling.models import BiLSTM_CRF_Model
 
-from kashgari.tasks.labeling.models import BGRUModel
-from kashgari.tasks.labeling.models import BGRUCRFModel
+from kashgari.tasks.labeling.models import BiGRU_Model
+from kashgari.tasks.labeling.models import BiGRU_CRF_Model
 
 if __name__ == "__main__":
     print("Hello world")

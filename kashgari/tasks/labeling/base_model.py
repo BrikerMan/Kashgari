@@ -138,7 +138,7 @@ class BaseLabelingModel(BaseModel):
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)
-    from kashgari.tasks.labeling import BLSTMModel
+    from kashgari.tasks.labeling import BiLSTM_Model
     from kashgari.corpus import ChineseDailyNerCorpus
     from kashgari.utils import load_model
 

@@ -14,7 +14,7 @@ Labeling Models
    :nosignatures:
 
    BLSTMModel
-   CNNLSTMModel
+   CNN_LSTM_Model
 
 .. automodule:: kashgari.tasks.labeling.models
    :members:

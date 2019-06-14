@@ -15,7 +15,7 @@ import numpy as np
 import kashgari
 from kashgari.corpus import ChineseDailyNerCorpus
 from kashgari.embeddings import WordEmbedding
-from kashgari.tasks.labeling import CNNLSTMModel
+from kashgari.tasks.labeling import CNN_LSTM_Model
 from kashgari.macros import DATA_PATH
 
 from tensorflow.python.keras.utils import get_file
@@ -30,10 +30,10 @@ w2v_embedding = WordEmbedding(sample_w2v_path, task=kashgari.LABELING)
 w2v_embedding_variable_len = WordEmbedding(sample_w2v_path, task=kashgari.LABELING, sequence_length='variable')
 
 
-class TestCNNLSTMModel(unittest.TestCase):
+class TestCNN_LSTM_Model(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.model_class = CNNLSTMModel
+        cls.model_class = CNN_LSTM_Model
 
     def test_basic_use_build(self):
         model = self.model_class()

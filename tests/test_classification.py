@@ -36,7 +36,7 @@ w2v_embedding_variable_len = WordEmbedding(sample_w2v_path, task=kashgari.CLASSI
 logging.basicConfig(level=logging.DEBUG)
 
 
-class TestBertCNNLSTMModel(unittest.TestCase):
+class TestBertCNN_LSTM_Model(unittest.TestCase):
     def test_bert_model(self):
         embedding = BERTEmbedding(bert_path, task=kashgari.CLASSIFICATION, sequence_length=100)
         model = BLSTMModel(embedding=embedding)
@@ -55,7 +55,7 @@ class TestBertCNNLSTMModel(unittest.TestCase):
         assert np.array_equal(new_res, res)
 
 
-class TestCNNLSTMModel(unittest.TestCase):
+class TestCNN_LSTM_Model(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.model_class = BLSTMModel
