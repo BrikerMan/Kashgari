@@ -8,23 +8,26 @@ python:
 cache: pip
 # command to install dependencies
 env:
-  - TEST_FILE=tests/labeling/ COVERALLS_PARALLEL=true
-  - TEST_FILE=tests/test_corpus.py COVERALLS_PARALLEL=true
-  - TEST_FILE=tests/test_classification.py COVERALLS_PARALLEL=true
-  - TEST_FILE=tests/test_custom_multi_output_classification.py COVERALLS_PARALLEL=true
-  # Embedding
-  - TEST_FILE=tests/embedding/test_bert_embedding.py COVERALLS_PARALLEL=true
-  - TEST_FILE=tests/embedding/test_gpt2_embedding.py COVERALLS_PARALLEL=true
-  - TEST_FILE=tests/embedding/test_numeric_features_embedding.py COVERALLS_PARALLEL=true
-  - TEST_FILE=tests/embedding/test_stacked_embedding.py COVERALLS_PARALLEL=true
-  - TEST_FILE=tests/embedding/test_bare_embedding.py COVERALLS_PARALLEL=true
-  - TEST_FILE=tests/embedding/test_word_embedding.py COVERALLS_PARALLEL=true
-  # Labeling
-  #  - TEST_FILE=tests/labeling/test_blstm_model.py
-  #  - TEST_FILE=tests/labeling/test_cnn_lstm_model.py
-  #  - TEST_FILE=tests/labeling/test_seq_self_attenion_model.py
-  #  - TEST_FILE=tests/labeling/test_blstm_crf_model.py
-  - TEST_FILE=tests/test_processor.py COVERALLS_PARALLEL=true
+  global:
+    - COVERALLS_PARALLEL=true
+  matrix:
+    # Labeling
+    - TEST_FILE=tests/labeling/
+    #  - TEST_FILE=tests/labeling/test_blstm_model.py
+    #  - TEST_FILE=tests/labeling/test_cnn_lstm_model.py
+    #  - TEST_FILE=tests/labeling/test_seq_self_attenion_model.py
+    #  - TEST_FILE=tests/labeling/test_blstm_crf_model.py
+    - TEST_FILE=tests/test_corpus.py
+    - TEST_FILE=tests/test_classification.py
+    - TEST_FILE=tests/test_custom_multi_output_classification.py
+    # Embedding
+    - TEST_FILE=tests/embedding/test_bert_embedding.py
+    - TEST_FILE=tests/embedding/test_gpt2_embedding.py
+    - TEST_FILE=tests/embedding/test_numeric_features_embedding.py
+    - TEST_FILE=tests/embedding/test_stacked_embedding.py
+    - TEST_FILE=tests/embedding/test_bare_embedding.py
+    - TEST_FILE=tests/embedding/test_word_embedding.py
+    - TEST_FILE=tests/test_processor.py
 
 before_install:
   - export BOTO_CONFIG=/dev/null
