@@ -3,17 +3,28 @@
 Kashgari provides several models for sequence labeling,
 All labeling models inherit from the `BaseLabelingModel`.
 
-Available model list:
+Available model list, matrics based on this training:
 
-| model                 | import module                          | f1 Score | params  | epoch-time |
-| --------------------- | -------------------------------------- | :------: | ------- | :--------: |
-| BLSTMModel            | `kashgari.tasks.labeling`              |  0.7479  | 557,152 |    10s     |
-| BiLSTM_CRF_Model         | `kashgari.tasks.labeling`              |  0.5999  | 558,240 |    212s    |
-| CNN_LSTM_Model          | `kashgari.tasks.labeling`              |  0.7328  | 414,208 |     6s     |
-| BLSTMAttentionModel   | `kashgari.tasks.labeling.experimental` |  0.5591  | 414,881 |    10s     |
-| SeqSelfAttentionModel | `kashgari.tasks.labeling.experimental` |  0.1205  | 334,338 |     7s     |
+- corpus: ChineseDailyNerCorpus
+- epochs: 50 epochs with `EarlyStopping(patience=5)`
+- batch_size: 64
+- T4 GPU / 2 CPU / 30 GB on [openbayes](https://openbayes.com)
+- [colab link](https://drive.google.com/file/d/1-tPlD3jP_5AK8xOz_CE1-p-s9mttUt16/view?usp=sharing
+)
 
-**f1 score based on ChineseDailyNerCorpus, 50 epochs, 64 batch_size, no pre-trained embedding, macro avg**
+| model            | Embedding    | f1 Score | Trainable params | epoch-time |
+| ---------------- | ------------ | :------: | ---------------- | :--------: |
+| BiLSTM_Model     | None         |  0.7333  | 558,176          |     9s     |
+| BiGRU_Model      | None         |  0.7370  | 499,296          |    113s    |
+| BiLSTM_CRF_Model | None         |  0.8085  | 573,168          |     7s     |
+| BiGRU_CRF_Model  | None         |  0.8159  | 514,288          |    112s    |
+|                  |              |          |                  |
+| BiLSTM_Model     | BERT-Chinese |  0.9173  | 4,329,480        |    190s    |
+| BiGRU_Model      | BERT-Chinese |  0.9147  | 3,247,624        |    189s    |
+| BiLSTM_CRF_Model | BERT-Chinese |  0.9347  | 4,344,472        |    220s    |
+| BiGRU_CRF_Model  | BERT-Chinese |  0.9365  | 3,262,616        |    219s    |
+
+![](../assets/ner_f1_scores.png)
 
 ## Train basic NER model
 
