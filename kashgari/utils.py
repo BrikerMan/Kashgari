@@ -131,4 +131,3 @@ def convert_labeling_to_doccano(semantic_data,
 if __name__ == "__main__":
     path = '/Users/brikerman/Desktop/python/Kashgari/tests/saved_models/kashgari.tasks.classification.models/BLSTMModel'
     load_model(path)
-    print(get_project_path())

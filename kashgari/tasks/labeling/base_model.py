@@ -132,8 +132,5 @@ if __name__ == "__main__":
 
     # model.fit(train_x[:1000], train_y[:1000], epochs=10)
 
-    import pprint
-
-    pprint.pprint(r)
     # model.evaluate(train_x[:20], train_y[:20])
     print("Hello world")
