@@ -52,6 +52,12 @@ class TestCNN_LSTM_Model(unittest.TestCase):
                                   str(time.time()))
         model.save(model_path)
 
+        pd_model_path = os.path.join('./pd_saved_models/',
+                                     model.__class__.__module__,
+                                     model.__class__.__name__,
+                                     str(time.time()))
+        model.export(pd_model_path)
+
         new_model = kashgari.utils.load_model(model_path)
         new_res = new_model.predict(valid_x[:20])
         assert np.array_equal(new_res, res)

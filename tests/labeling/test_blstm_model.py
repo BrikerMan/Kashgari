@@ -14,7 +14,7 @@ from kashgari.tasks.labeling import BiLSTM_Model
 class TestBLSTMModel(base.TestCNN_LSTM_Model):
     @classmethod
     def setUpClass(cls):
-        cls.epochs = 3
+        cls.epochs = 1
         cls.model_class = BiLSTM_Model
 
     def test_basic_use_build(self):

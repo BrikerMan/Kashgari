@@ -14,7 +14,6 @@ from tensorflow import keras
 
 from kashgari.tasks.labeling.base_model import BaseLabelingModel
 from kashgari.layers import L
-# from kashgari.layers.crf import CRF
 from kashgari.layers.legacy_crf import CRF as LagecyCRF
 from kashgari.layers.legacy_crf import crf_loss, crf_accuracy
 
@@ -75,7 +74,7 @@ class BiLSTM_Model(BaseLabelingModel):
 
 
 class BiLSTM_CRF_Model(BaseLabelingModel):
-    """Bidirectional LSTM Sequence Labeling Model"""
+    """Bidirectional LSTM CRF Sequence Labeling Model"""
 
     @classmethod
     def get_default_hyper_parameters(cls) -> Dict[str, Dict[str, Any]]:
@@ -119,8 +118,8 @@ class BiLSTM_CRF_Model(BaseLabelingModel):
     def compile_model(self, **kwargs):
         if kwargs.get('loss') is None:
             kwargs['loss'] = crf_loss
-        # if kwargs.get('metrics') is None:
-        #     kwargs['metrics'] = [crf_accuracy]
+        if kwargs.get('metrics') is None:
+            kwargs['metrics'] = [crf_accuracy]
         super(BiLSTM_CRF_Model, self).compile_model(**kwargs)
 
 
@@ -176,7 +175,7 @@ class BiGRU_Model(BaseLabelingModel):
 
 
 class BiGRU_CRF_Model(BaseLabelingModel):
-    """Bidirectional GRU Sequence Labeling Model"""
+    """Bidirectional GRU CRF Sequence Labeling Model"""
 
     @classmethod
     def get_default_hyper_parameters(cls) -> Dict[str, Dict[str, Any]]:
@@ -220,8 +219,8 @@ class BiGRU_CRF_Model(BaseLabelingModel):
     def compile_model(self, **kwargs):
         if kwargs.get('loss') is None:
             kwargs['loss'] = crf_loss
-        # if kwargs.get('metrics') is None:
-        #     kwargs['metrics'] = [crf_accuracy]
+        if kwargs.get('metrics') is None:
+            kwargs['metrics'] = [crf_accuracy]
         super(BiGRU_CRF_Model, self).compile_model(**kwargs)
 
 

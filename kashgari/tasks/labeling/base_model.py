@@ -12,9 +12,6 @@ from typing import Dict, Any, Tuple
 
 import random
 import logging
-import json
-import numpy as np
-from kashgari.loss import weighted_categorical_crossentropy
 from seqeval.metrics import classification_report
 from seqeval.metrics.sequence_labeling import get_entities
 
@@ -83,23 +80,6 @@ class BaseLabelingModel(BaseModel):
             })
         return final_res
 
-    # Todo: Better way to do this, too
-    # def compile_model(self, **kwargs):
-    #     if kwargs.get('loss') is None:
-    #         idx2label = self.embedding.processor.idx2label
-    #         weight = np.full((len(idx2label),), 50)
-    #         for idx, label in idx2label.items():
-    #             if label == self.embedding.processor.token_pad:
-    #                 weight[idx] = 1
-    #             if label in ['O']:
-    #                 weight[idx] = 10
-    #         weight_dict = {}
-    #         for idx, label in idx2label.items():
-    #             weight_dict[label] = weight[idx]
-    #         logging.debug(f"label weights set to {weight_dict}")
-    #         kwargs['loss'] = weighted_categorical_crossentropy(weight)
-    #     super(BaseLabelingModel, self).compile_model(**kwargs)
-
     def evaluate(self,
                  x_data,
                  y_data,
@@ -151,7 +131,6 @@ if __name__ == "__main__":
     # model.build_model(train_x[:100], train_y[:100])
 
     # model.fit(train_x[:1000], train_y[:1000], epochs=10)
-    r = model.predict_doccano(train_x[:1000], 'result.json', join_chunk='')
 
     import pprint
 
