@@ -52,6 +52,7 @@ script:
 
 after_script:
   - sonar-scanner
+  - coveralls
 
 notifications:
   webhooks: https://coveralls.io/webhook
