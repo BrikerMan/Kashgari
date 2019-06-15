@@ -14,13 +14,13 @@ from tensorflow import keras
 
 from kashgari.tasks.labeling.base_model import BaseLabelingModel
 from kashgari.layers import L
-from kashgari.layers.crf import CRF
+# from kashgari.layers.crf import CRF
 from kashgari.layers.legacy_crf import CRF as LagecyCRF
 from kashgari.layers.legacy_crf import crf_loss, crf_accuracy
 
 from kashgari.utils import custom_objects
 
-custom_objects['CRF'] = CRF
+custom_objects['CRF'] = LagecyCRF
 
 
 class BiLSTM_Model(BaseLabelingModel):
