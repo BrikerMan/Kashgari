@@ -21,12 +21,13 @@ env:
     - TEST_FILE=tests/test_classification.py
     - TEST_FILE=tests/test_custom_multi_output_classification.py
     # Embedding
-    - TEST_FILE=tests/embedding/test_bert_embedding.py
-    - TEST_FILE=tests/embedding/test_gpt2_embedding.py
-    - TEST_FILE=tests/embedding/test_numeric_features_embedding.py
-    - TEST_FILE=tests/embedding/test_stacked_embedding.py
-    - TEST_FILE=tests/embedding/test_bare_embedding.py
-    - TEST_FILE=tests/embedding/test_word_embedding.py
+    - TEST_FILE=tests/embedding/
+#    - TEST_FILE=tests/embedding/test_bert_embedding.py
+#    - TEST_FILE=tests/embedding/test_gpt2_embedding.py
+#    - TEST_FILE=tests/embedding/test_numeric_features_embedding.py
+#    - TEST_FILE=tests/embedding/test_stacked_embedding.py
+#    - TEST_FILE=tests/embedding/test_bare_embedding.py
+#    - TEST_FILE=tests/embedding/test_word_embedding.py
     - TEST_FILE=tests/test_processor.py
 
 before_install:
