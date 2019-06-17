@@ -12,17 +12,22 @@ Available model list, matrics based on this training:
 - [colab link](https://drive.google.com/file/d/1-tPlD3jP_5AK8xOz_CE1-p-s9mttUt16/view?usp=sharing
 )
 
-| model            | Embedding    | f1 Score | Trainable params | epoch-time |
-| ---------------- | ------------ | :------: | ---------------- | :--------: |
-| BiLSTM_Model     | None         |  0.7333  | 558,176          |     9s     |
-| BiGRU_Model      | None         |  0.7370  | 499,296          |    113s    |
-| BiLSTM_CRF_Model | None         |  0.8085  | 573,168          |     7s     |
-| BiGRU_CRF_Model  | None         |  0.8159  | 514,288          |    112s    |
-|                  |              |          |                  |
-| BiLSTM_Model     | BERT-Chinese |  0.9173  | 4,329,480        |    190s    |
-| BiGRU_Model      | BERT-Chinese |  0.9147  | 3,247,624        |    189s    |
-| BiLSTM_CRF_Model | BERT-Chinese |  0.9347  | 4,344,472        |    220s    |
-| BiGRU_CRF_Model  | BERT-Chinese |  0.9365  | 3,262,616        |    219s    |
+| model            | Embedding     | f1 Score | Trainable params | epoch-time |
+| ---------------- | ------------- | :------: | ---------------- | :--------: |
+| BiLSTM_Model     | None          |  0.7333  | 558,176          |     9s     |
+| BiGRU_Model      | None          |  0.7370  | 499,296          |    113s    |
+| BiLSTM_CRF_Model | None          |  0.8085  | 573,168          |     7s     |
+| BiGRU_CRF_Model  | None          |  0.8159  | 514,288          |    112s    |
+|                  |               |          |                  |            |
+| BiLSTM_Model     | BERT-Chinese  |  0.9173  | 4,329,480        |    190s    |
+| BiGRU_Model      | BERT-Chinese  |  0.9147  | 3,247,624        |    189s    |
+| BiLSTM_CRF_Model | BERT-Chinese  |  0.9347  | 4,344,472        |    220s    |
+| BiGRU_CRF_Model  | BERT-Chinese  |  0.9365  | 3,262,616        |    219s    |
+|                  |               |          |                  |            |
+| BiLSTM_Model     | ERNIE-Chinese |  0.9276  | -                |     -      |
+| BiGRU_Model      | ERNIE-Chinese |  0.9280  | -                |    254s    |
+| BiLSTM_CRF_Model | ERNIE-Chinese |  0.9383  | -                |    250s    |
+| BiGRU_CRF_Model  | ERNIE-Chinese |  0.9341  | -                |    247s    |
 
 ![](../assets/ner_f1_scores.png)
 
