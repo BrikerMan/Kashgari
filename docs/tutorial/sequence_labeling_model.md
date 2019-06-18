@@ -17,22 +17,22 @@ early_stop = keras.callbacks.EarlyStopping(patience=10)
 reduse_lr_callback = keras.callbacks.ReduceLROnPlateau(factor=0.1, patience=5)
 ```
 
-| Name             | Embedding | F1 Score | Epoch Time | Trainable params | Non Trainable params |
-| ---------------- | --------- | :------: | ---------- | :--------------- | :------------------- |
-| BiLSTM_Model     | None      | 0.74147  | 9.5s       | 0                | 558176               |
-| BiLSTM_CRF_Model | None      | 0.81378  | 123.0s     | 0                | 573168               |
-| BiGRU_Model      | None      | 0.74375  | 9.7s       | 0                | 499296               |
-| BiGRU_CRF_Model  | None      | 0.82516  | 120.7s     | 0                | 514288               |
-|                  |           |          |            |                  |                      |
-| BiLSTM_Model     | BERT      | 0.92727  | 183.0s     | 101360640        | 3280904              |
-| BiLSTM_CRF_Model | BERT      | 0.94013  | 265.0s     | 101360640        | 3295896              |
-| BiGRU_Model      | BERT      | 0.92700  | 180.4s     | 101360640        | 2461192              |
-| BiGRU_CRF_Model  | BERT      | 0.94319  | 263.4s     | 101360640        | 2476184              |
-|                  |           |          |            |                  |                      |
-| BiLSTM_Model     | ERNIE     | 0.93109  | 167.6s     | 98958336         | 3280904              |
-| BiLSTM_CRF_Model | ERNIE     | 0.94460  | 250.6s     | 98958336         | 3295896              |
-| BiGRU_Model      | ERNIE     | 0.93512  | 165.7s     | 98958336         | 2461192              |
-| BiGRU_CRF_Model  | ERNIE     | 0.94218  | 250.4s     | 98958336         | 2476184              |
+| Name             | Embedding | F1 Score | Epoch Time | Non Trainable params | Trainable params |
+| ---------------- | --------- | :------: | ---------- | :------------------- | :--------------- |
+| BiLSTM_Model     | None      | 0.74147  | 9.5s       | 0                    | 558176           |
+| BiLSTM_CRF_Model | None      | 0.81378  | 123.0s     | 0                    | 573168           |
+| BiGRU_Model      | None      | 0.74375  | 9.7s       | 0                    | 499296           |
+| BiGRU_CRF_Model  | None      | 0.82516  | 120.7s     | 0                    | 514288           |
+|                  |           |          |            |                      |                  |
+| BiLSTM_Model     | BERT      | 0.92727  | 183.0s     | 101360640            | 3280904          |
+| BiLSTM_CRF_Model | BERT      | 0.94013  | 265.0s     | 101360640            | 3295896          |
+| BiGRU_Model      | BERT      | 0.92700  | 180.4s     | 101360640            | 2461192          |
+| BiGRU_CRF_Model  | BERT      | 0.94319  | 263.4s     | 101360640            | 2476184          |
+|                  |           |          |            |                      |                  |
+| BiLSTM_Model     | ERNIE     | 0.93109  | 167.6s     | 98958336             | 3280904          |
+| BiLSTM_CRF_Model | ERNIE     | 0.94460  | 250.6s     | 98958336             | 3295896          |
+| BiGRU_Model      | ERNIE     | 0.93512  | 165.7s     | 98958336             | 2461192          |
+| BiGRU_CRF_Model  | ERNIE     | 0.94218  | 250.4s     | 98958336             | 2476184          |
 
 ![](../assets/ner_f1_scores.png)
 
