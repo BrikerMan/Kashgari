@@ -8,16 +8,10 @@
 # time: 2019-05-23 14:05
 
 import kashgari
-import tensorflow as tf
-from tensorflow.python import keras
-
-L = keras.layers
-
-if tf.test.is_gpu_available(cuda_only=True):
-    L.LSTM = L.CuDNNLSTM
+from tensorflow.python.keras.layers import Layer
 
 
-class NonMaskingLayer(keras.layers.Layer):
+class NonMaskingLayer(Layer):
     """
     fix convolutional 1D can't receive masked input, detail: https://github.com/keras-team/keras/issues/4978
     thanks for https://github.com/jacoxu
@@ -36,9 +30,6 @@ class NonMaskingLayer(keras.layers.Layer):
 
     def call(self, x, mask=None):
         return x
-
-    # def get_output_shape_for(self, input_shape):
-    #     return input_shape
 
 
 kashgari.custom_objects['NonMaskingLayer'] = NonMaskingLayer

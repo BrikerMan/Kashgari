@@ -112,43 +112,6 @@ class BaseModel(object):
             self.build_model_arc()
             self.compile_model()
 
-    def get_data_generator(self,
-                           x_data,
-                           y_data,
-                           batch_size: int = 64,
-                           shuffle: bool = True):
-        """
-        data generator for fit_generator
-
-        Args:
-            x_data: Array of feature data (if the model has a single input),
-                or tuple of feature data array (if the model has multiple inputs)
-            y_data: Array of label data
-            batch_size: Number of samples per gradient update, default to 64.
-            shuffle:
-
-        Returns:
-            data generator
-        """
-        index_list = np.arange(len(x_data[0]))
-        page_count = len(x_data[0]) // batch_size + 1
-
-        while True:
-            if shuffle:
-                np.random.shuffle(index_list)
-            for page in range(page_count):
-                start_index = page * batch_size
-                end_index = start_index + batch_size
-                target_index = index_list[start_index: end_index]
-
-                if len(target_index) == 0:
-                    target_index = index_list[0: batch_size]
-                x_tensor = self.embedding.process_x_dataset(x_data,
-                                                            target_index)
-                y_tensor = self.embedding.process_y_dataset(y_data,
-                                                            target_index)
-                yield (x_tensor, y_tensor)
-
     def fit(self,
             x_train: Union[Tuple[List[List[str]], ...], List[List[str]]],
             y_train: Union[List[List[str]], List[str]],
@@ -202,6 +165,44 @@ class BaseModel(object):
                                      **fit_kwargs)
 
     # Todo: add fit generator function
+    # def get_data_generator(self,
+    #                        x_data,
+    #                        y_data,
+    #                        batch_size: int = 64,
+    #                        shuffle: bool = True):
+    #     """
+    #     data generator for fit_generator
+    #
+    #     Args:
+    #         x_data: Array of feature data (if the model has a single input),
+    #             or tuple of feature data array (if the model has multiple inputs)
+    #         y_data: Array of label data
+    #         batch_size: Number of samples per gradient update, default to 64.
+    #         shuffle:
+    #
+    #     Returns:
+    #         data generator
+    #     """
+    #     index_list = np.arange(len(x_data[0]))
+    #     page_count = len(x_data[0]) // batch_size + 1
+    #
+    #     while True:
+    #         if shuffle:
+    #             np.random.shuffle(index_list)
+    #         for page in range(page_count):
+    #             start_index = page * batch_size
+    #             end_index = start_index + batch_size
+    #             target_index = index_list[start_index: end_index]
+    #
+    #             if len(target_index) == 0:
+    #                 target_index = index_list[0: batch_size]
+    #             x_tensor = self.embedding.process_x_dataset(x_data,
+    #                                                         target_index)
+    #             y_tensor = self.embedding.process_y_dataset(y_data,
+    #                                                         target_index)
+    #             yield (x_tensor, y_tensor)
+    #
+    #
     # def fit_with_generator(self,
     #                        x_train: Union[Tuple[List[List[str]], ...], List[List[str]]],
     #                        y_train: Union[List[List[str]], List[str]],
