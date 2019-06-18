@@ -6,23 +6,33 @@ All labeling models inherit from the `BaseLabelingModel`.
 Available model list, matrics based on this training:
 
 - corpus: ChineseDailyNerCorpus
-- epochs: 50 epochs with `EarlyStopping(patience=5)`
+- epochs: 50 epochs with callbacks
 - batch_size: 64
 - T4 GPU / 2 CPU / 30 GB on [openbayes](https://openbayes.com)
 - [colab link](https://drive.google.com/file/d/1-tPlD3jP_5AK8xOz_CE1-p-s9mttUt16/view?usp=sharing
 )
 
-| model            | Embedding    | f1 Score | Trainable params | epoch-time |
-| ---------------- | ------------ | :------: | ---------------- | :--------: |
-| BiLSTM_Model     | None         |  0.7333  | 558,176          |     9s     |
-| BiGRU_Model      | None         |  0.7370  | 499,296          |    113s    |
-| BiLSTM_CRF_Model | None         |  0.8085  | 573,168          |     7s     |
-| BiGRU_CRF_Model  | None         |  0.8159  | 514,288          |    112s    |
-|                  |              |          |                  |
-| BiLSTM_Model     | BERT-Chinese |  0.9173  | 4,329,480        |    190s    |
-| BiGRU_Model      | BERT-Chinese |  0.9147  | 3,247,624        |    189s    |
-| BiLSTM_CRF_Model | BERT-Chinese |  0.9347  | 4,344,472        |    220s    |
-| BiGRU_CRF_Model  | BERT-Chinese |  0.9365  | 3,262,616        |    219s    |
+```python
+early_stop = keras.callbacks.EarlyStopping(patience=10)
+reduse_lr_callback = keras.callbacks.ReduceLROnPlateau(factor=0.1, patience=5)
+```
+
+| Name             | Embedding | F1 Score | Epoch Time | Trainable params | Non Trainable params |
+| ---------------- | --------- | :------: | ---------- | :--------------- | :------------------- |
+| BiLSTM_Model     | None      | 0.74147  | 9.5s       | 0                | 558176               |
+| BiLSTM_CRF_Model | None      | 0.81378  | 123.0s     | 0                | 573168               |
+| BiGRU_Model      | None      | 0.74375  | 9.7s       | 0                | 499296               |
+| BiGRU_CRF_Model  | None      | 0.82516  | 120.7s     | 0                | 514288               |
+|                  |           |          |            |                  |                      |
+| BiLSTM_Model     | BERT      | 0.92727  | 183.0s     | 101360640        | 3280904              |
+| BiLSTM_CRF_Model | BERT      | 0.94013  | 265.0s     | 101360640        | 3295896              |
+| BiGRU_Model      | BERT      | 0.92700  | 180.4s     | 101360640        | 2461192              |
+| BiGRU_CRF_Model  | BERT      | 0.94319  | 263.4s     | 101360640        | 2476184              |
+|                  |           |          |            |                  |                      |
+| BiLSTM_Model     | ERNIE     | 0.93109  | 167.6s     | 98958336         | 3280904              |
+| BiLSTM_CRF_Model | ERNIE     | 0.94460  | 250.6s     | 98958336         | 3295896              |
+| BiGRU_Model      | ERNIE     | 0.93512  | 165.7s     | 98958336         | 2461192              |
+| BiGRU_CRF_Model  | ERNIE     | 0.94218  | 250.4s     | 98958336         | 2476184              |
 
 ![](../assets/ner_f1_scores.png)
 
