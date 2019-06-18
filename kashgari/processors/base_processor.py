@@ -72,32 +72,6 @@ class BaseProcessor(object):
         if len(self.label2idx) == 0 or force:
             self._build_label_dict(labels)
 
-    def save_dicts(self, cache_dir: str):
-        pathlib.Path(cache_dir).mkdir(exist_ok=True, parents=True)
-        with open(os.path.join(cache_dir, 'token2idx.json'), 'w', encoding='utf-8') as f:
-            f.write(json.dumps(self.token2idx, ensure_ascii=False, indent=2))
-
-        with open(os.path.join(cache_dir, 'label2idx.json'), 'w', encoding='utf-8') as f:
-            f.write(json.dumps(self.label2idx, ensure_ascii=False, indent=2))
-        logging.debug(f"saved token2idx and label2idx to dir: {cache_dir}.")
-
-    @classmethod
-    def load_cached_processor(cls, cache_dir: str):
-        processor = cls()
-        with open(os.path.join(cache_dir, 'token2idx.json'), 'r', encoding='utf-8') as f:
-            processor.token2idx = json.loads(f.read())
-            processor.idx2token = dict(
-                [(value, key) for key, value in processor.token2idx.items()])
-
-        with open(os.path.join(cache_dir, 'label2idx.json'), 'r', encoding='utf-8') as f:
-            processor.label2idx = json.loads(f.read())
-            processor.idx2label = dict(
-                [(value, key) for key, value in processor.label2idx.items()])
-        logging.debug(f"loaded token2idx and label2idx from dir: {cache_dir}. "
-                      f"Contain {len(processor.token2idx)} tokens and {len(processor.label2idx)} labels.")
-
-        return processor
-
     def _build_token_dict(self, corpus: List[List[str]], min_count: int = 3):
         """
         Build token index dictionary using corpus
