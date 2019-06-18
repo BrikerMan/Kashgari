@@ -39,19 +39,8 @@ class TestLabelingProcessor(unittest.TestCase):
             res_y = self.processor.reverse_numerize_label_sequences(vector_y.argmax(-1), lengths=np.full(15, 15))
             assert target_y == res_y
 
-    def test_save_load(self):
-        self.processor.save_dicts('./saved-model/labeling')
-
-        p = LabelingProcessor.load_cached_processor('./saved-model/labeling')
-
-        vector_x_1 = p.process_x_dataset(train_x[:9])
-        vector_x_2 = self.processor.process_x_dataset(train_x[:9])
-
-        vector_y_1 = p.process_y_dataset(train_y[:9])
-        vector_y_2 = self.processor.process_y_dataset(train_y[:9])
-
-        assert np.array_equal(vector_x_1, vector_x_2)
-        assert np.array_equal(vector_y_1, vector_y_2)
+        self.processor.process_x_dataset(train_x[:9], subset=[1, 2, 3])
+        self.processor.process_y_dataset(train_y[:9], subset=[1, 2, 3])
 
 
 class TestClassificationProcessor(unittest.TestCase):
@@ -75,20 +64,6 @@ class TestClassificationProcessor(unittest.TestCase):
 
             res_y = self.processor.reverse_numerize_label_sequences(vector_y.argmax(-1))
             assert train_y1[:15] == res_y
-
-    def test_save_load(self):
-        self.processor.save_dicts('./saved-model/classification')
-
-        p = ClassificationProcessor.load_cached_processor('./saved-model/classification')
-
-        vector_x_1 = p.process_x_dataset(train_x1[:9])
-        vector_x_2 = self.processor.process_x_dataset(train_x1[:9])
-
-        vector_y_1 = p.process_y_dataset(train_y1[:9])
-        vector_y_2 = self.processor.process_y_dataset(train_y1[:9])
-
-        assert np.array_equal(vector_x_1, vector_x_2)
-        assert np.array_equal(vector_y_1, vector_y_2)
 
 
 if __name__ == "__main__":

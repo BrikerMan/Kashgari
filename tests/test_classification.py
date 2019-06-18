@@ -74,6 +74,8 @@ class TestCNN_LSTM_Model(unittest.TestCase):
         new_res = new_model.predict(valid_x[:20])
         assert np.array_equal(new_res, res)
 
+        new_model.evaluate(valid_x, valid_y)
+
     def test_w2v_model(self):
         model = self.model_class(embedding=w2v_embedding)
         model.fit(valid_x, valid_y, epochs=1)

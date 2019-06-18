@@ -46,6 +46,10 @@ class TestCONLL2003ENCorpus(unittest.TestCase):
         assert len(test_x) == len(test_y)
         assert len(test_x) > 0
 
+        test_x, test_y = CONLL2003ENCorpus.load_data('test')
+        assert len(test_x) == len(test_y)
+        assert len(test_x) > 0
+
 
 class TestSMP2018ECDTCorpus(unittest.TestCase):
 
