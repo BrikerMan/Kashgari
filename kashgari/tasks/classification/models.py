@@ -14,7 +14,7 @@ from kashgari.layers import L
 from kashgari.tasks.classification.base_model import BaseClassificationModel
 
 
-class BLSTMModel(BaseClassificationModel):
+class BiLSTM_Model(BaseClassificationModel):
 
     @classmethod
     def get_default_hyper_parameters(cls) -> Dict[str, Dict[str, Any]]:
@@ -41,6 +41,89 @@ class BLSTMModel(BaseClassificationModel):
 
         self.tf_model = tf.keras.Model(embed_model.inputs, output_tensor)
 
+
+class CNN_Model(BaseClassificationModel):
+
+    @classmethod
+    def get_default_hyper_parameters(cls) -> Dict[str, Dict[str, Any]]:
+        return {
+            'conv1d_layer': {
+                'filters': 128,
+                'kernel_size': 5,
+                'activation': 'relu'
+            },
+            'max_pool_layer': {},
+            'dense_layer': {
+                'units': 64,
+                'activation': 'relu'
+            },
+            'activation_layer': {
+                'activation': 'softmax'
+            },
+        }
+
+    def build_model_arc(self):
+        output_dim = len(self.pre_processor.label2idx)
+        config = self.hyper_parameters
+        embed_model = self.embedding.embed_model
+
+        # build model structure in sequent way
+        layers_seq = []
+        layers_seq.append(L.Conv1D(**config['conv1d_layer']))
+        layers_seq.append(L.GlobalMaxPooling1D(**config['max_pool_layer']))
+        layers_seq.append(L.Dense(**config['dense_layer']))
+        layers_seq.append(L.Dense(output_dim, **config['activation_layer']))
+
+        tensor = embed_model.output
+        for layer in layers_seq:
+            tensor = layer(tensor)
+
+        self.tf_model = tf.keras.Model(embed_model.inputs, tensor)
+
+
+class CNN_LSTM_Model(BaseClassificationModel):
+
+    @classmethod
+    def get_default_hyper_parameters(cls) -> Dict[str, Dict[str, Any]]:
+        return {
+            'conv_layer': {
+                'filters': 32,
+                'kernel_size': 3,
+                'padding': 'same',
+                'activation': 'relu'
+            },
+            'max_pool_layer': {
+                'pool_size': 2
+            },
+            'lstm_layer': {
+                'units': 100
+            },
+            'activation_layer': {
+                'activation': 'softmax'
+            },
+        }
+
+    def build_model_arc(self):
+        output_dim = len(self.pre_processor.label2idx)
+        config = self.hyper_parameters
+        embed_model = self.embedding.embed_model
+
+        layers_seq = []
+        layers_seq.append(L.Conv1D(**config['conv_layer']))
+        layers_seq.append(L.MaxPooling1D(**config['max_pool_layer']))
+        layers_seq.append(L.LSTM(**config['lstm_layer']))
+        layers_seq.append(L.Dense(output_dim, **config['activation_layer']))
+
+        tensor = embed_model.output
+        for layer in layers_seq:
+            tensor = layer(tensor)
+
+        self.tf_model = tf.keras.Model(embed_model.inputs, tensor)
+
+
+BLSTMModel = BiLSTM_Model
+CNNModel = CNN_Model
+CNNLSTMModel = CNN_LSTM_Model
 
 if __name__ == "__main__":
     print(BLSTMModel.get_default_hyper_parameters())
