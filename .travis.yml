@@ -17,8 +17,8 @@ env:
     #  - TEST_FILE=tests/labeling/test_cnn_lstm_model.py
     #  - TEST_FILE=tests/labeling/test_seq_self_attenion_model.py
     #  - TEST_FILE=tests/labeling/test_blstm_crf_model.py
+    - TEST_FILE=tests/classification
     - TEST_FILE="tests/test_callbacks.py tests/test_corpus.py tests/test_processor.py"
-    - TEST_FILE=tests/test_classification.py
     - TEST_FILE=tests/test_custom_multi_output_classification.py
     # Embedding
     - TEST_FILE=tests/embedding/
