@@ -121,20 +121,15 @@ class CNN_LSTM_Model(BaseClassificationModel):
         self.tf_model = tf.keras.Model(embed_model.inputs, tensor)
 
 
-BLSTMModel = BiLSTM_Model
-CNNModel = CNN_Model
-CNNLSTMModel = CNN_LSTM_Model
-
 if __name__ == "__main__":
-    print(BLSTMModel.get_default_hyper_parameters())
+    print(BiLSTM_Model.get_default_hyper_parameters())
     logging.basicConfig(level=logging.DEBUG)
     from kashgari.corpus import SMP2018ECDTCorpus
 
     x, y = SMP2018ECDTCorpus.load_data()
 
-    m = BLSTMModel()
+    m = BiLSTM_Model()
     m.build_model(x, y)
-    r = m.get_data_generator(x, y)
     m.fit(x, y, epochs=5)
     m.evaluate(x, y)
     print(m.predict(x[:10]))

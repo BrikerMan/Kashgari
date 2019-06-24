@@ -55,7 +55,7 @@ class TestBertCNN_LSTM_Model(unittest.TestCase):
         assert np.array_equal(new_res, res)
 
 
-class TestCNN_LSTM_Model(unittest.TestCase):
+class TestBi_LSTM_Model(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.model_class = BLSTMModel
