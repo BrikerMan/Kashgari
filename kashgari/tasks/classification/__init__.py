@@ -9,9 +9,10 @@
 
 
 from kashgari.tasks.classification.models import BiLSTM_Model
+from kashgari.tasks.classification.models import BiGRU_Model
 from kashgari.tasks.classification.models import CNN_Model
 from kashgari.tasks.classification.models import CNN_LSTM_Model
-
+from kashgari.tasks.classification.models import CNN_GRU_Model
 
 BLSTMModel = BiLSTM_Model
 CNNModel = CNN_Model
