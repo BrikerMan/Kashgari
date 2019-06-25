@@ -77,6 +77,7 @@ class AttentionWeightedAverageLayer(L.Layer):
         else:
             return None
 
+
 AttentionWeightedAverage = AttentionWeightedAverageLayer
 AttWgtAvgLayer = AttentionWeightedAverageLayer
 

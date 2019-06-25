@@ -10,7 +10,7 @@
 import logging
 import tensorflow as tf
 from typing import Dict, Any
-from kashgari.layers import L, AttentionWeightedAverageLayer, KMaxPoolLayer
+from kashgari.layers import L, AttentionWeightedAverageLayer, KMaxPoolingLayer
 from kashgari.tasks.classification.base_model import BaseClassificationModel
 
 
@@ -193,72 +193,72 @@ class AVCNN_Model(BaseClassificationModel):
     @classmethod
     def get_default_hyper_parameters(cls) -> Dict[str, Dict[str, Any]]:
         return {
-           'spatial_dropout': {
-            'rate': 0.25
-           },
-           'conv_0': {
-               'filters': 300,
-               'kernel_size': 1,
-               'kernel_initializer': 'normal',
-               'padding': 'valid',
-               'activation': 'relu'
-           },
-           'conv_1': {
-               'filters': 300,
-               'kernel_size': 2,
-               'kernel_initializer': 'normal',
-               'padding': 'valid',
-               'activation': 'relu'
-           },
-           'conv_2': {
-               'filters': 300,
-               'kernel_size': 3,
-               'kernel_initializer': 'normal',
-               'padding': 'valid',
-               'activation': 'relu'
-           },
-           'conv_3': {
-               'filters': 300,
-               'kernel_size': 4,
-               'kernel_initializer': 'normal',
-               'padding': 'valid',
-               'activation': 'relu'
-           },
-           # ---
-           'attn_0': {},
-           'avg_0': {},
-           'maxpool_0': {},
-           # ---
-           'maxpool_1': {},
-           'attn_1': {},
-           'avg_1': {},
-           # ---
-           'maxpool_2': {},
-           'attn_2': {},
-           'avg_2': {},
-           # ---
-           'maxpool_3': {},
-           'attn_3': {},
-           'avg_3': {},
-           # ---
-           'v_col3': {
-               # 'mode': 'concat',
-               'axis': 1
-           },
-           'merged_tensor': {
-               # 'mode': 'concat',
-               'axis': 1
-           },
-           'dropout': {
-               'rate': 0.7
-           },
-           'dense': {
-               'units': 144,
-               'activation': 'relu'
-           },
-           'activation_layer': {
-               'activation': 'softmax'
-           },
+            'spatial_dropout': {
+             'rate': 0.25
+            },
+            'conv_0': {
+                'filters': 300,
+                'kernel_size': 1,
+                'kernel_initializer': 'normal',
+                'padding': 'valid',
+                'activation': 'relu'
+            },
+            'conv_1': {
+                'filters': 300,
+                'kernel_size': 2,
+                'kernel_initializer': 'normal',
+                'padding': 'valid',
+                'activation': 'relu'
+            },
+            'conv_2': {
+                'filters': 300,
+                'kernel_size': 3,
+                'kernel_initializer': 'normal',
+                'padding': 'valid',
+                'activation': 'relu'
+            },
+            'conv_3': {
+                'filters': 300,
+                'kernel_size': 4,
+                'kernel_initializer': 'normal',
+                'padding': 'valid',
+                'activation': 'relu'
+            },
+            # ---
+            'attn_0': {},
+            'avg_0': {},
+            'maxpool_0': {},
+            # ---
+            'maxpool_1': {},
+            'attn_1': {},
+            'avg_1': {},
+            # ---
+            'maxpool_2': {},
+            'attn_2': {},
+            'avg_2': {},
+            # ---
+            'maxpool_3': {},
+            'attn_3': {},
+            'avg_3': {},
+            # ---
+            'v_col3': {
+                # 'mode': 'concat',
+                'axis': 1
+            },
+            'merged_tensor': {
+                # 'mode': 'concat',
+                'axis': 1
+            },
+            'dropout': {
+                'rate': 0.7
+            },
+            'dense': {
+                'units': 144,
+                'activation': 'relu'
+            },
+            'activation_layer': {
+                'activation': 'softmax'
+            },
         }
 
     def build_model_arc(self):
@@ -269,21 +269,21 @@ class AVCNN_Model(BaseClassificationModel):
         layer_embed_dropout = L.SpatialDropout1D(**config['spatial_dropout'])
         layers_conv = [L.Conv1D(**config[f'conv_{i}']) for i in range(4)]
         layers_seq = []
-        layers_seq.append( L.Dropout(**config['dropout']) )
-        layers_seq.append( L.Dense(**config['dense']) )
-        layers_seq.append( L.Dense(output_dim, **config['activation_layer']) )
+        layers_seq.append(L.Dropout(**config['dropout']))
+        layers_seq.append(L.Dense(**config['dense']))
+        layers_seq.append(L.Dense(output_dim, **config['activation_layer']))
 
         embed_tensor = layer_embed_dropout(embed_model.output)
         tensors_conv = [layer_conv(embed_tensor) for layer_conv in layers_conv]
         tensors_matrix_sensor = []
         for tensor_conv in tensors_conv:
             tensor_sensors = []
-            tensor_sensors.append( L.GlobalMaxPooling1D()(tensor_conv) )
-            tensor_sensors.append( AttentionWeightedAverageLayer()(tensor_conv) )
-            tensor_sensors.append( L.GlobalAveragePooling1D()(tensor_conv) )
+            tensor_sensors.append(L.GlobalMaxPooling1D()(tensor_conv))
+            tensor_sensors.append(AttentionWeightedAverageLayer()(tensor_conv))
+            tensor_sensors.append(L.GlobalAveragePooling1D()(tensor_conv))
             tensors_matrix_sensor.append(tensor_sensors)
         tensors_v_cols = [L.concatenate(tensors, **config['v_col3'])
-                            for tensors in zip(*tensors_matrix_sensor)]
+                for tensors in zip(*tensors_matrix_sensor)]
 
         tensor = L.concatenate(tensors_v_cols, **config['merged_tensor'])
         for layer in layers_seq:
@@ -298,7 +298,7 @@ class KMax_CNN_Model(BaseClassificationModel):
     def get_default_hyper_parameters(cls) -> Dict[str, Dict[str, Any]]:
         return {
             'spatial_dropout': {
-            'rate': 0.2
+                'rate': 0.2
             },
             'conv_0': {
                 'filters': 180,
@@ -357,12 +357,12 @@ class KMax_CNN_Model(BaseClassificationModel):
         layers_sensor = [KMaxPoolingLayer(**config['maxpool_i4']),
                          L.Flatten()]
         layers_seq = []
-        layers_seq.append( L.Dropout(**config['dropout']) )
-        layers_seq.append( L.Dense(**config['dense']) )
-        layers_seq.append( L.Dense(output_dim, **config['activation_layer']) )
+        layers_seq.append(L.Dropout(**config['dropout']))
+        layers_seq.append(L.Dense(**config['dense']))
+        layers_seq.append(L.Dense(output_dim, **config['activation_layer']))
 
         embed_tensor = layer_embed_dropout(embed_model.output)
-        tensor_conv = [layer_conv(embed_tensor) for layer_conv in layers_conv]
+        tensors_conv = [layer_conv(embed_tensor) for layer_conv in layers_conv]
         tensors_sensor = []
         for tensor_conv in tensors_conv:
             tensor_sensor = tensor_conv
