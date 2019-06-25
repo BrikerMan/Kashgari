@@ -11,8 +11,8 @@ import tensorflow as tf
 from tensorflow.python import keras
 from kashgari.layers.non_masking_layer import NonMaskingLayer
 from kashgari.layers.crf import CRF
-from kashgari.layers.att_wgt_avg_layer import AttentionWeightedAverageLayer,
-    AttentionWeightedAverage, AttWgtAvgLayer
+from kashgari.layers.att_wgt_avg_layer import AttentionWeightedAverageLayer, \
+        AttentionWeightedAverage, AttWgtAvgLayer
 from kashgari.layers.kmax_pool_layer import KMaxPoolingLayer, KMaxPoolLayer, KMaxPooling
 
 L = keras.layers
