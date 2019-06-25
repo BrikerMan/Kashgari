@@ -3,17 +3,38 @@
 Kashgari provides several models for sequence labeling,
 All labeling models inherit from the `BaseLabelingModel`.
 
-Available model list:
+Available model list, matrics based on this training:
 
-| model                 | import module                          | f1 Score | params  | epoch-time |
-| --------------------- | -------------------------------------- | :------: | ------- | :--------: |
-| BLSTMModel            | `kashgari.tasks.labeling`              |  0.7479  | 557,152 |    10s     |
-| BLSTMCRFModel         | `kashgari.tasks.labeling`              |  0.5999  | 558,240 |    212s    |
-| CNNLSTMModel          | `kashgari.tasks.labeling`              |  0.7328  | 414,208 |     6s     |
-| BLSTMAttentionModel   | `kashgari.tasks.labeling.experimental` |  0.5591  | 414,881 |    10s     |
-| SeqSelfAttentionModel | `kashgari.tasks.labeling.experimental` |  0.1205  | 334,338 |     7s     |
+- corpus: ChineseDailyNerCorpus
+- epochs: 50 epochs with callbacks
+- batch_size: 64
+- T4 GPU / 2 CPU / 30 GB on [openbayes](https://openbayes.com)
+- [colab link](https://drive.google.com/file/d/1-tPlD3jP_5AK8xOz_CE1-p-s9mttUt16/view?usp=sharing
+)
 
-**f1 score based on ChineseDailyNerCorpus, 50 epochs, 64 batch_size, no pre-trained embedding, macro avg**
+```python
+early_stop = keras.callbacks.EarlyStopping(patience=10)
+reduse_lr_callback = keras.callbacks.ReduceLROnPlateau(factor=0.1, patience=5)
+```
+
+| Name             | Embedding   | F1 Score | Epoch Time | Non Trainable params | Trainable params |
+| ---------------- | ----------- | :------: | ---------- | :------------------- | :--------------- |
+| BiLSTM_Model     | Random Init | 0.74147  | 9.5s       | 0                    | 558176           |
+| BiLSTM_CRF_Model | Random Init | 0.81378  | 123.0s     | 0                    | 573168           |
+| BiGRU_Model      | Random Init | 0.74375  | 9.7s       | 0                    | 499296           |
+| BiGRU_CRF_Model  | Random Init | 0.82516  | 120.7s     | 0                    | 514288           |
+|                  |             |          |            |                      |                  |
+| BiLSTM_Model     | BERT        | 0.92727  | 183.0s     | 101360640            | 3280904          |
+| BiLSTM_CRF_Model | BERT        | 0.94013  | 265.0s     | 101360640            | 3295896          |
+| BiGRU_Model      | BERT        | 0.92700  | 180.4s     | 101360640            | 2461192          |
+| BiGRU_CRF_Model  | BERT        | 0.94319  | 263.4s     | 101360640            | 2476184          |
+|                  |             |          |            |                      |                  |
+| BiLSTM_Model     | ERNIE       | 0.93109  | 167.6s     | 98958336             | 3280904          |
+| BiLSTM_CRF_Model | ERNIE       | 0.94460  | 250.6s     | 98958336             | 3295896          |
+| BiGRU_Model      | ERNIE       | 0.93512  | 165.7s     | 98958336             | 2461192          |
+| BiGRU_CRF_Model  | ERNIE       | 0.94218  | 250.4s     | 98958336             | 2476184          |
+
+![](../assets/ner_f1_scores.png)
 
 ## Train basic NER model
 

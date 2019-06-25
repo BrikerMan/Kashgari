@@ -8,17 +8,17 @@
 # time: 2019-05-31 19:06
 
 import tests.labeling.test_cnn_lstm_model as base
-from kashgari.tasks.labeling import BiLSTM_Model
+from kashgari.tasks.labeling import BiGRU_Model
 
 
-class TestBLSTMModel(base.TestCNN_LSTM_Model):
+class TestBiGRUModel(base.TestCNN_LSTM_Model):
     @classmethod
     def setUpClass(cls):
         cls.epochs = 1
-        cls.model_class = BiLSTM_Model
+        cls.model_class = BiGRU_Model
 
     def test_basic_use_build(self):
-        super(TestBLSTMModel, self).test_basic_use_build()
+        super(TestBiGRUModel, self).test_basic_use_build()
 
 
 if __name__ == "__main__":

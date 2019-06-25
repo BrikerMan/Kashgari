@@ -3,7 +3,7 @@
 API Documentation
 =================
 
-Below please find the documentation for the public classes and functions of ``kashgari``.
+Documentations for the public classes and functions of ``kashgari``.
 
 Labeling Models
 ---------------
@@ -11,12 +11,15 @@ Labeling Models
 .. py:currentmodule:: kashgari.tasks.labeling
 
 .. autosummary::
-   :nosignatures:
+    :nosignatures:
 
-   BLSTMModel
-   CNNLSTMModel
+    BiLSTM_Model
+    BiLSTM_CRF_Model
 
-.. automodule:: kashgari.tasks.labeling.models
+    BiGRU_Model
+    BiGRU_CRF_Model
+
+.. autoclass:: kashgari.tasks.labeling.BiLSTM_Model
    :members:
    :undoc-members:
    :inherited-members:
@@ -27,23 +30,23 @@ Embedding
 .. py:currentmodule:: kashgari.embeddings
 
 .. autosummary::
-   :nosignatures:
+    :nosignatures:
 
-   BareEmbedding
-   BERTEmbedding
-   WordEmbedding
-   NumericFeaturesEmbedding
-   StackedEmbedding
+    BareEmbedding
+    BERTEmbedding
+    WordEmbedding
+    NumericFeaturesEmbedding
+    StackedEmbedding
 
 .. automodule:: kashgari.embeddings
-   :members:
-   :undoc-members:
-   :inherited-members:
+    :members:
+    :undoc-members:
+    :inherited-members:
 
 Corpus
 ------
 
 .. automodule:: kashgari.corpus
-   :members:
-   :undoc-members:
-   :inherited-members:
+    :members:
+    :undoc-members:
+    :inherited-members:

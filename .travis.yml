@@ -8,23 +8,26 @@ python:
 cache: pip
 # command to install dependencies
 env:
-  - TEST_FILE=tests/test_corpus.py
-  - TEST_FILE=tests/test_classification.py
-  - TEST_FILE=tests/test_custom_multi_output_classification.py
-  # Embedding
-  - TEST_FILE=tests/embedding/test_bert_embedding.py
-  - TEST_FILE=tests/embedding/test_gpt2_embedding.py
-  - TEST_FILE=tests/embedding/test_numeric_features_embedding.py
-  - TEST_FILE=tests/embedding/test_stacked_embedding.py
-  - TEST_FILE=tests/embedding/test_bare_embedding.py
-  - TEST_FILE=tests/embedding/test_word_embedding.py
-  # Labeling
-  - TEST_FILE=tests/labeling/
-  #  - TEST_FILE=tests/labeling/test_blstm_model.py
-  #  - TEST_FILE=tests/labeling/test_cnn_lstm_model.py
-  #  - TEST_FILE=tests/labeling/test_seq_self_attenion_model.py
-  #  - TEST_FILE=tests/labeling/test_blstm_crf_model.py
-  - TEST_FILE=tests/test_processor.py
+  global:
+    - COVERALLS_PARALLEL=true
+  matrix:
+    # Labeling
+    - TEST_FILE=tests/labeling/
+    #  - TEST_FILE=tests/labeling/test_blstm_model.py
+    #  - TEST_FILE=tests/labeling/test_cnn_lstm_model.py
+    #  - TEST_FILE=tests/labeling/test_seq_self_attenion_model.py
+    #  - TEST_FILE=tests/labeling/test_blstm_crf_model.py
+    - TEST_FILE=tests/classification
+    - TEST_FILE="tests/test_callbacks.py tests/test_corpus.py tests/test_processor.py"
+    - TEST_FILE=tests/test_custom_multi_output_classification.py
+    # Embedding
+    - TEST_FILE=tests/embedding/
+#    - TEST_FILE=tests/embedding/test_bert_embedding.py
+#    - TEST_FILE=tests/embedding/test_gpt2_embedding.py
+#    - TEST_FILE=tests/embedding/test_numeric_features_embedding.py
+#    - TEST_FILE=tests/embedding/test_stacked_embedding.py
+#    - TEST_FILE=tests/embedding/test_bare_embedding.py
+#    - TEST_FILE=tests/embedding/test_word_embedding.py
 
 before_install:
   - export BOTO_CONFIG=/dev/null
@@ -52,3 +55,7 @@ script:
 
 after_script:
   - sonar-scanner
+  - coveralls
+
+notifications:
+  webhooks: https://coveralls.io/webhook

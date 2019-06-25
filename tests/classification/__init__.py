@@ -5,10 +5,8 @@
 # blog: https://eliyar.biz
 
 # file: __init__.py
-# time: 2019-05-20 11:34
+# time: 10:34
 
-from kashgari.tasks import labeling
-from kashgari.tasks import classification
 
 if __name__ == "__main__":
-    print("Hello world")
+    print("hello, world")

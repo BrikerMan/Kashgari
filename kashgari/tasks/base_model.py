@@ -32,11 +32,15 @@ class BaseModel(object):
         raise NotImplementedError
 
     def info(self):
+        model_json_str = self.tf_model.to_json()
+        model_json_str = model_json_str.replace('"class_name": "CuDNNLSTM"', '"class_name": "LSTM"')
+        model_json_str = model_json_str.replace('"class_name": "CuDNNGRU"', '"class_name": "GRU"')
+
         return {
             'config': {
                 'hyper_parameters': self.hyper_parameters,
             },
-            'tf_model': json.loads(self.tf_model.to_json()),
+            'tf_model': json.loads(model_json_str),
             'embedding': self.embedding.info(),
             'class_name': self.__class__.__name__,
             'module': self.__class__.__module__
@@ -80,56 +84,33 @@ class BaseModel(object):
         return self.embedding.task
 
     def build_model(self,
-                    x_data: Union[Tuple[List[List[str]], ...], List[List[str]]],
-                    y_data: Union[List[List[str]], List[str]],
+                    x_train: Union[Tuple[List[List[str]], ...], List[List[str]]],
+                    y_train: Union[List[List[str]], List[str]],
                     x_validate: Union[Tuple[List[List[str]], ...], List[List[str]]] = None,
                     y_validate: Union[List[List[str]], List[str]] = None):
+        """
+        Build model with corpus
+
+        Args:
+            x_train: Array of train feature data (if the model has a single input),
+                or tuple of train feature data array (if the model has multiple inputs)
+            y_train: Array of train label data
+            x_validate: Array of validation feature data (if the model has a single input),
+                or tuple of validation feature data array (if the model has multiple inputs)
+            y_validate: Array of validation label data
+
+        Returns:
+
+        """
 
         if x_validate is not None and not isinstance(x_validate, tuple):
-            self.embedding.analyze_corpus(x_data + x_validate, y_data + y_validate)
+            self.embedding.analyze_corpus(x_train + x_validate, y_train + y_validate)
         else:
-            self.embedding.analyze_corpus(x_data, y_data)
+            self.embedding.analyze_corpus(x_train, y_train)
 
         if self.tf_model is None:
             self.build_model_arc()
             self.compile_model()
-
-    def get_data_generator(self,
-                           x_data,
-                           y_data,
-                           batch_size: int = 64,
-                           shuffle: bool = True):
-        """
-        data generator for fit_generator
-
-        Args:
-            x_data: Array of feature data (if the model has a single input),
-                or tuple of feature data array (if the model has multiple inputs)
-            y_data: Array of label data
-            batch_size: Number of samples per gradient update, default to 64.
-            shuffle:
-
-        Returns:
-            data generator
-        """
-        index_list = np.arange(len(x_data[0]))
-        page_count = len(x_data[0]) // batch_size + 1
-
-        while True:
-            if shuffle:
-                np.random.shuffle(index_list)
-            for page in range(page_count):
-                start_index = page * batch_size
-                end_index = start_index + batch_size
-                target_index = index_list[start_index: end_index]
-
-                if len(target_index) == 0:
-                    target_index = index_list[0: batch_size]
-                x_tensor = self.embedding.process_x_dataset(x_data,
-                                                            target_index)
-                y_tensor = self.embedding.process_y_dataset(y_data,
-                                                            target_index)
-                yield (x_tensor, y_tensor)
 
     def fit(self,
             x_train: Union[Tuple[List[List[str]], ...], List[List[str]]],
@@ -183,45 +164,84 @@ class BaseModel(object):
                                      batch_size=batch_size,
                                      **fit_kwargs)
 
-    def fit_with_generator(self,
-                           x_train: Union[Tuple[List[List[str]], ...], List[List[str]]],
-                           y_train: Union[List[List[str]], List[str]],
-                           x_validate: Union[Tuple[List[List[str]], ...], List[List[str]]] = None,
-                           y_validate: Union[List[List[str]], List[str]] = None,
-                           batch_size: int = 64,
-                           epochs: int = 5,
-                           callbacks: List[keras.callbacks.Callback] = None,
-                           fit_kwargs: Dict = None):
-        train_generator = self.get_data_generator(x_train,
-                                                  y_train,
-                                                  batch_size)
-        if fit_kwargs is None:
-            fit_kwargs = {}
-
-        validation_generator = None
-        validation_steps = None
-        if x_validate:
-            validation_generator = self.get_data_generator(x_validate,
-                                                           y_validate,
-                                                           batch_size)
-
-            if isinstance(x_validate, tuple):
-                validation_steps = len(x_validate[0]) // batch_size + 1
-            else:
-                validation_steps = len(x_validate) // batch_size + 1
-
-        if isinstance(x_train, tuple):
-            steps_per_epoch = len(x_train[0]) // batch_size + 1
-        else:
-            steps_per_epoch = len(x_train) // batch_size + 1
-        with utils.custom_object_scope():
-            return self.tf_model.fit_generator(train_generator,
-                                               steps_per_epoch=steps_per_epoch,
-                                               epochs=epochs,
-                                               validation_data=validation_generator,
-                                               validation_steps=validation_steps,
-                                               callbacks=callbacks,
-                                               **fit_kwargs)
+    # Todo: add fit generator function
+    # def get_data_generator(self,
+    #                        x_data,
+    #                        y_data,
+    #                        batch_size: int = 64,
+    #                        shuffle: bool = True):
+    #     """
+    #     data generator for fit_generator
+    #
+    #     Args:
+    #         x_data: Array of feature data (if the model has a single input),
+    #             or tuple of feature data array (if the model has multiple inputs)
+    #         y_data: Array of label data
+    #         batch_size: Number of samples per gradient update, default to 64.
+    #         shuffle:
+    #
+    #     Returns:
+    #         data generator
+    #     """
+    #     index_list = np.arange(len(x_data[0]))
+    #     page_count = len(x_data[0]) // batch_size + 1
+    #
+    #     while True:
+    #         if shuffle:
+    #             np.random.shuffle(index_list)
+    #         for page in range(page_count):
+    #             start_index = page * batch_size
+    #             end_index = start_index + batch_size
+    #             target_index = index_list[start_index: end_index]
+    #
+    #             if len(target_index) == 0:
+    #                 target_index = index_list[0: batch_size]
+    #             x_tensor = self.embedding.process_x_dataset(x_data,
+    #                                                         target_index)
+    #             y_tensor = self.embedding.process_y_dataset(y_data,
+    #                                                         target_index)
+    #             yield (x_tensor, y_tensor)
+    #
+    #
+    # def fit_with_generator(self,
+    #                        x_train: Union[Tuple[List[List[str]], ...], List[List[str]]],
+    #                        y_train: Union[List[List[str]], List[str]],
+    #                        x_validate: Union[Tuple[List[List[str]], ...], List[List[str]]] = None,
+    #                        y_validate: Union[List[List[str]], List[str]] = None,
+    #                        batch_size: int = 64,
+    #                        epochs: int = 5,
+    #                        callbacks: List[keras.callbacks.Callback] = None,
+    #                        fit_kwargs: Dict = None):
+    #     train_generator = self.get_data_generator(x_train,
+    #                                               y_train,
+    #                                               batch_size)
+    #     if fit_kwargs is None:
+    #         fit_kwargs = {}
+    #
+    #     validation_generator = None
+    #     validation_steps = None
+    #     if x_validate:
+    #         validation_generator = self.get_data_generator(x_validate,
+    #                                                        y_validate,
+    #                                                        batch_size)
+    #
+    #         if isinstance(x_validate, tuple):
+    #             validation_steps = len(x_validate[0]) // batch_size + 1
+    #         else:
+    #             validation_steps = len(x_validate) // batch_size + 1
+    #
+    #     if isinstance(x_train, tuple):
+    #         steps_per_epoch = len(x_train[0]) // batch_size + 1
+    #     else:
+    #         steps_per_epoch = len(x_train) // batch_size + 1
+    #     with utils.custom_object_scope():
+    #         return self.tf_model.fit_generator(train_generator,
+    #                                            steps_per_epoch=steps_per_epoch,
+    #                                            epochs=epochs,
+    #                                            validation_data=validation_generator,
+    #                                            validation_steps=validation_steps,
+    #                                            callbacks=callbacks,
+    #                                            **fit_kwargs)
 
     def compile_model(self, **kwargs):
         """Configures the model for training.
@@ -285,17 +305,33 @@ class BaseModel(object):
                  batch_size=None,
                  digits=4,
                  debug_info=False) -> Tuple[float, float, Dict]:
+        """
+        Evaluate model
+        Args:
+            x_data:
+            y_data:
+            batch_size:
+            digits:
+            debug_info:
+
+        Returns:
+
+        """
         raise NotImplementedError
 
     def build_model_arc(self):
         raise NotImplementedError
 
     def save(self, model_path: str):
-        pathlib.Path(model_path).mkdir(exist_ok=True, parents=True)
+        """
+        Save model
+        Args:
+            model_path:
 
-        # with open(os.path.join(model_path, 'processor.pickle'), 'wb') as f:
-        #     f.write(pickle.dumps(self.embedding.processor))
-        #     f.close()
+        Returns:
+
+        """
+        pathlib.Path(model_path).mkdir(exist_ok=True, parents=True)
 
         with open(os.path.join(model_path, 'model_info.json'), 'w') as f:
             f.write(json.dumps(self.info(), indent=2, ensure_ascii=True))
@@ -305,6 +341,15 @@ class BaseModel(object):
         logging.info('model saved to {}'.format(os.path.abspath(model_path)))
 
     def export(self, export_path: str, inputs: Optional[Dict] = None, outputs: Optional[Dict] = None):
+        """
+        Export model for tensorflow serving
+        Args:
+            export_path: The path to which the SavedModel will be stored.
+            inputs: dict mapping string input names to tensors. These are added
+                to the SignatureDef as the inputs.
+            outputs:  dict mapping string output names to tensors. These are added
+                to the SignatureDef as the outputs.
+        """
         pathlib.Path(export_path).mkdir(exist_ok=True, parents=True)
 
         ts = round(time.time())
@@ -322,12 +367,12 @@ class BaseModel(object):
 
 
 if __name__ == "__main__":
-    from kashgari.tasks.labeling import CNNLSTMModel
+    from kashgari.tasks.labeling import CNN_LSTM_Model
     from kashgari.corpus import ChineseDailyNerCorpus
 
     train_x, train_y = ChineseDailyNerCorpus.load_data('valid')
 
-    model = CNNLSTMModel()
+    model = CNN_LSTM_Model()
     model.build_model(train_x[:100], train_y[:100])
     r = model.predict_entities(train_x[:5])
     model.save('./res')

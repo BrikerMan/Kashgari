@@ -4,21 +4,22 @@
 # contact: eliyar917@gmail.com
 # blog: https://eliyar.biz
 
-# file: test_blstm_model.py
-# time: 2019-05-31 19:06
+# file: test_blstm_crf_model.py
+# time: 00:38
+
 
 import tests.labeling.test_cnn_lstm_model as base
-from kashgari.tasks.labeling import BiLSTM_Model
+from kashgari.tasks.labeling import BiGRU_CRF_Model
 
 
-class TestBLSTMModel(base.TestCNN_LSTM_Model):
+class TestGRUCRFModel(base.TestCNN_LSTM_Model):
     @classmethod
     def setUpClass(cls):
         cls.epochs = 1
-        cls.model_class = BiLSTM_Model
+        cls.model_class = BiGRU_CRF_Model
 
     def test_basic_use_build(self):
-        super(TestBLSTMModel, self).test_basic_use_build()
+        super(TestGRUCRFModel, self).test_basic_use_build()
 
 
 if __name__ == "__main__":

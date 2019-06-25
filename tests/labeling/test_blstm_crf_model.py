@@ -9,14 +9,14 @@
 
 
 import tests.labeling.test_cnn_lstm_model as base
-from kashgari.tasks.labeling import BLSTMCRFModel
+from kashgari.tasks.labeling import BiLSTM_CRF_Model
 
 
-class TestBLSTMModel(base.TestCNNLSTMModel):
+class TestBLSTMModel(base.TestCNN_LSTM_Model):
     @classmethod
     def setUpClass(cls):
-        cls.epochs = 3
-        cls.model_class = BLSTMCRFModel
+        cls.epochs = 1
+        cls.model_class = BiLSTM_CRF_Model
 
     def test_basic_use_build(self):
         super(TestBLSTMModel, self).test_basic_use_build()

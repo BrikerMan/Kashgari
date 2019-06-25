@@ -34,11 +34,6 @@ def get_list_subset(target: List, index_list: List[int]) -> List:
     return [target[i] for i in index_list if i < len(target)]
 
 
-def get_project_path() -> str:
-    here = pathlib.Path(__file__).parent
-    return os.path.abspath(os.path.join(here, '../'))
-
-
 def custom_object_scope():
     return tf.keras.utils.custom_object_scope(custom_objects)
 
@@ -136,4 +131,3 @@ def convert_labeling_to_doccano(semantic_data,
 if __name__ == "__main__":
     path = '/Users/brikerman/Desktop/python/Kashgari/tests/saved_models/kashgari.tasks.classification.models/BLSTMModel'
     load_model(path)
-    print(get_project_path())

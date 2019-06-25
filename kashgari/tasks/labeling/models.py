@@ -14,16 +14,15 @@ from tensorflow import keras
 
 from kashgari.tasks.labeling.base_model import BaseLabelingModel
 from kashgari.layers import L
-from kashgari.layers.crf import CRF
 from kashgari.layers.legacy_crf import CRF as LagecyCRF
 from kashgari.layers.legacy_crf import crf_loss, crf_accuracy
 
 from kashgari.utils import custom_objects
 
-custom_objects['CRF'] = CRF
+custom_objects['CRF'] = LagecyCRF
 
 
-class BLSTMModel(BaseLabelingModel):
+class BiLSTM_Model(BaseLabelingModel):
     """Bidirectional LSTM Sequence Labeling Model"""
 
     @classmethod
@@ -74,8 +73,8 @@ class BLSTMModel(BaseLabelingModel):
         self.tf_model = keras.Model(embed_model.inputs, output_tensor)
 
 
-class BLSTMCRFModel(BaseLabelingModel):
-    """Bidirectional LSTM Sequence Labeling Model"""
+class BiLSTM_CRF_Model(BaseLabelingModel):
+    """Bidirectional LSTM CRF Sequence Labeling Model"""
 
     @classmethod
     def get_default_hyper_parameters(cls) -> Dict[str, Dict[str, Any]]:
@@ -119,12 +118,12 @@ class BLSTMCRFModel(BaseLabelingModel):
     def compile_model(self, **kwargs):
         if kwargs.get('loss') is None:
             kwargs['loss'] = crf_loss
-        # if kwargs.get('metrics') is None:
-        #     kwargs['metrics'] = [crf_accuracy]
-        super(BLSTMCRFModel, self).compile_model(**kwargs)
+        if kwargs.get('metrics') is None:
+            kwargs['metrics'] = [crf_accuracy]
+        super(BiLSTM_CRF_Model, self).compile_model(**kwargs)
 
 
-class BGRUModel(BaseLabelingModel):
+class BiGRU_Model(BaseLabelingModel):
     """Bidirectional GRU Sequence Labeling Model"""
 
     @classmethod
@@ -175,8 +174,8 @@ class BGRUModel(BaseLabelingModel):
         self.tf_model = keras.Model(embed_model.inputs, output_tensor)
 
 
-class BGRUCRFModel(BaseLabelingModel):
-    """Bidirectional GRU Sequence Labeling Model"""
+class BiGRU_CRF_Model(BaseLabelingModel):
+    """Bidirectional GRU CRF Sequence Labeling Model"""
 
     @classmethod
     def get_default_hyper_parameters(cls) -> Dict[str, Dict[str, Any]]:
@@ -220,12 +219,12 @@ class BGRUCRFModel(BaseLabelingModel):
     def compile_model(self, **kwargs):
         if kwargs.get('loss') is None:
             kwargs['loss'] = crf_loss
-        # if kwargs.get('metrics') is None:
-        #     kwargs['metrics'] = [crf_accuracy]
-        super(BGRUCRFModel, self).compile_model(**kwargs)
+        if kwargs.get('metrics') is None:
+            kwargs['metrics'] = [crf_accuracy]
+        super(BiGRU_CRF_Model, self).compile_model(**kwargs)
 
 
-class CNNLSTMModel(BaseLabelingModel):
+class CNN_LSTM_Model(BaseLabelingModel):
     """CNN LSTM Sequence Labeling Model"""
 
     @classmethod
@@ -289,6 +288,6 @@ if __name__ == "__main__":
 
     valid_x, valid_y = ChineseDailyNerCorpus.load_data('train')
 
-    model = BLSTMCRFModel()
+    model = BiLSTM_CRF_Model()
     model.fit(valid_x, valid_y, epochs=50, batch_size=64)
     model.evaluate(valid_x, valid_y)

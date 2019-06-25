@@ -10,7 +10,6 @@
 import tensorflow as tf
 from tensorflow.python import keras
 from kashgari.layers.non_masking_layer import NonMaskingLayer
-from kashgari.layers.crf import CRF
 from kashgari.layers.att_wgt_avg_layer import AttentionWeightedAverageLayer, \
         AttentionWeightedAverage, AttWgtAvgLayer
 from kashgari.layers.kmax_pool_layer import KMaxPoolingLayer, KMaxPoolLayer, KMaxPooling
@@ -19,6 +18,7 @@ L = keras.layers
 
 if tf.test.is_gpu_available(cuda_only=True):
     L.LSTM = L.CuDNNLSTM
+    L.GRU = L.CuDNNGRU
 
 if __name__ == "__main__":
     print("Hello world")

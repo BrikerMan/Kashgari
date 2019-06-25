@@ -10,8 +10,8 @@ Available model list:
 | model                 | import module                          | f1 Score | params  | epoch-time |
 | --------------------- | -------------------------------------- | :------: | ------- | :--------: |
 | BLSTMModel            | `kashgari.tasks.labeling`              |  0.7479  | 557,152 |    10s     |
-| BLSTMCRFModel         | `kashgari.tasks.labeling`              |  0.5999  | 558,240 |    212s    |
-| CNNLSTMModel          | `kashgari.tasks.labeling`              |          | 414,208 |     6s     |
+| BiLSTM_CRF_Model         | `kashgari.tasks.labeling`              |  0.5999  | 558,240 |    212s    |
+| CNN_LSTM_Model          | `kashgari.tasks.labeling`              |          | 414,208 |     6s     |
 | BLSTMAttentionModel   | `kashgari.tasks.labeling.experimental` |  0.5591  | 414,881 |    10s     |
 | SeqSelfAttentionModel | `kashgari.tasks.labeling.experimental` |  0.1205  | 334,338 |     7s     |
 

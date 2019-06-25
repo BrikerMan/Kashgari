@@ -6,13 +6,13 @@
     <a href="https://github.com/BrikerMan/kashgari/blob/master/LICENSE">
         <img alt="GitHub" src="https://img.shields.io/github/license/BrikerMan/kashgari.svg?color=blue&style=popout">
     </a>
-    <a href="https://kashgari.readthedocs.io/">
-        <img alt="Website" src="https://sonarcloud.io/api/project_badges/measure?project=BrikerMan_Kashgari&metric=coverage">
+    <a href="https://travis-ci.com/BrikerMan/Kashgari">
+        <img src="https://travis-ci.com/BrikerMan/Kashgari.svg?branch=tf.keras-version"/>
     </a>
-    <a href="https://kashgari.readthedocs.io/">
-        <img alt="Reliability" src="https://sonarcloud.io/api/project_badges/measure?project=BrikerMan_Kashgari&metric=reliability_rating">
+    <a href='https://coveralls.io/github/BrikerMan/Kashgari?branch=tf.keras-version'>
+        <img src='https://coveralls.io/repos/github/BrikerMan/Kashgari/badge.svg?branch=tf.keras-version' alt='Coverage Status'/>
     </a>
-    <a href="https://pepy.tech/project/kashgari">
+     <a href="https://pepy.tech/project/kashgari">
         <img src="https://pepy.tech/badge/kashgari"/>
     </a>
     <a href="https://pypi.org/project/kashgari/">

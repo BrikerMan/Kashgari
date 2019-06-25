@@ -12,7 +12,7 @@ import numpy as np
 
 import kashgari
 from kashgari.embeddings import StackedEmbedding
-from kashgari.tasks.labeling import BLSTMModel
+from kashgari.tasks.labeling import BiLSTM_Model
 from kashgari.macros import DATA_PATH
 from kashgari.corpus import ChineseDailyNerCorpus
 from kashgari.embeddings import BareEmbedding, NumericFeaturesEmbedding, BERTEmbedding
@@ -112,7 +112,7 @@ class TestStackedEmbedding(unittest.TestCase):
         y = label_list
         stack_embedding.analyze_corpus(x, y)
 
-        model = BLSTMModel(embedding=stack_embedding)
+        model = BiLSTM_Model(embedding=stack_embedding)
         model.build_model(x, y)
         model.tf_model.summary()
 

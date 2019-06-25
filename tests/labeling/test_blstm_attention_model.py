@@ -11,10 +11,10 @@ from tests.labeling import test_cnn_lstm_model as base
 from kashgari.tasks.labeling.experimental import BLSTMAttentionModel
 
 
-class TestBLSTMAttentionModel(base.TestCNNLSTMModel):
+class TestBLSTMAttentionModel(base.TestCNN_LSTM_Model):
     @classmethod
     def setUpClass(cls):
-        cls.epochs = 3
+        cls.epochs = 1
         cls.model_class = BLSTMAttentionModel
 
     def test_variable_length_model(self):

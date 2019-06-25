@@ -15,6 +15,28 @@ from kashgari.corpus import SMP2018ECDTCorpus, ChineseDailyNerCorpus
 train_x, train_y = ChineseDailyNerCorpus.load_data('valid')
 train_x1, train_y1 = SMP2018ECDTCorpus.load_data('valid')
 
+sample_train_x = [
+    list('语言学（英语：linguistics）是一门关于人类语言的科学研究'),
+    list('语言学（英语：linguistics）是一门关于人类语言的科学研究'),
+    list('语言学（英语：linguistics）是一门关于人类语言的科学研究'),
+    list('语言学包含了几种分支领域。'),
+    list('在语言结构（语法）研究与意义（语义与语用）研究之间存在一个重要的主题划分'),
+]
+
+sample_train_y = [['b', 'c'], ['a'], ['a', 'c'], ['a', 'b'], ['c']]
+
+sample_eval_x = [
+    list('语言学是一门关于人类语言的科学研究。'),
+    list('语言学包含了几种分支领域。'),
+    list('在语言结构研究与意义研究之间存在一个重要的主题划分。'),
+    list('语法中包含了词法，句法以及语音。'),
+    list('语音学是语言学的一个相关分支，它涉及到语音与非语音声音的实际属性，以及它们是如何发出与被接收到的。'),
+    list('与学习语言不同，语言学是研究所有人类语文发展有关的一门学术科目。'),
+    list('在语言结构（语法）研究与意义（语义与语用）研究之间存在一个重要的主题划分'),
+]
+
+sample_eval_y = [['b', 'c'], ['a'], ['a', 'c'], ['a', 'b'], ['c'], ['b'], ['a']]
+
 
 class TestLabelingProcessor(unittest.TestCase):
 
@@ -39,19 +61,8 @@ class TestLabelingProcessor(unittest.TestCase):
             res_y = self.processor.reverse_numerize_label_sequences(vector_y.argmax(-1), lengths=np.full(15, 15))
             assert target_y == res_y
 
-    def test_save_load(self):
-        self.processor.save_dicts('./saved-model/labeling')
-
-        p = LabelingProcessor.load_cached_processor('./saved-model/labeling')
-
-        vector_x_1 = p.process_x_dataset(train_x[:9])
-        vector_x_2 = self.processor.process_x_dataset(train_x[:9])
-
-        vector_y_1 = p.process_y_dataset(train_y[:9])
-        vector_y_2 = self.processor.process_y_dataset(train_y[:9])
-
-        assert np.array_equal(vector_x_1, vector_x_2)
-        assert np.array_equal(vector_y_1, vector_y_2)
+        self.processor.process_x_dataset(train_x[:9], subset=[1, 2, 3])
+        self.processor.process_y_dataset(train_y[:9], subset=[1, 2, 3])
 
 
 class TestClassificationProcessor(unittest.TestCase):
@@ -76,19 +87,13 @@ class TestClassificationProcessor(unittest.TestCase):
             res_y = self.processor.reverse_numerize_label_sequences(vector_y.argmax(-1))
             assert train_y1[:15] == res_y
 
-    def test_save_load(self):
-        self.processor.save_dicts('./saved-model/classification')
+    def test_multi_label_processor(self):
+        p = ClassificationProcessor(multi_label=True)
+        p.analyze_corpus(sample_train_x, sample_train_y)
+        assert len(p.label2idx) == 3
 
-        p = ClassificationProcessor.load_cached_processor('./saved-model/classification')
-
-        vector_x_1 = p.process_x_dataset(train_x1[:9])
-        vector_x_2 = self.processor.process_x_dataset(train_x1[:9])
-
-        vector_y_1 = p.process_y_dataset(train_y1[:9])
-        vector_y_2 = self.processor.process_y_dataset(train_y1[:9])
-
-        assert np.array_equal(vector_x_1, vector_x_2)
-        assert np.array_equal(vector_y_1, vector_y_2)
+        print(p.process_x_dataset(sample_train_x))
+        print(p.process_y_dataset(sample_train_y))
 
 
 if __name__ == "__main__":
