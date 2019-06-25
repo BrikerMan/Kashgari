@@ -61,10 +61,10 @@ class BiGRU_Model(BaseClassificationModel):
         config = self.hyper_parameters
         embed_model = self.embedding.embed_model
 
-        layer_bi_lstm = L.Bidirectional(L.GRU(**config['layer_bi_lstm']))
+        layer_bi_gru = L.Bidirectional(L.GRU(**config['layer_bi_gru']))
         layer_dense = L.Dense(output_dim, **config['layer_dense'])
 
-        tensor = layer_bi_lstm(embed_model.output)
+        tensor = layer_bi_gru(embed_model.output)
         output_tensor = layer_dense(tensor)
 
         self.tf_model = tf.keras.Model(embed_model.inputs, output_tensor)
@@ -179,7 +179,7 @@ class CNN_GRU_Model(BaseClassificationModel):
         layers_seq = []
         layers_seq.append(L.Conv1D(**config['conv_layer']))
         layers_seq.append(L.MaxPooling1D(**config['max_pool_layer']))
-        layers_seq.append(L.LSTM(**config['lstm_layer']))
+        layers_seq.append(L.GRU(**config['gru_layer']))
         layers_seq.append(L.Dense(output_dim, **config['activation_layer']))
 
         tensor = embed_model.output

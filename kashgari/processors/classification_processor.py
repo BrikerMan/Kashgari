@@ -6,6 +6,7 @@ from tensorflow.python.keras.utils import to_categorical
 import kashgari
 from kashgari import utils
 from kashgari.processors.base_processor import BaseProcessor
+from sklearn.preprocessing import MultiLabelBinarizer
 
 
 class ClassificationProcessor(BaseProcessor):
@@ -13,21 +14,33 @@ class ClassificationProcessor(BaseProcessor):
     Corpus Pre Processor class
     """
 
+    def __init__(self, multi_label=False, **kwargs):
+        super(ClassificationProcessor, self).__init__(**kwargs)
+        self.multi_label = multi_label
+        self.multi_label_binarizer: MultiLabelBinarizer = None
+
     def info(self):
         info = super(ClassificationProcessor, self).info()
         info['task'] = kashgari.CLASSIFICATION
+        info['multi_label'] = self.multi_label
         return info
 
     def _build_label_dict(self,
                           labels: List[str]):
-        label_set = list(set(labels))
+        if self.multi_label:
+            label_set = set()
+            for i in labels:
+                label_set = label_set.union(list(i))
+        else:
+            label_set = set(labels)
 
-        self.label2idx = {self.token_pad: 0, }
+        self.label2idx = {}
         for idx, label in enumerate(label_set):
-            self.label2idx[label] = idx + 1
+            self.label2idx[label] = len(self.label2idx)
 
         self.idx2label = dict([(value, key) for key, value in self.label2idx.items()])
         self.dataset_info['label_count'] = len(self.label2idx)
+        self.multi_label_binarizer = MultiLabelBinarizer(classes=list(self.label2idx.keys()))
 
     def process_y_dataset(self,
                           data: List[str],
@@ -37,8 +50,11 @@ class ClassificationProcessor(BaseProcessor):
             target = utils.get_list_subset(data, subset)
         else:
             target = data
-        numerized_samples = self.numerize_label_sequences(target)
-        return to_categorical(numerized_samples, len(self.label2idx))
+        if self.multi_label:
+            return self.multi_label_binarizer.fit_transform(target)
+        else:
+            numerized_samples = self.numerize_label_sequences(target)
+            return to_categorical(numerized_samples, len(self.label2idx))
 
     def numerize_token_sequences(self,
                                  sequences: List[List[str]]):
@@ -65,7 +81,10 @@ class ClassificationProcessor(BaseProcessor):
         return [self.label2idx[label] for label in sequences]
 
     def reverse_numerize_label_sequences(self, sequences, **kwargs):
-        return [self.idx2label[label] for label in sequences]
+        if self.multi_label:
+            return self.multi_label_binarizer.inverse_transform(sequences)
+        else:
+            return [self.idx2label[label] for label in sequences]
 
 
 if __name__ == "__main__":

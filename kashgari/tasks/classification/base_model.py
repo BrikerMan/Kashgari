@@ -9,14 +9,28 @@
 
 import random
 import logging
-from typing import Dict, Any, Tuple
-from kashgari.tasks.base_model import BaseModel
+import kashgari
+from typing import Dict, Any, Tuple, Optional
+from kashgari.tasks.base_model import BaseModel, BareEmbedding
+
+from kashgari.embeddings.base_embedding import Embedding
 from sklearn import metrics
 
 
 class BaseClassificationModel(BaseModel):
 
     __task__ = 'classification'
+
+    def __init__(self,
+                 embedding: Optional[Embedding] = None,
+                 hyper_parameters: Optional[Dict[str, Dict[str, Any]]] = None):
+        super(BaseClassificationModel, self).__init__(embedding, hyper_parameters)
+        if hyper_parameters is None and \
+                self.embedding.processor.__getattribute__('multi_label') is True:
+            last_layer_name = list(self.hyper_parameters.keys())[-1]
+            self.hyper_parameters[last_layer_name]['activation'] = 'sigmoid'
+            logging.warning("Activation Layer's activate function changed to sigmoid for"
+                            " multi-label classification question")
 
     @classmethod
     def get_default_hyper_parameters(cls) -> Dict[str, Dict[str, Any]]:
@@ -25,22 +39,82 @@ class BaseClassificationModel(BaseModel):
     def build_model_arc(self):
         raise NotImplementedError
 
+    def predict(self,
+                x_data,
+                batch_size=None,
+                multi_label_threshold: float = 0.5,
+                debug_info=False):
+        """
+        Generates output predictions for the input samples.
+
+        Computation is done in batches.
+
+        Args:
+            x_data: The input data, as a Numpy array (or list of Numpy arrays if the model has multiple inputs).
+            batch_size: Integer. If unspecified, it will default to 32.
+            multi_label_threshold:
+            debug_info: Bool, Should print out the logging info.
+
+        Returns:
+            array(s) of predictions.
+        """
+        with kashgari.utils.custom_object_scope():
+            if isinstance(x_data, tuple):
+                lengths = [len(sen) for sen in x_data[0]]
+            else:
+                lengths = [len(sen) for sen in x_data]
+            tensor = self.embedding.process_x_dataset(x_data)
+            pred = self.tf_model.predict(tensor, batch_size=batch_size)
+            if self.embedding.processor.multi_label:
+                if debug_info:
+                    logging.info('raw output: {}'.format(pred))
+                pred[pred >= multi_label_threshold] = 1
+                pred[pred < multi_label_threshold] = 0
+
+            else:
+                pred = pred.argmax(-1)
+
+            res = self.embedding.reverse_numerize_label_sequences(pred,
+                                                                  lengths)
+            if debug_info:
+                logging.info('input: {}'.format(tensor))
+                logging.info('output: {}'.format(pred))
+                logging.info('output argmax: {}'.format(pred.argmax(-1)))
+        return res
+
     def evaluate(self,
                  x_data,
                  y_data,
                  batch_size=None,
                  digits=4,
-                 debug_info=False) -> Tuple[float, float, Dict]:
+                 output_dict=False,
+                 debug_info=False) -> Optional[Tuple[float, float, Dict]]:
         y_pred = self.predict(x_data, batch_size=batch_size)
-        report = metrics.classification_report(y_data, y_pred, output_dict=True, digits=digits)
-        print(metrics.classification_report(y_data, y_pred, digits=digits))
+
         if debug_info:
             for index in random.sample(list(range(len(x_data))), 5):
                 logging.debug('------ sample {} ------'.format(index))
                 logging.debug('x      : {}'.format(x_data[index]))
                 logging.debug('y      : {}'.format(y_data[index]))
                 logging.debug('y_pred : {}'.format(y_pred[index]))
-        return report
+
+        if self.pre_processor.multi_label:
+            y_pred_b = self.pre_processor.multi_label_binarizer.fit_transform(y_pred)
+            y_true_b = self.pre_processor.multi_label_binarizer.fit_transform(y_data)
+            report = metrics.classification_report(y_pred_b,
+                                                   y_true_b,
+                                                   target_names=self.pre_processor.multi_label_binarizer.classes_,
+                                                   output_dict=output_dict,
+                                                   digits=digits)
+        else:
+            report = metrics.classification_report(y_data,
+                                                   y_pred,
+                                                   output_dict=output_dict,
+                                                   digits=digits)
+        if not output_dict:
+            print(report)
+        else:
+            return report
 
 
 if __name__ == "__main__":
