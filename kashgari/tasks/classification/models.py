@@ -376,6 +376,302 @@ class KMax_CNN_Model(BaseClassificationModel):
         self.tf_model = tf.keras.Model(embed_model.inputs, tensor)
 
 
+class R_CNN_Model(BaseClassificationModel):
+
+    @classmethod
+    def get_default_hyper_parameters(cls) -> Dict[str, Dict[str, Any]]:
+        return {
+            'spatial_dropout': {
+                'rate': 0.2
+            },
+            'rnn_0': {
+                'units': 64,
+                'return_sequences': True
+            },
+            'conv_0': {
+                'filters': 128,
+                'kernel_size': 2,
+                'kernel_initializer': 'normal',
+                'padding': 'valid',
+                'activation': 'relu',
+                'strides': 1
+            },
+            'maxpool': {},
+            'attn': {},
+            'average': {},
+            'concat': {
+                'axis': 1
+            },
+            'dropout': {
+                'rate': 0.5
+            },
+            'dense': {
+                'units': 120,
+                'activation': 'relu'
+            },
+            'activation_layer': {
+                'activation': 'softmax'
+            },
+        }
+
+    def build_model_arc(self):
+        output_dim = len(self.pre_processor.label2idx)
+        config = self.hyper_parameters
+        embed_model = self.embedding.embed_model
+
+        layers_rcnn_seq = []
+        layers_rcnn_seq.append(L.SpatialDropout1D(**config['spatial_dropout']))
+        layers_rcnn_seq.append(L.Bidirectional(L.GRU(**config['rnn_0'])))
+        layers_rcnn_seq.append(L.Conv1D(**config['conv_0']))
+
+        layers_sensor = []
+        layers_sensor.append(L.GlobalMaxPooling1D())
+        layers_sensor.append(AttentionWeightedAverageLayer())
+        layers_sensor.append(L.GlobalAveragePooling1D())
+
+        layers_full_connect = []
+        layers_full_connect.append(L.Dropout(**config['dropout']))
+        layers_full_connect.append(L.Dense(**config['dense']))
+        layers_full_connect.append(L.Dense(output_dim, **config['activation_layer']))
+
+        tensor = embed_model.output
+        for layer in layers_rcnn_seq:
+            tensor = layer(tensor)
+
+        tensor_sensors = [layer(tensor) for layer in layers_sensor]
+        tensor_output = L.concatenate(tensor_sensors, **config['concat'])
+
+        for layer in layers_full_connect:
+            tensor_output = layer(tensor_output)
+
+        self.tf_model = tf.keras.Model(embed_model.inputs, tensor_output)
+
+
+class AVRNN_Model(BaseClassificationModel):
+
+    @classmethod
+    def get_default_hyper_parameters(cls) -> Dict[str, Dict[str, Any]]:
+        return {
+            'spatial_dropout': {
+                'rate': 0.25
+            },
+            'rnn_0': {
+                'units': 60,
+                'return_sequences': True
+            },
+            'rnn_1': {
+                'units': 60,
+                'return_sequences': True
+            },
+            'concat_rnn': {
+                'axis': 2
+            },
+            'last': {},
+            'maxpool': {},
+            'attn': {},
+            'average': {},
+            'all_views': {
+                'axis': 1
+            },
+            'dropout': {
+                'rate': 0.5
+            },
+            'dense': {
+                'units': 144,
+                'activation': 'relu'
+            },
+            'activation_layer': {
+                'activation': 'softmax'
+            },
+        }
+
+    def build_model_arc(self):
+        output_dim = len(self.pre_processor.label2idx)
+        config = self.hyper_parameters
+        embed_model = self.embedding.embed_model
+
+        layers_rnn0 = []
+        layers_rnn0.append(L.SpatialDropout1D(**config['spatial_dropout']))
+        layers_rnn0.append(L.Bidirectional(L.GRU(**config['rnn_0'])))
+
+        layer_bi_rnn1 = L.Bidirectional(L.GRU(**config['rnn_1']))
+
+        layers_concat = []
+        layers_concat.append(L.Concatenate(**config['concat_rnn']))
+        layers_concat.append(L.Lambda(lambda t: t[:, -1], name='last'))
+
+        layers_sensor = []
+        layers_sensor.append(L.GlobalMaxPooling1D())
+        layers_sensor.append(AttentionWeightedAverageLayer())
+        layers_sensor.append(L.GlobalAveragePooling1D())
+
+        layer_allviews = L.Concatenate(**config['all_views'])
+        layers_full_connect = []
+        layers_full_connect.append(L.Dropout(**config['dropout']))
+        layers_full_connect.append(L.Dense(**config['dense']))
+        layers_full_connect.append(L.Dense(output_dim, **config['activation_layer']))
+
+        tensor_rnn = embed_model.output
+        for layer in layers_rnn0:
+            tensor_rnn = layer(tensor_rnn)
+        tensor_concat = [tensor_rnn, layer_bi_rnn1(tensor_rnn)]
+        for layer in layers_concat:
+            tensor_concat = layer(tensor_concat)
+        tensor_sensors = [layer(tensor_concat) for layer in layers_sensor]
+        tensor_output = layer_allviews(tensor_sensors)
+        for layer in layers_full_connect:
+            tensor_output = layer(tensor_output)
+
+        self.tf_model = tf.keras.Model(embed_model.inputs, tensor_output)
+
+
+class Dropout_BiGRU_Model(BaseClassificationModel):
+
+    @classmethod
+    def get_default_hyper_parameters(cls) -> Dict[str, Dict[str, Any]]:
+        return {
+            'spatial_dropout': {
+                'rate': 0.15
+            },
+            'rnn_0': {
+                'units': 64,
+                'return_sequences': True
+            },
+            'dropout_rnn': {
+                'rate': 0.35
+            },
+            'rnn_1': {
+                'units': 64,
+                'return_sequences': True
+            },
+            'last': {},
+            'maxpool': {},
+            'average': {},
+            'all_views': {
+                'axis': 1
+            },
+            'dropout': {
+                'rate': 0.5
+            },
+            'dense': {
+                'units': 72,
+                'activation': 'relu'
+            },
+            'activation_layer': {
+                'activation': 'softmax'
+            },
+        }
+
+    def build_model_arc(self):
+        output_dim = len(self.pre_processor.label2idx)
+        config = self.hyper_parameters
+        embed_model = self.embedding.embed_model
+
+        layers_rnn = []
+        layers_rnn.append(L.SpatialDropout1D(**config['spatial_dropout']))
+        layers_rnn.append(L.Bidirectional(L.GRU(**config['rnn_0'])))
+        layers_rnn.append(L.Dropout(**config['dropout_rnn']))
+        layers_rnn.append(L.Bidirectional(L.GRU(**config['rnn_1'])))
+
+        layers_sensor = []
+        layers_sensor.append(L.Lambda(lambda t: t[:, -1], name='last'))
+        layers_sensor.append(L.GlobalMaxPooling1D())
+        layers_sensor.append(L.GlobalAveragePooling1D())
+
+        layer_allviews = L.Concatenate(**config['all_views'])
+
+        layers_full_connect = []
+        layers_full_connect.append(L.Dropout(**config['dropout']))
+        layers_full_connect.append(L.Dense(**config['dense']))
+        layers_full_connect.append(L.Dense(output_dim, **config['activation_layer']))
+
+        tensor_rnn = embed_model.output
+        for layer in layers_rnn:
+            tensor_rnn = layer(tensor_rnn)
+        tensor_sensors = [layer(tensor_rnn) for layer in layers_sensor]
+        tensor_output = layer_allviews(tensor_sensors)
+        for layer in layers_full_connect:
+            tensor_output = layer(tensor_output)
+
+        self.tf_model = tf.keras.Model(embed_model.inputs, tensor_output)
+
+
+class Dropout_AVRNN_Model(BaseClassificationModel):
+
+    @classmethod
+    def get_default_hyper_parameters(cls) -> Dict[str, Dict[str, Any]]:
+        return {
+            'spatial_dropout': {
+                'rate': 0.25
+            },
+            'rnn_0': {
+                'units': 56,
+                'return_sequences': True
+            },
+            'rnn_dropout': {
+                'rate': 0.3
+            },
+            'rnn_1': {
+                'units': 56,
+                'return_sequences': True
+            },
+            'last': {},
+            'maxpool': {},
+            'attn': {},
+            'average': {},
+            'all_views': {
+                'axis': 1
+            },
+            'dropout_0': {
+                'rate': 0.5
+            },
+            'dense': {
+                'units': 128,
+                'activation': 'relu'
+            },
+            'dropout_1': {
+                'rate': 0.25
+            },
+            'activation_layer': {
+                'activation': 'softmax'
+            },
+        }
+
+    def build_model_arc(self):
+        output_dim = len(self.pre_processor.label2idx)
+        config = self.hyper_parameters
+        embed_model = self.embedding.embed_model
+
+        layers_rnn = []
+        layers_rnn.append(L.SpatialDropout1D(**config['spatial_dropout']))
+        layers_rnn.append(L.Bidirectional(L.GRU(**config['rnn_0'])))
+        layers_rnn.append(L.SpatialDropout1D(**config['rnn_dropout']))
+        layers_rnn.append(L.Bidirectional(L.GRU(**config['rnn_1'])))
+
+        layers_sensor = []
+        layers_sensor.append(L.Lambda(lambda t: t[:, -1], name='last'))
+        layers_sensor.append(L.GlobalMaxPooling1D())
+        layers_sensor.append(AttentionWeightedAverageLayer())
+        layers_sensor.append(L.GlobalAveragePooling1D())
+
+        layer_allviews = L.Concatenate(**config['all_views'])
+        layers_full_connect = []
+        layers_full_connect.append(L.Dropout(**config['dropout_0']))
+        layers_full_connect.append(L.Dense(**config['dense']))
+        layers_full_connect.append(L.Dropout(**config['dropout_1']))
+        layers_full_connect.append(L.Dense(output_dim, **config['activation_layer']))
+
+        tensor_rnn = embed_model.output
+        for layer in layers_rnn:
+            tensor_rnn = layer(tensor_rnn)
+        tensor_sensors = [layer(tensor_rnn) for layer in layers_sensor]
+        tensor_output = layer_allviews(tensor_sensors)
+        for layer in layers_full_connect:
+            tensor_output = layer(tensor_output)
+
+        self.tf_model = tf.keras.Model(embed_model.inputs, tensor_output)
+
+
 if __name__ == "__main__":
     print(BiLSTM_Model.get_default_hyper_parameters())
     logging.basicConfig(level=logging.DEBUG)
