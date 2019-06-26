@@ -51,6 +51,11 @@ class GPT2Embedding(Embedding):
             processor:
             from_saved_model:
         """
+        super(GPT2Embedding, self).__init__(task=task,
+                                            sequence_length=sequence_length,
+                                            embedding_size=0,
+                                            processor=processor,
+                                            from_saved_model=from_saved_model)
         if isinstance(sequence_length, tuple):
             if len(sequence_length) > 2:
                 raise ValueError('BERT only more 2')
@@ -60,12 +65,6 @@ class GPT2Embedding(Embedding):
 
         if sequence_length == 'variable':
             self.sequence_length = None
-
-        super(GPT2Embedding, self).__init__(task=task,
-                                            sequence_length=sequence_length,
-                                            embedding_size=0,
-                                            processor=processor,
-                                            from_saved_model=from_saved_model)
 
         self.processor.token_pad = 'pad'
         self.processor.token_unk = 'unk'
