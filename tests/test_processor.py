@@ -6,14 +6,18 @@
 
 # file: test_processor.py
 # time: 2019-05-23 17:02
-
+import os
+import time
+import tempfile
 import unittest
 import numpy as np
+from kashgari import utils
 from kashgari.processors import ClassificationProcessor, LabelingProcessor
 from kashgari.corpus import SMP2018ECDTCorpus, ChineseDailyNerCorpus
+from kashgari.tasks.classification import BiGRU_Model
 
-train_x, train_y = ChineseDailyNerCorpus.load_data('valid')
-train_x1, train_y1 = SMP2018ECDTCorpus.load_data('valid')
+ner_train_x, ner_train_y = ChineseDailyNerCorpus.load_data('valid')
+class_train_x, class_train_y = SMP2018ECDTCorpus.load_data('valid')
 
 sample_train_x = [
     list('语言学（英语：linguistics）是一门关于人类语言的科学研究'),
@@ -43,26 +47,26 @@ class TestLabelingProcessor(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.processor = LabelingProcessor()
-        cls.processor.analyze_corpus(train_x, train_y)
+        cls.processor.analyze_corpus(ner_train_x, ner_train_y)
 
     def test_process_data(self):
         for i in range(3):
-            vector_x = self.processor.process_x_dataset(train_x[:20], max_len=12)
+            vector_x = self.processor.process_x_dataset(ner_train_x[:20], max_len=12)
             assert vector_x.shape == (20, 12)
 
-            subset_index = np.random.randint(0, len(train_x), 30)
-            vector_x = self.processor.process_x_dataset(train_x, max_len=12, subset=subset_index)
+            subset_index = np.random.randint(0, len(ner_train_x), 30)
+            vector_x = self.processor.process_x_dataset(ner_train_x, max_len=12, subset=subset_index)
             assert vector_x.shape == (30, 12)
 
-            vector_y = self.processor.process_y_dataset(train_y[:15], max_len=15)
+            vector_y = self.processor.process_y_dataset(ner_train_y[:15], max_len=15)
             assert vector_y.shape == (15, 15, len(self.processor.label2idx))
 
-            target_y = [seq[:15] for seq in train_y[:15]]
+            target_y = [seq[:15] for seq in ner_train_y[:15]]
             res_y = self.processor.reverse_numerize_label_sequences(vector_y.argmax(-1), lengths=np.full(15, 15))
             assert target_y == res_y
 
-        self.processor.process_x_dataset(train_x[:9], subset=[1, 2, 3])
-        self.processor.process_y_dataset(train_y[:9], subset=[1, 2, 3])
+        self.processor.process_x_dataset(ner_train_x[:9], subset=[1, 2, 3])
+        self.processor.process_y_dataset(ner_train_y[:9], subset=[1, 2, 3])
 
 
 class TestClassificationProcessor(unittest.TestCase):
@@ -70,22 +74,22 @@ class TestClassificationProcessor(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.processor = ClassificationProcessor()
-        cls.processor.analyze_corpus(train_x1, train_y1)
+        cls.processor.analyze_corpus(class_train_x, class_train_y)
 
     def test_process_data(self):
         for i in range(3):
-            vector_x = self.processor.process_x_dataset(train_x1[:20], max_len=12)
+            vector_x = self.processor.process_x_dataset(class_train_x[:20], max_len=12)
             assert vector_x.shape == (20, 12)
 
-            subset_index = np.random.randint(0, len(train_x1), 30)
-            vector_x = self.processor.process_x_dataset(train_x1, max_len=12, subset=subset_index)
+            subset_index = np.random.randint(0, len(class_train_x), 30)
+            vector_x = self.processor.process_x_dataset(class_train_x, max_len=12, subset=subset_index)
             assert vector_x.shape == (30, 12)
 
-            vector_y = self.processor.process_y_dataset(train_y1[:15], max_len=15)
+            vector_y = self.processor.process_y_dataset(class_train_y[:15], max_len=15)
             assert vector_y.shape == (15, len(self.processor.label2idx))
 
             res_y = self.processor.reverse_numerize_label_sequences(vector_y.argmax(-1))
-            assert train_y1[:15] == res_y
+            assert class_train_y[:15] == res_y
 
     def test_multi_label_processor(self):
         p = ClassificationProcessor(multi_label=True)
@@ -94,6 +98,23 @@ class TestClassificationProcessor(unittest.TestCase):
 
         print(p.process_x_dataset(sample_train_x))
         print(p.process_y_dataset(sample_train_y))
+
+    def test_load(self):
+        model_path = os.path.join(tempfile.gettempdir(), str(time.time()))
+        model = BiGRU_Model()
+        model.fit(class_train_x, class_train_y, epochs=1)
+        model.save(model_path)
+
+        processor = utils.load_processor(model_path)
+
+        assert processor.token2idx == model.embedding.processor.token2idx
+        assert processor.label2idx == model.embedding.processor.label2idx
+
+        assert processor.__class__ == model.embedding.processor.__class__
+
+        process_x_0 = processor.process_x_dataset(class_train_x[:10])
+        process_x_1 = model.embedding.process_x_dataset(class_train_x[:10])
+        assert np.array_equal(process_x_0, process_x_1)
 
 
 if __name__ == "__main__":

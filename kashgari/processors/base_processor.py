@@ -43,6 +43,8 @@ class BaseProcessor(object):
 
         self.add_bos_eos: bool = kwargs.get('add_bos_eos', False)
 
+        self.sequence_length = kwargs.get('sequence_length', None)
+
     def info(self):
         return {
             'class_name': self.__class__.__name__,
@@ -54,7 +56,8 @@ class BaseProcessor(object):
                 'token_bos': self.token_bos,
                 'token_eos': self.token_eos,
                 'dataset_info': self.dataset_info,
-                'add_bos_eos': self.add_bos_eos
+                'add_bos_eos': self.add_bos_eos,
+                'sequence_length': self.sequence_length
             },
             'module': self.__class__.__module__,
         }
@@ -116,6 +119,8 @@ class BaseProcessor(object):
                           data: List[List[str]],
                           max_len: Optional[int] = None,
                           subset: Optional[List[int]] = None) -> np.ndarray:
+        if max_len is None:
+            max_len = self.sequence_length
         if subset is not None:
             target = utils.get_list_subset(data, subset)
         else:

@@ -13,11 +13,11 @@
 import os
 import json
 import random
-import pathlib
 import pydoc
 import tensorflow as tf
 from kashgari import custom_objects
 from kashgari.tasks.base_model import BaseModel
+from kashgari.processors.base_processor import BaseProcessor
 from kashgari.embeddings.base_embedding import Embedding
 from typing import List, Union
 
@@ -57,6 +57,25 @@ def load_model(model_path: str) -> BaseModel:
 
     model.embedding = embedding
     return model
+
+
+def load_processor(model_path: str) -> BaseProcessor:
+    """
+    Load processor from model
+    When we using tf-serving, we need to use model's processor to pre-process data
+    Args:
+        model_path:
+
+    Returns:
+
+    """
+    with open(os.path.join(model_path, 'model_info.json'), 'r') as f:
+        model_info = json.load(f)
+
+    processor_info = model_info['embedding']['processor']
+    processor_class = pydoc.locate(f"{processor_info['module']}.{processor_info['class_name']}")
+    processor: BaseProcessor = processor_class(**processor_info['config'])
+    return processor
 
 
 def convert_to_tpu_model(model: BaseModel,
@@ -129,5 +148,8 @@ def convert_labeling_to_doccano(semantic_data,
 
 
 if __name__ == "__main__":
-    path = '/Users/brikerman/Desktop/python/Kashgari/tests/saved_models/kashgari.tasks.classification.models/BLSTMModel'
-    load_model(path)
+    path = '/Users/brikerman/Desktop/python/Kashgari/tests/classification/saved_models/kashgari.tasks.classification.models/BiLSTM_Model'
+    p = load_processor(path)
+    print(p.process_x_dataset([list('语言模型')]))
+    print(p.label2idx)
+    print(p.token2idx)

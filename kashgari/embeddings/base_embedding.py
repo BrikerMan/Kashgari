@@ -67,8 +67,7 @@ class Embedding(object):
                  from_saved_model: bool = False):
         self.task = task
         self.embedding_size = embedding_size
-        self.sequence_length: Union[int, str] = sequence_length
-        self.embed_model: Optional[keras.Model] = None
+
         if processor is None:
             if task == kashgari.CLASSIFICATION:
                 self.processor = ClassificationProcessor()
@@ -78,6 +77,10 @@ class Embedding(object):
                 raise ValueError()
         else:
             self.processor = processor
+
+        self.sequence_length: Union[int, str] = sequence_length
+        self.embed_model: Optional[keras.Model] = None
+
 
     @property
     def token_count(self) -> int:
@@ -91,7 +94,7 @@ class Embedding(object):
         """
         model sequence length
         """
-        return self._sequence_length
+        return self.processor.sequence_length
 
     @sequence_length.setter
     def sequence_length(self, val: Union[int, str]):
@@ -102,7 +105,7 @@ class Embedding(object):
                 val = None
             else:
                 raise ValueError("sequence_length must be an int or 'auto' or 'variable'")
-        self._sequence_length = val
+        self.processor.sequence_length = val
 
     def _build_model(self, **kwargs):
         raise NotImplementedError

@@ -15,7 +15,6 @@ import time
 import json
 import pathlib
 import logging
-import numpy as np
 from tensorflow import keras, saved_model
 from kashgari import utils
 from kashgari.embeddings import BareEmbedding
