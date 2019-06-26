@@ -8,6 +8,7 @@
 # time: 2019-05-22 12:39
 import os
 import logging
+import tempfile
 import unittest
 import numpy as np
 
@@ -70,10 +71,7 @@ class TestBertCNN_LSTM_Model(unittest.TestCase):
         res = model.predict(valid_x[:20])
         assert True
 
-        model_path = os.path.join('./saved_models/',
-                                  model.__class__.__module__,
-                                  model.__class__.__name__,
-                                  str(time.time()))
+        model_path = os.path.join(tempfile.gettempdir(), str(time.time()))
         model.save(model_path)
 
         new_model = kashgari.utils.load_model(model_path)
@@ -91,9 +89,7 @@ class TestBi_LSTM_Model(unittest.TestCase):
         model.fit(valid_x, valid_y, valid_x, valid_y, epochs=1)
         res = model.predict(valid_x[:20])
         assert len(res) == 20
-        model_path = os.path.join('./saved_models/',
-                                  model.__class__.__module__,
-                                  model.__class__.__name__)
+        model_path = os.path.join(tempfile.gettempdir(), str(time.time()))
         model.save(model_path)
 
         new_model = kashgari.utils.load_model(model_path)
