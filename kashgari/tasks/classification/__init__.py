@@ -13,7 +13,14 @@ from kashgari.tasks.classification.models import BiGRU_Model
 from kashgari.tasks.classification.models import CNN_Model
 from kashgari.tasks.classification.models import CNN_LSTM_Model
 from kashgari.tasks.classification.models import CNN_GRU_Model
+from kashgari.tasks.classification.models import AVCNN_Model
+from kashgari.tasks.classification.models import KMax_CNN_Model
+
 
 BLSTMModel = BiLSTM_Model
+BGRUModel = BiGRU_Model
 CNNModel = CNN_Model
 CNNLSTMModel = CNN_LSTM_Model
+CNNGRUModel = CNN_GRU_Model
+AVCNNModel = AVCNN_Model
+KMaxCNNModel = KMax_CNN_Model
