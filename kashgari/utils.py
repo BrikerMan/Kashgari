@@ -188,7 +188,8 @@ def convert_labeling_to_doccano(semantic_data,
 
 
 if __name__ == "__main__":
-    path = '/Users/brikerman/Desktop/python/Kashgari/tests/classification/saved_models/kashgari.tasks.classification.models/BiLSTM_Model'
+    path = '/Users/brikerman/Desktop/python/Kashgari/tests/classification/saved_models/' \
+           'kashgari.tasks.classification.models/BiLSTM_Model'
     p = load_processor(path)
     print(p.process_x_dataset([list('语言模型')]))
     print(p.label2idx)

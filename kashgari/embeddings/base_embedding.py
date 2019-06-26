@@ -81,7 +81,6 @@ class Embedding(object):
         self.sequence_length: Union[int, str] = sequence_length
         self.embed_model: Optional[keras.Model] = None
 
-
     @property
     def token_count(self) -> int:
         """
