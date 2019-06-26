@@ -7,4 +7,4 @@
 # file: __version__.py.py
 # time: 2019-05-20 16:32
 
-__version__ = '0.40.0.2019061301'
+__version__ = '0.40.0a0'

@@ -35,7 +35,7 @@ def find_version(*file_paths):
     raise RuntimeError("Unable to find version string.")
 
 
-__name__ = 'kashgari'
+__name__ = 'kashgari-tf'
 __author__ = "BrikerMan"
 __copyright__ = "Copyright 2018, BrikerMan"
 __credits__ = []
