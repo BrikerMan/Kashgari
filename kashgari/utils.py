@@ -83,7 +83,7 @@ def load_processor(model_path: str) -> BaseProcessor:
 
 
 def convert_to_saved_model(model: BaseModel,
-                           export_path: str,
+                           model_path: str,
                            version: str = None,
                            inputs: Optional[Dict] = None,
                            outputs: Optional[Dict] = None):
@@ -91,17 +91,17 @@ def convert_to_saved_model(model: BaseModel,
     Export model for tensorflow serving
     Args:
         model: Target model
-        export_path: The path to which the SavedModel will be stored.
+        model_path: The path to which the SavedModel will be stored.
         version: The model version code, default timestamp
         inputs: dict mapping string input names to tensors. These are added
             to the SignatureDef as the inputs.
         outputs:  dict mapping string output names to tensors. These are added
             to the SignatureDef as the outputs.
     """
-    pathlib.Path(export_path).mkdir(exist_ok=True, parents=True)
+    pathlib.Path(model_path).mkdir(exist_ok=True, parents=True)
     if version is None:
-        version = str(round(time.time()))
-    export_path = os.path.join(export_path, version)
+        version = round(time.time())
+    export_path = os.path.join(model_path, str(version))
 
     if inputs is None:
         inputs = {i.name: i for i in model.tf_model.inputs}
@@ -112,6 +112,10 @@ def convert_to_saved_model(model: BaseModel,
                             export_dir=export_path,
                             inputs=inputs,
                             outputs=outputs)
+
+    with open(os.path.join(export_path, 'model_info.json'), 'w') as f:
+        f.write(json.dumps(model.info(), indent=2, ensure_ascii=True))
+        f.close()
 
 
 def convert_to_tpu_model(model: BaseModel,
