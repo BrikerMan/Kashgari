@@ -11,11 +11,10 @@
 from typing import Dict, Any, List, Optional, Union, Tuple
 
 import os
-import time
 import json
 import pathlib
 import logging
-from tensorflow import keras, saved_model
+from tensorflow import keras
 from kashgari import utils
 from kashgari.embeddings import BareEmbedding
 from kashgari.embeddings.base_embedding import Embedding
@@ -338,31 +337,6 @@ class BaseModel(object):
 
         self.tf_model.save_weights(os.path.join(model_path, 'model.h5'))
         logging.info('model saved to {}'.format(os.path.abspath(model_path)))
-
-    def export(self, export_path: str, inputs: Optional[Dict] = None, outputs: Optional[Dict] = None):
-        """
-        Export model for tensorflow serving
-        Args:
-            export_path: The path to which the SavedModel will be stored.
-            inputs: dict mapping string input names to tensors. These are added
-                to the SignatureDef as the inputs.
-            outputs:  dict mapping string output names to tensors. These are added
-                to the SignatureDef as the outputs.
-        """
-        pathlib.Path(export_path).mkdir(exist_ok=True, parents=True)
-
-        ts = round(time.time())
-        export_path = os.path.join(export_path, str(ts))
-
-        if inputs is None:
-            inputs = {i.name: i for i in self.tf_model.inputs}
-        if outputs is None:
-            outputs = {o.name: o for o in self.tf_model.outputs}
-        sess = keras.backend.get_session()
-        saved_model.simple_save(session=sess,
-                                export_dir=export_path,
-                                inputs=inputs,
-                                outputs=outputs)
 
 
 if __name__ == "__main__":

@@ -12,14 +12,18 @@
 """
 import os
 import json
-import random
+import time
 import pydoc
+import random
+import pathlib
 import tensorflow as tf
+from tensorflow.python import keras, saved_model
+
 from kashgari import custom_objects
 from kashgari.tasks.base_model import BaseModel
 from kashgari.processors.base_processor import BaseProcessor
 from kashgari.embeddings.base_embedding import Embedding
-from typing import List, Union
+from typing import List, Optional, Dict
 
 
 def unison_shuffled_copies(a, b):
@@ -76,6 +80,38 @@ def load_processor(model_path: str) -> BaseProcessor:
     processor_class = pydoc.locate(f"{processor_info['module']}.{processor_info['class_name']}")
     processor: BaseProcessor = processor_class(**processor_info['config'])
     return processor
+
+
+def convert_to_saved_model(model: BaseModel,
+                           export_path: str,
+                           version: str = None,
+                           inputs: Optional[Dict] = None,
+                           outputs: Optional[Dict] = None):
+    """
+    Export model for tensorflow serving
+    Args:
+        model: Target model
+        export_path: The path to which the SavedModel will be stored.
+        version: The model version code, default timestamp
+        inputs: dict mapping string input names to tensors. These are added
+            to the SignatureDef as the inputs.
+        outputs:  dict mapping string output names to tensors. These are added
+            to the SignatureDef as the outputs.
+    """
+    pathlib.Path(export_path).mkdir(exist_ok=True, parents=True)
+    if version is None:
+        version = str(round(time.time()))
+    export_path = os.path.join(export_path, version)
+
+    if inputs is None:
+        inputs = {i.name: i for i in model.tf_model.inputs}
+    if outputs is None:
+        outputs = {o.name: o for o in model.tf_model.outputs}
+    sess = keras.backend.get_session()
+    saved_model.simple_save(session=sess,
+                            export_dir=export_path,
+                            inputs=inputs,
+                            outputs=outputs)
 
 
 def convert_to_tpu_model(model: BaseModel,
