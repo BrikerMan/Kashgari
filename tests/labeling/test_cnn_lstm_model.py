@@ -11,6 +11,7 @@ import unittest
 
 import os
 import time
+import tempfile
 import numpy as np
 import kashgari
 from kashgari.corpus import ChineseDailyNerCorpus
@@ -46,17 +47,12 @@ class TestCNN_LSTM_Model(unittest.TestCase):
 
         for i in range(5):
             assert len(res[i]) == min(model.embedding.sequence_length, len(valid_x[i]))
-        model_path = os.path.join('./saved_models/',
-                                  model.__class__.__module__,
-                                  model.__class__.__name__,
-                                  str(time.time()))
+        model_path = os.path.join(tempfile.gettempdir(), str(time.time()))
         model.save(model_path)
 
-        pd_model_path = os.path.join('./pd_saved_models/',
-                                     model.__class__.__module__,
-                                     model.__class__.__name__,
-                                     str(time.time()))
-        model.export(pd_model_path)
+        pd_model_path = os.path.join(tempfile.gettempdir(), str(time.time()))
+        kashgari.utils.convert_to_saved_model(model,
+                                              pd_model_path)
 
         new_model = kashgari.utils.load_model(model_path)
         new_res = new_model.predict(valid_x[:20])
