@@ -194,7 +194,7 @@ class AVCNN_Model(BaseClassificationModel):
     def get_default_hyper_parameters(cls) -> Dict[str, Dict[str, Any]]:
         return {
             'spatial_dropout': {
-             'rate': 0.25
+                'rate': 0.25
             },
             'conv_0': {
                 'filters': 300,
@@ -282,8 +282,8 @@ class AVCNN_Model(BaseClassificationModel):
             tensor_sensors.append(AttentionWeightedAverageLayer()(tensor_conv))
             tensor_sensors.append(L.GlobalAveragePooling1D()(tensor_conv))
             tensors_matrix_sensor.append(tensor_sensors)
-        tensors_v_cols = [L.concatenate(tensors, **config['v_col3'])
-                for tensors in zip(*tensors_matrix_sensor)]
+        tensors_v_cols = [L.concatenate(tensors, **config['v_col3']) for tensors
+                          in zip(*tensors_matrix_sensor)]
 
         tensor = L.concatenate(tensors_v_cols, **config['merged_tensor'])
         for layer in layers_seq:
