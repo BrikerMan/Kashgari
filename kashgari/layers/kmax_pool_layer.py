@@ -46,7 +46,7 @@ class KMaxPoolingLayer(L.Layer):
         `(batch_size, top-k-steps, features)`
     '''
 
-    def __init__(self, k=1, sorted=True, data_format='channels_last', **kwargs):
+    def __init__(self, k=1, sorted=True, data_format='channels_last', **kwargs): # noqa: A002
         super(KMaxPoolingLayer, self).__init__(**kwargs)
         self.input_spec = InputSpec(ndim=3)
         self.k = k
