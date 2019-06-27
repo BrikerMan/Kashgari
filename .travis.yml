@@ -1,7 +1,8 @@
-dist: xenial
-#language: python            # this works for Linux but is an error on macOS or Windows
+#dist: xenial
+language: python            # this works for Linux but is an error on macOS or Windows
 
 matrix:
+  fast_finish: true
   include:
     - name: "Python 3.7 on Xenial Linux"
       python: 3.7           # this works for Linux but is ignored on macOS or Windows
