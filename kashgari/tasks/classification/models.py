@@ -268,6 +268,12 @@ class AVCNN_Model(BaseClassificationModel):
 
         layer_embed_dropout = L.SpatialDropout1D(**config['spatial_dropout'])
         layers_conv = [L.Conv1D(**config[f'conv_{i}']) for i in range(4)]
+        layers_sensor = []
+        layers_sensor.append(L.GlobalMaxPooling1D())
+        layers_sensor.append(AttentionWeightedAverageLayer())
+        layers_sensor.append(L.GlobalAveragePooling1D())
+        layer_view = L.Concatenate(**config['v_col3'])
+        layer_allviews = L.Concatenate(**config['merged_tensor'])
         layers_seq = []
         layers_seq.append(L.Dropout(**config['dropout']))
         layers_seq.append(L.Dense(**config['dense']))
@@ -277,15 +283,17 @@ class AVCNN_Model(BaseClassificationModel):
         tensors_conv = [layer_conv(embed_tensor) for layer_conv in layers_conv]
         tensors_matrix_sensor = []
         for tensor_conv in tensors_conv:
-            tensor_sensors = []
-            tensor_sensors.append(L.GlobalMaxPooling1D()(tensor_conv))
-            tensor_sensors.append(AttentionWeightedAverageLayer()(tensor_conv))
-            tensor_sensors.append(L.GlobalAveragePooling1D()(tensor_conv))
+            tensor_sensors = [layer_sensor(tensor_conv) for layer_sensor in layers_sensor]
+            # tensor_sensors = []
+            # tensor_sensors.append(L.GlobalMaxPooling1D()(tensor_conv))
+            # tensor_sensors.append(AttentionWeightedAverageLayer()(tensor_conv))
+            # tensor_sensors.append(L.GlobalAveragePooling1D()(tensor_conv))
             tensors_matrix_sensor.append(tensor_sensors)
-        tensors_v_cols = [L.concatenate(tensors, **config['v_col3']) for tensors
-                          in zip(*tensors_matrix_sensor)]
-
-        tensor = L.concatenate(tensors_v_cols, **config['merged_tensor'])
+        tensors_views = [layer_view(tensors) for tensors in zip(*tensors_matrix_sensor)]
+        tensor = layer_allviews(tensors_views)
+        # tensors_v_cols = [L.concatenate(tensors, **config['v_col3']) for tensors
+        #                   in zip(*tensors_matrix_sensor)]
+        # tensor = L.concatenate(tensors_v_cols, **config['merged_tensor'])
         for layer in layers_seq:
             tensor = layer(tensor)
 
@@ -356,6 +364,7 @@ class KMax_CNN_Model(BaseClassificationModel):
         layers_conv = [L.Conv1D(**config[f'conv_{i}']) for i in range(4)]
         layers_sensor = [KMaxPoolingLayer(**config['maxpool_i4']),
                          L.Flatten()]
+        layer_concat = L.Concatenate(**config['merged_tensor'])
         layers_seq = []
         layers_seq.append(L.Dropout(**config['dropout']))
         layers_seq.append(L.Dense(**config['dense']))
@@ -369,7 +378,8 @@ class KMax_CNN_Model(BaseClassificationModel):
             for layer_sensor in layers_sensor:
                 tensor_sensor = layer_sensor(tensor_sensor)
             tensors_sensor.append(tensor_sensor)
-        tensor = L.concatenate(tensors_sensor, **config['merged_tensor'])
+        tensor = layer_concat(tensors_sensor)
+        # tensor = L.concatenate(tensors_sensor, **config['merged_tensor'])
         for layer in layers_seq:
             tensor = layer(tensor)
 
@@ -428,6 +438,7 @@ class R_CNN_Model(BaseClassificationModel):
         layers_sensor.append(L.GlobalMaxPooling1D())
         layers_sensor.append(AttentionWeightedAverageLayer())
         layers_sensor.append(L.GlobalAveragePooling1D())
+        layer_concat = L.Concatenate(**config['concat'])
 
         layers_full_connect = []
         layers_full_connect.append(L.Dropout(**config['dropout']))
@@ -438,8 +449,9 @@ class R_CNN_Model(BaseClassificationModel):
         for layer in layers_rcnn_seq:
             tensor = layer(tensor)
 
-        tensor_sensors = [layer(tensor) for layer in layers_sensor]
-        tensor_output = L.concatenate(tensor_sensors, **config['concat'])
+        tensors_sensor = [layer(tensor) for layer in layers_sensor]
+        tensor_output = layer_concat(tensors_sensor)
+        # tensor_output = L.concatenate(tensor_sensors, **config['concat'])
 
         for layer in layers_full_connect:
             tensor_output = layer(tensor_output)
