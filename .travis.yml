@@ -12,7 +12,22 @@ matrix:
       os: windows           # Windows 10.0.17134 N/A Build 17134
       language: shell       # 'language: python' is an error on Travis CI Windows
       before_install: choco install python
-      env: PATH=/c/Python37:/c/Python37/Scripts:$PATH
+      env:
+        global:
+          - COVERALLS_PARALLEL=true
+          - PATH=/c/Python37:/c/Python37/Scripts:$PATH
+        matrix:
+          # Labeling
+          - TEST_FILE=tests/labeling/
+          #  - TEST_FILE=tests/labeling/test_blstm_model.py
+          #  - TEST_FILE=tests/labeling/test_cnn_lstm_model.py
+          #  - TEST_FILE=tests/labeling/test_seq_self_attenion_model.py
+          #  - TEST_FILE=tests/labeling/test_blstm_crf_model.py
+          - TEST_FILE=tests/classification
+          - TEST_FILE="tests/test_callbacks.py tests/test_corpus.py tests/test_processor.py"
+          - TEST_FILE=tests/test_custom_multi_output_classification.py
+          # Embedding
+          - TEST_FILE=tests/embedding/
 
     - name: "Python 3.6 on Xenial Linux"
       python: 3.6           # this works for Linux but is ignored on macOS or Windows
