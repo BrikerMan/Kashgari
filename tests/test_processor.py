@@ -8,6 +8,7 @@
 # time: 2019-05-23 17:02
 import os
 import time
+import logging
 import tempfile
 import unittest
 import numpy as np
@@ -63,6 +64,8 @@ class TestLabelingProcessor(unittest.TestCase):
 
             target_y = [seq[:15] for seq in ner_train_y[:15]]
             res_y = self.processor.reverse_numerize_label_sequences(vector_y.argmax(-1), lengths=np.full(15, 15))
+            logging.info(f"target_y: {target_y}")
+            logging.info(f"res_y: {res_y}")
             assert target_y == res_y
 
         self.processor.process_x_dataset(ner_train_x[:9], subset=[1, 2, 3])

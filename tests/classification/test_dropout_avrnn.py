@@ -4,21 +4,21 @@
 # contact: eliyar917@gmail.com
 # blog: https://eliyar.biz
 
-# file: test_avcnn.py
-# time: 2019-06-26 17:32
+# file: test_dropout_avrnn.py
+# time: 2019-06-27 11:07
 
 import tests.classification.test_bi_lstm as base
-from kashgari.tasks.classification import AVCNN_Model
+from kashgari.tasks.classification import Dropout_AVRNN_Model
 
 
-class TestAVCNN_Model(base.TestBi_LSTM_Model):
+class TestDropout_AVRNN_Model(base.TestBi_LSTM_Model):
     @classmethod
     def setUpClass(cls):
         cls.epochs = 1
-        cls.model_class = AVCNN_Model
+        cls.model_class = Dropout_AVRNN_Model
 
     def test_basic_use(self):
-        super(TestAVCNN_Model, self).test_basic_use()
+        super(TestDropout_AVRNN_Model, self).test_basic_use()
 
 
 if __name__ == "__main__":
