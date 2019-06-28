@@ -50,7 +50,7 @@ class ChineseDailyNerCorpus(object):
     https://github.com/zjy-ucas/ChineseNER/
     """
     __corpus_name__ = 'china-people-daily-ner-corpus'
-    __zip_file__name = 'http://storage.eliyar.biz/corpus/china-people-daily-ner-corpus.tar.gz'
+    __zip_file__name = 'http://s3.bmio.net/kashgari/china-people-daily-ner-corpus.tar.gz'
 
     @classmethod
     def load_data(cls,
