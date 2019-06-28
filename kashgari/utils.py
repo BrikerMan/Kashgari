@@ -118,30 +118,6 @@ def convert_to_saved_model(model: BaseModel,
         f.close()
 
 
-def convert_labeling_to_doccano(semantic_data,
-                                to_file=None,
-                                join_chunk=' '):
-    data_list = []
-    for index, seq_data in enumerate(semantic_data):
-        labels = []
-        text_raw = seq_data['text_raw']
-        for entity in seq_data['labels']:
-            start = entity['start']
-            end = entity['end']
-            start_index = len(join_chunk.join(text_raw[:start]))
-            entity_len = len(join_chunk.join(text_raw[start: end + 1]))
-            labels.append([start_index, start_index + entity_len, entity["entity"]])
-        data_list.append({
-            "text": join_chunk.join(seq_data['text_raw']),
-            "labels": labels
-        })
-    if to_file:
-        with open(to_file, 'w') as f:
-            for item in data_list:
-                f.write(json.dumps(item, ensure_ascii=False) + '\n')
-    return data_list
-
-
 if __name__ == "__main__":
     path = '/Users/brikerman/Desktop/python/Kashgari/tests/classification/saved_models/' \
            'kashgari.tasks.classification.models/BiLSTM_Model'
