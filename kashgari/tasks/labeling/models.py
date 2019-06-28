@@ -14,9 +14,7 @@ from tensorflow import keras
 
 from kashgari.tasks.labeling.base_model import BaseLabelingModel
 from kashgari.layers import L
-from kashgari.layers.legacy_crf import CRF as LagecyCRF
 from kashgari.layers.crf import CRF
-from kashgari.layers.legacy_crf import crf_loss, crf_accuracy
 
 from kashgari.utils import custom_objects
 
@@ -107,10 +105,12 @@ class BiLSTM_CRF_Model(BaseLabelingModel):
                                       name='layer_blstm')
 
         layer_dense = L.Dense(**config['layer_dense'], name='layer_dense')
-        layer_crf = LagecyCRF(output_dim, name='layer_crf')
+        layer_crf_dense = L.Dense(output_dim, name='layer_crf_dense')
+        layer_crf = CRF(output_dim, name='layer_crf')
 
         tensor = layer_blstm(embed_model.output)
         tensor = layer_dense(tensor)
+        tensor = layer_crf_dense(tensor)
         output_tensor = layer_crf(tensor)
 
         self.layer_crf = layer_crf
@@ -118,9 +118,9 @@ class BiLSTM_CRF_Model(BaseLabelingModel):
 
     def compile_model(self, **kwargs):
         if kwargs.get('loss') is None:
-            kwargs['loss'] = crf_loss
+            kwargs['loss'] = self.layer_crf.loss
         if kwargs.get('metrics') is None:
-            kwargs['metrics'] = [crf_accuracy]
+            kwargs['metrics'] = [self.layer_crf.viterbi_accuracy]
         super(BiLSTM_CRF_Model, self).compile_model(**kwargs)
 
 
