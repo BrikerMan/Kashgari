@@ -118,51 +118,6 @@ def convert_to_saved_model(model: BaseModel,
         f.close()
 
 
-def convert_to_tpu_model(model: BaseModel,
-                         strategy: tf.contrib.distribute.TPUStrategy) -> BaseModel:
-    """
-
-    Args:
-        model:
-        strategy:
-
-    Returns:
-
-    """
-    with custom_object_scope():
-        tpu_model = tf.contrib.tpu.keras_to_tpu_model(model.tf_model, strategy=strategy)
-        model.tf_model = tpu_model
-        model.compile_model(optimizer=tf.train.AdamOptimizer())
-        return model
-
-
-def convert_to_multi_gpu_model(model: BaseModel,
-                               gpus: int,
-                               cpu_merge: bool = True,
-                               cpu_relocation: bool = False):
-    """
-
-    Args:
-        model:
-        gpus:
-        cpu_merge:
-        cpu_relocation:
-
-    Returns:
-
-    """
-    if model.tf_model is None:
-        raise ValueError('Must build model using `model.build_model` function before convert to multi_gpu model')
-    with custom_object_scope():
-        multi_gpu_model = tf.keras.utils.multi_gpu_model(model.tf_model,
-                                                         gpus,
-                                                         cpu_merge=cpu_merge,
-                                                         cpu_relocation=cpu_relocation)
-        model.tf_model = multi_gpu_model
-        model.compile_model()
-        return model
-
-
 def convert_labeling_to_doccano(semantic_data,
                                 to_file=None,
                                 join_chunk=' '):
