@@ -103,7 +103,7 @@ class TestBi_LSTM_Model(unittest.TestCase):
         model.fit(valid_x, valid_y, epochs=1)
         assert True
 
-    def test_variable_length_model(self):
+    def test_custom_hyper_params(self):
         hyper_params = self.model_class.get_default_hyper_parameters()
 
         for layer, config in hyper_params.items():
