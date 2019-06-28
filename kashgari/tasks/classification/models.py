@@ -508,11 +508,10 @@ class AVRNN_Model(BaseClassificationModel):
 
         layer_bi_rnn1 = L.Bidirectional(L.GRU(**config['rnn_1']))
 
-        layers_concat = []
-        layers_concat.append(L.Concatenate(**config['concat_rnn']))
-        layers_concat.append(L.Lambda(lambda t: t[:, -1], name='last'))
+        layer_concat = L.Concatenate(**config['concat_rnn'])
 
         layers_sensor = []
+        layers_sensor.append(L.Lambda(lambda t: t[:, -1], name='last'))
         layers_sensor.append(L.GlobalMaxPooling1D())
         layers_sensor.append(AttentionWeightedAverageLayer())
         layers_sensor.append(L.GlobalAveragePooling1D())
@@ -526,9 +525,7 @@ class AVRNN_Model(BaseClassificationModel):
         tensor_rnn = embed_model.output
         for layer in layers_rnn0:
             tensor_rnn = layer(tensor_rnn)
-        tensor_concat = [tensor_rnn, layer_bi_rnn1(tensor_rnn)]
-        for layer in layers_concat:
-            tensor_concat = layer(tensor_concat)
+        tensor_concat = layer_concat([tensor_rnn, layer_bi_rnn1(tensor_rnn)])
         tensor_sensors = [layer(tensor_concat) for layer in layers_sensor]
         tensor_output = layer_allviews(tensor_sensors)
         for layer in layers_full_connect:
