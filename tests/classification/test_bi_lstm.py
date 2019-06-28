@@ -103,7 +103,7 @@ class TestBi_LSTM_Model(unittest.TestCase):
         model.fit(valid_x, valid_y, epochs=1)
         assert True
 
-    def test_variable_length_model(self):
+    def test_custom_hyper_params(self):
         hyper_params = self.model_class.get_default_hyper_parameters()
 
         for layer, config in hyper_params.items():
@@ -111,7 +111,7 @@ class TestBi_LSTM_Model(unittest.TestCase):
                 if isinstance(value, bool):
                     pass
                 elif isinstance(value, int):
-                    hyper_params[layer][key] = value + 15
+                    hyper_params[layer][key] = value + 15 if value > 64 else value
         model = self.model_class(embedding=w2v_embedding_variable_len,
                                  hyper_parameters=hyper_params)
         model.fit(valid_x, valid_y, epochs=1)
