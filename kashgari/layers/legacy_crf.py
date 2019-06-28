@@ -365,24 +365,28 @@ class CRF(Layer):
 
     def build(self, input_shape):
         self.input_spec = [InputSpec(shape=input_shape)]
-        self.input_dim = int(input_shape[-1])
+        self.input_dim = input_shape[-1].value
+        # self.input_dim = int(input_shape[-1])
 
         self.kernel = self.add_weight(shape=(self.input_dim, self.units),
                                       name='kernel',
                                       initializer=self.kernel_initializer,
                                       regularizer=self.kernel_regularizer,
-                                      constraint=self.kernel_constraint)
+                                      constraint=self.kernel_constraint,
+                                      trainable=True)
         self.chain_kernel = self.add_weight(shape=(self.units, self.units),
                                             name='chain_kernel',
                                             initializer=self.chain_initializer,
                                             regularizer=self.chain_regularizer,
-                                            constraint=self.chain_constraint)
+                                            constraint=self.chain_constraint,
+                                            trainable=True)
         if self.use_bias:
             self.bias = self.add_weight(shape=(self.units,),
                                         name='bias',
                                         initializer=self.bias_initializer,
                                         regularizer=self.bias_regularizer,
-                                        constraint=self.bias_constraint)
+                                        constraint=self.bias_constraint,
+                                        trainable=True)
         else:
             self.bias = 0
 
@@ -391,13 +395,16 @@ class CRF(Layer):
                                                  name='left_boundary',
                                                  initializer=self.boundary_initializer,
                                                  regularizer=self.boundary_regularizer,
-                                                 constraint=self.boundary_constraint)
+                                                 constraint=self.boundary_constraint,
+                                                 trainable=True)
             self.right_boundary = self.add_weight(shape=(self.units,),
                                                   name='right_boundary',
                                                   initializer=self.boundary_initializer,
                                                   regularizer=self.boundary_regularizer,
-                                                  constraint=self.boundary_constraint)
-        self.built = True
+                                                  constraint=self.boundary_constraint,
+                                                  trainable=True)
+        super(CRF, self).build(input_shape)
+        # self.built = True
 
     def call(self, X, mask=None):
         if mask is not None:
@@ -421,7 +428,8 @@ class CRF(Layer):
         return out
 
     def compute_output_shape(self, input_shape):
-        return input_shape[:2] + (self.units,)
+        return (input_shape[0], input_shape[1], self.units)
+        # return input_shape[:2] + (self.units,)
 
     def compute_mask(self, input, mask=None):
         if mask is not None and self.learn_mode == 'join':
