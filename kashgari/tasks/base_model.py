@@ -15,7 +15,6 @@ import json
 import pathlib
 import logging
 import tensorflow as tf
-import kashgari
 from tensorflow import keras
 from kashgari import utils
 from kashgari.embeddings import BareEmbedding
