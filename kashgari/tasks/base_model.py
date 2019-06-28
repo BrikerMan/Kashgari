@@ -113,6 +113,78 @@ class BaseModel(object):
             self.build_model_arc()
             self.compile_model()
 
+    def build_multi_gpu_model(self, gpus: int, cpu_merge: bool, cpu_relocation: bool,
+                              x_train: Union[Tuple[List[List[str]], ...], List[List[str]]],
+                              y_train: Union[List[List[str]], List[str]],
+                              x_validate: Union[Tuple[List[List[str]], ...], List[List[str]]] = None,
+                              y_validate: Union[List[List[str]], List[str]] = None):
+        """
+        Build multi-GPU model with corpus
+
+        Args:
+            gpus: Integer >= 2, number of on GPUs on which to create model replicas.
+            cpu_merge: A boolean value to identify whether to force merging model weights
+                under the scope of the CPU or not.
+            cpu_relocation: A boolean value to identify whether to create the model's weights
+                under the scope of the CPU. If the model is not defined under any preceding device
+                scope, you can still rescue it by activating this option.
+            x_train: Array of train feature data (if the model has a single input),
+                or tuple of train feature data array (if the model has multiple inputs)
+            y_train: Array of train label data
+            x_validate: Array of validation feature data (if the model has a single input),
+                or tuple of validation feature data array (if the model has multiple inputs)
+            y_validate: Array of validation label data
+
+        Returns:
+
+        """
+
+        if x_validate is not None and not isinstance(x_validate, tuple):
+            self.embedding.analyze_corpus(x_train + x_validate, y_train + y_validate)
+        else:
+            self.embedding.analyze_corpus(x_train, y_train)
+
+        if self.tf_model is None:
+            with utils.custom_object_scope():
+                self.build_model_arc()
+                self.tf_model = tf.keras.utils.multi_gpu_model(self.tf_model,
+                                                               gpus,
+                                                               cpu_merge=cpu_merge,
+                                                               cpu_relocation=cpu_relocation)
+                self.compile_model()
+
+    def build_tpu_model(self, strategy: tf.contrib.distribute.TPUStrategy,
+                        x_train: Union[Tuple[List[List[str]], ...], List[List[str]]],
+                        y_train: Union[List[List[str]], List[str]],
+                        x_validate: Union[Tuple[List[List[str]], ...], List[List[str]]] = None,
+                        y_validate: Union[List[List[str]], List[str]] = None):
+        """
+        Build TPU model with corpus
+
+        Args:
+            strategy: `TPUDistributionStrategy`. The strategy to use for replicating model
+                across multiple TPU cores.
+            x_train: Array of train feature data (if the model has a single input),
+                or tuple of train feature data array (if the model has multiple inputs)
+            y_train: Array of train label data
+            x_validate: Array of validation feature data (if the model has a single input),
+                or tuple of validation feature data array (if the model has multiple inputs)
+            y_validate: Array of validation label data
+
+        Returns:
+
+        """
+
+        if x_validate is not None and not isinstance(x_validate, tuple):
+            self.embedding.analyze_corpus(x_train + x_validate, y_train + y_validate)
+        else:
+            self.embedding.analyze_corpus(x_train, y_train)
+        if self.tf_model is None:
+            with utils.custom_object_scope():
+                self.build_model_arc()
+                self.tf_model = tf.contrib.tpu.keras_to_tpu_model(self.tf_model, strategy=strategy)
+                self.compile_model(optimizer=tf.train.AdamOptimizer())
+
     def fit(self,
             x_train: Union[Tuple[List[List[str]], ...], List[List[str]]],
             y_train: Union[List[List[str]], List[str]],
