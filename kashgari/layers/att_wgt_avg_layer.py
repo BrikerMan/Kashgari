@@ -80,7 +80,7 @@ class AttentionWeightedAverageLayer(L.Layer):
             return None
 
     def get_config(self):
-        config = {'return_attention': self.return_attention,}
+        config = {'return_attention': self.return_attention, }
         base_config = super(AttentionWeightedAverageLayer, self).get_config()
         return dict(list(base_config.items()) + list(config.items()))
 
