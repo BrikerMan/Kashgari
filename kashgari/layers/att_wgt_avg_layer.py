@@ -10,10 +10,10 @@ import kashgari
 import tensorflow as tf
 from tensorflow.python import keras
 from tensorflow.python.keras import backend as K
-from tensorflow.python.keras.engine.input_spec import InputSpec
 
 L = keras.layers
 initializers = keras.initializers
+InputSpec = L.InputSpec
 
 if tf.test.is_gpu_available(cuda_only=True):
     L.LSTM = L.CuDNNLSTM
@@ -35,10 +35,12 @@ class AttentionWeightedAverageLayer(L.Layer):
         self.input_spec = [InputSpec(ndim=3)]
         assert len(input_shape) == 3
 
-        self.W = self.add_weight(shape=(input_shape[2], 1),
+        self.W = self.add_weight(shape=(input_shape[2].value, 1),
                                  name='{}_w'.format(self.name),
-                                 initializer=self.init)
-        self.trainable_weights = [self.W]
+                                 initializer=self.init,
+                                 trainable=True
+                                 )
+        # self.trainable_weights = [self.W]
         super(AttentionWeightedAverageLayer, self).build(input_shape)
 
     def call(self, x, mask=None):
@@ -76,6 +78,11 @@ class AttentionWeightedAverageLayer(L.Layer):
             return [None] * len(input_mask)
         else:
             return None
+
+    def get_config(self):
+        config = {'return_attention': self.return_attention,}
+        base_config = super(AttentionWeightedAverageLayer, self).get_config()
+        return dict(list(base_config.items()) + list(config.items()))
 
 
 AttentionWeightedAverage = AttentionWeightedAverageLayer

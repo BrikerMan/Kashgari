@@ -283,13 +283,13 @@ class AVCNN_Model(BaseClassificationModel):
         tensors_conv = [layer_conv(embed_tensor) for layer_conv in layers_conv]
         tensors_matrix_sensor = []
         for tensor_conv in tensors_conv:
+            tensor_sensors = []
             tensor_sensors = [layer_sensor(tensor_conv) for layer_sensor in layers_sensor]
-            # tensor_sensors = []
             # tensor_sensors.append(L.GlobalMaxPooling1D()(tensor_conv))
             # tensor_sensors.append(AttentionWeightedAverageLayer()(tensor_conv))
             # tensor_sensors.append(L.GlobalAveragePooling1D()(tensor_conv))
             tensors_matrix_sensor.append(tensor_sensors)
-        tensors_views = [layer_view(tensors) for tensors in zip(*tensors_matrix_sensor)]
+        tensors_views = [layer_view(list(tensors)) for tensors in zip(*tensors_matrix_sensor)]
         tensor = layer_allviews(tensors_views)
         # tensors_v_cols = [L.concatenate(tensors, **config['v_col3']) for tensors
         #                   in zip(*tensors_matrix_sensor)]

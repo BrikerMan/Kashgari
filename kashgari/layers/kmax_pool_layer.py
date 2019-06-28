@@ -10,9 +10,9 @@ import kashgari
 import tensorflow as tf
 from tensorflow.python import keras
 from tensorflow.python.keras import backend as K
-from tensorflow.python.keras.engine.input_spec import InputSpec
 
 L = keras.layers
+InputSpec = L.InputSpec
 
 if tf.test.is_gpu_available(cuda_only=True):
     L.LSTM = L.CuDNNLSTM
