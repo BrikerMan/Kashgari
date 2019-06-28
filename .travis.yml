@@ -35,7 +35,7 @@ install:
   - pip install jieba
   - pip install python-coveralls
   - pip install -e .
-  - pip install tensorflow==1.13.1
+  - pip install tensorflow==1.14.0
   - pip install coverage
   - pip install nose
   - pip install pytest pytest-cov
