@@ -14,6 +14,8 @@ import os
 import json
 import pathlib
 import logging
+import tensorflow as tf
+import kashgari
 from tensorflow import keras
 from kashgari import utils
 from kashgari.embeddings import BareEmbedding
@@ -41,7 +43,9 @@ class BaseModel(object):
             'tf_model': json.loads(model_json_str),
             'embedding': self.embedding.info(),
             'class_name': self.__class__.__name__,
-            'module': self.__class__.__module__
+            'module': self.__class__.__module__,
+            'tf_version': tf.__version__,
+            'kashgari_version': tf.__version__
         }
 
     def __init__(self,

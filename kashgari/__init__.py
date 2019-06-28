@@ -21,12 +21,13 @@ custom_objects = keras_bert.get_custom_objects()
 CLASSIFICATION = TaskType.CLASSIFICATION
 LABELING = TaskType.LABELING
 
+from kashgari.version import __version__
+
 from kashgari import layers
 from kashgari import corpus
 from kashgari import embeddings
 from kashgari import macros
 from kashgari import processors
 from kashgari import tasks
-from kashgari.version import __version__
 from kashgari import utils
 from kashgari import callbacks
