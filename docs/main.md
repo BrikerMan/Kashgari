@@ -44,26 +44,14 @@ Kashgare is simple and powerful NLP framework, build your state-of-art model in 
 | ------------------------ | -------- | ------------------------- | -------------- | ------------------------------------------------------------------------ |
 | Named Entity Recognition | Chinese  | People's Daily Ner Corpus | **92.20** (F1) | [基于 BERT 的中文命名实体识别](https://eliyar.biz/nlp_chinese_bert_ner/) |
 
-## Tutorials
-
-Here is a set of quick tutorials to get you started with the library:
-
-- [Tutorial 3: Sequence labeling Model](./tutorial/sequence_labeling_model.md)
-
-There are also articles and posts that illustrate how to use Kashgari:
-
-- [15 分钟搭建中文文本分类模型](https://eliyar.biz/nlp_chinese_text_classification_in_15mins/)
-- [基于 BERT 的中文命名实体识别（NER)](https://eliyar.biz/nlp_chinese_bert_ner/)
-- [Multi-Class Text Classification with Kashgari in 15 minutes](https://medium.com/@BrikerMan/multi-class-text-classification-with-kashgari-in-15mins-c3e744ce971d)
-
 ## Quick start
 
 ### Requirements and Installation
 
-The project is based on Keras 2.2.0+ and Python 3.6+, because it is 2019 and type hints is cool.
+The project is based on TenorFlow 1.14.0 and Python 3.6+, because it is 2019 and type hints is cool.
 
 ```bash
-pip install kashgari
+pip install kashgari-tf
 # CPU
 pip install tensorflow
 # GPU
@@ -84,7 +72,6 @@ valid_x, valid_y = ChineseDailyNerCorpus.load_data('valid')
 
 model = BLSTMModel()
 model.fit(train_x, train_y, valid_x, valid_y, epochs=50)
-
 """
 _________________________________________________________________
 Layer (type)                 Output Shape              Param #
@@ -112,62 +99,18 @@ Epoch 1/50
 """
 ```
 
-### Run with GPT-2 Embedding
+## Tutorials
 
-```python
-from kashgari.embeddings import GPT2Embedding
-from kashgari.corpus import ChineseDailyNerCorpus
-from kashgari.tasks.labeling import BLSTMModel
+Here is a set of quick tutorials to get you started with the library:
 
-train_x, train_y = ChineseDailyNerCorpus.load_data('train')
-valid_x, valid_y = ChineseDailyNerCorpus.load_data('valid')
+- [Tutorial 3: Sequence labeling Model](./tutorial/sequence_labeling_model.md)
 
-gpt2_embedding = GPT2Embedding('<path-to-gpt-model-folder>', sequence_length=30)
-model = BLSTMModel(gpt2_embedding)
-model.fit(train_x, train_y, valid_x, valid_y, epochs=50)
-```
+There are also articles and posts that illustrate how to use Kashgari:
 
-### Run with Bert Embedding
+- [15 分钟搭建中文文本分类模型](https://eliyar.biz/nlp_chinese_text_classification_in_15mins/)
+- [基于 BERT 的中文命名实体识别（NER)](https://eliyar.biz/nlp_chinese_bert_ner/)
+- [Multi-Class Text Classification with Kashgari in 15 minutes](https://medium.com/@BrikerMan/multi-class-text-classification-with-kashgari-in-15mins-c3e744ce971d)
 
-```python
-from kashgari.embeddings import BERTEmbedding
-from kashgari.tasks.labeling import BLSTMModel
-from kashgari.corpus import ChineseDailyNerCorpus
-
-bert_embedding = BERTEmbedding('<bert-model-folder>', sequence_length=30)
-model = BLSTMModel(bert_embedding)
-
-train_x, train_y = ChineseDailyNerCorpus.load_data()
-model.fit(train_x, train_y)
-```
-
-### Run with Word2vec Embedding
-
-```python
-from kashgari.embeddings import WordEmbedding
-from kashgari.tasks.labeling import BLSTMModel
-from kashgari.corpus import ChineseDailyNerCorpus
-
-bert_embedding = WordEmbedding('<Gensim embedding file>', sequence_length=30)
-model = BLSTMModel(bert_embedding)
-train_x, train_y = ChineseDailyNerCorpus.load_data()
-model.fit(train_x, train_y)
-```
-
-### Support for Training on Multiple GPUs
-
-```python
-import kashgari
-from kashgari.tasks.labeling import BLSTMModel
-from kashgari.corpus import ChineseDailyNerCorpus
-
-model = BLSTMModel()
-train_x, train_y = ChineseDailyNerCorpus.load_data()
-model.build_model(train_x, train_y)
-
-model = kashgari.utils.convert_to_multi_gpu_model(model, gpus=2)
-model.fit(train_x, train_y)
-```
 
 ## Contributing
 

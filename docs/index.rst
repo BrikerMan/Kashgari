@@ -17,13 +17,13 @@ Welcome to Kashgari's documentation!
 
 
 .. toctree::
-   :hidden:
-   :maxdepth: 1
-   :caption: Tutorial
+    :hidden:
+    :maxdepth: 1
+    :caption: Tutorial
 
-   tutorial/text_classification_model
-   tutorial/sequence_labeling_model
-   tutorial/language_modeling.md
+    tutorial/language_embedding
+    tutorial/text_classification_model
+    tutorial/sequence_labeling_model
 
 .. toctree::
    :hidden:
