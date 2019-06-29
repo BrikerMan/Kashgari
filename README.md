@@ -60,29 +60,29 @@ There are also articles and posts that illustrate how to use Kashgari:
 
 ### Requirements and Installation
 
-The project is based on Keras 2.2.0+ and Python 3.6+, because it is 2019 and type hints is cool.
+The project is based on TenorFlow 1.14.0 and Python 3.6+, because it is 2019 and type hints is cool.
 
 ```bash
-pip install kashgari
+pip install kashgari-tf
 # CPU
-pip install tensorflow
+pip install tensorflow==1.14.0
 # GPU
-pip install tensorflow-gpu
+pip install tensorflow-gpu==1.14.0
 ```
 
 ### Example Usage
 
-lets run a NER labeling model with BLSTM Model.
+lets run a NER labeling model with Bi_LSTM Model.
 
 ```python
 from kashgari.corpus import ChineseDailyNerCorpus
-from kashgari.tasks.labeling import BLSTMModel
+from kashgari.tasks.labeling import BiLSTM_Model
 
 train_x, train_y = ChineseDailyNerCorpus.load_data('train')
 test_x, test_y = ChineseDailyNerCorpus.load_data('test')
 valid_x, valid_y = ChineseDailyNerCorpus.load_data('valid')
 
-model = BLSTMModel()
+model = BiLSTM_Model()
 model.fit(train_x, train_y, valid_x, valid_y, epochs=50)
 
 """
@@ -117,13 +117,13 @@ Epoch 1/50
 ```python
 from kashgari.embeddings import GPT2Embedding
 from kashgari.corpus import ChineseDailyNerCorpus
-from kashgari.tasks.labeling import BLSTMModel
+from kashgari.tasks.labeling import BiGRU_Model
 
 train_x, train_y = ChineseDailyNerCorpus.load_data('train')
 valid_x, valid_y = ChineseDailyNerCorpus.load_data('valid')
 
 gpt2_embedding = GPT2Embedding('<path-to-gpt-model-folder>', sequence_length=30)
-model = BLSTMModel(gpt2_embedding)
+model = BiGRU_Model(gpt2_embedding)
 model.fit(train_x, train_y, valid_x, valid_y, epochs=50)
 ```
 
@@ -131,11 +131,11 @@ model.fit(train_x, train_y, valid_x, valid_y, epochs=50)
 
 ```python
 from kashgari.embeddings import BERTEmbedding
-from kashgari.tasks.labeling import BLSTMModel
+from kashgari.tasks.labeling import BiGRU_Model
 from kashgari.corpus import ChineseDailyNerCorpus
 
 bert_embedding = BERTEmbedding('<bert-model-folder>', sequence_length=30)
-model = BLSTMModel(bert_embedding)
+model = BiGRU_Model(bert_embedding)
 
 train_x, train_y = ChineseDailyNerCorpus.load_data()
 model.fit(train_x, train_y)
@@ -145,11 +145,11 @@ model.fit(train_x, train_y)
 
 ```python
 from kashgari.embeddings import WordEmbedding
-from kashgari.tasks.labeling import BLSTMModel
+from kashgari.tasks.labeling import BiLSTM_CRF_Model
 from kashgari.corpus import ChineseDailyNerCorpus
 
 bert_embedding = WordEmbedding('<Gensim embedding file>', sequence_length=30)
-model = BLSTMModel(bert_embedding)
+model = BiLSTM_CRF_Model(bert_embedding)
 train_x, train_y = ChineseDailyNerCorpus.load_data()
 model.fit(train_x, train_y)
 ```
@@ -157,15 +157,17 @@ model.fit(train_x, train_y)
 ### Support for Training on Multiple GPUs
 
 ```python
-import kashgari
-from kashgari.tasks.labeling import BLSTMModel
+from kashgari.tasks.labeling import BiGRU_Model
 from kashgari.corpus import ChineseDailyNerCorpus
 
-model = BLSTMModel()
+model = BiGRU_Model()
 train_x, train_y = ChineseDailyNerCorpus.load_data()
-model.build_model(train_x, train_y)
+model.build_multi_gpu_model(gpus=2, 
+                            cpu_merge=False, 
+                            cpu_relocation=False,
+                            x_train=train_x, 
+                            y_train=train_y)
 
-model = kashgari.utils.convert_to_multi_gpu_model(model, gpus=2)
 model.fit(train_x, train_y)
 ```
 
