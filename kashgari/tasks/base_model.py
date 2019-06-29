@@ -113,9 +113,12 @@ class BaseModel(object):
             self.build_model_arc()
             self.compile_model()
 
-    def build_multi_gpu_model(self, gpus: int, cpu_merge: bool, cpu_relocation: bool,
+    def build_multi_gpu_model(self,
+                              gpus: int,
                               x_train: Union[Tuple[List[List[str]], ...], List[List[str]]],
                               y_train: Union[List[List[str]], List[str]],
+                              cpu_merge: bool = True,
+                              cpu_relocation: bool = False,
                               x_validate: Union[Tuple[List[List[str]], ...], List[List[str]]] = None,
                               y_validate: Union[List[List[str]], List[str]] = None):
         """
