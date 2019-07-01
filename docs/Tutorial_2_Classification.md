@@ -63,20 +63,20 @@ from kashgari.tasks.classification import ClassificationModel
 
 class MyOwnModel(ClassificationModel):
     __architect_name__ = 'MyOwnModel'
-
-    def build_model(self):
+    
+    def _prepare_model(self):
         base_model = self.embedding.model
         lstm_layer = LSTM(100, return_sequences=True)(base_model.output)
         drop_out_layer = Dropout(0.3)(lstm_layer)
         dense_layer = Dense(len(self.label2idx), activation='sigmoid')(drop_out_layer)
         output_layers = [dense_layer]
+        
+        self.model = Model(base_model.inputs, output_layers)
 
-        model = Model(base_model.inputs, output_layers)
-        model.compile(loss='categorical_crossentropy',
-                      optimizer='adam',
-                      metrics=['accuracy'])
-        self.model = model
-        self.model.summary()
+    def _compile_model(self):
+        self.model.compile(optimizer='adam',
+                           loss='categorical_crossentropy',
+                           metrics=['accuracy'])
 
 model = MyOwnModel()
 model.fit(train_x, train_y)
