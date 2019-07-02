@@ -19,6 +19,7 @@ from kashgari.tasks.classification.models import R_CNN_Model
 from kashgari.tasks.classification.models import AVRNN_Model
 from kashgari.tasks.classification.models import Dropout_BiGRU_Model
 from kashgari.tasks.classification.models import Dropout_AVRNN_Model
+from kashgari.tasks.classification.dpcnn_model import DPCNN_Model
 
 
 BLSTMModel = BiLSTM_Model
@@ -32,3 +33,5 @@ RCNNModel = R_CNN_Model
 AVRNNModel = AVRNN_Model
 DropoutBGRUModel = Dropout_BiGRU_Model
 DropoutAVRNNModel = Dropout_AVRNN_Model
+
+DPCNN = DPCNN_Model
