@@ -140,7 +140,7 @@ class DPCNN_Model(BaseClassificationModel):
             L.Conv1D(**config['region_embedding']),
             L.BatchNormalization(),
             L.PReLU(),
-            L.Dropout(**config['region_embedding'])
+            L.Dropout(**config['region_dropout'])
         ]
 
         layers_main = [
