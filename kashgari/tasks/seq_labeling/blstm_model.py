@@ -13,9 +13,11 @@
 
 import logging
 
-from keras.layers import Bidirectional, LSTM
+from keras.layers import Bidirectional
 from keras.layers import Dense, Dropout, TimeDistributed, Activation
 from keras.models import Model
+
+from kashgari.layers import LSTMLayer
 
 from kashgari.tasks.seq_labeling.base_model import SequenceLabelingModel
 
@@ -34,7 +36,7 @@ class BLSTMModel(SequenceLabelingModel):
     def _prepare_model(self):
         embed_model = self.embedding.model
 
-        blstm_layer = Bidirectional(LSTM(**self.hyper_parameters['lstm_layer']))(embed_model.output)
+        blstm_layer = Bidirectional(LSTMLayer(**self.hyper_parameters['lstm_layer']))(embed_model.output)
         dropout_layer = Dropout(**self.hyper_parameters['dropout_layer'])(blstm_layer)
         time_distributed_layer = TimeDistributed(Dense(len(self.label2idx)))(dropout_layer)
         activation = Activation('softmax')(time_distributed_layer)

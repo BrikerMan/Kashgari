@@ -11,11 +11,10 @@
 
 """
 from keras.layers import Dense, Bidirectional
-from keras.layers.recurrent import LSTM
 from keras.models import Model
 
 from kashgari.utils.crf import CRF, crf_loss, crf_accuracy
-
+from kashgari.layers import LSTMLayer
 from kashgari.tasks.seq_labeling.base_model import SequenceLabelingModel
 
 
@@ -34,7 +33,7 @@ class BLSTMCRFModel(SequenceLabelingModel):
 
     def _prepare_model(self):
         base_model = self.embedding.model
-        blstm_layer = Bidirectional(LSTM(**self.hyper_parameters['lstm_layer']))(base_model.output)
+        blstm_layer = Bidirectional(LSTMLayer(**self.hyper_parameters['lstm_layer']))(base_model.output)
         dense_layer = Dense(128, activation='tanh')(blstm_layer)
         crf = CRF(len(self.label2idx), sparse_target=False)
         crf_layer = crf(dense_layer)

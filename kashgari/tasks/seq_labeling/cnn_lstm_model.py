@@ -11,7 +11,7 @@
 
 """
 from keras.layers import Dense, Conv1D, TimeDistributed, Activation
-from keras.layers.recurrent import LSTM
+from kashgari.layers import LSTMLayer
 from keras.models import Model
 
 from kashgari.tasks.seq_labeling.base_model import SequenceLabelingModel
@@ -39,7 +39,7 @@ class CNNLSTMModel(SequenceLabelingModel):
         base_model = self.embedding.model
         conv_layer = Conv1D(**self.hyper_parameters['conv_layer'])(base_model.output)
         # max_pool_layer = MaxPooling1D(**self.hyper_parameters['max_pool_layer'])(conv_layer)
-        lstm_layer = LSTM(**self.hyper_parameters['lstm_layer'])(conv_layer)
+        lstm_layer = LSTMLayer(**self.hyper_parameters['lstm_layer'])(conv_layer)
         time_distributed_layer = TimeDistributed(Dense(len(self.label2idx)))(lstm_layer)
         activation = Activation('softmax')(time_distributed_layer)
         output_layers = [activation]
