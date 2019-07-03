@@ -166,6 +166,8 @@ class DPCNN_Model(BaseClassificationModel):
         tensor_out = self.conv_block(tensor_out, **config['conv_block'])
         # build the above pyramid layers while `steps > 2`
         seq_len = tensor_out.shape[1].value
+        if seq_len is None:
+            raise ValueError('`sequence_length` should be explicitly assigned, but it is `None`.')
         for i in range(floor(log2(seq_len)) - 2):
             tensor_out = self.resnet_block(tensor_out, stage=i + 1,
                                            **config['resnet_block'])
