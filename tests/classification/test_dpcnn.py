@@ -18,5 +18,19 @@ class TestDPCNN_Model(base.TestBi_LSTM_Model):
         cls.model_class = DPCNN_Model
 
 
+    def test_custom_hyper_params(self):
+        hyper_params = self.model_class.get_default_hyper_parameters()
+
+        for layer, config in hyper_params.items():
+            for key, value in config.items():
+                if isinstance(value, bool):
+                    pass
+                elif isinstance(value, int):
+                    hyper_params[layer][key] = value + 15 if value >= 64 else value
+        model = self.model_class(embedding=base.w2v_embedding,
+                                 hyper_parameters=hyper_params)
+        model.fit(base.valid_x, base.valid_y, epochs=1)
+        assert True
+
 if __name__ == "__main__":
     print("Hello world")

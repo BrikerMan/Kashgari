@@ -21,6 +21,10 @@ from kashgari.tasks.classification.base_model import BaseClassificationModel
 
 
 class DPCNN_Model(BaseClassificationModel):
+    '''
+    This implementation of DPCNN requires a clear declared sequence length.
+    So sequences input in should be padded or cut to a given length in advance.
+    '''
 
     @classmethod
     def get_default_hyper_parameters(cls) -> Dict[str, Dict[str, Any]]:
@@ -152,7 +156,7 @@ class DPCNN_Model(BaseClassificationModel):
             L.Dense(output_dim, **config['activation'])
         ]
 
-        tensor_out = embed_model.inputs
+        tensor_out = embed_model.output
 
         # build region tensors
         for layer in layers_region:
