@@ -1,4 +1,4 @@
-sklearn
+scikit-learn>=0.21.1
 h5py
 keras-bert>=0.50.0
 keras-gpt-2>=0.8.0
