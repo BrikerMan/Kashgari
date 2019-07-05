@@ -413,7 +413,7 @@ class BaseModel(object):
             f.write(json.dumps(self.info(), indent=2, ensure_ascii=True))
             f.close()
 
-        self.tf_model.save_weights(os.path.join(model_path, 'model.h5'))
+        self.tf_model.save_weights(os.path.join(model_path, 'model_weights.h5'))
         logging.info('model saved to {}'.format(os.path.abspath(model_path)))
 
 

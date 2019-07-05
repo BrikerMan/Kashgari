@@ -42,7 +42,7 @@ def custom_object_scope():
     return tf.keras.utils.custom_object_scope(custom_objects)
 
 
-def load_model(model_path: str) -> BaseModel:
+def load_model(model_path: str, load_weights: bool = True) -> BaseModel:
     with open(os.path.join(model_path, 'model_info.json'), 'r') as f:
         model_info = json.load(f)
 
@@ -51,7 +51,8 @@ def load_model(model_path: str) -> BaseModel:
 
     model: BaseModel = model_class()
     model.tf_model = tf.keras.models.model_from_json(model_json_str, custom_objects)
-    model.tf_model.load_weights(os.path.join(model_path, 'model.h5'))
+    if load_weights:
+        model.tf_model.load_weights(os.path.join(model_path, 'model_weights.h5'))
 
     embed_info = model_info['embedding']
     embed_class = pydoc.locate(f"{embed_info['module']}.{embed_info['class_name']}")
