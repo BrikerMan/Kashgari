@@ -58,6 +58,10 @@ class TestCNN_LSTM_Model(unittest.TestCase):
         new_res = new_model.predict(valid_x[:20])
         assert np.array_equal(new_res, res)
 
+    def test_fit_without_generator(self):
+        model = self.model_class()
+        model.fit_without_generator(valid_x, valid_y, valid_x, valid_y, epochs=2)
+
     def test_w2v_model(self):
         model = self.model_class(embedding=w2v_embedding)
         model.fit(valid_x, valid_y, epochs=1)

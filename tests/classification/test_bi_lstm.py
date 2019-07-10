@@ -98,9 +98,9 @@ class TestBi_LSTM_Model(unittest.TestCase):
 
         new_model.evaluate(valid_x, valid_y)
 
-    def test_train_with_generator(self):
+    def test_fit_without_generator(self):
         model = self.model_class()
-        model.fit_with_generator(valid_x, valid_y, valid_x, valid_y, epochs=5)
+        model.fit_without_generator(valid_x, valid_y, valid_x, valid_y, epochs=2)
 
     def test_w2v_model(self):
         model = self.model_class(embedding=w2v_embedding)
