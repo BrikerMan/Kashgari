@@ -59,6 +59,7 @@ setup(
     name=__name__,
     version=__version__,
     description=__description__,
+    python_requires='>3.6',
     long_description=README,
     long_description_content_type="text/markdown",
     author=__author__,
