@@ -33,9 +33,8 @@ class ClassificationProcessor(BaseProcessor):
                 label_set = label_set.union(list(i))
         else:
             label_set = set(labels)
-
         self.label2idx = {}
-        for idx, label in enumerate(label_set):
+        for idx, label in enumerate(sorted(label_set)):
             self.label2idx[label] = len(self.label2idx)
 
         self.idx2label = dict([(value, key) for key, value in self.label2idx.items()])
