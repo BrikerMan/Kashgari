@@ -258,8 +258,8 @@ class BaseModel(object):
         Returns:
             data generator
         """
-        index_list = np.arange(len(x_data[0]))
-        page_count = len(x_data[0]) // batch_size + 1
+        index_list = np.arange(len(x_data))
+        page_count = len(x_data) // batch_size + 1
 
         while True:
             if shuffle:
