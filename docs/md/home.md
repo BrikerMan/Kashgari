@@ -103,7 +103,9 @@ Epoch 1/50
 
 Here is a set of quick tutorials to get you started with the library:
 
-- [Tutorial 3: Sequence labeling Model](./tutorial/sequence_labeling_model.md)
+- [Tutorial 1: Language Embedding](./md/sequence_labeling_model.md)
+- [Tutorial 3: Text Classification Model](./md/text_classification_model.md)
+- [Tutorial 3: Text Labeling Model](./md/text_labeling_model.md)
 
 There are also articles and posts that illustrate how to use Kashgari:
 
