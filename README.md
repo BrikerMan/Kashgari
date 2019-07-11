@@ -36,9 +36,8 @@ Kashgari is simple and powerful NLP Transfer learning framework, build a state-o
 
 - **Human-friendly**. Kashgari's code is straightforward, well documented and tested, which makes it very easy to understand and modify.
 - **Powerful and simple**. Kashgari allows you to apply state-of-the-art natural language processing (NLP) models to your text, such as named entity recognition (NER), part-of-speech tagging (PoS) and classification.
-- **tf.Keras based**. Kashgari builds directly on tf.Keras, making it easy to train your models and experiment with new approaches using different embeddings and model structure.
 - **Buildin transfer learning**. Kashgari build-in pre-trained BERT and Word2vec embedding models, which makes it very simple to transfer learning to train your model.
-- **Fully scalable**. Kashgari provide a simple, fast, and scalable environment for fast experimentation.
+- **Fully scalable**. Kashgari provide a simple, fast, and scalable environment for fast experimentation, train your models and experiment with new approaches using different embeddings and model structure. 
 - **Product Ready**. Kashgari could export model with `SavedModel` format for tensorflow serving, you could directly deploy it on cloud. 
 
 ## Our Goal
