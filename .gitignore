@@ -109,3 +109,4 @@ venv.bak/
 .idea
 .vscode
 venv-tf/*
+.pytype/
