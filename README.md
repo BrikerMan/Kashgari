@@ -51,7 +51,7 @@ Kashgari is simple and powerful NLP Transfer learning framework, build a state-o
 
 | Task                     | Language | Dataset                   | Score          | Detail                                                                   |
 | ------------------------ | -------- | ------------------------- | -------------- | ------------------------------------------------------------------------ |
-| Named Entity Recognition | Chinese  | People's Daily Ner Corpus | **92.20** (F1) | [基于 BERT 的中文命名实体识别](https://eliyar.biz/nlp_chinese_bert_ner/) |
+| Named Entity Recognition | Chinese  | People's Daily Ner Corpus | **94.46** (F1) | [Text Labeling Performance Report](https://kashgari.readthedocs.io/md/text_labeling_model.html#performance-report) |
 
 ## Tutorials
 
