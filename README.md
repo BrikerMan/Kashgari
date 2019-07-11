@@ -7,10 +7,10 @@
         <img alt="GitHub" src="https://img.shields.io/github/license/BrikerMan/kashgari.svg?color=blue&style=popout">
     </a>
     <a href="https://travis-ci.com/BrikerMan/Kashgari">
-        <img src="https://travis-ci.com/BrikerMan/Kashgari.svg?branch=tf.keras-version"/>
+        <img src="https://travis-ci.com/BrikerMan/Kashgari.svg?branch=master"/>
     </a>
-    <a href='https://coveralls.io/github/BrikerMan/Kashgari?branch=tf.keras-version'>
-        <img src='https://coveralls.io/repos/github/BrikerMan/Kashgari/badge.svg?branch=tf.keras-version' alt='Coverage Status'/>
+    <a href='https://coveralls.io/github/BrikerMan/Kashgari?branch=master'>
+        <img src='https://coveralls.io/repos/github/BrikerMan/Kashgari/badge.svg?branch=master' alt='Coverage Status'/>
     </a>
      <a href="https://pepy.tech/project/kashgari-tf">
         <img src="https://pepy.tech/badge/kashgari-tf"/>
