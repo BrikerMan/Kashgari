@@ -10,11 +10,11 @@ position in text and more. Kashgari provides `NumericFeaturesEmbedding` and `Sta
 If you have a dataset like this.
 
 ```python
-token=NLP	start_of_p=True 	bold=True	center=True	B-Category
-token=Projects	start_of_p=False	bold=True	center=True	I-Category
-token=Project	start_of_p=True	        bold=True	center=False	B-Project-name
-token=Name	start_of_p=False	bold=True	center=False	I-Project-name
-token=:         start_of_p=False	bold=False	center=False	I-Project-name
+token=NLP       start_of_p=True    bold=True     center=True     B-Category
+token=Projects  start_of_p=False   bold=True     center=True     I-Category
+token=Project   start_of_p=True    bold=True     center=False    B-Project-name
+token=Name      start_of_p=False   bold=True     center=False    I-Project-name
+token=:         start_of_p=False   bold=False    center=False    I-Project-name
 ```
 
 First, numerize your additional features. Convert your data to this. Remember to leave `0` for padding.
