@@ -10,7 +10,7 @@
     :hidden:
     :maxdepth: 0
 
-    main
+    md/home
 
 
 .. toctree::
@@ -18,25 +18,25 @@
     :maxdepth: 1
     :caption: Tutorial
 
-    tutorial/language_embedding
-    tutorial/text_classification_model
-    tutorial/sequence_labeling_model
+    md/language_embedding
+    md/text_classification_model
+    md/sequence_labeling_model
 
 .. toctree::
    :hidden:
    :maxdepth: 1
    :caption: Advanced use
 
-   tutorial/customize_multi_output_model
-   tutorial/deal_with_numeric_features
-   tutorial/tensorflow_serving.md
+   md/customize_multi_output_model
+   md/deal_with_numeric_features
+   md/tensorflow_serving.md
 
 .. toctree::
   :hidden:
   :maxdepth: 2
   :caption: API
 
-  corpus
-  api
-  CONTRIBUTING
+  md/corpus
+  md/api
+  md/CONTRIBUTING
   CHANGELOG
