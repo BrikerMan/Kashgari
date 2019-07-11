@@ -1,6 +1,6 @@
-# Text classification model
+# Text Classification Model
 
-Kashgari provides several models for sequence labeling,
+Kashgari provides several models for text classification,
 All labeling models inherit from the `BaseClassificationModel`.
 You could easily switch from one model to another just by changing one line of code.
 

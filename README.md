@@ -141,36 +141,6 @@ train_x, train_y = ChineseDailyNerCorpus.load_data()
 model.fit(train_x, train_y)
 ```
 
-### Run with Word2vec Embedding
-
-```python
-from kashgari.embeddings import WordEmbedding
-from kashgari.tasks.labeling import BiLSTM_CRF_Model
-from kashgari.corpus import ChineseDailyNerCorpus
-
-bert_embedding = WordEmbedding('<Gensim embedding file>', sequence_length=30)
-model = BiLSTM_CRF_Model(bert_embedding)
-train_x, train_y = ChineseDailyNerCorpus.load_data()
-model.fit(train_x, train_y)
-```
-
-### Support for Training on Multiple GPUs
-
-```python
-from kashgari.tasks.labeling import BiGRU_Model
-from kashgari.corpus import ChineseDailyNerCorpus
-
-model = BiGRU_Model()
-train_x, train_y = ChineseDailyNerCorpus.load_data()
-model.build_multi_gpu_model(gpus=2, 
-                            cpu_merge=False, 
-                            cpu_relocation=False,
-                            x_train=train_x, 
-                            y_train=train_y)
-
-model.fit(train_x, train_y)
-```
-
 ## Contributing
 
 Thanks for your interest in contributing! There are many ways to get involved; start with the [contributor guidelines](CONTRIBUTING.md) and then check these open issues for specific tasks.

@@ -1,6 +1,6 @@
-# Sequence Labeling Model
+# Text Labeling Model
 
-Kashgari provides several models for sequence labeling,
+Kashgari provides several models for text labeling,
 All labeling models inherit from the `BaseLabelingModel`.
 You could easily switch from one model to another just by changing one line of code.
 

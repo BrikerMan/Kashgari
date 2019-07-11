@@ -64,13 +64,13 @@ lets run a NER labeling model with BLSTM Model.
 
 ```python
 from kashgari.corpus import ChineseDailyNerCorpus
-from kashgari.tasks.labeling import BLSTMModel
+from kashgari.tasks.labeling import BiLSTM_Model
 
 train_x, train_y = ChineseDailyNerCorpus.load_data('train')
 test_x, test_y = ChineseDailyNerCorpus.load_data('test')
 valid_x, valid_y = ChineseDailyNerCorpus.load_data('valid')
 
-model = BLSTMModel()
+model = BiLSTM_Model()
 model.fit(train_x, train_y, valid_x, valid_y, epochs=50)
 """
 _________________________________________________________________
@@ -110,7 +110,6 @@ There are also articles and posts that illustrate how to use Kashgari:
 - [15 分钟搭建中文文本分类模型](https://eliyar.biz/nlp_chinese_text_classification_in_15mins/)
 - [基于 BERT 的中文命名实体识别（NER)](https://eliyar.biz/nlp_chinese_bert_ner/)
 - [Multi-Class Text Classification with Kashgari in 15 minutes](https://medium.com/@BrikerMan/multi-class-text-classification-with-kashgari-in-15mins-c3e744ce971d)
-
 
 ## Contributing
 
