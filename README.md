@@ -12,8 +12,8 @@
     <a href='https://coveralls.io/github/BrikerMan/Kashgari?branch=tf.keras-version'>
         <img src='https://coveralls.io/repos/github/BrikerMan/Kashgari/badge.svg?branch=tf.keras-version' alt='Coverage Status'/>
     </a>
-     <a href="https://pepy.tech/project/kashgari">
-        <img src="https://pepy.tech/badge/kashgari"/>
+     <a href="https://pepy.tech/project/kashgari-tf">
+        <img src="https://pepy.tech/badge/kashgari-tf"/>
     </a>
     <a href="https://pypi.org/project/kashgari/">
         <img alt="PyPI" src="https://img.shields.io/pypi/v/kashgari.svg">
@@ -28,6 +28,8 @@
     <a href="https://kashgari.readthedocs.io/">Contributing</a>
 </h4>
 
+🎉🎉🎉 We are proud to announce that we entirely rewrite  Kashgari with tf.keras, now Kashgari comes with cleaner API and faster speed. 🎉🎉🎉
+
 ## Overview
 
 Kashgari is simple and powerful NLP Transfer learning framework, build a state-of-art model in 5 minutes for named entity recognition (NER), part-of-speech tagging (PoS) and text classification tasks.
@@ -37,6 +39,14 @@ Kashgari is simple and powerful NLP Transfer learning framework, build a state-o
 - **tf.Keras based**. Kashgari builds directly on tf.Keras, making it easy to train your models and experiment with new approaches using different embeddings and model structure.
 - **Buildin transfer learning**. Kashgari build-in pre-trained BERT and Word2vec embedding models, which makes it very simple to transfer learning to train your model.
 - **Fully scalable**. Kashgari provide a simple, fast, and scalable environment for fast experimentation.
+- **Product Ready**. Kashgari could export model with `SavedModel` format for tensorflow serving, you could directly deploy it on cloud. 
+
+## Our Goal
+
+- **Academic users** Experiments to prove their hypothesis without coding from scratch.
+- **NLP beginners** Learn how to build an NLP project with production level code quality.
+- **NLP developers** Build a production level classification/labeling model within minutes.
+
 
 ## Performance
 
@@ -61,6 +71,8 @@ There are also articles and posts that illustrate how to use Kashgari:
 ## Quick start
 
 ### Requirements and Installation
+
+🎉🎉🎉 We renamed the tf.keras version as **kashgari-tf** 🎉🎉🎉
 
 The project is based on TenorFlow 1.14.0 and Python 3.6+, because it is 2019 and type hints is cool.
 
