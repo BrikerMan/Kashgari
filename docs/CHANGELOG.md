@@ -1,6 +1,8 @@
 # Changelog
 
-## [0.5.0]  🎉🎉 tf.keras version 🎉🎉
+## [0.5.0] - 2019.07.11
+
+🎉🎉 tf.keras version 🎉🎉
 
 - 🎉 Rewrite Kashgari using `tf.keras`. Discussion: [#77](https://github.com/BrikerMan/Kashgari/issues/77)
 - 🎉 Rewrite Documents.
@@ -57,6 +59,6 @@
 - fix classification model evaluate result output
 - change test settings
 
-[0.5.0]: https://github.com/BrikerMan/Kashgari/compare/8c1580c6ae44ce762b99474220cfdb72c4b68b45...master
+[0.5.0]: https://github.com/BrikerMan/Kashgari/compare/8c1580c6ae44ce762b99474220cfdb72c4b68b45...v0.5.0
 [0.2.4]: https://github.com/BrikerMan/Kashgari/compare/v0.2.1...v0.2.4
 [0.2.1]: https://github.com/BrikerMan/Kashgari/compare/v0.2.0...v0.2.1
