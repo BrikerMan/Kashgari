@@ -20,7 +20,7 @@
 
     md/language_embedding
     md/text_classification_model
-    md/sequence_labeling_model
+    md/text_labeling_model
 
 .. toctree::
    :hidden:
