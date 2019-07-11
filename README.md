@@ -48,9 +48,9 @@ Kashgare is simple and powerful NLP framework, build your state-of-art model in 
 
 Here is a set of quick tutorials to get you started with the library:
 
-- [Tutorial 1: Language Embedding](https://kashgari.readthedocs.io/language_embedding)
-- [Tutorial 3: Text Classification Model](https://kashgari.readthedocs.io/text_classification_model)
-- [Tutorial 3: Text Labeling Model](https://kashgari.readthedocs.io/text_labeling_model)
+- [Tutorial 1: Language Embedding](https://kashgari.readthedocs.io/md/language_embedding.html)
+- [Tutorial 3: Text Classification Model](https://kashgari.readthedocs.io/md/text_classification_model.html)
+- [Tutorial 3: Text Labeling Model](https://kashgari.readthedocs.io/md/text_labeling_model.html)
 
 There are also articles and posts that illustrate how to use Kashgari:
 
