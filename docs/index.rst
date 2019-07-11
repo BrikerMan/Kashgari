@@ -37,6 +37,6 @@
   :caption: API
 
   md/corpus
-  md/api
+  api
   md/CONTRIBUTING
   CHANGELOG

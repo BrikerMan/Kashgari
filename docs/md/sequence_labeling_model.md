@@ -4,6 +4,16 @@ Kashgari provides several models for sequence labeling,
 All labeling models inherit from the `BaseLabelingModel`.
 You could easily switch from one model to another just by changing one line of code.
 
+## Available Models
+
+| Name             | Info |
+| ---------------- | ---- |
+| CNN_LSTM_Model   |      |
+| BiLSTM_Model     |      |
+| BiLSTM_CRF_Model |      |
+| BiGRU_Model      |      |
+| BiGRU_CRF_Model  |      |
+
 ## Train basic NER model
 
 Kashgari provices basic NER corpus for expirement. You could also use your corpus in any language for training.
@@ -96,11 +106,11 @@ model = BLSTMModel(hyper_parameters=hyper)
 
 ## Use callbacks
 
-Kashgari is based on keras so that you could use all of the [keras callbacks](https://keras.io/callbacks/) directly with
+Kashgari is based on keras so that you could use all of the [tf.keras callbacks](https://www.tensorflow.org/api_docs/python/tf/keras/callbacks) directly with
 Kashgari model. For example, here is how to visualize training with tensorboard.
 
 ```python
-import keras
+from tensorflow.python import keras
 from kashgari.tasks.labeling import BLSTMModel
 from kashgari.callbacks import EvalCallBack
 
