@@ -15,8 +15,8 @@
      <a href="https://pepy.tech/project/kashgari-tf">
         <img src="https://pepy.tech/badge/kashgari-tf"/>
     </a>
-    <a href="https://pypi.org/project/kashgari/">
-        <img alt="PyPI" src="https://img.shields.io/pypi/v/kashgari.svg">
+    <a href="https://pypi.org/project/kashgari-tf/">
+        <img alt="PyPI" src="https://img.shields.io/pypi/v/kashgari-tf.svg">
     </a>
 </p>
 
