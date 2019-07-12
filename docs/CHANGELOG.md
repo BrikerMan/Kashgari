@@ -5,17 +5,25 @@
 🎉🎉 tf.keras version 🎉🎉
 
 - 🎉 Rewrite Kashgari using `tf.keras`. Discussion: [#77](https://github.com/BrikerMan/Kashgari/issues/77)
-- 🎉 Rewrite Documents.
-- ✨ Add TPU support.
+- 🎉 Rewrite Documents
+- ✨ Add TPU support
 - ✨ Add TF-Serving support.
-- ✨ Add advance customization support, like multi-input model.
-- 🐎 Performance optimization.
+- ✨ Add advance customization support, like multi-input model
+- 🐎 Performance optimization
+
+# Legacy Version Changelog
+
+## [0.2.5] (2019.07.12)
+
+- 📝 Add tf.keras version info
+- 🔥 Removed [PAD] class from classification task ([#135](https://github.com/BrikerMan/Kashgari/issues/135))
+- 🐛 Fixing lstm issue in labeling model ([#125](https://github.com/BrikerMan/Kashgari/issues/125))
 
 ## [0.2.4] - 2019.06.06
 
-- Add BERT output feature layer fine-tune support. Discussion: [#103](https://github.com/BrikerMan/Kashgari/issues/103)
-- Add BERT output feature layer number selection, default 4 according to BERT paper.
-- Fix BERT embedding token index offset issue [#104](https://github.com/BrikerMan/Kashgari/issues/104).
+- Add BERT output feature layer fine-tune support. Discussion: ([#103](https://github.com/BrikerMan/Kashgari/issues/103))
+- Add BERT output feature layer number selection, default 4 according to BERT paper
+- Fix BERT embedding token index offset issue ([#104](https://github.com/BrikerMan/Kashgari/issues/104)
 
 ## [0.2.1] - 2019.03.05
 
@@ -59,6 +67,7 @@
 - fix classification model evaluate result output
 - change test settings
 
-[0.5.0]: https://github.com/BrikerMan/Kashgari/compare/8c1580c6ae44ce762b99474220cfdb72c4b68b45...v0.5.0
+[0.5.0]: https://github.com/BrikerMan/Kashgari/compare/milestone/tf.keras...v0.5.0
+[0.2.5]: https://github.com/BrikerMan/Kashgari/compare/v0.2.4...v0.2.5
 [0.2.4]: https://github.com/BrikerMan/Kashgari/compare/v0.2.1...v0.2.4
 [0.2.1]: https://github.com/BrikerMan/Kashgari/compare/v0.2.0...v0.2.1
