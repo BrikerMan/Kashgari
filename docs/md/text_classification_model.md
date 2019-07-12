@@ -41,6 +41,9 @@ Then train our first model. All models provided some APIs, so you could use any 
 import kashgari
 from kashgari.tasks.classification import BiLSTM_Model
 
+import logging
+logging.basicConfig(level='DEBUG')
+
 model = BiLSTM_Model()
 model.fit(train_x, train_y, valid_x, valid_y)
 
@@ -133,6 +136,9 @@ from tensorflow import keras
 
 from kashgari.tasks.classification.base_model import BaseClassificationModel
 from kashgari.layers import L
+
+import logging
+logging.basicConfig(level='DEBUG')
 
 
 class DoubleBLSTMModel(BaseClassificationModel):

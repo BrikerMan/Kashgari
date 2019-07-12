@@ -147,6 +147,8 @@ from tensorflow import keras
 from kashgari.tasks.labeling.base_model import BaseLabelingModel
 from kashgari.layers import L
 
+import logging
+logging.basicConfig(level='DEBUG')
 
 class DoubleBLSTMModel(BaseLabelingModel):
     """Bidirectional LSTM Sequence Labeling Model"""

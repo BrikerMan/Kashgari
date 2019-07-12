@@ -58,6 +58,8 @@ pip install tensorflow
 pip install tensorflow-gpu
 ```
 
+**You could work with tensorflow==1.13.0 for embedding and labeling tasks, but some customized classification models might crash**
+
 ### Example Usage
 
 lets run a NER labeling model with BLSTM Model.
