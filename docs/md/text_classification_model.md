@@ -69,6 +69,9 @@ import kashgari
 from kashgari.tasks.classification import BiGRU_Model
 from kashgari.embeddings import BERTEmbedding
 
+import logging
+logging.basicConfig(level='DEBUG')
+
 bert_embed = BERTEmbedding('<PRE_TRAINED_BERT_MODEL_FOLDER>',
                            task=kashgari.LABELING,
                            sequence_length=100)
@@ -104,6 +107,8 @@ from tensorflow.python import keras
 from kashgari.tasks.classification import BiGRU_Model
 from kashgari.callbacks import EvalCallBack
 
+import logging
+logging.basicConfig(level='DEBUG')
 
 model = BiGRU_Model()
 
@@ -121,6 +126,45 @@ model.fit(train_x,
           valid_y,
           batch_size=100,
           callbacks=[eval_callback, tf_board_callback])
+```
+
+## Multi-Label Classification
+
+Kashgari support multi-label classification, Here is how we build one.
+
+Let's assume we have a dataset like this.
+
+```python
+x = [
+   ['This','news',are',very','well','organized'],
+   ['What','extremely','usefull','tv','show'],
+   ['The','tv','presenter','were','very','well','dress'],
+   ['Multi-class', 'classification', 'means', 'a', 'classification', 'task', 'with', 'more', 'than', 'two', 'classes']
+]
+
+y = [
+   ['A', 'B'],
+   ['A',],
+   ['B', 'C'],
+   []
+]
+```
+
+Now we need to init a `Processor` and `Embedding` for our model, then prepare model and fit.
+
+```python
+from kashgari.tasks.classification import BiLSTM_Model
+from kashgari.processors import ClassificationProcessor
+from kashgari.embeddings import BareEmbedding
+
+import logging
+logging.basicConfig(level='DEBUG')
+
+processor = ClassificationProcessor(multi_label=True)
+embed = BareEmbedding(processor=processor)
+
+model = BiLSTM_Model(embed)
+model.fit(x, y)
 ```
 
 ## Customize your own model

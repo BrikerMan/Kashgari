@@ -33,6 +33,9 @@ Then you have four input sequence and one output sequence. Prepare your embeddin
 import kashgari
 from kashgari.embeddings import NumericFeaturesEmbedding, BareEmbedding, StackedEmbedding
 
+import logging
+logging.basicConfig(level='DEBUG')
+
 text = ['NLP', 'Projects', 'Project', 'Name', ':']
 start_of_p = [1, 2, 1, 2, 2]
 bold = [1, 1, 1, 1, 2]
