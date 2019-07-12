@@ -36,6 +36,14 @@ tensor = processor.process_x_dataset([x])
 
 # array([[1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]], dtype=int32)
 
+# if you using BERT, you need to reformat tensor first
+# ------ Only for BERT Embedding Start --------
+tensor = [{
+   "Input-Token:0": i.tolist(),
+   "Input-Segment:0": np.zeros(i.shape).tolist()
+} for i in tensor]
+# ------ Only for BERT Embedding End ----------
+
 # predict
 r = requests.post("http://localhost:8501/v1/models/bgru:predict", json={"instances": tensor.tolist()})
 preds = r.json()['predictions']
