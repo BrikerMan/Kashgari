@@ -63,7 +63,8 @@ required = [
     # 'bz2file>=0.98',
     'sklearn',
     'pandas>=0.23.0',
-    'keras-gpt-2==0.11.1'
+    'keras-gpt-2==0.11.1',
+    'colorama'
 ]
 
 # long_description = ""

@@ -20,6 +20,18 @@ from kashgari.tasks import seq_labeling
 from kashgari.macros import config
 
 from kashgari.version import __version__
+from colorama import Fore
+
+print(f"""
+   {Fore.YELLOW}╭────────────────────────────────────────────────────────────────────────────╮
+   {Fore.YELLOW}│                                                                            │
+   {Fore.YELLOW}│ {Fore.WHITE}                      New tf.keras version available!                      {Fore.YELLOW}│
+   {Fore.YELLOW}│ {Fore.WHITE}   Changelog: {Fore.CYAN}https://github.com/BrikerMan/Kashgari/releases/tag/v0.5.0    {Fore.YELLOW}│
+   {Fore.YELLOW}│ {Fore.WHITE}    Run {Fore.BLUE}`pip uninstall kashgari && pip install kashgari-tf` {Fore.WHITE}to install     {Fore.YELLOW}│
+   {Fore.YELLOW}│ {Fore.WHITE}                Documents: {Fore.CYAN}https://kashgari.readthedocs.io{Fore.YELLOW}                 │
+   {Fore.YELLOW}│                                                                            │ 
+   {Fore.YELLOW}╰────────────────────────────────────────────────────────────────────────────╯
+""")
 
 if __name__ == "__main__":
     print("Hello world")
