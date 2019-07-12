@@ -140,7 +140,9 @@ class ClassificationModel(BaseModel):
             label_set = set(y_data)
 
         if not len(self.label2idx):
-            label2idx = {}
+            label2idx = {
+                k.PAD: 0
+            }
             for idx, label in enumerate(label_set):
                 label2idx[label] = idx + 1
             self._label2idx = label2idx
