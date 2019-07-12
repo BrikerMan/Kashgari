@@ -1,3 +1,8 @@
+## v0.2.5 (2019.07.12)
+
+* Removed [PAD] class from classification task ([#135](https://github.com/BrikerMan/Kashgari/issues/135))
+* Add tf.keras version info.
+
 ## v0.2.4 (2019.06.06)
 
 * Add BERT output feature layer fine-tune support. Discussion: #103
