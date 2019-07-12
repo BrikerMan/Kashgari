@@ -13,10 +13,9 @@
 
 # Legacy Version Changelog
 
-## [0.2.5] (2019.07.12)
+## [0.2.6] (2019.07.12)
 
 - 📝 Add tf.keras version info
-- 🔥 Removed [PAD] class from classification task ([#135](https://github.com/BrikerMan/Kashgari/issues/135))
 - 🐛 Fixing lstm issue in labeling model ([#125](https://github.com/BrikerMan/Kashgari/issues/125))
 
 ## [0.2.4] - 2019.06.06
@@ -68,6 +67,6 @@
 - change test settings
 
 [0.5.0]: https://github.com/BrikerMan/Kashgari/compare/milestone/tf.keras...v0.5.0
-[0.2.5]: https://github.com/BrikerMan/Kashgari/compare/v0.2.4...v0.2.5
+[0.2.6]: https://github.com/BrikerMan/Kashgari/compare/v0.2.4...v0.2.6
 [0.2.4]: https://github.com/BrikerMan/Kashgari/compare/v0.2.1...v0.2.4
 [0.2.1]: https://github.com/BrikerMan/Kashgari/compare/v0.2.0...v0.2.1
