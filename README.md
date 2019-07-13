@@ -66,6 +66,7 @@ There are also articles and posts that illustrate how to use Kashgari:
 - [15 分钟搭建中文文本分类模型](https://eliyar.biz/nlp_chinese_text_classification_in_15mins/)
 - [基于 BERT 的中文命名实体识别（NER)](https://eliyar.biz/nlp_chinese_bert_ner/)
 - [BERT/ERNIE 文本分类和部署](https://eliyar.biz/nlp_train_and_deploy_bert_text_classification/)
+- [五分钟搭建一个基于BERT的NER模型](https://www.jianshu.com/p/1d6689851622)
 - [Multi-Class Text Classification with Kashgari in 15 minutes](https://medium.com/@BrikerMan/multi-class-text-classification-with-kashgari-in-15mins-c3e744ce971d)
 
 ## Quick start
