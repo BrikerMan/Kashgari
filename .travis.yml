@@ -40,10 +40,6 @@ jobs:
         - flake8 kashgari
 
     - stage: Test
-      python:
-        - "3.6"
-        - "3.7"
-
       script: nosetests --with-coverage --cover-html --cover-html-dir=htmlcov
         --cover-xml --cover-xml-file=coverage.xml --with-xunit
         --cover-package="kashgari"
