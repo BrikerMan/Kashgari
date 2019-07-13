@@ -43,6 +43,15 @@ def custom_object_scope():
 
 
 def load_model(model_path: str, load_weights: bool = True) -> BaseModel:
+    """
+    Load saved model from saved model from `model.save` function
+    Args:
+        model_path: model folder path
+        load_weights: only load model structure and vocabulary when set to False, default True.
+
+    Returns:
+
+    """
     with open(os.path.join(model_path, 'model_info.json'), 'r') as f:
         model_info = json.load(f)
 
