@@ -161,7 +161,7 @@ kashgari.embeddings.GPT2Embedding(model_folder: str,
 
 NumericFeaturesEmbedding is a random init `tf.keras.layers.Embedding` layer for numeric feature embedding. Which usally comes togather with [StackedEmbedding](#stacked-embedding) for represent non text features.
 
-More details checkout the example: [Handle Numeric features](./deal_with_numeric_features.md)
+More details checkout the example: [Handle Numeric features](../deal_with_numeric_features.md)
 
 ```python
 kashgari.embeddings.NumericFeaturesEmbedding(feature_count: int,
@@ -182,7 +182,7 @@ kashgari.embeddings.NumericFeaturesEmbedding(feature_count: int,
 
 StackedEmbedding is a special kind of embedding class, which will able to stack other embedding layers togather for multi-input models.
 
-More details checkout the example: [Handle Numeric features](./deal_with_numeric_features.md)
+More details checkout the example: [Handle Numeric features](../deal_with_numeric_features.md)
 
 ```python
 kashgari.embeddings.StackedEmbedding(embeddings: List[Embedding],

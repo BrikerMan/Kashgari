@@ -2,18 +2,22 @@ site_name: Kashgari
 theme:
   name: "material"
   font: false
+  feature:
+    tabs: true
   palette:
     primary: "indigo"
     # accent: "indigo"
   language: "en"
 repo_url: https://github.com/BrikerMan/Kashgari
+
 nav:
-  - Home: "index.md"
-  - TUTORIAL:
-      - "language_embedding.md"
-      - "text_classification_model.md"
-      - "text_labeling_model.md"
-  - Advanced use:
+  - Home:
+      - "index.md"
+  - Tutorials:
+      - tutorial/language_embedding.md
+      - tutorial/text_classification_model.md
+      - tutorial/text_labeling_model.md
+  - Advanced:
       - customize_multi_output_model.md
       - deal_with_numeric_features.md
       - tensorflow_serving.md
@@ -24,7 +28,39 @@ nav:
       - "Release Notes": "CHANGELOG.md"
 
 markdown_extensions:
-  - codehilite
+  - markdown.extensions.admonition
+  - markdown.extensions.codehilite:
+      guess_lang: false
+  - markdown.extensions.def_list
+  - markdown.extensions.footnotes
+  - markdown.extensions.meta
+  - markdown.extensions.toc:
+      permalink: true
+  - pymdownx.arithmatex
+  - pymdownx.betterem:
+      smart_enable: all
+  - pymdownx.caret
+  - pymdownx.critic
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_generator: !!python/name:pymdownx.emoji.to_svg
+  - pymdownx.inlinehilite
+  - pymdownx.keys
+  - pymdownx.magiclink:
+      repo_url_shorthand: true
+      user: squidfunk
+      repo: mkdocs-material
+  - pymdownx.mark
+  - pymdownx.smartsymbols
+  - pymdownx.superfences
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tilde
 
 plugins:
   - search
+
+extra:
+  social:
+    - type: github-alt
+      link: https://github.com/BrikerMan

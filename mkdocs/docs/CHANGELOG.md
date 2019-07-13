@@ -14,6 +14,8 @@ To inspect the currently installed version, use the following command:
 pip show kashgari-tf
 ```
 
+## Current Release
+
 ### [0.5.0] - 2019.07.11
 
 🎉🎉 tf.keras version 🎉🎉
