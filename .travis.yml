@@ -24,17 +24,18 @@ env:
 
 cache: pip
 
+addons:
+  sonarcloud:
+    organization: "brikerman-github"
+    token:
+      secure: $SONAR_TOKEN
+
 jobs:
   include:
     - stage: test
       before_install:
         - export BOTO_CONFIG=/dev/null
 
-      addons:
-        sonarcloud:
-          organization: "brikerman-github"
-          token:
-            secure: $SONAR_TOKEN
       install:
         - pip install jieba
         - pip install python-coveralls
