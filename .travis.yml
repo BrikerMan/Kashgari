@@ -7,22 +7,7 @@ python:
 
 cache: pip
 # command to install dependencies
-env:
-  global:
-    - COVERALLS_PARALLEL=true
-  matrix:
-    # Labeling
-    - TEST_FILE=tests/labeling/
-    # classification part 1
-    - TEST_FILE="tests/classification/test_cnn_lstm.py tests/classification/test_cnn_gru.py tests/classification/test_cnn.py tests/classification/test_kmax_cnn.py"
-    # classification part 2
-    - TEST_FILE="tests/classification/test_r_cnn.py tests/classification/test_dropout_bigru.py tests/classification/test_avcnn.py tests/classification/test_bi_gru.py"
-    # classification part 3
-    - TEST_FILE="tests/classification/test_dpcnn.py tests/classification/test_bi_lstm.py tests/classification/test_avrnn_model.py tests/classification/test_dropout_avrnn.py"
-    - TEST_FILE="tests/test_callbacks.py tests/test_corpus.py tests/test_processor.py"
-    - TEST_FILE=tests/test_custom_multi_output_classification.py
-    # Embedding
-    - TEST_FILE=tests/embedding/
+
 #    - TEST_FILE=tests/embedding/test_bert_embedding.py
 #    - TEST_FILE=tests/embedding/test_gpt2_embedding.py
 #    - TEST_FILE=tests/embedding/test_numeric_features_embedding.py
@@ -32,16 +17,6 @@ env:
 
 before_install:
   - export BOTO_CONFIG=/dev/null
-install:
-  - pip install jieba
-  - pip install python-coveralls
-  - pip install -e .
-  - pip install tensorflow==1.14.0
-  - pip install coverage
-  - pip install nose
-  - pip install pytest pytest-cov
-  - pip install flake8 flake8-builtins
-  - python -c "import kashgari;print(f'kashgari version {kashgari.__version__}')"
 
 addons:
   sonarcloud:
@@ -52,6 +27,32 @@ addons:
 jobs:
   include:
 #    - stage: test
+#      env:
+#        global:
+#          - COVERALLS_PARALLEL=true
+#        matrix:
+#          # Labeling
+#          - TEST_FILE=tests/labeling/
+#          # classification part 1
+#          - TEST_FILE="tests/classification/test_cnn_lstm.py tests/classification/test_cnn_gru.py tests/classification/test_cnn.py tests/classification/test_kmax_cnn.py"
+#          # classification part 2
+#          - TEST_FILE="tests/classification/test_r_cnn.py tests/classification/test_dropout_bigru.py tests/classification/test_avcnn.py tests/classification/test_bi_gru.py"
+#          # classification part 3
+#          - TEST_FILE="tests/classification/test_dpcnn.py tests/classification/test_bi_lstm.py tests/classification/test_avrnn_model.py tests/classification/test_dropout_avrnn.py"
+#          - TEST_FILE="tests/test_callbacks.py tests/test_corpus.py tests/test_processor.py"
+#          - TEST_FILE=tests/test_custom_multi_output_classification.py
+#          # Embedding
+#          - TEST_FILE=tests/embedding/
+#      install:
+#        - pip install jieba
+#        - pip install python-coveralls
+#        - pip install -e .
+#        - pip install tensorflow==1.14.0
+#        - pip install coverage
+#        - pip install nose
+#        - pip install pytest pytest-cov
+#        - pip install flake8 flake8-builtins
+#        - python -c "import kashgari;print(f'kashgari version {kashgari.__version__}')"
 #      script:
 #        - git fetch --unshallow --quiet
 #        - flake8 kashgari
@@ -64,6 +65,7 @@ jobs:
     - stage: Update Document
       install:
         - echo -e "machine github.com\n  login ${GITHUB_TOKEN}" > ~/.netrc
+        - pip install mkdocs mkdocs-material
       script:
         - pip install -r requirements.dev.txt
         - cd mkdocs
