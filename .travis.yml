@@ -50,11 +50,16 @@ jobs:
       python:
         - "3.6"
         - "3.7"
-    - script:
-        - nosetests --with-coverage --cover-html --cover-html-dir=htmlcov
-          --cover-xml --cover-xml-file=coverage.xml --with-xunit
-          --cover-package="kashgari"
-          tests/labeling/
+      script: nosetests --with-coverage --cover-html --cover-html-dir=htmlcov
+              --cover-xml --cover-xml-file=coverage.xml --with-xunit
+              --cover-package="kashgari"
+              tests/test_callbacks.py tests/test_corpus.py tests/test_processor.py
+      name: "Test utils"
+
+    - script: nosetests --with-coverage --cover-html --cover-html-dir=htmlcov
+              --cover-xml --cover-xml-file=coverage.xml --with-xunit
+              --cover-package="kashgari"
+              tests/labeling/
       name: "Labeling Model Tests"
 
     - script: nosetests --with-coverage --cover-html --cover-html-dir=htmlcov
@@ -78,12 +83,12 @@ jobs:
       name: "Classification Model Tests-2"
 
     - script: nosetests --with-coverage --cover-html --cover-html-dir=htmlcov
-        --cover-xml --cover-xml-file=coverage.xml --with-xunit
-        --cover-package="kashgari"
-        tests/classification/test_dpcnn.py
-        tests/classification/test_bi_lstm.py
-        tests/classification/test_avrnn_model.py
-        tests/classification/test_dropout_avrnn.py
+              --cover-xml --cover-xml-file=coverage.xml --with-xunit
+              --cover-package="kashgari"
+              tests/classification/test_dpcnn.py
+              tests/classification/test_bi_lstm.py
+              tests/classification/test_avrnn_model.py
+              tests/classification/test_dropout_avrnn.py
 
       name: "Classification Model Tests-3"
 
