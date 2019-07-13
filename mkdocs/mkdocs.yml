@@ -1,0 +1,30 @@
+site_name: Kashgari
+theme:
+  name: "material"
+  font: false
+  palette:
+    primary: "indigo"
+    # accent: "indigo"
+  language: "en"
+repo_url: https://github.com/BrikerMan/Kashgari
+nav:
+  - Home: "index.md"
+  - TUTORIAL:
+      - "language_embedding.md"
+      - "text_classification_model.md"
+      - "text_labeling_model.md"
+  - Advanced use:
+      - customize_multi_output_model.md
+      - deal_with_numeric_features.md
+      - tensorflow_serving.md
+  - API:
+      - "corpus.md"
+  - About:
+      - "CONTRIBUTING.md"
+      - "Release Notes": "CHANGELOG.md"
+
+markdown_extensions:
+  - codehilite
+
+plugins:
+  - search

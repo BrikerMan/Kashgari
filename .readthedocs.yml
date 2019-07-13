@@ -5,8 +5,9 @@
 version: 2
 
 # Build documentation in the docs/ directory with Sphinx
-sphinx:
-  configuration: docs/conf.py
+mkdocs:
+  configuration: mkdocs/mkdocs.yml
+  fail_on_warning: false
 
 # Build documentation with MkDocs
 #mkdocs:
