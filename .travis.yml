@@ -62,7 +62,12 @@ jobs:
 #      notifications:
 #        webhooks: https://coveralls.io/webhook
     - stage: Update Document
+      install:
+        - echo -e "machine github.com\n  login ${GITHUB_TOKEN}" > ~/.netrc
       script:
         - pip install -r requirements.dev.txt
         - cd mkdocs
-        - mkdocs gh-deploy
+        - mkdocs gh-deploy --force --clean
+      branches:
+        only:
+          - master
