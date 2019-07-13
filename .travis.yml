@@ -5,9 +5,9 @@ env:
   global:
     - COVERALLS_PARALLEL=true
 
-python:
-  - "3.6"
-  - "3.7"
+#python:
+#  - "3.6"
+#  - "3.7"
 
 cache: pip
 
@@ -40,10 +40,22 @@ jobs:
         - flake8 kashgari
 
     - stage: Test
+      python:
+        - "3.6"
       script: nosetests --with-coverage --cover-html --cover-html-dir=htmlcov
         --cover-xml --cover-xml-file=coverage.xml --with-xunit
         --cover-package="kashgari"
         tests/labeling/
+      name: "Labeling Model Tests"
+
+    - script: nosetests --with-coverage --cover-html --cover-html-dir=htmlcov
+        --cover-xml --cover-xml-file=coverage.xml --with-xunit
+        --cover-package="kashgari"
+        tests/labeling/
+
+      python:
+        - "3.7"
+        - "3.6"
       name: "Labeling Model Tests"
 
     - script: nosetests --with-coverage --cover-html --cover-html-dir=htmlcov
