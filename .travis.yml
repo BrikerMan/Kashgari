@@ -50,16 +50,11 @@ jobs:
       python:
         - "3.6"
         - "3.7"
-      script: nosetests --with-coverage --cover-html --cover-html-dir=htmlcov
-              --cover-xml --cover-xml-file=coverage.xml --with-xunit
-              --cover-package="kashgari"
-              tests/test_callbacks.py tests/test_corpus.py tests/test_processor.py
-      name: "Test utils"
 
-    - script: nosetests --with-coverage --cover-html --cover-html-dir=htmlcov
-              --cover-xml --cover-xml-file=coverage.xml --with-xunit
-              --cover-package="kashgari"
-              tests/labeling/
+      script: nosetests --with-coverage --cover-html --cover-html-dir=htmlcov
+        --cover-xml --cover-xml-file=coverage.xml --with-xunit
+        --cover-package="kashgari"
+        tests/labeling/
       name: "Labeling Model Tests"
 
     - script: nosetests --with-coverage --cover-html --cover-html-dir=htmlcov
@@ -91,6 +86,26 @@ jobs:
               tests/classification/test_dropout_avrnn.py
 
       name: "Classification Model Tests-3"
+
+    - script: nosetests --with-coverage --cover-html --cover-html-dir=htmlcov
+        --cover-xml --cover-xml-file=coverage.xml --with-xunit
+        --cover-package="kashgari"
+              tests/test_callbacks.py tests/test_corpus.py tests/test_processor.py
+      name: "Callbacks Corpus Processor Test"
+
+    - script: nosetests --with-coverage --cover-html --cover-html-dir=htmlcov
+          --cover-xml --cover-xml-file=coverage.xml --with-xunit
+          --cover-package="kashgari"
+          tests/test_custom_multi_output_classification.py
+
+      name: "Custom Multi-Output Model Tests"
+
+    - script: nosetests --with-coverage --cover-html --cover-html-dir=htmlcov
+        --cover-xml --cover-xml-file=coverage.xml --with-xunit
+        --cover-package="kashgari"
+        tests/embedding/
+
+      name: "Embeddings Tests"
 
       after_script:
         - coveralls
