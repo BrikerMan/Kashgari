@@ -1,10 +1,6 @@
 language: python
 dist: xenial
 
-python:
- - "3.6"
- - "3.7"
-
 env:
   global:
     - COVERALLS_PARALLEL=true
@@ -32,6 +28,16 @@ stages:
   - Test
   - Document
 
+install:
+  - pip install jieba
+  - pip install python-coveralls
+  - pip install -e .
+  - pip install tensorflow==1.14.0
+  - pip install coverage
+  - pip install nose
+  - python -c "import kashgari;print(f'kashgari version {kashgari.__version__}')"
+  - git fetch --unshallow --quiet
+
 jobs:
   include:
     - stage: Lint
@@ -41,17 +47,10 @@ jobs:
         - flake8 kashgari
 
     - stage: Test
-      install:
-        - pip install jieba
-        - pip install python-coveralls
-        - pip install -e .
-        - pip install tensorflow==1.14.0
-        - pip install coverage
-        - pip install nose
-        - python -c "import kashgari;print(f'kashgari version {kashgari.__version__}')"
-        - git fetch --unshallow --quiet
-
-      script:
+      python:
+        - "3.6"
+        - "3.7"
+    - script:
         - nosetests --with-coverage --cover-html --cover-html-dir=htmlcov
           --cover-xml --cover-xml-file=coverage.xml --with-xunit
           --cover-package="kashgari"
@@ -65,7 +64,28 @@ jobs:
               tests/classification/test_cnn_gru.py
               tests/classification/test_cnn.py
               tests/classification/test_kmax_cnn.py
+
       name: "Classification Model Tests-1"
+
+    - script: nosetests --with-coverage --cover-html --cover-html-dir=htmlcov
+              --cover-xml --cover-xml-file=coverage.xml --with-xunit
+              --cover-package="kashgari"
+              tests/classification/test_r_cnn.py
+              tests/classification/test_dropout_bigru.py
+              tests/classification/test_avcnn.py
+              tests/classification/test_bi_gru.py
+
+      name: "Classification Model Tests-2"
+
+    - script: nosetests --with-coverage --cover-html --cover-html-dir=htmlcov
+        --cover-xml --cover-xml-file=coverage.xml --with-xunit
+        --cover-package="kashgari"
+        tests/classification/test_dpcnn.py
+        tests/classification/test_bi_lstm.py
+        tests/classification/test_avrnn_model.py
+        tests/classification/test_dropout_avrnn.py
+
+      name: "Classification Model Tests-3"
 
       after_script:
         - coveralls
