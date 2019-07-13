@@ -110,3 +110,4 @@ venv.bak/
 .vscode
 venv-tf/*
 .pytype/
+mkdocs/site
