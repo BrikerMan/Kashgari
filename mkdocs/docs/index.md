@@ -47,9 +47,9 @@ Kashgari is simple and powerful NLP Transfer learning framework, build a state-o
 
 Here is a set of quick tutorials to get you started with the library:
 
-- [Tutorial 1: Language Embedding](https://kashgari.readthedocs.io/md/language_embedding.html)
-- [Tutorial 3: Text Classification Model](https://kashgari.readthedocs.io/md/text_classification_model.html)
-- [Tutorial 3: Text Labeling Model](https://kashgari.readthedocs.io/md/text_labeling_model.html)
+- [Tutorial 1: Language Embedding](tutorial/language_embedding.md)
+- [Tutorial 2: Text Classification Model](tutorial/text_classification_model.md)
+- [Tutorial 3: Text Labeling Model](tutorial/text_labeling_model.md)
 
 There are also articles and posts that illustrate how to use Kashgari:
 
@@ -63,7 +63,8 @@ There are also articles and posts that illustrate how to use Kashgari:
 
 ### Requirements and Installation
 
-🎉🎉🎉 We renamed the tf.keras version as **kashgari-tf** 🎉🎉🎉
+!!!important
+    We renamed the tf.keras version as `kashgari-tf`
 
 The project is based on TenorFlow 1.14.0 and Python 3.6+, because it is 2019 and type hints is cool.
 

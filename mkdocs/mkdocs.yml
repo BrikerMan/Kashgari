@@ -34,11 +34,11 @@ markdown_extensions:
   - pymdownx.superfences
   - pymdownx.highlight:
       # css_class: codehilite # https://github.com/facelessuser/pymdown-extensions/blob/master/mkdocs.yml
-      # extend_pygments_lang:
-      #   - name: python
-      #     lang: python
-      #     options:
-      #       startinline: true
+      extend_pygments_lang:
+        - name: python
+          lang: python
+          options:
+            startinline: true
   - pymdownx.tasklist:
       custom_checkbox: true
   - pymdownx.tilde

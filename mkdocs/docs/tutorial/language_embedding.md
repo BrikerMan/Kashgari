@@ -117,7 +117,8 @@ BERTEmbedding is based on [keras-bert](https://github.com/CyberZHG/keras-bert). 
 
 BERTEmbedding support BERT variants like **ERNIE**, but need to load the **tensorflow checkpoint**. If you intrested to use ERNIE, just download [tensorflow_ernie](https://github.com/ArthurRizar/tensorflow_ernie) and load like BERT Embedding.
 
-**When using pre-trained embedding, remember to use same tokenize tool with the embedding model, this will allow to access the full power of the embedding**
+!!! tip
+    When using pre-trained embedding, remember to use same tokenize tool with the embedding model, this will allow to access the full power of the embedding
 
 ```python
 
@@ -141,7 +142,8 @@ kashgari.embeddings.BERTEmbedding(model_folder: str,
 
 GPT2Embedding is based on [keras-gpt-2](https://github.com/CyberZHG/keras-gpt-2). The embeddings itself are wrapped into our simple embedding interface so that they can be used like any other embedding.
 
-**When using pre-trained embedding, remember to use same tokenize tool with the embedding model, this will allow to access the full power of the embedding**
+!!! tip
+    When using pre-trained embedding, remember to use same tokenize tool with the embedding model, this will allow to access the full power of the embedding
 
 ```python
 
