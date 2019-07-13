@@ -41,6 +41,8 @@ install:
 jobs:
   include:
     - stage: Lint
+      python:
+        - "3.6"
       install:
         - pip install flake8 flake8-builtins
       script:
@@ -114,6 +116,8 @@ jobs:
         webhooks: https://coveralls.io/webhook
 
     - stage: Document
+      python:
+        - "3.6"
       install:
         - echo -e "machine github.com\n  login ${GITHUB_TOKEN}" > ~/.netrc
         - pip install mkdocs mkdocs-material pymdown-extensions
