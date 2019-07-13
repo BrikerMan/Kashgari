@@ -4,19 +4,10 @@ dist: xenial
 env:
   global:
     - COVERALLS_PARALLEL=true
-#  matrix:
-#    # Labeling
-#    - TEST_FILE=tests/labeling/
-#    # classification part 1
-#    - TEST_FILE="tests/classification/test_cnn_lstm.py tests/classification/test_cnn_gru.py tests/classification/test_cnn.py tests/classification/test_kmax_cnn.py"
-#    # classification part 2
-#    - TEST_FILE="tests/classification/test_r_cnn.py tests/classification/test_dropout_bigru.py tests/classification/test_avcnn.py tests/classification/test_bi_gru.py"
-#    # classification part 3
-#    - TEST_FILE="tests/classification/test_dpcnn.py tests/classification/test_bi_lstm.py tests/classification/test_avrnn_model.py tests/classification/test_dropout_avrnn.py"
-#    - TEST_FILE="tests/test_callbacks.py tests/test_corpus.py tests/test_processor.py"
-#    - TEST_FILE=tests/test_custom_multi_output_classification.py
-#    # Embedding
-#    - TEST_FILE=tests/embedding/
+
+python:
+  - "3.6"
+  - "3.7"
 
 cache: pip
 
