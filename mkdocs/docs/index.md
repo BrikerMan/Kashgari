@@ -1,5 +1,5 @@
-<h1 align="center">
-    Kashgari
+<h1 align="center" >
+    <strong style="color: rgba(0,0,0,.87);">Kashgari</strong>
 </h1>
 
 <p align="center">
@@ -20,23 +20,22 @@
     </a>
 </p>
 
-<h4 align="center">
-    <a href="#overview">Overview</a> |
-    <a href="#performance">Performance</a> |
-    <a href="#quick-start">Quick start</a> |
-    <a href="https://kashgari.readthedocs.io/">Documentation</a> |
-    <a href="https://kashgari.readthedocs.io/">Contributing</a>
-</h4>
+🎉🎉🎉 We are proud to announce that we entirely rewrite  Kashgari with tf.keras, now Kashgari comes with cleaner API and faster speed. 🎉🎉🎉
 
-## Overview
+Kashgari is simple and powerful NLP Transfer learning framework, build a state-of-art model in 5 minutes for named entity recognition (NER), part-of-speech tagging (PoS) and text classification tasks.
 
-Kashgare is simple and powerful NLP framework, build your state-of-art model in 5 minutes for named entity recognition (NER), part-of-speech tagging (PoS) and text classification tasks.
+- **Human-friendly**. Kashgari's code is straightforward, well documented and tested, which makes it very easy to understand and modify.
+- **Powerful and simple**. Kashgari allows you to apply state-of-the-art natural language processing (NLP) models to your text, such as named entity recognition (NER), part-of-speech tagging (PoS) and classification.
+- **Buildin transfer learning**. Kashgari build-in pre-trained BERT and Word2vec embedding models, which makes it very simple to transfer learning to train your model.
+- **Fully scalable**. Kashgari provide a simple, fast, and scalable environment for fast experimentation, train your models and experiment with new approaches using different embeddings and model structure. 
+- **Product Ready**. Kashgari could export model with `SavedModel` format for tensorflow serving, you could directly deploy it on cloud. 
 
-- **Human-friendly**. Kashgare's code is straightforward, well documented and tested, which makes it very easy to understand and modify.
-- **Powerful and simple**. Kashgare allows you to apply state-of-the-art natural language processing (NLP) models to your text, such as named entity recognition (NER), part-of-speech tagging (PoS) and classification.
-- **Keras based**. Kashgare builds directly on Keras, making it easy to train your models and experiment with new approaches using different embeddings and model structure.
-- **Buildin transfer learning**. Kashgare build-in pre-trained BERT and Word2vec embedding models, which makes it very simple to transfer learning to train your model.
-- **Fully scalable**. Kashgare provide a simple, fast, and scalable environment for fast experimentation.
+## Our Goal
+
+- **Academic users** Experiments to prove their hypothesis without coding from scratch.
+- **NLP beginners** Learn how to build an NLP project with production level code quality.
+- **NLP developers** Build a production level classification/labeling model within minutes.
+
 
 ## Performance
 
@@ -44,25 +43,41 @@ Kashgare is simple and powerful NLP framework, build your state-of-art model in 
 | ------------------------ | -------- | ------------------------- | -------------- | ------------------------------------------------------------------------------------------------------------------ |
 | Named Entity Recognition | Chinese  | People's Daily Ner Corpus | **94.46** (F1) | [Text Labeling Performance Report](https://kashgari.readthedocs.io/md/text_labeling_model.html#performance-report) |
 
+## Tutorials
+
+Here is a set of quick tutorials to get you started with the library:
+
+- [Tutorial 1: Language Embedding](https://kashgari.readthedocs.io/md/language_embedding.html)
+- [Tutorial 3: Text Classification Model](https://kashgari.readthedocs.io/md/text_classification_model.html)
+- [Tutorial 3: Text Labeling Model](https://kashgari.readthedocs.io/md/text_labeling_model.html)
+
+There are also articles and posts that illustrate how to use Kashgari:
+
+- [15 分钟搭建中文文本分类模型](https://eliyar.biz/nlp_chinese_text_classification_in_15mins/)
+- [基于 BERT 的中文命名实体识别（NER)](https://eliyar.biz/nlp_chinese_bert_ner/)
+- [BERT/ERNIE 文本分类和部署](https://eliyar.biz/nlp_train_and_deploy_bert_text_classification/)
+- [五分钟搭建一个基于BERT的NER模型](https://www.jianshu.com/p/1d6689851622)
+- [Multi-Class Text Classification with Kashgari in 15 minutes](https://medium.com/@BrikerMan/multi-class-text-classification-with-kashgari-in-15mins-c3e744ce971d)
+
 ## Quick start
 
 ### Requirements and Installation
+
+🎉🎉🎉 We renamed the tf.keras version as **kashgari-tf** 🎉🎉🎉
 
 The project is based on TenorFlow 1.14.0 and Python 3.6+, because it is 2019 and type hints is cool.
 
 ```bash
 pip install kashgari-tf
 # CPU
-pip install tensorflow
+pip install tensorflow==1.14.0
 # GPU
-pip install tensorflow-gpu
+pip install tensorflow-gpu==1.14.0
 ```
 
-**You could work with tensorflow==1.13.0 for embedding and labeling tasks, but some customized classification models might crash**
+### Basic Usage
 
-### Example Usage
-
-lets run a NER labeling model with BLSTM Model.
+lets run a NER labeling model with Bi_LSTM Model.
 
 ```python
 from kashgari.corpus import ChineseDailyNerCorpus
@@ -74,6 +89,7 @@ valid_x, valid_y = ChineseDailyNerCorpus.load_data('valid')
 
 model = BiLSTM_Model()
 model.fit(train_x, train_y, valid_x, valid_y, epochs=50)
+
 """
 _________________________________________________________________
 Layer (type)                 Output Shape              Param #
@@ -101,21 +117,34 @@ Epoch 1/50
 """
 ```
 
-## Tutorials
+### Run with GPT-2 Embedding
 
-Here is a set of quick tutorials to get you started with the library:
+```python
+from kashgari.embeddings import GPT2Embedding
+from kashgari.corpus import ChineseDailyNerCorpus
+from kashgari.tasks.labeling import BiGRU_Model
 
-- [Tutorial 1: Language Embedding](./tutorial/language_embedding.md)
-- [Tutorial 3: Text Classification Model](./tutorial/text_classification_model.md)
-- [Tutorial 3: Text Labeling Model](./tutorial/text_labeling_model.md)
+train_x, train_y = ChineseDailyNerCorpus.load_data('train')
+valid_x, valid_y = ChineseDailyNerCorpus.load_data('valid')
 
-There are also articles and posts that illustrate how to use Kashgari:
+gpt2_embedding = GPT2Embedding('<path-to-gpt-model-folder>', sequence_length=30)
+model = BiGRU_Model(gpt2_embedding)
+model.fit(train_x, train_y, valid_x, valid_y, epochs=50)
+```
 
-- [15 分钟搭建中文文本分类模型](https://eliyar.biz/nlp_chinese_text_classification_in_15mins/)
-- [基于 BERT 的中文命名实体识别（NER)](https://eliyar.biz/nlp_chinese_bert_ner/)
-- [BERT/ERNIE 文本分类和部署](https://eliyar.biz/nlp_train_and_deploy_bert_text_classification/)
-- [五分钟搭建一个基于BERT的NER模型](https://www.jianshu.com/p/1d6689851622)
-- [Multi-Class Text Classification with Kashgari in 15 minutes](https://medium.com/@BrikerMan/multi-class-text-classification-with-kashgari-in-15mins-c3e744ce971d)
+### Run with Bert Embedding
+
+```python
+from kashgari.embeddings import BERTEmbedding
+from kashgari.tasks.labeling import BiGRU_Model
+from kashgari.corpus import ChineseDailyNerCorpus
+
+bert_embedding = BERTEmbedding('<bert-model-folder>', sequence_length=30)
+model = BiGRU_Model(bert_embedding)
+
+train_x, train_y = ChineseDailyNerCorpus.load_data()
+model.fit(train_x, train_y)
+```
 
 ## Contributing
 
