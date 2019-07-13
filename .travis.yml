@@ -24,12 +24,6 @@ env:
 
 cache: pip
 
-addons:
-  sonarcloud:
-    organization: "brikerman-github"
-    token:
-      secure: $SONAR_TOKEN
-
 before_install:
   - export BOTO_CONFIG=/dev/null
 
@@ -52,7 +46,6 @@ jobs:
         - nosetests --with-coverage --cover-html --cover-html-dir=htmlcov --cover-xml --cover-xml-file=coverage.xml --with-xunit --cover-package="kashgari" $TEST_FILE
 
       after_script:
-        - sonar-scanner
         - coveralls
 
       notifications:
