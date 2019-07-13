@@ -49,14 +49,17 @@ addons:
     token:
       secure: $SONAR_TOKEN
 
-script:
-  - git fetch --unshallow --quiet
-  - flake8 kashgari
-  - nosetests --with-coverage --cover-html --cover-html-dir=htmlcov --cover-xml --cover-xml-file=coverage.xml --with-xunit --cover-package="kashgari" $TEST_FILE
-
-after_script:
-  - sonar-scanner
-  - coveralls
-
-notifications:
-  webhooks: https://coveralls.io/webhook
+jobs:
+  include:
+    - stage: test
+      script:
+        - git fetch --unshallow --quiet
+        - flake8 kashgari
+#        - nosetests --with-coverage --cover-html --cover-html-dir=htmlcov --cover-xml --cover-xml-file=coverage.xml --with-xunit --cover-package="kashgari" $TEST_FILE
+      after_script:
+        - sonar-scanner
+#        - coveralls
+#      notifications:
+#        webhooks: https://coveralls.io/webhook
+    - stage: update-doc
+      script: mkdocs gh-deploy
