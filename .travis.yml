@@ -27,6 +27,11 @@ cache: pip
 before_install:
   - export BOTO_CONFIG=/dev/null
 
+stages:
+  - Lint
+  - Test
+  - Document
+
 jobs:
   include:
     - stage: Lint
@@ -65,7 +70,7 @@ jobs:
       notifications:
         webhooks: https://coveralls.io/webhook
 
-    - stage: Update Document
+    - stage: Document
       install:
         - echo -e "machine github.com\n  login ${GITHUB_TOKEN}" > ~/.netrc
         - pip install mkdocs mkdocs-material pymdown-extensions
