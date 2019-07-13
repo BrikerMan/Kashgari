@@ -35,7 +35,7 @@ Kashgare is simple and powerful NLP framework, build your state-of-art model in 
 - **Human-friendly**. Kashgare's code is straightforward, well documented and tested, which makes it very easy to understand and modify.
 - **Powerful and simple**. Kashgare allows you to apply state-of-the-art natural language processing (NLP) models to your text, such as named entity recognition (NER), part-of-speech tagging (PoS) and classification.
 - **Keras based**. Kashgare builds directly on Keras, making it easy to train your models and experiment with new approaches using different embeddings and model structure.
-- **Buildin transfer learning**. Kashgare build-in pre-trained BERT and Word2vec embedding models, which makes it very simple to transfer learning to train your model.
+- **Built-in transfer learning**. Kashgare build-in pre-trained BERT and Word2vec embedding models, which makes it very simple to transfer learning to train your model.
 - **Fully scalable**. Kashgare provide a simple, fast, and scalable environment for fast experimentation.
 
 ## Performance
@@ -58,9 +58,9 @@ pip install tensorflow
 pip install tensorflow-gpu
 ```
 
-### Example Usage
+### Example Usage - Named Entity Recognition (NER)
 
-lets run a NER labeling model with BLSTM Model.
+Let's run a NER labeling model with BLSTM Model:
 
 ```python
 from kashgari.corpus import ChineseDailyNerCorpus
@@ -97,6 +97,81 @@ Epoch 1/50
 20864/20864 [==============================] - 9s 417us/sample - loss: 0.2508 - acc: 0.9333 - val_loss: 0.1240 - val_acc: 0.9607
 
 """
+```
+
+### Example Usage - Text Classification
+
+Let's run a text classification model with BERT.
+
+```python
+sentences = [
+    "Jim Henson was a puppeteer.",
+    "This here's an example of using the BERT tokenizer.",
+    "Why did the chicken cross the road?"
+            ]
+
+labels = [
+    "class1",
+    "class2",
+    "class1"
+]
+########## pre-process input sentences first ##########
+import os
+import codecs
+from keras_bert import Tokenizer
+
+bert_model_path = "wwm_uncased_L-24_H-1024_A-16/"
+vocab_path = os.path.join(bert_model_path, 'vocab.txt')
+
+token_dict = {}
+with codecs.open(vocab_path, 'r', 'utf8') as reader:
+    for line in reader:
+        token = line.strip()
+        token_dict[token] = len(token_dict)
+
+"""
+token_dict should contain something like the following:
+{{'[PAD]': 0, ..., 'stratford': 17723, '##rted': 17724, 'noticeable': 17725, '##evic': 17726, 'imp': 17727, '##rita': 17728, ...}
+"""
+
+tokenizer = Tokenizer(token_dict)
+
+sentences_tokenized = []
+for sentence in sentences:
+  sentence_tokenized = tokenizer.tokenize(sentence)
+  sentences_tokenized.append(sentence_tokenized)
+
+"""
+The sentences will become tokenized into:
+[
+    ['[CLS]', 'jim', 'henson', 'was', 'a', 'puppet', '##eer', '.', '[SEP]'], 
+    ['[CLS]', 'this', 'here', "'", 's', 'an', 'example', 'of', 'using', 'the', 'bert', 'token', '##izer', '.', '[SEP]'], 
+    ['[CLS]', 'why', 'did', 'the', 'chicken', 'cross', 'the', 'road', '?', '[SEP]']
+]
+"""
+
+train_x, train_y = sentences[:2], labels[:2]
+validate_x, validate_y = sentences[2:], labels[2:]
+########## /pre-process input sentences first ##########
+
+########## build model ##########
+from kashgari.embeddings import BERTEmbedding
+from kashgari.tasks.classification import CNNLSTMModel
+import kashgari
+
+bert_embedding = BERTEmbedding(bert_model_path, task=kashgari.CLASSIFICATION, sequence_length=128)                                   
+model = CNNLSTMModel(bert_embedding)
+########## /build model ##########
+
+model.fit(
+    train_x, train_y,
+    validate_x, validate_y,
+    epochs=3,
+    batch_size=32
+)
+
+# save model
+model.save('path/to/save/model/to')
 ```
 
 ## Tutorials
