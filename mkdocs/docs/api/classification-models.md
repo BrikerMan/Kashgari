@@ -27,7 +27,32 @@ labeling_model = BiLSTM_Model(hyper_parameters=hyper_parameters)
 labeling_model.fit(x, y)
 ```
 
+## get\_default\_hyper_parameters
+
+Return the defualt hyper parameters
+
+!!! attention "You must implement this function when customizing a model"
+    When you are customizing your own model, you must implement this function.
+    
+    Customization example: [customize-your-own-mode](../tutorial/text-classification.md#customize-your-own-model)
+
+```python
+@classmethod
+def get_default_hyper_parameters(cls) -> Dict[str, Dict[str, Any]]:
+```
+
+__Returns__:
+
+- dict of the defualt hyper parameters
+
 ## build\_model\_arc
+
+build model architectural, define models structure in this function.
+
+!!! attention "You must implement this function when customizing a model"
+    When you are customizing your own model, you must implement this function.
+    
+    Customization example: [customize-your-own-mode](../tutorial/text-classification.md#customize-your-own-model)
 
 ```python
 def build_model_arc(self):

@@ -81,6 +81,7 @@ nav:
       - api/corpus.md
       - api/classification-models.md
       - api/lableing-models.md
+      - api/utils.md
   - About:
       - about/contributing.md
       - about/release-notes.md
