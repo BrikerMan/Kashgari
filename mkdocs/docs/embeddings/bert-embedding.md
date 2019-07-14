@@ -8,7 +8,6 @@ BERTEmbedding support BERT variants like **ERNIE**, but need to load the **tenso
     When using pre-trained embedding, remember to use same tokenize tool with the embedding model, this will allow to access the full power of the embedding
 
 ```python
-
 kashgari.embeddings.BERTEmbedding(model_folder: str,
                                   layer_nums: int = 4,
                                   trainable: bool = False,
@@ -76,7 +75,13 @@ validate_x, validate_y = sentences[2:], labels[2:]
 from kashgari.embeddings import BERTEmbedding
 from kashgari.tasks.classification import CNNLSTMModel
 import kashgari
-bert_embedding = BERTEmbedding(bert_model_path, task=kashgari.CLASSIFICATION, sequence_length=128)
+
+bert_embedding = BERTEmbedding(bert_model_path, 
+                               task=kashgari.CLASSIFICATION,
+                               sequence_length=128)
+# Our tokenizer already added the BOS([CLS]) and EOS([SEP]) token
+# so we need to disable the default add_bos_eos setting. 
+bert_embedding.processor.add_bos_eos = True                         
 model = CNNLSTMModel(bert_embedding)
 
 ########## /build model ##########
