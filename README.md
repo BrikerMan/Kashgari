@@ -24,8 +24,9 @@
     <a href="#overview">Overview</a> |
     <a href="#performance">Performance</a> |
     <a href="#quick-start">Quick start</a> |
-    <a href="https://kashgari.readthedocs.io/">Documentation</a> |
-    <a href="https://kashgari.readthedocs.io/">Contributing</a>
+    <a href="https://kashgari.bmio.net/">Documentation</a> |
+    <a href="https://kashgari-zh.bmio.net/">中文文档</a> |
+    <a href="https://kashgari.bmio.net/about/contributing/">Contributing</a>
 </h4>
 
 🎉🎉🎉 We are proud to announce that we entirely rewrite  Kashgari with tf.keras, now Kashgari comes with cleaner API and faster speed. 🎉🎉🎉
@@ -46,20 +47,19 @@ Kashgari is simple and powerful NLP Transfer learning framework, build a state-o
 - **NLP beginners** Learn how to build an NLP project with production level code quality.
 - **NLP developers** Build a production level classification/labeling model within minutes.
 
-
 ## Performance
 
-| Task                     | Language | Dataset                   | Score          | Detail                                                                   |
-| ------------------------ | -------- | ------------------------- | -------------- | ------------------------------------------------------------------------ |
-| Named Entity Recognition | Chinese  | People's Daily Ner Corpus | **94.46** (F1) | [Text Labeling Performance Report](https://kashgari.readthedocs.io/md/text_labeling_model.html#performance-report) |
+| Task                     | Language | Dataset                   | Score          | Detail                                                                                                             |
+| ------------------------ | -------- | ------------------------- | -------------- | ------------------------------------------------------------------------------------------------------------------ |
+| Named Entity Recognition | Chinese  | People's Daily Ner Corpus | **94.46** (F1) | [Text Labeling Performance Report](https://kashgari.bmio.net/tutorial/text-labeling/#performance-report) |
 
 ## Tutorials
 
 Here is a set of quick tutorials to get you started with the library:
 
-- [Tutorial 1: Language Embedding](https://kashgari.readthedocs.io/md/language_embedding.html)
-- [Tutorial 3: Text Classification Model](https://kashgari.readthedocs.io/md/text_classification_model.html)
-- [Tutorial 3: Text Labeling Model](https://kashgari.readthedocs.io/md/text_labeling_model.html)
+- [Tutorial 1: Text Classification](https://kashgari.bmio.net/tutorial/text-classification/)
+- [Tutorial 2: Text Labeling](https://kashgari.bmio.net/tutorial/text-labeling/)
+- [Tutorial 3: Language Embedding](https://kashgari.bmio.net/embeddings/)
 
 There are also articles and posts that illustrate how to use Kashgari:
 
@@ -158,7 +158,7 @@ model.fit(train_x, train_y)
 
 ## Contributing
 
-Thanks for your interest in contributing! There are many ways to get involved; start with the [contributor guidelines](CONTRIBUTING.md) and then check these open issues for specific tasks.
+Thanks for your interest in contributing! There are many ways to get involved; start with the [contributor guidelines](https://kashgari.bmio.net/about/contributing/) and then check these open issues for specific tasks.
 
 ## Reference
 

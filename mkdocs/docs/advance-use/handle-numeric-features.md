@@ -96,4 +96,4 @@ print(model.predict_entities(x))
 
 This is the struct of this model.
 
-![](./assets/multi_feature_model.png)
+![](../static/images/multi_feature_model.png)

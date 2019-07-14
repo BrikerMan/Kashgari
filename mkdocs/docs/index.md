@@ -26,9 +26,9 @@ Kashgari is simple and powerful NLP Transfer learning framework, build a state-o
 
 - **Human-friendly**. Kashgari's code is straightforward, well documented and tested, which makes it very easy to understand and modify.
 - **Powerful and simple**. Kashgari allows you to apply state-of-the-art natural language processing (NLP) models to your text, such as named entity recognition (NER), part-of-speech tagging (PoS) and classification.
-- **Buildin transfer learning**. Kashgari build-in pre-trained BERT and Word2vec embedding models, which makes it very simple to transfer learning to train your model.
+- **Built-in transfer learning**. Kashgari built-in pre-trained BERT and Word2vec embedding models, which makes it very simple to transfer learning to train your model.
 - **Fully scalable**. Kashgari provide a simple, fast, and scalable environment for fast experimentation, train your models and experiment with new approaches using different embeddings and model structure. 
-- **Product Ready**. Kashgari could export model with `SavedModel` format for tensorflow serving, you could directly deploy it on cloud. 
+- **Product Ready**. Kashgari could export model with `SavedModel` format for tensorflow serving, you could directly deploy it on cloud.
 
 ## Our Goal
 
@@ -36,20 +36,18 @@ Kashgari is simple and powerful NLP Transfer learning framework, build a state-o
 - **NLP beginners** Learn how to build an NLP project with production level code quality.
 - **NLP developers** Build a production level classification/labeling model within minutes.
 
-
 ## Performance
 
-| Task                     | Language | Dataset                   | Score          | Detail                                                                                                             |
-| ------------------------ | -------- | ------------------------- | -------------- | ------------------------------------------------------------------------------------------------------------------ |
-| Named Entity Recognition | Chinese  | People's Daily Ner Corpus | **94.46** (F1) | [Text Labeling Performance Report](https://kashgari.readthedocs.io/md/text_labeling_model.html#performance-report) |
+| Task                     | Language | Dataset                   | Score          | Detail                                                                             |
+| ------------------------ | -------- | ------------------------- | -------------- | ---------------------------------------------------------------------------------- |
+| Named Entity Recognition | Chinese  | People's Daily Ner Corpus | **94.46** (F1) | [Text Labeling Performance Report](./tutorial/text-labeling.md#performance-report) |
 
 ## Tutorials
 
 Here is a set of quick tutorials to get you started with the library:
 
-- [Tutorial 1: Language Embedding](tutorial/language_embedding.md)
-- [Tutorial 2: Text Classification Model](tutorial/text_classification_model.md)
-- [Tutorial 3: Text Labeling Model](tutorial/text_labeling_model.md)
+- [Tutorial 1: Text Classification Model](tutorial/text-classification.md)
+- [Tutorial 2: Text Labeling Model](tutorial/text-labeling.md)
 
 There are also articles and posts that illustrate how to use Kashgari:
 
@@ -149,7 +147,7 @@ model.fit(train_x, train_y)
 
 ## Contributing
 
-Thanks for your interest in contributing! There are many ways to get involved; start with the [contributor guidelines](CONTRIBUTING.md) and then check these open issues for specific tasks.
+Thanks for your interest in contributing! There are many ways to get involved; start with the [contributor guidelines](about/contributing.md) and then check these open issues for specific tasks.
 
 ## Reference
 
