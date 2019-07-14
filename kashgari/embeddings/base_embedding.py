@@ -95,6 +95,20 @@ class Embedding(object):
         """
         return self.processor.sequence_length
 
+    @property
+    def label2idx(self) -> Dict[str, int]:
+        """
+        label to index dict
+        """
+        return self.processor.label2idx
+
+    @property
+    def token2idx(self) -> Dict[str, int]:
+        """
+        token to index dict
+        """
+        return self.processor.token2idx
+
     @sequence_length.setter
     def sequence_length(self, val: Union[int, str]):
         if isinstance(val, str):
