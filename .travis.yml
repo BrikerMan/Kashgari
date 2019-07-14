@@ -27,10 +27,13 @@ cache: pip
 before_install:
   - export BOTO_CONFIG=/dev/null
 
+
 stages:
   - Lint
-  - Test
-  - Document
+  - name: Test
+    if: (branch = master) AND (type IN (pull_request))
+  - name: Document
+    if: branch = master
 
 jobs:
   include:
@@ -40,12 +43,8 @@ jobs:
         - pip install flake8 flake8-builtins
       script:
         - flake8 kashgari
-      branches:
-        only:
-          - master
 
     - stage: Test
-      if: (branch = master) AND (type IN (pull_request))
       python:
         - "3.6"
         - "3.7"
@@ -79,6 +78,3 @@ jobs:
       script:
         - cd mkdocs
         - mkdocs gh-deploy --force --clean
-      branches:
-        only:
-          - master
