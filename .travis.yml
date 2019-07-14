@@ -27,7 +27,6 @@ cache: pip
 before_install:
   - export BOTO_CONFIG=/dev/null
 
-
 stages:
   - Lint
   - name: Test
