@@ -47,9 +47,8 @@ Kashgari is simple and powerful NLP Transfer learning framework, build a state-o
 
 Here is a set of quick tutorials to get you started with the library:
 
-- [Tutorial 1: Language Embedding](tutorial/language_embedding.md)
-- [Tutorial 2: Text Classification Model](tutorial/text_classification_model.md)
-- [Tutorial 3: Text Labeling Model](tutorial/text_labeling_model.md)
+- [Tutorial 1: Text Classification Model](tutorial/text-classification.md)
+- [Tutorial 2: Text Labeling Model](tutorial/text-labeling.md)
 
 There are also articles and posts that illustrate how to use Kashgari:
 
@@ -149,7 +148,7 @@ model.fit(train_x, train_y)
 
 ## Contributing
 
-Thanks for your interest in contributing! There are many ways to get involved; start with the [contributor guidelines](CONTRIBUTING.md) and then check these open issues for specific tasks.
+Thanks for your interest in contributing! There are many ways to get involved; start with the [contributor guidelines](about/contributing.md) and then check these open issues for specific tasks.
 
 ## Reference
 

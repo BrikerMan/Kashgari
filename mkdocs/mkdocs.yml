@@ -46,6 +46,9 @@ markdown_extensions:
 extra_css:
   - static/css/extra.css
 
+extra_javascript:
+  - static/js/baidu-static.js
+
 plugins:
   - search
 
@@ -55,18 +58,26 @@ extra:
       link: https://github.com/BrikerMan
 
 nav:
-  - Home:
-      - "index.md"
+  - Introduction: index.md
   - Tutorials:
-      - tutorial/language_embedding.md
-      - tutorial/text_classification_model.md
-      - tutorial/text_labeling_model.md
+      - tutorial/text-classification.md
+      - tutorial/text-labeling.md
+
+  - Embeddings:
+      - embeddings/index.md
+      - embeddings/bare-embedding.md
+      - embeddings/word-embedding.md
+      - embeddings/bert-embedding.md
+      - embeddings/gpt2-embedding.md
+      - embeddings/numeric-features-embedding.md
+      - embeddings/stacked-embedding.md
+
   - Advanced:
-      - customize_multi_output_model.md
-      - deal_with_numeric_features.md
-      - tensorflow_serving.md
+      - advance-use/multi-output-model.md
+      - advance-use/handle-numeric-features.md
+      - advance-use/tensorflow-serving.md
   - API:
-      - "corpus.md"
+      - api/corpus.md
   - About:
-      - "CONTRIBUTING.md"
-      - "Release Notes": "CHANGELOG.md"
+      - about/contributing.md
+      - about/release-notes.md

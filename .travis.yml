@@ -43,12 +43,16 @@ install:
   - git fetch --unshallow --quiet
 
 script: nosetests --with-coverage --cover-html --cover-html-dir=htmlcov
-        --cover-xml --cover-xml-file=coverage.xml --with-xunit
-        --cover-package="kashgari"
-        $TEST_FILE
+  --cover-xml --cover-xml-file=coverage.xml --with-xunit
+  --cover-package="kashgari"
+  $TEST_FILE
 
 after_script:
   - coveralls
+
+branches:
+  only:
+    - master
 
 notifications:
   webhooks: https://coveralls.io/webhook
