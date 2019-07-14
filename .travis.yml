@@ -40,6 +40,9 @@ jobs:
         - pip install flake8 flake8-builtins
       script:
         - flake8 kashgari
+      branches:
+        only:
+          - master
 
     - stage: Test
       if: (branch = master) AND (type IN (pull_request))
