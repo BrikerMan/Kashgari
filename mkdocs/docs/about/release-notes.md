@@ -16,6 +16,12 @@ pip show kashgari-tf
 
 ## Current Release
 
+### [0.5.1] - Developing
+
+- 📝 Rewrite documents with mkdocs
+- 📝 Add Chinese documents
+- 🚸 Add `label2idx`, `token2idx` properties to Embeddings
+
 ### [0.5.0] - 2019.07.11
 
 🎉🎉 tf.keras version 🎉🎉

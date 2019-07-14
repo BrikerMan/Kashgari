@@ -1,8 +1,9 @@
-# Corpus
+# corpus
 
 Kashgari provides several build-in corpus for testing.
 
 ## Chinese Daily Ner Corpus
+
 Chinese Ner corpus cotains 20864 train samples, 4636 test samples and 2318 valid samples.
 
 Usage:

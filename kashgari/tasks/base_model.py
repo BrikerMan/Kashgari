@@ -364,7 +364,7 @@ class BaseModel(object):
 
     def predict(self,
                 x_data,
-                batch_size=None,
+                batch_size=32,
                 debug_info=False):
         """
         Generates output predictions for the input samples.

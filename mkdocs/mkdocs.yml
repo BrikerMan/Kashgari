@@ -79,6 +79,10 @@ nav:
       - advance-use/tensorflow-serving.md
   - API:
       - api/corpus.md
+      - api/tasks.classification.md
+      - api/tasks.labeling.md
+      - api/utils.md
+      - api/callbacks.md
   - About:
       - about/contributing.md
       - about/release-notes.md

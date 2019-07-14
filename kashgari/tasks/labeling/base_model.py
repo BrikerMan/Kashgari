@@ -42,15 +42,6 @@ class BaseLabelingModel(BaseModel):
 
         Returns:
             list: list of entity.
-
-        Example:
-            >>> from seqeval.metrics.sequence_labeling import get_entities
-            >>> seq = 'President Obama is speaking at the White House.'
-            >>> model.predict_entities([seq])
-            [[
-            {'entity': 'PER', 'start': 0, 'end': 1, 'value': ['President', 'Obama']},
-            {'entity': 'LOC', 'start': 6, 'end': 7, 'value': ['White', 'House']}
-            ]]
         """
         if isinstance(x_data, tuple):
             text_seq = x_data[0]
