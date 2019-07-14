@@ -32,31 +32,6 @@ stages:
   - Test
   - Document
 
-install:
-  - pip install jieba
-  - pip install python-coveralls
-  - pip install -e .
-  - pip install tensorflow==1.14.0
-  - pip install coverage
-  - pip install nose
-  - python -c "import kashgari;print(f'kashgari version {kashgari.__version__}')"
-  - git fetch --unshallow --quiet
-
-script: nosetests --with-coverage --cover-html --cover-html-dir=htmlcov
-  --cover-xml --cover-xml-file=coverage.xml --with-xunit
-  --cover-package="kashgari"
-  $TEST_FILE
-
-after_script:
-  - coveralls
-
-branches:
-  only:
-    - master
-
-notifications:
-  webhooks: https://coveralls.io/webhook
-
 jobs:
   include:
     - stage: Lint
@@ -65,6 +40,36 @@ jobs:
         - pip install flake8 flake8-builtins
       script:
         - flake8 kashgari
+
+    - stage: Test
+      python:
+        - "3.6"
+        - "3.7"
+
+      install:
+        - pip install jieba
+        - pip install python-coveralls
+        - pip install -e .
+        - pip install tensorflow==1.14.0
+        - pip install coverage
+        - pip install nose
+        - python -c "import kashgari;print(f'kashgari version {kashgari.__version__}')"
+        - git fetch --unshallow --quiet
+
+      script: nosetests --with-coverage --cover-html --cover-html-dir=htmlcov
+        --cover-xml --cover-xml-file=coverage.xml --with-xunit
+        --cover-package="kashgari"
+        $TEST_FILE
+
+      after_script:
+        - coveralls
+
+      branches:
+        only:
+          - master
+
+      notifications:
+        webhooks: https://coveralls.io/webhook
 
     - stage: Document
       python: "3.6"
