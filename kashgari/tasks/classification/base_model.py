@@ -41,7 +41,7 @@ class BaseClassificationModel(BaseModel):
 
     def predict(self,
                 x_data,
-                batch_size=None,
+                batch_size=32,
                 multi_label_threshold: float = 0.5,
                 debug_info=False):
         """

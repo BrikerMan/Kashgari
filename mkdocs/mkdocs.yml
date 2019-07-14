@@ -79,6 +79,8 @@ nav:
       - advance-use/tensorflow-serving.md
   - API:
       - api/corpus.md
+      - api/classification-models.md
+      - api/lableing-models.md
   - About:
       - about/contributing.md
       - about/release-notes.md
