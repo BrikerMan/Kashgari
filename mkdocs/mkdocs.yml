@@ -59,6 +59,7 @@ extra:
 
 nav:
   - Introduction: index.md
+  - 中文文档: https://kashgari-zh.bmio.net
   - Tutorials:
       - tutorial/text-classification.md
       - tutorial/text-labeling.md

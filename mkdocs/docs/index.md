@@ -38,9 +38,9 @@ Kashgari is simple and powerful NLP Transfer learning framework, build a state-o
 
 ## Performance
 
-| Task                     | Language | Dataset                   | Score          | Detail                                                                                                             |
-| ------------------------ | -------- | ------------------------- | -------------- | ------------------------------------------------------------------------------------------------------------------ |
-| Named Entity Recognition | Chinese  | People's Daily Ner Corpus | **94.46** (F1) | [Text Labeling Performance Report](https://kashgari.readthedocs.io/md/text_labeling_model.html#performance-report) |
+| Task                     | Language | Dataset                   | Score          | Detail                                                                             |
+| ------------------------ | -------- | ------------------------- | -------------- | ---------------------------------------------------------------------------------- |
+| Named Entity Recognition | Chinese  | People's Daily Ner Corpus | **94.46** (F1) | [Text Labeling Performance Report](./tutorial/text-labeling.md#performance-report) |
 
 ## Tutorials
 

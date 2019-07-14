@@ -25,6 +25,7 @@
     <a href="#performance">Performance</a> |
     <a href="#quick-start">Quick start</a> |
     <a href="https://kashgari.bmio.net/">Documentation</a> |
+    <a href="https://kashgari-zh.bmio.net/">中文文档</a> |
     <a href="https://kashgari.bmio.net/about/contributing/">Contributing</a>
 </h4>
 
@@ -50,7 +51,7 @@ Kashgari is simple and powerful NLP Transfer learning framework, build a state-o
 
 | Task                     | Language | Dataset                   | Score          | Detail                                                                                                             |
 | ------------------------ | -------- | ------------------------- | -------------- | ------------------------------------------------------------------------------------------------------------------ |
-| Named Entity Recognition | Chinese  | People's Daily Ner Corpus | **94.46** (F1) | [Text Labeling Performance Report](https://kashgari.readthedocs.io/md/text_labeling_model.html#performance-report) |
+| Named Entity Recognition | Chinese  | People's Daily Ner Corpus | **94.46** (F1) | [Text Labeling Performance Report](https://kashgari.bmio.net/tutorial/text-labeling/#performance-report) |
 
 ## Tutorials
 
