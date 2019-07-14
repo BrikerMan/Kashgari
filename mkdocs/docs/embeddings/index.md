@@ -15,7 +15,7 @@ All embedding classes inherit from the `Embedding` class and implement the `embe
 
 ## Quick start
 
-### Feature Extract From Pre-trained Embedding
+## Feature Extract From Pre-trained Embedding
 
 Feature Extraction is one of the major way to use pre-trained language embedding. Kashgari provides simple API for this task. All you need to is init a embedding object then call `embed` function. Here is the example. All embedding shares same embed API.
 
@@ -50,10 +50,10 @@ print(embed_tensor)
 #         -0.36805922, -0.0052386 ]], dtype=float32)
 ```
 
-### Classification and Labeling
+## Classification and Labeling
 
 See details at classification and labeling tutorial.
 
-### Customized model
+## Customized model
 
 You can access the tf.keras model of embedding and add your own layers or any kind customizion. Just need to access the `embed_model` property of the embedding object.

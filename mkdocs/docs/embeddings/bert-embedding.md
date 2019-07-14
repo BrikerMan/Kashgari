@@ -63,8 +63,8 @@ for sentence in sentences:
 """
 The sentences will become tokenized into:
 [
-    ['[CLS]', 'jim', 'henson', 'was', 'a', 'puppet', '##eer', '.', '[SEP]'], 
-    ['[CLS]', 'this', 'here', "'", 's', 'an', 'example', 'of', 'using', 'the', 'bert', 'token', '##izer', '.', '[SEP]'], 
+    ['[CLS]', 'jim', 'henson', 'was', 'a', 'puppet', '##eer', '.', '[SEP]'],
+    ['[CLS]', 'this', 'here', "'", 's', 'an', 'example', 'of', 'using', 'the', 'bert', 'token', '##izer', '.', '[SEP]'],
     ['[CLS]', 'why', 'did', 'the', 'chicken', 'cross', 'the', 'road', '?', '[SEP]']
 ]
 """
@@ -89,3 +89,15 @@ model.fit(
 # save model
 model.save('path/to/save/model/to')
 ```
+
+## Pre-trained models
+
+| model            | provider             | Language       | Link             | info                          |
+| ---------------- | -------------------- | -------------- | ---------------- | ----------------------------- |
+| BERT official    | Google               | Multi Language | [link][bert]     |                               |
+| ERNIE            | Baidu                | Chinese        | [link][ernie]    | Unofficial Tensorflow Version |
+| Chinese BERT WWM | 哈工大讯飞联合实验室 | Chinese        | [link][bert-wwm] | Use Tensorflow Version        |
+
+[bert]: https://github.com/google-research/bert
+[ernie]: https://github.com/ArthurRizar/tensorflow_ernie
+[bert-wwm]: https://github.com/ymcui/Chinese-BERT-wwm#%E4%B8%AD%E6%96%87%E6%A8%A1%E5%9E%8B%E4%B8%8B%E8%BD%BD
