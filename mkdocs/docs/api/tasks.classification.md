@@ -1,4 +1,4 @@
-# Classification Models
+# tasks.classification
 
 All Text classification models share the same API.
 

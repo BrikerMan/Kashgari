@@ -1,4 +1,4 @@
-# Labeling Models
+# tasks.labeling
 
 All Text labeling models share the same API.
 
