@@ -36,7 +36,6 @@ Kashgari is simple and powerful NLP Transfer learning framework, build a state-o
 - **NLP beginners** Learn how to build an NLP project with production level code quality.
 - **NLP developers** Build a production level classification/labeling model within minutes.
 
-
 ## Performance
 
 | Task                     | Language | Dataset                   | Score          | Detail                                                                                                             |
