@@ -42,7 +42,7 @@ jobs:
         - flake8 kashgari
 
     - stage: Test
-      if: branch = master
+      if: (branch = master) AND (type IN (pull_request))
       python:
         - "3.6"
         - "3.7"
