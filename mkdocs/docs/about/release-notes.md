@@ -24,6 +24,7 @@ pip show kashgari-tf
 - ✨ Add `predict_top_k_class` for classification model to get predict probabilities ([#146](https://github.com/BrikerMan/Kashgari/issues/146))
 - 🚸 Add `tokenizer` property for BERT Embedding. ([#136](https://github.com/BrikerMan/Kashgari/issues/136))
 - 🚸 Add `predict_kwargs` for models `predict()` function
+- ⚡️ Change multi-label classification's default loss function to binary_crossentropy ([#151](https://github.com/BrikerMan/Kashgari/issues/151))
 
 ### [0.5.0] - 2019.07.11
 
