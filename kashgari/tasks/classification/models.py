@@ -688,8 +688,15 @@ if __name__ == "__main__":
 
     x, y = SMP2018ECDTCorpus.load_data()
 
-    m = BiLSTM_Model()
-    m.build_model(x, y)
-    m.fit(x, y, epochs=5)
-    m.evaluate(x, y)
+    import kashgari
+    from kashgari.processors.classification_processor import ClassificationProcessor
+    from kashgari.embeddings import BareEmbedding
+
+    processor = ClassificationProcessor(multi_label=False)
+    embed = BareEmbedding(task=kashgari.CLASSIFICATION, sequence_length=30, processor=processor)
+    m = BiLSTM_Model(embed)
+    # m.build_model(x, y)
+    m.fit(x, y, epochs=2)
     print(m.predict(x[:10]))
+    # m.evaluate(x, y)
+    print(m.predict_top_k_class(x[:10]))
