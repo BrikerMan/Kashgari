@@ -96,27 +96,30 @@ class BaseClassificationModel(BaseModel):
         Returns:
             array(s) of predictions.
             single-label classification:
+              [
                 {
-                "label": "chat",
-                "confidence": 0.5801531,
-                "candidates": [
+                  "label": "chat",
+                  "confidence": 0.5801531,
+                  "candidates": [
                     { "label": "cookbook", "confidence": 0.1886314 },
                     { "label": "video", "confidence": 0.13805099 },
                     { "label": "health", "confidence": 0.013852648 },
                     { "label": "translation", "confidence": 0.012913573 }
                   ]
                 }
+              ]
             multi-label classification:
-                [
-                  {'candidates': [
-                    {'confidence': 0.9959336, 'label': 'toxic'},
-                    {'confidence': 0.9358089, 'label': 'obscene'},
-                    {'confidence': 0.6882098, 'label': 'insult'},
-                    {'confidence': 0.13540423, 'label': 'severe_toxic'},
-                    {'confidence': 0.017219543, 'label': 'identity_hate'}
-                    ]
-                  }
-                ]
+              [
+                {
+                  "candidates": [
+                    { "confidence": 0.9959336, "label": "toxic" },
+                    { "confidence": 0.9358089, "label": "obscene" },
+                    { "confidence": 0.6882098, "label": "insult" },
+                    { "confidence": 0.13540423, "label": "severe_toxic" },
+                    { "confidence": 0.017219543, "label": "identity_hate" }
+                  ]
+                }
+              ]
         """
         with kashgari.utils.custom_object_scope():
             tensor = self.embedding.process_x_dataset(x_data)

@@ -268,6 +268,64 @@ __Returns__:
 
 - array of predictions.
 
+## predict\_top\_k\_class
+
+Generates output predictions with confidence for the input samples.
+
+Computation is done in batches.
+
+```python
+def predict_top_k_class(self,
+                        x_data,
+                        top_k=5,
+                        batch_size=32,
+                        debug_info=False) -> List[Dict]:
+```
+
+__Args__:
+
+- **x_data**: The input data, as a Numpy array (or list of Numpy arrays if the model has multiple inputs).
+- **top_k**: int
+- **batch_size**: Integer. If unspecified, it will default to 32.
+- **debug_info**: Bool, Should print out the logging info.
+
+__Returns__:
+
+array(s) of prediction result dict.
+
+- sample result of single-label classification:
+
+```json
+[
+  {
+    "label": "chat",
+    "confidence": 0.5801531,
+    "candidates": [
+      { "label": "cookbook", "confidence": 0.1886314 },
+      { "label": "video", "confidence": 0.13805099 },
+      { "label": "health", "confidence": 0.013852648 },
+      { "label": "translation", "confidence": 0.012913573 }
+    ]
+  }
+]
+```
+
+- sample result of multi-label classification:
+
+```json
+[
+  {
+    "candidates": [
+      { "confidence": 0.9959336, "label": "toxic" },
+      { "confidence": 0.9358089, "label": "obscene" },
+      { "confidence": 0.6882098, "label": "insult" },
+      { "confidence": 0.13540423, "label": "severe_toxic" },
+      { "confidence": 0.017219543, "label": "identity_hate" }
+    ]
+  }
+]
+```
+
 ## evaluate
 
 Evaluate model
