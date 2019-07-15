@@ -65,8 +65,8 @@ The sentences will become tokenized into:
 # so we need to disable the default add_bos_eos setting.
 bert_embedding.processor.add_bos_eos = False
 
-train_x, train_y = sentences, labels
-validate_x, validate_y = sentences, labels
+train_x, train_y = sentences_tokenized[:2], labels[:2]
+validate_x, validate_y = sentences_tokenized[2:], labels[2:]
 
 ########## build model ##########
 from kashgari.tasks.classification import CNNLSTMModel
