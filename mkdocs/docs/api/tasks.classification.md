@@ -15,7 +15,7 @@ __Args__:
 - **embedding**: model embedding
 - **hyper_parameters**: a dict of hyper_parameters.
 
-You could change customize hyper_parameters like this::
+You could change customize hyper_parameters like this:
 
 ```python
 # get default hyper_parameters
@@ -27,7 +27,19 @@ labeling_model = BiLSTM_Model(hyper_parameters=hyper_parameters)
 labeling_model.fit(x, y)
 ```
 
-## get\_default\_hyper_parameters
+## Properties
+
+### token2idx
+
+Returns model's token index map, type: `Dict[str, int]`
+
+### label2idx
+
+Returns model's label index map, type: `Dict[str, int]`
+
+## Methods
+
+### get\_default\_hyper_parameters
 
 Return the defualt hyper parameters
 
@@ -45,7 +57,7 @@ __Returns__:
 
 - dict of the defualt hyper parameters
 
-## build\_model\_arc
+### build\_model\_arc
 
 build model architectural, define models structure in this function.
 
@@ -58,7 +70,7 @@ build model architectural, define models structure in this function.
 def build_model_arc(self):
 ```
 
-## build_model
+### build_model
 
 build model with corpus
 
@@ -79,7 +91,7 @@ __Args__:
       or tuple of validation feature data array (if the model has multiple inputs)
 - **y_validate**: Array of validation label data
 
-## build\_multi\_gpu\_model
+### build\_multi\_gpu\_model
 
 Build multi-GPU model with corpus
 
@@ -109,7 +121,7 @@ __Args__:
     or tuple of validation feature data array (if the model has multiple inputs)
 - **y_validate**: Array of validation label data
 
-## build\_tpu\_model
+### build\_tpu\_model
 
 Build TPU model with corpus
 
@@ -132,7 +144,7 @@ __Args__:
     or tuple of validation feature data array (if the model has multiple inputs)
 - **y_validate**: Array of validation label data
 
-## compile_model
+### compile_model
 
 Configures the model for training.
 
@@ -153,7 +165,7 @@ __Defaults__:
 - **metrics**: ``['accuracy']``
 
 
-## get\_data\_generator
+### get\_data\_generator
 
 data generator for fit_generator
 
@@ -177,7 +189,7 @@ __Returns__:
 
 - data generator
 
-## fit
+### fit
 
 Trains the model for a given number of epochs with fit_generator (iterations on a dataset).
 
@@ -211,7 +223,7 @@ __Returns__:
 
 - A `tf.keras.callbacks.History` object.
 
-## fit\_without\_generator
+### fit\_without\_generator
 
 Trains the model for a given number of epochs (iterations on a dataset). Large memory Cost.
 
@@ -245,7 +257,7 @@ __Returns__:
 
 - A `tf.keras.callbacks.History` object.
 
-## predict
+### predict
 
 Generates output predictions for the input samples. Computation is done in batches.
 
@@ -254,7 +266,8 @@ def predict(self,
             x_data,
             batch_size=None,
             multi_label_threshold: float = 0.5,
-            debug_info=False):
+            debug_info=False,
+            predict_kwargs: Dict = None):
 ```
 
 __Args__:
@@ -263,12 +276,73 @@ __Args__:
 - **batch_size**: Integer. If unspecified, it will default to 32.
 - **multi\_label\_threshold**:
 - **debug_info**: Bool, Should print out the logging info.
+- **predict_kwargs**: Dict, arguments passed to `predict()` function of [tensorflow.keras.Model](https://www.tensorflow.org/api_docs/python/tf/keras/models/Model#fit_generator)
 
 __Returns__:
 
 - array of predictions.
 
-## evaluate
+### predict\_top\_k\_class
+
+Generates output predictions with confidence for the input samples.
+
+Computation is done in batches.
+
+```python
+def predict_top_k_class(self,
+                        x_data,
+                        top_k=5,
+                        batch_size=32,
+                        debug_info=False,
+                        predict_kwargs: Dict = None) -> List[Dict]:
+```
+
+__Args__:
+
+- **x_data**: The input data, as a Numpy array (or list of Numpy arrays if the model has multiple inputs).
+- **top_k**: int
+- **batch_size**: Integer. If unspecified, it will default to 32.
+- **debug_info**: Bool, Should print out the logging info.
+- **predict_kwargs**: Dict, arguments passed to `predict()` function of [tensorflow.keras.Model](https://www.tensorflow.org/api_docs/python/tf/keras/models/Model#fit_generator)
+
+__Returns__:
+
+array(s) of prediction result dict.
+
+- sample result of single-label classification:
+
+```json
+[
+  {
+    "label": "chat",
+    "confidence": 0.5801531,
+    "candidates": [
+      { "label": "cookbook", "confidence": 0.1886314 },
+      { "label": "video", "confidence": 0.13805099 },
+      { "label": "health", "confidence": 0.013852648 },
+      { "label": "translation", "confidence": 0.012913573 }
+    ]
+  }
+]
+```
+
+- sample result of multi-label classification:
+
+```json
+[
+  {
+    "candidates": [
+      { "confidence": 0.9959336, "label": "toxic" },
+      { "confidence": 0.9358089, "label": "obscene" },
+      { "confidence": 0.6882098, "label": "insult" },
+      { "confidence": 0.13540423, "label": "severe_toxic" },
+      { "confidence": 0.017219543, "label": "identity_hate" }
+    ]
+  }
+]
+```
+
+### evaluate
 
 Evaluate model
 
@@ -289,7 +363,7 @@ __Args__:
 - **digits**:
 - **debug_info**:
 
-## save
+### save
 
 Save model info json and model weights to given folder path
 
@@ -300,3 +374,11 @@ def save(self, model_path: str):
 __Args__:
 
 - **model_path**: target model folder path
+
+### info
+
+Returns a dictionary containing the configuration of the model.
+
+```python
+def info(self)
+```

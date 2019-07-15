@@ -31,7 +31,8 @@ class BaseLabelingModel(BaseModel):
                          x_data,
                          batch_size=None,
                          join_chunk=' ',
-                         debug_info=False):
+                         debug_info=False,
+                         predict_kwargs: Dict = None):
         """Gets entities from sequence.
 
         Args:
@@ -39,6 +40,7 @@ class BaseLabelingModel(BaseModel):
             batch_size: Integer. If unspecified, it will default to 32.
             join_chunk: str or False,
             debug_info: Bool, Should print out the logging info.
+            predict_kwargs: arguments passed to ``predict()`` function of ``tf.keras.Model``
 
         Returns:
             list: list of entity.
@@ -47,7 +49,7 @@ class BaseLabelingModel(BaseModel):
             text_seq = x_data[0]
         else:
             text_seq = x_data
-        res = self.predict(x_data, batch_size, debug_info)
+        res = self.predict(x_data, batch_size, debug_info, predict_kwargs)
         new_res = [get_entities(seq) for seq in res]
         final_res = []
         for index, seq in enumerate(new_res):

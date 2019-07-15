@@ -10,6 +10,11 @@ theme:
   language: "en"
 repo_url: https://github.com/BrikerMan/Kashgari
 
+copyright: "Copyright &copy; 2018 - 2018 BrikerMan"
+
+plugins:
+  - search
+
 markdown_extensions:
   - markdown.extensions.admonition
   - markdown.extensions.def_list
@@ -49,9 +54,6 @@ extra_css:
 extra_javascript:
   - static/js/baidu-static.js
 
-plugins:
-  - search
-
 extra:
   social:
     - type: github-alt
@@ -77,12 +79,14 @@ nav:
       - advance-use/multi-output-model.md
       - advance-use/handle-numeric-features.md
       - advance-use/tensorflow-serving.md
+
   - API:
       - api/corpus.md
       - api/tasks.classification.md
       - api/tasks.labeling.md
       - api/utils.md
       - api/callbacks.md
+
   - About:
       - about/contributing.md
       - about/release-notes.md

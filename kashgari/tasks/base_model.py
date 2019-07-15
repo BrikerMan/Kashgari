@@ -48,6 +48,18 @@ class BaseModel(object):
             'kashgari_version': tf.__version__
         }
 
+    @property
+    def task(self):
+        return self.embedding.task
+
+    @property
+    def token2idx(self) -> Dict[str, int]:
+        return self.embedding.token2idx
+
+    @property
+    def label2idx(self) -> Dict[str, int]:
+        return self.embedding.label2idx
+
     def __init__(self,
                  embedding: Optional[Embedding] = None,
                  hyper_parameters: Optional[Dict[str, Dict[str, Any]]] = None):
@@ -80,10 +92,6 @@ class BaseModel(object):
 
         if hyper_parameters:
             self.hyper_parameters.update(hyper_parameters)
-
-    @property
-    def task(self):
-        return self.embedding.task
 
     def build_model(self,
                     x_train: Union[Tuple[List[List[str]], ...], List[List[str]]],
@@ -365,7 +373,8 @@ class BaseModel(object):
     def predict(self,
                 x_data,
                 batch_size=32,
-                debug_info=False):
+                debug_info=False,
+                predict_kwargs: Dict = None):
         """
         Generates output predictions for the input samples.
 
@@ -375,17 +384,20 @@ class BaseModel(object):
             x_data: The input data, as a Numpy array (or list of Numpy arrays if the model has multiple inputs).
             batch_size: Integer. If unspecified, it will default to 32.
             debug_info: Bool, Should print out the logging info.
+            predict_kwargs: arguments passed to ``predict()`` function of ``tf.keras.Model``
 
         Returns:
             array(s) of predictions.
         """
+        if predict_kwargs is None:
+            predict_kwargs = {}
         with utils.custom_object_scope():
             if isinstance(x_data, tuple):
                 lengths = [len(sen) for sen in x_data[0]]
             else:
                 lengths = [len(sen) for sen in x_data]
             tensor = self.embedding.process_x_dataset(x_data)
-            pred = self.tf_model.predict(tensor, batch_size=batch_size)
+            pred = self.tf_model.predict(tensor, batch_size=batch_size, **predict_kwargs)
             res = self.embedding.reverse_numerize_label_sequences(pred.argmax(-1),
                                                                   lengths)
             if debug_info:

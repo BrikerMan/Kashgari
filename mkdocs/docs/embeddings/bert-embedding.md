@@ -39,26 +39,19 @@ labels = [
     "class2",
     "class1"
 ]
-########## pre-process input sentences first ##########
-import os
-import codecs
-from keras_bert import Tokenizer
-bert_model_path = "wwm_uncased_L-24_H-1024_A-16/"
-vocab_path = os.path.join(bert_model_path, 'vocab.txt')
-token_dict = {}
-with codecs.open(vocab_path, 'r', 'utf8') as reader:
-    for line in reader:
-        token = line.strip()
-        token_dict[token] = len(token_dict)
-"""
-token_dict should contain something like the following:
-{{'[PAD]': 0, ..., 'stratford': 17723, '##rted': 17724, 'noticeable': 17725, '##evic': 17726, 'imp': 17727, '##rita': 17728, ...}
-"""
-tokenizer = Tokenizer(token_dict)
+########## Load Bert Embedding ##########
+import kashgari
+from kashgari.embeddings import BERTEmbedding
+
+bert_embedding = BERTEmbedding(bert_model_path,
+                               task=kashgari.CLASSIFICATION,
+                               sequence_length=128)
+
+tokenizer = bert_embedding.tokenizer
 sentences_tokenized = []
 for sentence in sentences:
-  sentence_tokenized = tokenizer.tokenize(sentence)
-  sentences_tokenized.append(sentence_tokenized)
+    sentence_tokenized = tokenizer.tokenize(sentence)
+    sentences_tokenized.append(sentence_tokenized)
 """
 The sentences will become tokenized into:
 [
@@ -67,21 +60,16 @@ The sentences will become tokenized into:
     ['[CLS]', 'why', 'did', 'the', 'chicken', 'cross', 'the', 'road', '?', '[SEP]']
 ]
 """
-train_x, train_y = sentences[:2], labels[:2]
-validate_x, validate_y = sentences[2:], labels[2:]
-########## /pre-process input sentences first ##########
+
+# Our tokenizer already added the BOS([CLS]) and EOS([SEP]) token
+# so we need to disable the default add_bos_eos setting.
+bert_embedding.processor.add_bos_eos = False
+
+train_x, train_y = sentences_tokenized[:2], labels[:2]
+validate_x, validate_y = sentences_tokenized[2:], labels[2:]
 
 ########## build model ##########
-from kashgari.embeddings import BERTEmbedding
 from kashgari.tasks.classification import CNNLSTMModel
-import kashgari
-
-bert_embedding = BERTEmbedding(bert_model_path, 
-                               task=kashgari.CLASSIFICATION,
-                               sequence_length=128)
-# Our tokenizer already added the BOS([CLS]) and EOS([SEP]) token
-# so we need to disable the default add_bos_eos setting. 
-bert_embedding.processor.add_bos_eos = True                         
 model = CNNLSTMModel(bert_embedding)
 
 ########## /build model ##########

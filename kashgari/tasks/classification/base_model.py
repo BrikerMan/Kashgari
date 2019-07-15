@@ -10,7 +10,7 @@
 import random
 import logging
 import kashgari
-from typing import Dict, Any, Tuple, Optional
+from typing import Dict, Any, Tuple, Optional, List
 from kashgari.tasks.base_model import BaseModel, BareEmbedding
 
 from kashgari.embeddings.base_embedding import Embedding
@@ -39,11 +39,17 @@ class BaseClassificationModel(BaseModel):
     def build_model_arc(self):
         raise NotImplementedError
 
+    def compile_model(self, **kwargs):
+        if kwargs.get('loss') is None and self.embedding.processor.multi_label:
+            kwargs['loss'] = 'binary_crossentropy'
+        super(BaseClassificationModel, self).compile_model(**kwargs)
+
     def predict(self,
                 x_data,
                 batch_size=32,
                 multi_label_threshold: float = 0.5,
-                debug_info=False):
+                debug_info=False,
+                predict_kwargs: Dict = None):
         """
         Generates output predictions for the input samples.
 
@@ -54,15 +60,12 @@ class BaseClassificationModel(BaseModel):
             batch_size: Integer. If unspecified, it will default to 32.
             multi_label_threshold:
             debug_info: Bool, Should print out the logging info.
+            predict_kwargs: arguments passed to ``predict()`` function of ``tf.keras.Model``
 
         Returns:
             array(s) of predictions.
         """
         with kashgari.utils.custom_object_scope():
-            if isinstance(x_data, tuple):
-                lengths = [len(sen) for sen in x_data[0]]
-            else:
-                lengths = [len(sen) for sen in x_data]
             tensor = self.embedding.process_x_dataset(x_data)
             pred = self.tf_model.predict(tensor, batch_size=batch_size)
             if self.embedding.processor.multi_label:
@@ -74,13 +77,91 @@ class BaseClassificationModel(BaseModel):
             else:
                 pred = pred.argmax(-1)
 
-            res = self.embedding.reverse_numerize_label_sequences(pred,
-                                                                  lengths)
+            res = self.embedding.reverse_numerize_label_sequences(pred)
             if debug_info:
                 logging.info('input: {}'.format(tensor))
                 logging.info('output: {}'.format(pred))
                 logging.info('output argmax: {}'.format(pred.argmax(-1)))
         return res
+
+    def predict_top_k_class(self,
+                            x_data,
+                            top_k=5,
+                            batch_size=32,
+                            debug_info=False,
+                            predict_kwargs: Dict = None) -> List[Dict]:
+        """
+        Generates output predictions with confidence for the input samples.
+
+        Computation is done in batches.
+
+        Args:
+            x_data: The input data, as a Numpy array (or list of Numpy arrays if the model has multiple inputs).
+            top_k: int
+            batch_size: Integer. If unspecified, it will default to 32.
+            debug_info: Bool, Should print out the logging info.
+            predict_kwargs: arguments passed to ``predict()`` function of ``tf.keras.Model``
+
+        Returns:
+            array(s) of predictions.
+            single-label classification:
+              [
+                {
+                  "label": "chat",
+                  "confidence": 0.5801531,
+                  "candidates": [
+                    { "label": "cookbook", "confidence": 0.1886314 },
+                    { "label": "video", "confidence": 0.13805099 },
+                    { "label": "health", "confidence": 0.013852648 },
+                    { "label": "translation", "confidence": 0.012913573 }
+                  ]
+                }
+              ]
+            multi-label classification:
+              [
+                {
+                  "candidates": [
+                    { "confidence": 0.9959336, "label": "toxic" },
+                    { "confidence": 0.9358089, "label": "obscene" },
+                    { "confidence": 0.6882098, "label": "insult" },
+                    { "confidence": 0.13540423, "label": "severe_toxic" },
+                    { "confidence": 0.017219543, "label": "identity_hate" }
+                  ]
+                }
+              ]
+        """
+        if predict_kwargs is None:
+            predict_kwargs = {}
+        with kashgari.utils.custom_object_scope():
+            tensor = self.embedding.process_x_dataset(x_data)
+            pred = self.tf_model.predict(tensor, batch_size=batch_size, **predict_kwargs)
+            new_results = []
+
+            for sample_prob in pred:
+                sample_res = zip(self.label2idx.keys(), sample_prob)
+                sample_res = sorted(sample_res, key=lambda k: k[1], reverse=True)
+                data = {}
+                for label, confidence in sample_res[:top_k]:
+                    if 'candidates' not in data:
+                        if self.embedding.processor.multi_label:
+                            data['candidates'] = []
+                        else:
+                            data['label'] = label
+                            data['confidence'] = confidence
+                            data['candidates'] = []
+                            continue
+                    data['candidates'].append({
+                        'label': label,
+                        'confidence': confidence
+                    })
+
+                new_results.append(data)
+
+            if debug_info:
+                logging.info('input: {}'.format(tensor))
+                logging.info('output: {}'.format(pred))
+                logging.info('output argmax: {}'.format(pred.argmax(-1)))
+        return new_results
 
     def evaluate(self,
                  x_data,

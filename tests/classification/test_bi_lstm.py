@@ -97,6 +97,7 @@ class TestBi_LSTM_Model(unittest.TestCase):
         assert np.array_equal(new_res, res)
 
         new_model.evaluate(valid_x, valid_y)
+        model.predict_top_k_class(valid_x)
 
     def test_fit_without_generator(self):
         model = self.model_class()
