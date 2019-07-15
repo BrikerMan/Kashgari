@@ -16,7 +16,7 @@ pip show kashgari-tf
 
 ## Current Release
 
-### [0.5.1] - Developing
+### [0.5.1] - 2019.07.15
 
 - 📝 Rewrite documents with mkdocs
 - 📝 Add Chinese documents
