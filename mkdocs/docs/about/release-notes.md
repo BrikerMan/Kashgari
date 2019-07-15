@@ -21,6 +21,7 @@ pip show kashgari-tf
 - 📝 Rewrite documents with mkdocs
 - 📝 Add Chinese documents
 - 🚸 Add `label2idx`, `token2idx` properties to Embeddings
+- ✨ Add `predict_top_k_class` for classification model to get predict probabilities ([#146](https://github.com/BrikerMan/Kashgari/issues/146))
 
 ### [0.5.0] - 2019.07.11
 
@@ -88,6 +89,7 @@ pip show kashgari-tf
 - fix classification model evaluate result output
 - change test settings
 
+[0.5.1]: https://github.com/BrikerMan/Kashgari/compare/v0.5.0...develop
 [0.5.0]: https://github.com/BrikerMan/Kashgari/compare/milestone/tf.keras...v0.5.0
 [0.2.6]: https://github.com/BrikerMan/Kashgari/compare/v0.2.4...v0.2.6
 [0.2.4]: https://github.com/BrikerMan/Kashgari/compare/v0.2.1...v0.2.4
