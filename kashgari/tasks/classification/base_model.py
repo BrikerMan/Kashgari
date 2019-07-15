@@ -39,6 +39,11 @@ class BaseClassificationModel(BaseModel):
     def build_model_arc(self):
         raise NotImplementedError
 
+    def compile_model(self, **kwargs):
+        if kwargs.get('loss') is None and self.embedding.processor.multi_label:
+            kwargs['loss'] = 'binary_crossentropy'
+        super(BaseClassificationModel, self).compile_model(**kwargs)
+
     def predict(self,
                 x_data,
                 batch_size=32,
