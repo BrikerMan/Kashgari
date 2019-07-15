@@ -80,6 +80,7 @@ class Embedding(object):
 
         self.sequence_length: Union[int, str] = sequence_length
         self.embed_model: Optional[keras.Model] = None
+        self._tokenizer = None
 
     @property
     def token_count(self) -> int:
@@ -108,6 +109,13 @@ class Embedding(object):
         token to index dict
         """
         return self.processor.token2idx
+
+    @property
+    def tokenizer(self):
+        if self._tokenizer:
+            return self._tokenizer
+        else:
+            raise ValueError('This embedding not support built-in tokenizer')
 
     @sequence_length.setter
     def sequence_length(self, val: Union[int, str]):

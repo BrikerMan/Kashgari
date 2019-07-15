@@ -94,6 +94,7 @@ class BERTEmbedding(Embedding):
                 token2idx[token] = len(token2idx)
 
         self.bert_token2idx = token2idx
+        self._tokenizer = keras_bert.Tokenizer(token2idx)
         self.processor.token2idx = self.bert_token2idx
         self.processor.idx2token = dict([(value, key) for key, value in token2idx.items()])
 
