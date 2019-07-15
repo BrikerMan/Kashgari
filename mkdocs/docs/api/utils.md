@@ -1,24 +1,26 @@
 # utils
 
-## unison\_shuffled\_copies
+## Methods
+
+### unison\_shuffled\_copies
 
 ```python
 def unison_shuffled_copies(a, b)
 ```
 
-## get\_list\_subset
+### get\_list\_subset
 
 ```python
 def get_list_subset(target: List, index_list: List[int]) -> List
 ```
 
-## custom\_object\_scope
+### custom\_object\_scope
 
 ```python
 def custom_object_scope()
 ```
 
-## load_model
+### load_model
 
 Load saved model from saved model from `model.save` function
 
@@ -33,7 +35,7 @@ __Args__:
 
 __Returns__:
 
-## load_processor
+### load_processor
 
 ```python
 def load_processor(model_path: str) -> BaseProcessor
@@ -46,7 +48,7 @@ __Args__:
 
 __Returns__:
 
-## convert\_to\_saved\_model
+### convert\_to\_saved\_model
 
 Export model for tensorflow serving
 

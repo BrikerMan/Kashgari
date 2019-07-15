@@ -27,7 +27,19 @@ labeling_model = BiLSTM_Model(hyper_parameters=hyper_parameters)
 labeling_model.fit(x, y)
 ```
 
-## get\_default\_hyper_parameters
+## Properties
+
+### token2idx
+
+Returns model's token index map, type: `Dict[str, int]`
+
+### label2idx
+
+Returns model's label index map, type: `Dict[str, int]`
+
+## Methods
+
+### get\_default\_hyper_parameters
 
 Return the defualt hyper parameters
 
@@ -45,7 +57,7 @@ __Returns__:
 
 - dict of the defualt hyper parameters
 
-## build\_model\_arc
+### build\_model\_arc
 
 build model architectural, define models structure in this function.
 
@@ -58,7 +70,7 @@ build model architectural, define models structure in this function.
 def build_model_arc(self):
 ```
 
-## build_model
+### build_model
 
 build model with corpus
 
@@ -79,7 +91,7 @@ __Args__:
       or tuple of validation feature data array (if the model has multiple inputs)
 - **y_validate**: Array of validation label data
 
-## build\_multi\_gpu\_model
+### build\_multi\_gpu\_model
 
 Build multi-GPU model with corpus
 
@@ -109,7 +121,7 @@ __Args__:
     or tuple of validation feature data array (if the model has multiple inputs)
 - **y_validate**: Array of validation label data
 
-## build\_tpu\_model
+### build\_tpu\_model
 
 Build TPU model with corpus
 
@@ -132,7 +144,7 @@ __Args__:
     or tuple of validation feature data array (if the model has multiple inputs)
 - **y_validate**: Array of validation label data
 
-## compile_model
+### compile_model
 
 Configures the model for training.
 
@@ -153,7 +165,7 @@ __Defaults__:
 - **metrics**: ``['accuracy']``
 
 
-## get\_data\_generator
+### get\_data\_generator
 
 data generator for fit_generator
 
@@ -177,7 +189,7 @@ __Returns__:
 
 - data generator
 
-## fit
+### fit
 
 Trains the model for a given number of epochs with fit_generator (iterations on a dataset).
 
@@ -211,7 +223,7 @@ __Returns__:
 
 - A `tf.keras.callbacks.History` object.
 
-## fit\_without\_generator
+### fit\_without\_generator
 
 Trains the model for a given number of epochs (iterations on a dataset). Large memory Cost.
 
@@ -245,7 +257,7 @@ __Returns__:
 
 - A `tf.keras.callbacks.History` object.
 
-## predict
+### predict
 
 Generates output predictions for the input samples. Computation is done in batches.
 
@@ -266,7 +278,7 @@ __Returns__:
 
 - array of predictions.
 
-## predict_entities
+### predict_entities
 
 Gets entities from sequence.
 
@@ -290,7 +302,7 @@ __Returns__:
 
 - list: list of entity.
 
-## evaluate
+### evaluate
 
 Evaluate model
 
@@ -311,7 +323,7 @@ __Args__:
 - **digits**:
 - **debug_info**:
 
-## save
+### save
 
 Save model info json and model weights to given folder path
 
@@ -322,3 +334,11 @@ def save(self, model_path: str):
 __Args__:
 
 - **model_path**: target model folder path
+
+### info
+
+Returns a dictionary containing the configuration of the model.
+
+```python
+def info(self)
+```
