@@ -127,7 +127,7 @@ class BaseClassificationModel(BaseModel):
             new_results = []
 
             for sample_prob in pred:
-                sample_res = zip(self.embedding.label2idx.keys(), sample_prob)
+                sample_res = zip(self.label2idx.keys(), sample_prob)
                 sample_res = sorted(sample_res, key=lambda k: k[1], reverse=True)
                 data = {}
                 for label, confidence in sample_res[:top_k]:

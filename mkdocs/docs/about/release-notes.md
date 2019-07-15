@@ -20,7 +20,7 @@ pip show kashgari-tf
 
 - 📝 Rewrite documents with mkdocs
 - 📝 Add Chinese documents
-- 🚸 Add `label2idx`, `token2idx` properties to Embeddings
+- 🚸 Add `label2idx`, `token2idx` properties to Embeddings and Models
 - ✨ Add `predict_top_k_class` for classification model to get predict probabilities ([#146](https://github.com/BrikerMan/Kashgari/issues/146))
 
 ### [0.5.0] - 2019.07.11

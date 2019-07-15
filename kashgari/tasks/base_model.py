@@ -48,6 +48,18 @@ class BaseModel(object):
             'kashgari_version': tf.__version__
         }
 
+    @property
+    def task(self):
+        return self.embedding.task
+
+    @property
+    def token2idx(self) -> Dict[str, int]:
+        return self.embedding.token2idx
+
+    @property
+    def label2idx(self) -> Dict[str, int]:
+        return self.embedding.label2idx
+
     def __init__(self,
                  embedding: Optional[Embedding] = None,
                  hyper_parameters: Optional[Dict[str, Dict[str, Any]]] = None):
@@ -80,10 +92,6 @@ class BaseModel(object):
 
         if hyper_parameters:
             self.hyper_parameters.update(hyper_parameters)
-
-    @property
-    def task(self):
-        return self.embedding.task
 
     def build_model(self,
                     x_train: Union[Tuple[List[List[str]], ...], List[List[str]]],
