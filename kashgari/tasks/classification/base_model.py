@@ -43,7 +43,8 @@ class BaseClassificationModel(BaseModel):
                 x_data,
                 batch_size=32,
                 multi_label_threshold: float = 0.5,
-                debug_info=False):
+                debug_info=False,
+                predict_kwargs: Dict = None):
         """
         Generates output predictions for the input samples.
 
@@ -54,6 +55,7 @@ class BaseClassificationModel(BaseModel):
             batch_size: Integer. If unspecified, it will default to 32.
             multi_label_threshold:
             debug_info: Bool, Should print out the logging info.
+            predict_kwargs: arguments passed to ``predict()`` function of ``tf.keras.Model``
 
         Returns:
             array(s) of predictions.
@@ -81,7 +83,8 @@ class BaseClassificationModel(BaseModel):
                             x_data,
                             top_k=5,
                             batch_size=32,
-                            debug_info=False) -> List[Dict]:
+                            debug_info=False,
+                            predict_kwargs: Dict = None) -> List[Dict]:
         """
         Generates output predictions with confidence for the input samples.
 
@@ -92,6 +95,7 @@ class BaseClassificationModel(BaseModel):
             top_k: int
             batch_size: Integer. If unspecified, it will default to 32.
             debug_info: Bool, Should print out the logging info.
+            predict_kwargs: arguments passed to ``predict()`` function of ``tf.keras.Model``
 
         Returns:
             array(s) of predictions.
@@ -121,9 +125,11 @@ class BaseClassificationModel(BaseModel):
                 }
               ]
         """
+        if predict_kwargs is None:
+            predict_kwargs = {}
         with kashgari.utils.custom_object_scope():
             tensor = self.embedding.process_x_dataset(x_data)
-            pred = self.tf_model.predict(tensor, batch_size=batch_size)
+            pred = self.tf_model.predict(tensor, batch_size=batch_size, **predict_kwargs)
             new_results = []
 
             for sample_prob in pred:
