@@ -266,7 +266,8 @@ def predict(self,
             x_data,
             batch_size=None,
             multi_label_threshold: float = 0.5,
-            debug_info=False):
+            debug_info=False,
+            predict_kwargs: Dict = None):
 ```
 
 __Args__:
@@ -275,6 +276,7 @@ __Args__:
 - **batch_size**: Integer. If unspecified, it will default to 32.
 - **multi\_label\_threshold**:
 - **debug_info**: Bool, Should print out the logging info.
+- **predict_kwargs**: Dict, arguments passed to `predict()` function of [tensorflow.keras.Model](https://www.tensorflow.org/api_docs/python/tf/keras/models/Model#fit_generator)
 
 __Returns__:
 
@@ -291,7 +293,8 @@ def predict_top_k_class(self,
                         x_data,
                         top_k=5,
                         batch_size=32,
-                        debug_info=False) -> List[Dict]:
+                        debug_info=False,
+                        predict_kwargs: Dict = None) -> List[Dict]:
 ```
 
 __Args__:
@@ -300,6 +303,7 @@ __Args__:
 - **top_k**: int
 - **batch_size**: Integer. If unspecified, it will default to 32.
 - **debug_info**: Bool, Should print out the logging info.
+- **predict_kwargs**: Dict, arguments passed to `predict()` function of [tensorflow.keras.Model](https://www.tensorflow.org/api_docs/python/tf/keras/models/Model#fit_generator)
 
 __Returns__:
 

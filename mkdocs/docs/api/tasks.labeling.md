@@ -265,7 +265,8 @@ Generates output predictions for the input samples. Computation is done in batch
 def predict(self,
             x_data,
             batch_size=32,
-            debug_info=False):
+            debug_info=False,
+            predict_kwargs: Dict = None):
 ```
 
 __Args__:
@@ -273,6 +274,7 @@ __Args__:
 - **x_data**: The input data, as a Numpy array (or list of Numpy arrays if the model has multiple inputs).
 - **batch_size**: Integer. If unspecified, it will default to 32.
 - **debug_info**: Bool, Should print out the logging info.
+- **predict_kwargs**: Dict, arguments passed to `predict()` function of [tensorflow.keras.Model](https://www.tensorflow.org/api_docs/python/tf/keras/models/Model#fit_generator)
 
 __Returns__:
 
@@ -287,7 +289,8 @@ def predict_entities(self,
                      x_data,
                      batch_size=None,
                      join_chunk=' ',
-                     debug_info=False):
+                     debug_info=False,
+                     predict_kwargs: Dict = None):
 
 ```
 
@@ -297,6 +300,7 @@ __Args__:
 - batch_size: Integer. If unspecified, it will default to 32.
 - join_chunk: str or False,
 - debug_info: Bool, Should print out the logging info.
+- **predict_kwargs**: Dict, arguments passed to `predict()` function of [tensorflow.keras.Model](https://www.tensorflow.org/api_docs/python/tf/keras/models/Model#fit_generator)
 
 __Returns__:
 
