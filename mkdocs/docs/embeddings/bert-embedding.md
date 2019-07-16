@@ -83,6 +83,22 @@ model.fit(
 model.save('path/to/save/model/to')
 ```
 
+## Use sentence pairs for input
+
+let's assume input pair sample is `"First do it" "then do it right"`, Then first tokenize the sentences using bert tokenizer. Then
+
+```python
+sentence1 = ['First', 'do', 'it']
+sentence2 = ['then', 'do', 'it', 'right']
+
+sample = sentence1 + ["[SEP]"] + sentence2
+# Add a special separation token `[SEP]` between two sentences tokens
+# Generate a new token list
+# ['First', 'do', 'it', '[SEP]', 'then', 'do', 'it', 'right']
+
+train_x = [sample]
+```
+
 ## Pre-trained models
 
 | model            | provider             | Language       | Link             | info                          |
