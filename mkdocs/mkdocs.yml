@@ -87,6 +87,9 @@ nav:
       - api/utils.md
       - api/callbacks.md
 
+  - FAQ:
+      - FAQ.md
+
   - About:
       - about/contributing.md
       - about/release-notes.md
