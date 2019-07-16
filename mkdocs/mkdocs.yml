@@ -82,6 +82,7 @@ nav:
 
   - API:
       - api/corpus.md
+      - api/embeddings.md
       - api/tasks.classification.md
       - api/tasks.labeling.md
       - api/utils.md

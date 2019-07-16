@@ -13,6 +13,8 @@ Kashgari provides several embeddings for language representation. Embedding laye
 
 All embedding classes inherit from the `Embedding` class and implement the `embed()` to embed your input sequence and `embed_model` property which you need to build you own Model. By providing the `embed()` function and `embed_model` property, Kashgari hides the the complexity of different language embedding from users, all you need to care is which language embedding you need.
 
+You could check out the Embedding API here: [link](../api/embeddings.md)
+
 ## Quick start
 
 ## Feature Extract From Pre-trained Embedding

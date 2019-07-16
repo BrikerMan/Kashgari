@@ -25,7 +25,7 @@ L = keras.layers
 class Embedding(object):
     """Base class for Embedding Model"""
 
-    def info(self):
+    def info(self) -> Dict:
         return {
             'processor': self.processor.info(),
             'class_name': self.__class__.__name__,
