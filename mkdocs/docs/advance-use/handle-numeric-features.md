@@ -4,8 +4,8 @@
 
 https://github.com/BrikerMan/Kashgari/issues/90
 
-Some time, except the text, we have some additional features like text formatting (italic, bold, centered), 
-position in text and more. Kashgari provides `NumericFeaturesEmbedding` and `StackedEmbedding` for this kine data. Here is the details.
+At times there have some additional features like text formatting (italic, bold, centered), 
+position in text and more. Kashgari provides `NumericFeaturesEmbedding` and `StackedEmbedding` for this kind data. Here is the details:
 
 If you have a dataset like this.
 
@@ -51,7 +51,7 @@ label_list = [label] * 100
 
 SEQUENCE_LEN = 100
 
-# You can use WordEmbedding or BERTEmbedding for your text embedding
+# You can use Word Embedding or BERT Embedding for your text embedding
 text_embedding = BareEmbedding(task=kashgari.LABELING, sequence_length=SEQUENCE_LEN)
 start_of_p_embedding = NumericFeaturesEmbedding(feature_count=2,
                                                 feature_name='start_of_p',
@@ -65,7 +65,7 @@ center_embedding = NumericFeaturesEmbedding(feature_count=2,
                                                 feature_name='center',
                                                 sequence_length=SEQUENCE_LEN)
 
-# first one must be the text embedding
+# first attribute, must be the text embedding
 stack_embedding = StackedEmbedding([
     text_embedding,
     start_of_p_embedding,
@@ -77,11 +77,11 @@ x = (text_list, start_of_p_list, bold_list, center_list)
 y = label_list
 stack_embedding.analyze_corpus(x, y)
 
-# Now we can embed with this stacked embedding layer
+# Now we can embed using this stacked embedding layer
 print(stack_embedding.embed(x))
 ```
 
-Once embedding layer prepared, you could use all of the classification and labeling models.
+Once the embedding layer prepared, you can use all of the classification and labeling models.
 
 ```python
 # We can build any labeling model with this embedding
@@ -94,6 +94,6 @@ print(model.predict(x))
 print(model.predict_entities(x))
 ```
 
-This is the struct of this model.
+This is the structurer of this model.
 
 ![](../static/images/multi_feature_model.png)

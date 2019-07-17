@@ -1,5 +1,5 @@
 <h1 align="center">
-    Kashgari
+    <a href='https://en.wikipedia.org/wiki/Mahmud_al-Kashgari'>Kashgari</a>
 </h1>
 
 <p align="center">
@@ -29,21 +29,21 @@
     <a href="https://kashgari.bmio.net/about/contributing/">Contributing</a>
 </h4>
 
-🎉🎉🎉 We are proud to announce that we entirely rewrite  Kashgari with tf.keras, now Kashgari comes with cleaner API and faster speed. 🎉🎉🎉
+🎉🎉🎉 We are proud to announce that we entirely rewritten Kashgari with tf.keras, now Kashgari comes with easier to understand API and is faster! 🎉🎉🎉
 
 ## Overview
 
-Kashgari is simple and powerful NLP Transfer learning framework, build a state-of-art model in 5 minutes for named entity recognition (NER), part-of-speech tagging (PoS) and text classification tasks.
+Kashgari is a simple and powerful NLP Transfer learning framework, build a state-of-art model in 5 minutes for named entity recognition (NER), part-of-speech tagging (PoS), and text classification tasks.
 
 - **Human-friendly**. Kashgari's code is straightforward, well documented and tested, which makes it very easy to understand and modify.
 - **Powerful and simple**. Kashgari allows you to apply state-of-the-art natural language processing (NLP) models to your text, such as named entity recognition (NER), part-of-speech tagging (PoS) and classification.
-- **Buildin transfer learning**. Kashgari build-in pre-trained BERT and Word2vec embedding models, which makes it very simple to transfer learning to train your model.
+- **Built-in transfer learning**. Kashgari built-in pre-trained BERT and Word2vec embedding models, which makes it very simple to transfer learning to train your model.
 - **Fully scalable**. Kashgari provide a simple, fast, and scalable environment for fast experimentation, train your models and experiment with new approaches using different embeddings and model structure. 
-- **Product Ready**. Kashgari could export model with `SavedModel` format for tensorflow serving, you could directly deploy it on cloud. 
+- **Production Ready**. Kashgari could export model with `SavedModel` format for tensorflow serving, you could directly deploy it on cloud. 
 
 ## Our Goal
 
-- **Academic users** Experiments to prove their hypothesis without coding from scratch.
+- **Academic users** Easier Experimentation to prove their hypothesis without coding from scratch.
 - **NLP beginners** Learn how to build an NLP project with production level code quality.
 - **NLP developers** Build a production level classification/labeling model within minutes.
 

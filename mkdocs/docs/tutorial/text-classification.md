@@ -170,8 +170,7 @@ model.fit(x, y)
 ## Customize your own model
 
 It is very easy and straightforward to build your own customized model,
-just inherit the `BaseClassificationModel` and implement the `get_default_hyper_parameters()` function
-and `build_model_arc()` function.
+just inherit the `BaseClassificationModel` and implement the `get_default_hyper_parameters()` function and `build_model_arc()` function.
 
 ```python
 from typing import Dict, Any
