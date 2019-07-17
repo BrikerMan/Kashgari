@@ -28,7 +28,7 @@ output_2 = [
     [0. 0. 1.]]
 ```
 
-Then you need to create a customized processor inhered from the `ClassificationProcessor`.
+Then you need to create a customized processor inherited from the `ClassificationProcessor`.
 
 ```python
 import kashgari
@@ -57,7 +57,7 @@ class MultiOutputProcessor(ClassificationProcessor):
             return tuple(result)
 ```
 
-Then build your own model inhered from the `BaseClassificationModel`
+Then build your own model inherited from the `BaseClassificationModel`
 
 ```python
 import kashgari

@@ -84,9 +84,9 @@ def build_model(self,
 
 __Args__:
 
-- **x_train**: Array of train feature data (if the model has a single input),
-      or tuple of train feature data array (if the model has multiple inputs)
-- **y_train**: Array of train label data
+- **x_train**: Array of training feature data (if the model has a single input),
+      or tuple of training feature data array (if the model has multiple inputs)
+- **y_train**: Array of training label data
 - **x_validate**: Array of validation feature data (if the model has a single input),
       or tuple of validation feature data array (if the model has multiple inputs)
 - **y_validate**: Array of validation label data
@@ -114,9 +114,9 @@ __Args__:
 - **cpu_relocation**: A boolean value to identify whether to create the model's weights
     under the scope of the CPU. If the model is not defined under any preceding device
     scope, you can still rescue it by activating this option.
-- **x_train**: Array of train feature data (if the model has a single input),
-    or tuple of train feature data array (if the model has multiple inputs)
-- **y_train**: Array of train label data
+- **x_train**: Array of training feature data (if the model has a single input),
+    or tuple of training feature data array (if the model has multiple inputs)
+- **y_train**: Array of training label data
 - **x_validate**: Array of validation feature data (if the model has a single input),
     or tuple of validation feature data array (if the model has multiple inputs)
 - **y_validate**: Array of validation label data
@@ -137,9 +137,9 @@ __Args__:
 
 - **strategy**: `TPUDistributionStrategy`. The strategy to use for replicating model
     across multiple TPU cores.
-- **x_train**: Array of train feature data (if the model has a single input),
-    or tuple of train feature data array (if the model has multiple inputs)
-- **y_train**: Array of train label data
+- **x_train**: Array of training feature data (if the model has a single input),
+    or tuple of training feature data array (if the model has multiple inputs)
+- **y_train**: Array of training label data
 - **x_validate**: Array of validation feature data (if the model has a single input),
     or tuple of validation feature data array (if the model has multiple inputs)
 - **y_validate**: Array of validation label data
@@ -207,9 +207,9 @@ def fit(self,
 
 __Args__:
 
-- **x_train**: Array of train feature data (if the model has a single input),
-    or tuple of train feature data array (if the model has multiple inputs)
-- **y_train**: Array of train label data
+- **x_train**: Array of training feature data (if the model has a single input),
+    or tuple of training feature data array (if the model has multiple inputs)
+- **y_train**: Array of training label data
 - **x_validate**: Array of validation feature data (if the model has a single input),
     or tuple of validation feature data array (if the model has multiple inputs)
 - **y_validate**: Array of validation label data
@@ -241,9 +241,9 @@ def fit_without_generator(self,
 
 __Args__:
 
-- **x_train**: Array of train feature data (if the model has a single input),
-    or tuple of train feature data array (if the model has multiple inputs)
-- **y_train**: Array of train label data
+- **x_train**: Array of training feature data (if the model has a single input),
+    or tuple of training feature data array (if the model has multiple inputs)
+- **y_train**: Array of training label data
 - **x_validate**: Array of validation feature data (if the model has a single input),
     or tuple of validation feature data array (if the model has multiple inputs)
 - **y_validate**: Array of validation label data

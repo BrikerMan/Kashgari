@@ -1,6 +1,6 @@
 # Contributing &amp; Support
 
-We are happy to accept your contributions to make `Kashgari` better and more awesome! You could contribute in various ways:
+We are happy to accept contributions that make `Kashgari` better and more awesome! You could contribute in various ways:
 
 ## Bug Reports
 
@@ -25,7 +25,7 @@ Take part in reviewing pull requests and/or reviewing direct commits.  Make sugg
 
 ## Answer Questions in Issues
 
-Take time and answer questions and offer suggestions to people who've created issues in the issue tracker. Often people will have questions that you might have an answer for.  Or maybe you know how to help them accomplish a specific task they are asking about. Feel free to share your experience to help others out.
+Take time and answer questions and offer suggestions to people who've created issues in the issue tracker. Often people will have questions that you might have an answer for.  Or maybe you know how to help them accomplish a specific task they are asking about. Feel free to share your experience with others to help them out.
 
 ## Pull Requests
 
