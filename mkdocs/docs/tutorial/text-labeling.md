@@ -6,13 +6,13 @@ You could easily switch from one model to another just by changing one line of c
 
 ## Available Models
 
-| Name             | Info |
-| ---------------- | ---- |
-| CNN_LSTM_Model   |      |
-| BiLSTM_Model     |      |
-| BiLSTM_CRF_Model |      |
-| BiGRU_Model      |      |
-| BiGRU_CRF_Model  |      |
+| Name               | Info |
+| ------------------ | ---- |
+| CNN\_LSTM\_Model   |      |
+| BiLSTM\_Model      |      |
+| BiLSTM\_CRF\_Model |      |
+| BiGRU\_Model       |      |
+| BiGRU\_CRF\_Model  |      |
 
 ## Train basic NER model
 
