@@ -6,20 +6,20 @@ You could easily switch from one model to another just by changing one line of c
 
 ## Available Models
 
-| Name                | info |
-| ------------------- | ---- |
-| BiLSTM_Model        |      |
-| BiGRU_Model         |      |
-| CNN_Model           |      |
-| CNN_LSTM_Model      |      |
-| CNN_GRU_Model       |      |
-| AVCNN_Model         |      |
-| KMax_CNN_Model      |      |
-| R_CNN_Model         |      |
-| AVRNN_Model         |      |
-| Dropout_BiGRU_Model |      |
-| Dropout_AVRNN_Model |      |
-| DPCNN_Model         |      |
+| Name                  | info |
+| --------------------- | ---- |
+| BiLSTM\_Model         |      |
+| BiGRU\_Model          |      |
+| CNN\_Model            |      |
+| CNN\_LSTM\_Model      |      |
+| CNN\_GRU\_Model       |      |
+| AVCNN\_Model          |      |
+| KMax\_CNN]\_Model     |      |
+| R\_CNN\_Model         |      |
+| AVRNN\_Model          |      |
+| Dropout\_BiGRU\_Model |      |
+| Dropout\_AVRNN\_Model |      |
+| DPCNN\_Model          |      |
 
 ## Train basic classification model
 
