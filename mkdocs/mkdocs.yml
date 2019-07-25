@@ -15,6 +15,10 @@ copyright: "Copyright &copy; 2018 - 2018 BrikerMan"
 plugins:
   - search
 
+google_analytics:
+  - "UA-78705624-3"
+  - "auto"
+
 markdown_extensions:
   - markdown.extensions.admonition
   - markdown.extensions.def_list
