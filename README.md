@@ -75,7 +75,7 @@ There are also articles and posts that illustrate how to use Kashgari:
 
 🎉🎉🎉 We renamed the tf.keras version as **kashgari-tf** 🎉🎉🎉
 
-The project is based on TenorFlow 1.14.0 and Python 3.6+, because it is 2019 and type hints is cool.
+The project is based on TensorFlow 1.14.0 and Python 3.6+, because it is 2019 and type hints is cool.
 
 ```bash
 pip install kashgari-tf
