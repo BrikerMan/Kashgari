@@ -29,7 +29,7 @@
     <a href="https://kashgari.bmio.net/about/contributing/">Contributing</a>
 </h4>
 
-🎉🎉🎉 We are proud to announce that we entirely rewritten Kashgari with tf.keras, now Kashgari comes with easier to understand API and is faster! 🎉🎉🎉
+🎉🎉🎉 We are proud to announce that we entirely rewrote Kashgari with tf.keras, now Kashgari comes with easier to understand API and is faster! 🎉🎉🎉
 
 ## Overview
 
@@ -38,12 +38,12 @@ Kashgari is a simple and powerful NLP Transfer learning framework, build a state
 - **Human-friendly**. Kashgari's code is straightforward, well documented and tested, which makes it very easy to understand and modify.
 - **Powerful and simple**. Kashgari allows you to apply state-of-the-art natural language processing (NLP) models to your text, such as named entity recognition (NER), part-of-speech tagging (PoS) and classification.
 - **Built-in transfer learning**. Kashgari built-in pre-trained BERT and Word2vec embedding models, which makes it very simple to transfer learning to train your model.
-- **Fully scalable**. Kashgari provide a simple, fast, and scalable environment for fast experimentation, train your models and experiment with new approaches using different embeddings and model structure. 
-- **Production Ready**. Kashgari could export model with `SavedModel` format for tensorflow serving, you could directly deploy it on cloud. 
+- **Fully scalable**. Kashgari provides a simple, fast, and scalable environment for fast experimentation, train your models and experiment with new approaches using different embeddings and model structure. 
+- **Production Ready**. Kashgari could export model with `SavedModel` format for tensorflow serving, you could directly deploy it on the cloud. 
 
 ## Our Goal
 
-- **Academic users** Easier Experimentation to prove their hypothesis without coding from scratch.
+- **Academic users** Easier experimentation to prove their hypothesis without coding from scratch.
 - **NLP beginners** Learn how to build an NLP project with production level code quality.
 - **NLP developers** Build a production level classification/labeling model within minutes.
 
@@ -75,7 +75,7 @@ There are also articles and posts that illustrate how to use Kashgari:
 
 🎉🎉🎉 We renamed the tf.keras version as **kashgari-tf** 🎉🎉🎉
 
-The project is based on TensorFlow 1.14.0 and Python 3.6+, because it is 2019 and type hints is cool.
+The project is based on TensorFlow 1.14.0 and Python 3.6+, because it is 2019 and type hinting is cool.
 
 ```bash
 pip install kashgari-tf
@@ -87,7 +87,7 @@ pip install tensorflow-gpu==1.14.0
 
 ### Example Usage
 
-lets run a NER labeling model with Bi_LSTM Model.
+Let's run an NER labeling model with Bi_LSTM Model.
 
 ```python
 from kashgari.corpus import ChineseDailyNerCorpus
