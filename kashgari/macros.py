@@ -45,8 +45,8 @@ class Config(object):
         from kashgari.layers import L
         if value:
             if tf.test.is_gpu_available(cuda_only=True):
-                L.LSTM = tf.keras.layers.CuDNNLSTM
-                L.GRU = tf.keras.layers.CuDNNGRU
+                L.LSTM = tf.compat.v1.keras.layers.CuDNNLSTM
+                L.GRU = tf.compat.v1.keras.layers.CuDNNGRU
                 logging.warning("CuDNN enabled, this will speed up the training, "
                                 "but will make model incompatible with CPU device.")
             else:
