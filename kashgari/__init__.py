@@ -11,11 +11,10 @@
 
 """
 import os
-import tensorflow as tf
 os.environ['TF_KERAS'] = '1'
 
 import keras_bert
-from kashgari.macros import TaskType
+from kashgari.macros import TaskType, config
 
 custom_objects = keras_bert.get_custom_objects()
 CLASSIFICATION = TaskType.CLASSIFICATION
@@ -31,3 +30,5 @@ from kashgari import processors
 from kashgari import tasks
 from kashgari import utils
 from kashgari import callbacks
+
+import tensorflow as tf
