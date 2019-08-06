@@ -70,11 +70,16 @@ class TestCNN_LSTM_Model(unittest.TestCase):
     def test_w2v_model(self):
         x, y = NERCorpus.load_corpus()
         model = self.model_class(embedding=w2v_embedding)
-        model.fit(x, y, x, y, epochs=1)
-        assert True
+        try:
+            model.fit(x, y, x, y, epochs=1)
+            model.evaluate(x, y)
+            assert True
+        except Exception as e:
+            print(model.label2idx)
+            raise e
 
     def test_variable_length_model(self):
-        x, y = NERCorpus.load_corpus()
+        x, y = NERCorpus.load_corpus('custom_2')
         hyper_params = self.model_class.get_default_hyper_parameters()
 
         for layer, config in hyper_params.items():
@@ -84,5 +89,10 @@ class TestCNN_LSTM_Model(unittest.TestCase):
 
         model = self.model_class(embedding=w2v_embedding_variable_len,
                                  hyper_parameters=hyper_params)
-        model.fit(x, y, epochs=1)
-        assert True
+        try:
+            model.fit(x, y, epochs=1)
+            model.evaluate(x, y)
+            assert True
+        except Exception as e:
+            print(model.label2idx)
+            raise e
