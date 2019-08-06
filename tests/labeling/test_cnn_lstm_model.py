@@ -28,9 +28,6 @@ sample_w2v_path = get_file('sample_w2v.txt',
                            "http://s3.bmio.net/kashgari/sample_w2v.txt",
                            cache_dir=DATA_PATH)
 
-w2v_embedding = WordEmbedding(sample_w2v_path, task=kashgari.LABELING)
-w2v_embedding_variable_len = WordEmbedding(sample_w2v_path, task=kashgari.LABELING, sequence_length='variable')
-
 
 class TestCNN_LSTM_Model(unittest.TestCase):
     @classmethod
@@ -63,12 +60,13 @@ class TestCNN_LSTM_Model(unittest.TestCase):
         assert np.array_equal(new_res, res)
 
     def test_fit_without_generator(self):
-        x, y = NERCorpus.load_corpus()
+        x, y = NERCorpus.load_corpus('custom_2')
         model = self.model_class()
         model.fit_without_generator(x, y, x, y, epochs=2)
 
     def test_w2v_model(self):
         x, y = NERCorpus.load_corpus()
+        w2v_embedding = WordEmbedding(sample_w2v_path, task=kashgari.LABELING)
         model = self.model_class(embedding=w2v_embedding)
         try:
             model.fit(x, y, x, y, epochs=1)
@@ -87,6 +85,9 @@ class TestCNN_LSTM_Model(unittest.TestCase):
                 if isinstance(value, int):
                     hyper_params[layer][key] = value + 15
 
+        w2v_embedding_variable_len = WordEmbedding(sample_w2v_path,
+                                                   task=kashgari.LABELING,
+                                                   sequence_length='variable')
         model = self.model_class(embedding=w2v_embedding_variable_len,
                                  hyper_parameters=hyper_params)
         try:
