@@ -33,8 +33,6 @@ class BaseModel(object):
 
     def info(self):
         model_json_str = self.tf_model.to_json()
-        model_json_str = model_json_str.replace('"class_name": "CuDNNLSTM"', '"class_name": "LSTM"')
-        model_json_str = model_json_str.replace('"class_name": "CuDNNGRU"', '"class_name": "GRU"')
 
         return {
             'config': {
