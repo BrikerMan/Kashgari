@@ -14,6 +14,7 @@ import time
 import tempfile
 import numpy as np
 import kashgari
+from tests.corpus import NERCorpus
 from kashgari.corpus import ChineseDailyNerCorpus
 from kashgari.embeddings import WordEmbedding
 from kashgari.tasks.labeling import CNN_LSTM_Model
@@ -27,9 +28,6 @@ sample_w2v_path = get_file('sample_w2v.txt',
                            "http://s3.bmio.net/kashgari/sample_w2v.txt",
                            cache_dir=DATA_PATH)
 
-w2v_embedding = WordEmbedding(sample_w2v_path, task=kashgari.LABELING)
-w2v_embedding_variable_len = WordEmbedding(sample_w2v_path, task=kashgari.LABELING, sequence_length='variable')
-
 
 class TestCNN_LSTM_Model(unittest.TestCase):
     @classmethod
@@ -37,16 +35,19 @@ class TestCNN_LSTM_Model(unittest.TestCase):
         cls.model_class = CNN_LSTM_Model
 
     def test_basic_use_build(self):
-        model = self.model_class()
-        model.fit(valid_x, valid_y, valid_x, valid_y, epochs=1)
-        model.predict_entities(valid_x[:5])
-        model.evaluate(valid_x[:100], valid_y[:100])
+        x, y = NERCorpus.load_corpus()
 
-        res = model.predict(valid_x[:20])
-        assert len(res) == 20
+        model = self.model_class()
+        model.fit(x, y, x, y, epochs=1)
+        model.predict_entities(x[:5])
+        model.evaluate(x, y)
+
+        res = model.predict(x[:20])
+        assert len(res) == min(len(x), 20)
 
         for i in range(5):
-            assert len(res[i]) == min(model.embedding.sequence_length, len(valid_x[i]))
+            assert len(res[i]) == min(model.embedding.sequence_length, len(x[i]))
+
         model_path = os.path.join(tempfile.gettempdir(), str(time.time()))
         model.save(model_path)
 
@@ -55,19 +56,28 @@ class TestCNN_LSTM_Model(unittest.TestCase):
                                               pd_model_path)
 
         new_model = kashgari.utils.load_model(model_path)
-        new_res = new_model.predict(valid_x[:20])
+        new_res = new_model.predict(x[:20])
         assert np.array_equal(new_res, res)
 
     def test_fit_without_generator(self):
+        x, y = NERCorpus.load_corpus('custom_2')
         model = self.model_class()
-        model.fit_without_generator(valid_x, valid_y, valid_x, valid_y, epochs=2)
+        model.fit_without_generator(x, y, x, y, epochs=2)
 
     def test_w2v_model(self):
+        x, y = NERCorpus.load_corpus()
+        w2v_embedding = WordEmbedding(sample_w2v_path, task=kashgari.LABELING)
         model = self.model_class(embedding=w2v_embedding)
-        model.fit(valid_x, valid_y, epochs=1)
-        assert True
+        try:
+            model.fit(x, y, x, y, epochs=1)
+            model.evaluate(x, y)
+            assert True
+        except Exception as e:
+            print(model.label2idx)
+            raise e
 
     def test_variable_length_model(self):
+        x, y = NERCorpus.load_corpus('custom_2')
         hyper_params = self.model_class.get_default_hyper_parameters()
 
         for layer, config in hyper_params.items():
@@ -75,7 +85,15 @@ class TestCNN_LSTM_Model(unittest.TestCase):
                 if isinstance(value, int):
                     hyper_params[layer][key] = value + 15
 
+        w2v_embedding_variable_len = WordEmbedding(sample_w2v_path,
+                                                   task=kashgari.LABELING,
+                                                   sequence_length='variable')
         model = self.model_class(embedding=w2v_embedding_variable_len,
                                  hyper_parameters=hyper_params)
-        model.fit(valid_x, valid_y, epochs=1)
-        assert True
+        try:
+            model.fit(x, y, epochs=1)
+            model.evaluate(x, y)
+            assert True
+        except Exception as e:
+            print(model.label2idx)
+            raise e
