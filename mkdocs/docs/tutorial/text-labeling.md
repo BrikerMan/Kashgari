@@ -219,6 +219,15 @@ model = DoubleBLSTMModel()
 model.fit(train_x, train_y, valid_x, valid_y)
 ```
 
+## Speed up using CuDNN cell
+
+You can speed up training and inferencing process using [CuDNN cell](https://stackoverflow.com/questions/46767001/what-is-cudnn-implementation-of-rnn-cells-in-tensorflow). CuDNNLSTM and CuDNNGRU layers are much faster than LSTM and GRU layer, but they must be used on GPU. If you want to train on GPU and inferencing on CPU, you cannot use CuDNN cells.
+
+```python
+# Enable use cudnn cell
+kashgari.config.use_cudnn_cell = True
+```
+
 ## Performance report
 
 Available model list, matrics based on this training:
