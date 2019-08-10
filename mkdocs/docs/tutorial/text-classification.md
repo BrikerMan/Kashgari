@@ -25,14 +25,20 @@ You could easily switch from one model to another just by changing one line of c
 
 Kashgari provices basic intent-classification corpus for expirement. You could also use your corpus in any language for training.
 
-Load build-in corpus.
-
 ```python
+# Load build-in corpus.
 from kashgari.corpus import SMP2018ECDTCorpus
 
 train_x, train_y = SMP2018ECDTCorpus.load_data('train')
 valid_x, valid_y = SMP2018ECDTCorpus.load_data('valid')
 test_x, test_y = SMP2018ECDTCorpus.load_data('test')
+
+# Or use your own corpus
+train_x = [['Hello', 'world'], ['Hello', 'Kashgari']]
+train_y = ['a', 'b']
+
+valid_x, valid_y = train_x, train_y
+test_x, test_x = train_x, train_y
 ```
 
 Then train our first model. All models provided some APIs, so you could use any labeling model here.

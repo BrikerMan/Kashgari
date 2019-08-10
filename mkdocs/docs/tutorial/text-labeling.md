@@ -18,23 +18,28 @@ You could easily switch from one model to another just by changing one line of c
 
 Kashgari provices basic NER corpus for expirement. You could also use your corpus in any language for training.
 
-Load build-in corpus.
-
 ```python
-# For Chinese
+# Load build-in corpus.
+## For Chinese
 from kashgari.corpus import ChineseDailyNerCorpus
 
 train_x, train_y = ChineseDailyNerCorpus.load_data('train')
 valid_x, valid_y = ChineseDailyNerCorpus.load_data('valid')
 test_x, test_y = ChineseDailyNerCorpus.load_data('test')
 
-
-# For English
+## For English
 from kashgari.corpus import CONLL2003ENCorpus
 
 train_x, train_y = CONLL2003ENCorpus.load_data('train')
 valid_x, valid_y = CONLL2003ENCorpus.load_data('valid')
 test_x, test_y = CONLL2003ENCorpus.load_data('test')
+
+# Or use your own corpus
+train_x = [['Hello', 'world'], ['Hello', 'Kashgari'], ['I', 'love', 'Beijing']]
+train_y = [['O', 'O'], ['O', 'B-PER'], ['O', 'B-LOC']]
+
+valid_x, valid_y = train_x, train_y
+test_x, test_x = train_x, train_y
 ```
 
 Or use your own corpus, it needs to be tokenized like this.
