@@ -7,6 +7,8 @@ assignees: BrikerMan
 
 ---
 
+**You must follow the issue template and provide as much information as possible. otherwise, this issue will be closed.
+请按照 issue 模板要求填写信息。如果没有按照 issue 模板填写，将会忽略并关闭这个 issue**
 ## Check List
 
 Thanks for considering to open an issue. Before you submit your issue, please confirm these boxes are checked.
@@ -19,6 +21,7 @@ Thanks for considering to open an issue. Before you submit your issue, please co
 ## Environment
 
 - OS [e.g. Mac OS, Linux]:
+- Python Version:
 - requirements.txt:
 
 ```txt
@@ -26,7 +29,6 @@ Thanks for considering to open an issue. Before you submit your issue, please co
 ```
 
 ## Issue Description
-
 ### What
 
 [Tell us about the issue]
