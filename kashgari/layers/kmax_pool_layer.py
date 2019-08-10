@@ -14,9 +14,6 @@ from tensorflow.python.keras import backend as K
 L = keras.layers
 InputSpec = L.InputSpec
 
-if tf.test.is_gpu_available(cuda_only=True):
-    L.LSTM = L.CuDNNLSTM
-
 
 class KMaxPoolingLayer(L.Layer):
     '''
