@@ -16,6 +16,10 @@ pip show kashgari-tf
 
 ## Current Release
 
+### [0.5.3] - 2019.08.11
+
+- 🐛 Fixing CuDNN Error ([#198])
+
 ### [0.5.2] - 2019.08.10
 
 - 💥 Add CuDNN Cell config, disable auto CuDNN cell. ([#182], [#198])
@@ -96,6 +100,7 @@ pip show kashgari-tf
 - fix classification model evaluate result output
 - change test settings
 
+[0.5.3]: https://github.com/BrikerMan/Kashgari/compare/v0.5.2...v0.5.3
 [0.5.2]: https://github.com/BrikerMan/Kashgari/compare/v0.5.1...v0.5.2
 [0.5.1]: https://github.com/BrikerMan/Kashgari/compare/v0.5.0...v0.5.1
 [0.5.0]: https://github.com/BrikerMan/Kashgari/compare/milestone/tf.keras...v0.5.0
