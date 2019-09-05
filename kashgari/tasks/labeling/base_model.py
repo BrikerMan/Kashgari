@@ -112,6 +112,9 @@ class BaseLabelingModel(BaseModel):
         print(classification_report(y_true, y_pred, digits=digits))
         return report
 
+    def build_model_arc(self):
+        raise NotImplementedError
+
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)
     from kashgari.tasks.labeling import BiLSTM_Model
