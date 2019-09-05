@@ -105,6 +105,44 @@ class BaseLabelingModel(BaseModel):
         print(classification_report(y_true, y_pred, digits=digits))
         return report
 
+    def new_evaluate(self,
+                 x_data,
+                 y_data,
+                 batch_size=None,
+                 digits=4,
+                 debug_info=False) -> Tuple[float, float, Dict]:
+        """
+        Build a text report showing the main classification metrics.
+
+        Args:
+            x_data:
+            y_data:
+            batch_size:
+            digits:
+            debug_info:
+
+        Returns:
+
+        """
+        temp_y_pred = self.predict(x_data, batch_size=batch_size)
+        temp_y_true = [seq[:len(y_pred[index])] for index, seq in enumerate(y_data)]
+        
+        y_pred, y_true = [], []
+        for x in temp_y_pred:
+            y_pred.append([str(i) for i in x])
+        for x in temp_y_true:
+            y_true.append([str(i) for i in x])
+        
+        if debug_info:
+            for index in random.sample(list(range(len(x_data))), 5):
+                logging.debug('------ sample {} ------'.format(index))
+                logging.debug('x      : {}'.format(x_data[index]))
+                logging.debug('y_true : {}'.format(y_true[index]))
+                logging.debug('y_pred : {}'.format(y_pred[index]))
+        report = classification_report(y_true, y_pred, digits=digits)
+        print(classification_report(y_true, y_pred, digits=digits))
+        return report
+    
     def build_model_arc(self):
         raise NotImplementedError
 
