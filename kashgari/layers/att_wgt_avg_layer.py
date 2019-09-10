@@ -15,9 +15,6 @@ L = keras.layers
 initializers = keras.initializers
 InputSpec = L.InputSpec
 
-if tf.test.is_gpu_available(cuda_only=True):
-    L.LSTM = L.CuDNNLSTM
-
 
 class AttentionWeightedAverageLayer(L.Layer):
     '''
