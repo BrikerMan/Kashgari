@@ -115,6 +115,7 @@ class BaseLabelingModel(BaseModel):
     def build_model_arc(self):
         raise NotImplementedError
 
+
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)
     from kashgari.tasks.labeling import BiLSTM_Model
