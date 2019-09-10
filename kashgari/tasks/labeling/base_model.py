@@ -92,14 +92,15 @@ class BaseLabelingModel(BaseModel):
         Returns:
 
         """
-        temp_y_pred = self.predict(x_data, batch_size=batch_size)
-        temp_y_true = [seq[:len(y_pred[index])] for index, seq in enumerate(y_data)]
-        
-        y_pred, y_true = [], []
-        for x in temp_y_pred:
-            y_pred.append([str(i) for i in x])
-        for x in temp_y_true:
-            y_true.append([str(i) for i in x])
+        y_pred = self.predict(x_data, batch_size=batch_size)
+        y_true = [seq[:len(y_pred[index])] for index, seq in enumerate(y_data)]
+
+        new_y_pred = []
+        for x in y_pred:
+            new_y_pred.append([str(i) for i in x])
+        new_y_true = []
+        for x in y_true:
+            new_y_true.append([str(i) for i in x])
                 
 
         if debug_info:
