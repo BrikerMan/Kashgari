@@ -187,7 +187,7 @@ class DoubleBLSTMModel(BaseLabelingModel):
         """
         build model architectural
         """
-        output_dim = len(self.pre_processor.label2idx)
+        output_dim = len(self.processor.label2idx)
         config = self.hyper_parameters
         embed_model = self.embedding.embed_model
 

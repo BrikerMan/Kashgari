@@ -8,16 +8,18 @@
 # time: 2019-05-22 11:21
 
 
+import json
+import logging
+import os
+import pathlib
 from typing import Dict, Any, List, Optional, Union, Tuple
 
-import os
-import json
-import pathlib
-import logging
-import tensorflow as tf
 import numpy as np
+import tensorflow as tf
 from tensorflow import keras
+
 from kashgari import utils
+from kashgari.helpers import deprecated
 from kashgari.embeddings import BareEmbedding
 from kashgari.embeddings.base_embedding import Embedding
 
@@ -58,6 +60,17 @@ class BaseModel(object):
     def label2idx(self) -> Dict[str, int]:
         return self.embedding.label2idx
 
+    @property
+    @deprecated("Property will be removed in 0.6.0, use self.processor instead")
+    def pre_processor(self):
+        """Deprecated. Use `self.wv.__getitem__` instead.
+        """
+        return self.embedding.processor
+
+    @property
+    def processor(self):
+        return self.embedding.processor
+
     def __init__(self,
                  embedding: Optional[Embedding] = None,
                  hyper_parameters: Optional[Dict[str, Dict[str, Any]]] = None):
@@ -86,7 +99,6 @@ class BaseModel(object):
         self.tf_model: keras.Model = None
         self.hyper_parameters = self.get_default_hyper_parameters()
         self.model_info = {}
-        self.pre_processor = self.embedding.processor
 
         if hyper_parameters:
             self.hyper_parameters.update(hyper_parameters)
@@ -453,6 +465,7 @@ if __name__ == "__main__":
     train_x, train_y = ChineseDailyNerCorpus.load_data('valid')
 
     model = CNN_LSTM_Model()
+    print(model.pre_processor)
     model.build_model(train_x[:100], train_y[:100])
     r = model.predict_entities(train_x[:5])
     model.save('./res')

@@ -29,7 +29,7 @@ class BiLSTM_Model(BaseClassificationModel):
         }
 
     def build_model_arc(self):
-        output_dim = len(self.pre_processor.label2idx)
+        output_dim = len(self.processor.label2idx)
         config = self.hyper_parameters
         embed_model = self.embedding.embed_model
 
@@ -57,7 +57,7 @@ class BiGRU_Model(BaseClassificationModel):
         }
 
     def build_model_arc(self):
-        output_dim = len(self.pre_processor.label2idx)
+        output_dim = len(self.processor.label2idx)
         config = self.hyper_parameters
         embed_model = self.embedding.embed_model
 
@@ -91,7 +91,7 @@ class CNN_Model(BaseClassificationModel):
         }
 
     def build_model_arc(self):
-        output_dim = len(self.pre_processor.label2idx)
+        output_dim = len(self.processor.label2idx)
         config = self.hyper_parameters
         embed_model = self.embedding.embed_model
 
@@ -132,7 +132,7 @@ class CNN_LSTM_Model(BaseClassificationModel):
         }
 
     def build_model_arc(self):
-        output_dim = len(self.pre_processor.label2idx)
+        output_dim = len(self.processor.label2idx)
         config = self.hyper_parameters
         embed_model = self.embedding.embed_model
 
@@ -172,7 +172,7 @@ class CNN_GRU_Model(BaseClassificationModel):
         }
 
     def build_model_arc(self):
-        output_dim = len(self.pre_processor.label2idx)
+        output_dim = len(self.processor.label2idx)
         config = self.hyper_parameters
         embed_model = self.embedding.embed_model
         layers_seq = []
@@ -262,7 +262,7 @@ class AVCNN_Model(BaseClassificationModel):
         }
 
     def build_model_arc(self):
-        output_dim = len(self.pre_processor.label2idx)
+        output_dim = len(self.processor.label2idx)
         config = self.hyper_parameters
         embed_model = self.embedding.embed_model
 
@@ -356,7 +356,7 @@ class KMax_CNN_Model(BaseClassificationModel):
         }
 
     def build_model_arc(self):
-        output_dim = len(self.pre_processor.label2idx)
+        output_dim = len(self.processor.label2idx)
         config = self.hyper_parameters
         embed_model = self.embedding.embed_model
 
@@ -425,7 +425,7 @@ class R_CNN_Model(BaseClassificationModel):
         }
 
     def build_model_arc(self):
-        output_dim = len(self.pre_processor.label2idx)
+        output_dim = len(self.processor.label2idx)
         config = self.hyper_parameters
         embed_model = self.embedding.embed_model
 
@@ -498,7 +498,7 @@ class AVRNN_Model(BaseClassificationModel):
         }
 
     def build_model_arc(self):
-        output_dim = len(self.pre_processor.label2idx)
+        output_dim = len(self.processor.label2idx)
         config = self.hyper_parameters
         embed_model = self.embedding.embed_model
 
@@ -572,7 +572,7 @@ class Dropout_BiGRU_Model(BaseClassificationModel):
         }
 
     def build_model_arc(self):
-        output_dim = len(self.pre_processor.label2idx)
+        output_dim = len(self.processor.label2idx)
         config = self.hyper_parameters
         embed_model = self.embedding.embed_model
 
@@ -647,7 +647,7 @@ class Dropout_AVRNN_Model(BaseClassificationModel):
         }
 
     def build_model_arc(self):
-        output_dim = len(self.pre_processor.label2idx)
+        output_dim = len(self.processor.label2idx)
         config = self.hyper_parameters
         embed_model = self.embedding.embed_model
 
