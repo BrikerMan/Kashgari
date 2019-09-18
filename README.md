@@ -160,6 +160,10 @@ model.fit(train_x, train_y)
 
 Thanks for your interest in contributing! There are many ways to get involved; start with the [contributor guidelines](https://kashgari.bmio.net/about/contributing/) and then check these open issues for specific tasks.
 
+Feel free to join the WeChat group if you want to more involved in Kashgari's development.
+
+![](http://s3.bmio.net/kashgari-qr-code.jpeg)
+
 ## Reference
 
 This library is inspired by and references following frameworks and papers.
