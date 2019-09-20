@@ -8,9 +8,10 @@
 # time: 2019-05-22 11:21
 
 
+import os
 import json
 import logging
-import os
+import warnings
 import pathlib
 from typing import Dict, Any, List, Optional, Union, Tuple
 
@@ -19,7 +20,7 @@ import tensorflow as tf
 from tensorflow import keras
 
 from kashgari import utils
-from kashgari.helpers import deprecated
+# from kashgari.helpers import deprecated
 from kashgari.embeddings import BareEmbedding
 from kashgari.embeddings.base_embedding import Embedding
 
@@ -61,10 +62,10 @@ class BaseModel(object):
         return self.embedding.label2idx
 
     @property
-    @deprecated("Property will be removed in 0.6.0, use self.processor instead")
     def pre_processor(self):
-        """Deprecated. Use `self.wv.__getitem__` instead.
-        """
+        warnings.warn("The 'pre_processor' property is deprecated, "
+                      "use 'processor' instead", DeprecationWarning, 2)
+        """Deprecated. Use `self.processor` instead."""
         return self.embedding.processor
 
     @property
