@@ -19,8 +19,8 @@ import numpy as np
 import tensorflow as tf
 from tensorflow import keras
 
+import kashgari
 from kashgari import utils
-# from kashgari.helpers import deprecated
 from kashgari.embeddings import BareEmbedding
 from kashgari.embeddings.base_embedding import Embedding
 
@@ -46,7 +46,7 @@ class BaseModel(object):
             'class_name': self.__class__.__name__,
             'module': self.__class__.__module__,
             'tf_version': tf.__version__,
-            'kashgari_version': tf.__version__
+            'kashgari_version': kashgari.__version__
         }
 
     @property
