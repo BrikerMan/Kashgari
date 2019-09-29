@@ -7,20 +7,20 @@
 # file: test_cnn_lstm_model.py
 # time: 2019-05-31 19:05
 
+import os
+import tempfile
+import time
 import unittest
 
-import os
-import time
-import tempfile
 import numpy as np
+from tensorflow.python.keras.utils import get_file
+
 import kashgari
-from tests.corpus import NERCorpus
 from kashgari.corpus import ChineseDailyNerCorpus
 from kashgari.embeddings import WordEmbedding
-from kashgari.tasks.labeling import CNN_LSTM_Model
 from kashgari.macros import DATA_PATH
-
-from tensorflow.python.keras.utils import get_file
+from kashgari.tasks.labeling import CNN_LSTM_Model
+from tests.corpus import NERCorpus
 
 valid_x, valid_y = ChineseDailyNerCorpus.load_data('valid')
 
@@ -58,6 +58,9 @@ class TestCNN_LSTM_Model(unittest.TestCase):
         new_model = kashgari.utils.load_model(model_path)
         new_res = new_model.predict(x[:20])
         assert np.array_equal(new_res, res)
+
+        new_model.compile_model()
+        model.fit(x, y, x, y, epochs=1)
 
     def test_fit_without_generator(self):
         x, y = NERCorpus.load_corpus('custom_2')
