@@ -62,7 +62,7 @@ def load_model(model_path: str, load_weights: bool = True) -> Union[BaseClassifi
     model_class = pydoc.locate(f"{model_info['module']}.{model_info['class_name']}")
     model_json_str = json.dumps(model_info['tf_model'])
 
-    model: BaseModel = model_class()
+    model = model_class()
     model.tf_model = tf.keras.models.model_from_json(model_json_str, custom_objects)
     if load_weights:
         model.tf_model.load_weights(os.path.join(model_path, 'model_weights.h5'))
