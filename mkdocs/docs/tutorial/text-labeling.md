@@ -71,6 +71,10 @@ model.save('saved_ner_model')
 # Load saved model
 loaded_model = kashgari.utils.load_model('saved_ner_model')
 loaded_model.predict(test_x[:10])
+
+# To continue training, compile the newly loaded model first
+loaded_model.compile_model()
+model.fit(train_x, train_y, valid_x, valid_y)
 ```
 
 That's all your need to do. Easy right.
