@@ -22,7 +22,7 @@ class ClassificationProcessor(BaseProcessor):
     def info(self):
         info = super(ClassificationProcessor, self).info()
         info['task'] = kashgari.CLASSIFICATION
-        info['multi_label'] = self.multi_label
+        info['config']['multi_label'] = self.multi_label
         return info
 
     def _build_label_dict(self,
