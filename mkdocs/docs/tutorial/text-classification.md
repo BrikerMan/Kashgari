@@ -79,7 +79,7 @@ import logging
 logging.basicConfig(level='DEBUG')
 
 bert_embed = BERTEmbedding('<PRE_TRAINED_BERT_MODEL_FOLDER>',
-                           task=kashgari.LABELING,
+                           task=kashgari.CLASSIFICATION,
                            sequence_length=100)
 model = BiGRU_Model(bert_embed)
 model.fit(train_x, train_y, valid_x, valid_y)

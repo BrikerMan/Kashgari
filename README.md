@@ -156,6 +156,10 @@ train_x, train_y = ChineseDailyNerCorpus.load_data()
 model.fit(train_x, train_y)
 ```
 
+## Sponsors
+
+Support this project by becoming a sponsor. Your issues and feature request will be prioritized.[[Become a sponsor](https://www.patreon.com/join/brikerman?)]
+
 ## Contributing
 
 Thanks for your interest in contributing! There are many ways to get involved; start with the [contributor guidelines](https://kashgari.bmio.net/about/contributing/) and then check these open issues for specific tasks.

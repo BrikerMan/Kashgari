@@ -15,11 +15,16 @@ import warnings
 import pathlib
 from typing import Dict, Any, List, Optional, Union, Tuple
 
+import os
+import pathlib
+from typing import Dict, Any, List, Optional, Union, Tuple
+
 import numpy as np
 import tensorflow as tf
 from tensorflow import keras
 
 import kashgari
+
 from kashgari import utils
 from kashgari.embeddings import BareEmbedding
 from kashgari.embeddings.base_embedding import Embedding
@@ -252,7 +257,8 @@ class BaseModel(object):
             batch_size: int = 64,
             epochs: int = 5,
             callbacks: List[keras.callbacks.Callback] = None,
-            fit_kwargs: Dict = None):
+            fit_kwargs: Dict = None,
+            shuffle: bool = True):
         """
         Trains the model for a given number of epochs with fit_generator (iterations on a dataset).
 
@@ -269,6 +275,7 @@ class BaseModel(object):
             fit_kwargs: fit_kwargs: additional arguments passed to ``fit_generator()`` function from
                 ``tensorflow.keras.Model``
                 - https://www.tensorflow.org/api_docs/python/tf/keras/models/Model#fit_generator
+            shuffle:
 
         Returns:
 
@@ -276,7 +283,8 @@ class BaseModel(object):
         self.build_model(x_train, y_train, x_validate, y_validate)
         train_generator = self.get_data_generator(x_train,
                                                   y_train,
-                                                  batch_size)
+                                                  batch_size,
+                                                  shuffle)
         if fit_kwargs is None:
             fit_kwargs = {}
 
@@ -285,7 +293,8 @@ class BaseModel(object):
         if x_validate:
             validation_generator = self.get_data_generator(x_validate,
                                                            y_validate,
-                                                           batch_size)
+                                                           batch_size,
+                                                           shuffle)
 
             if isinstance(x_validate, tuple):
                 validation_steps = len(x_validate[0]) // batch_size + 1
@@ -466,7 +475,6 @@ if __name__ == "__main__":
     train_x, train_y = ChineseDailyNerCorpus.load_data('valid')
 
     model = CNN_LSTM_Model()
-    print(model.pre_processor)
     model.build_model(train_x[:100], train_y[:100])
     r = model.predict_entities(train_x[:5])
     model.save('./res')
