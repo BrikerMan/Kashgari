@@ -49,7 +49,7 @@ class BiLSTM_Model(BaseLabelingModel):
         """
         build model architectural
         """
-        output_dim = len(self.pre_processor.label2idx)
+        output_dim = len(self.processor.label2idx)
         config = self.hyper_parameters
         embed_model = self.embedding.embed_model
 
@@ -97,7 +97,7 @@ class BiLSTM_CRF_Model(BaseLabelingModel):
         """
         build model architectural
         """
-        output_dim = len(self.pre_processor.label2idx)
+        output_dim = len(self.processor.label2idx)
         config = self.hyper_parameters
         embed_model = self.embedding.embed_model
 
@@ -152,7 +152,7 @@ class BiGRU_Model(BaseLabelingModel):
         """
         build model architectural
         """
-        output_dim = len(self.pre_processor.label2idx)
+        output_dim = len(self.processor.label2idx)
         config = self.hyper_parameters
         embed_model = self.embedding.embed_model
 
@@ -200,7 +200,7 @@ class BiGRU_CRF_Model(BaseLabelingModel):
         """
         build model architectural
         """
-        output_dim = len(self.pre_processor.label2idx)
+        output_dim = len(self.processor.label2idx)
         config = self.hyper_parameters
         embed_model = self.embedding.embed_model
 
@@ -261,7 +261,7 @@ class CNN_LSTM_Model(BaseLabelingModel):
         """
         build model architectural
         """
-        output_dim = len(self.pre_processor.label2idx)
+        output_dim = len(self.processor.label2idx)
         config = self.hyper_parameters
         embed_model = self.embedding.embed_model
 

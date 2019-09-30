@@ -7,16 +7,18 @@
 # file: base_model.py
 # time: 2019-05-22 11:21
 
-
+import os
 import json
 import logging
-import os
+import warnings
 import pathlib
 from typing import Dict, Any, List, Optional, Union, Tuple
 
 import numpy as np
 import tensorflow as tf
 from tensorflow import keras
+
+import kashgari
 
 from kashgari import utils
 from kashgari.embeddings import BareEmbedding
@@ -44,7 +46,7 @@ class BaseModel(object):
             'class_name': self.__class__.__name__,
             'module': self.__class__.__module__,
             'tf_version': tf.__version__,
-            'kashgari_version': tf.__version__
+            'kashgari_version': kashgari.__version__
         }
 
     @property
@@ -58,6 +60,17 @@ class BaseModel(object):
     @property
     def label2idx(self) -> Dict[str, int]:
         return self.embedding.label2idx
+
+    @property
+    def pre_processor(self):
+        warnings.warn("The 'pre_processor' property is deprecated, "
+                      "use 'processor' instead", DeprecationWarning, 2)
+        """Deprecated. Use `self.processor` instead."""
+        return self.embedding.processor
+
+    @property
+    def processor(self):
+        return self.embedding.processor
 
     def __init__(self,
                  embedding: Optional[Embedding] = None,
@@ -87,7 +100,6 @@ class BaseModel(object):
         self.tf_model: keras.Model = None
         self.hyper_parameters = self.get_default_hyper_parameters()
         self.model_info = {}
-        self.pre_processor = self.embedding.processor
 
         if hyper_parameters:
             self.hyper_parameters.update(hyper_parameters)

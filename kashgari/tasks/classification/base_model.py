@@ -179,12 +179,12 @@ class BaseClassificationModel(BaseModel):
                 logging.debug('y      : {}'.format(y_data[index]))
                 logging.debug('y_pred : {}'.format(y_pred[index]))
 
-        if self.pre_processor.multi_label:
-            y_pred_b = self.pre_processor.multi_label_binarizer.fit_transform(y_pred)
-            y_true_b = self.pre_processor.multi_label_binarizer.fit_transform(y_data)
+        if self.processor.multi_label:
+            y_pred_b = self.processor.multi_label_binarizer.fit_transform(y_pred)
+            y_true_b = self.processor.multi_label_binarizer.fit_transform(y_data)
             report = metrics.classification_report(y_pred_b,
                                                    y_true_b,
-                                                   target_names=self.pre_processor.multi_label_binarizer.classes_,
+                                                   target_names=self.processor.multi_label_binarizer.classes_,
                                                    output_dict=output_dict,
                                                    digits=digits)
         else:

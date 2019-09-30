@@ -136,7 +136,7 @@ class DPCNN_Model(BaseClassificationModel):
         return tensor_out
 
     def build_model_arc(self):
-        output_dim = len(self.pre_processor.label2idx)
+        output_dim = len(self.processor.label2idx)
         config = self.hyper_parameters
         embed_model = self.embedding.embed_model
 

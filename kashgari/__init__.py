@@ -12,6 +12,10 @@
 """
 import os
 os.environ['TF_KERAS'] = '1'
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+
+import tensorflow as tf
+tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 
 import keras_bert
 from kashgari.macros import TaskType, config
