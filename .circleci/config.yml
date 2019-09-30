@@ -44,7 +44,7 @@ default_steps:
         command: >
           . venv/bin/activate
 
-          TESTFILES=$(circleci tests glob "tests/**/*.py" | circleci tests split)
+          TESTFILES=$(circleci tests glob "tests/**/*.py" | circleci tests split --split-by=timings)
 
           echo $TESTFILES
 
