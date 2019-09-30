@@ -1,8 +1,25 @@
+numpy==1.16.4
+scikit-learn>=0.21.1
+h5py
+keras-bert>=0.50.0
+keras-gpt-2>=0.8.0
+gensim>=3.5.0
+seqeval==0.0.10
+pandas>=0.23.0
 jieba
-python-coveralls
+tensorflow==1.14.0
+google-compute-engine
+
+# test & coverage
 coverage
+python-coveralls
+flake8
+flake8-builtins
 nose
-tensorflow
-mkdocs 
-mkdocs-material 
+pytest
+pytest-cov
+
+# documents
+mkdocs
+mkdocs-material
 pymdown-extensions
