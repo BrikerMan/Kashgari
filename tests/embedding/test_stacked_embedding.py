@@ -7,7 +7,9 @@
 # file: test_stacked_embedding.py
 # time: 2019-05-31 19:35
 import os
+import time
 import unittest
+import tempfile
 import numpy as np
 
 import kashgari
@@ -35,11 +37,7 @@ class TestStackedEmbedding(unittest.TestCase):
         stack_embedding = StackedEmbedding([text_embedding, num_feature_embedding])
         stack_embedding.analyze_corpus((text, is_bold), label)
 
-        tensor = stack_embedding.process_x_dataset((text[:3], is_bold[:3]))
-        print(tensor[0].shape)
-        print(tensor[1].shape)
-        print(stack_embedding.embed_model.input_shape)
-        print(stack_embedding.embed_model.summary())
+        stack_embedding.process_x_dataset((text[:3], is_bold[:3]))
         r = stack_embedding.embed((text[:3], is_bold[:3]))
         assert r.shape == (3, 12, 116)
 
@@ -62,12 +60,7 @@ class TestStackedEmbedding(unittest.TestCase):
         stack_embedding = StackedEmbedding([text_embedding, num_feature_embedding])
         stack_embedding.analyze_corpus((text, is_bold), label)
 
-        tensor = stack_embedding.process_x_dataset((text[:3], is_bold[:3]))
-        print(tensor[0][0].shape)
-        print(tensor[0][1].shape)
-        print(tensor[1].shape)
-        print(stack_embedding.embed_model.input_shape)
-        print(stack_embedding.embed_model.summary())
+        stack_embedding.process_x_dataset((text[:3], is_bold[:3]))
         r = stack_embedding.embed((text[:3], is_bold[:3]))
         assert r.shape == (3, 12, 24)
 
@@ -118,12 +111,11 @@ class TestStackedEmbedding(unittest.TestCase):
 
         model.fit(x, y, epochs=2)
 
-        model_path = os.path.join('./saved_models/',
-                                  model.__class__.__module__,
-                                  model.__class__.__name__)
+        model_path = os.path.join(tempfile.gettempdir(), str(time.time()))
         model.save(model_path)
 
         new_model = kashgari.utils.load_model(model_path)
+        new_model.predict(x)
 
 
 if __name__ == "__main__":
