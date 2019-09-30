@@ -10,20 +10,24 @@
 @time: 2019-05-17 11:37
 
 """
-import os
 import json
-import time
+import os
+import pathlib
 import pydoc
 import random
-import pathlib
+import time
+from typing import List, Optional, Dict, Union
+
 import tensorflow as tf
 from tensorflow.python import keras, saved_model
 
 from kashgari import custom_objects
-from kashgari.tasks.base_model import BaseModel
-from kashgari.processors.base_processor import BaseProcessor
 from kashgari.embeddings.base_embedding import Embedding
-from typing import List, Optional, Dict
+from kashgari.layers.crf import CRF
+from kashgari.processors.base_processor import BaseProcessor
+from kashgari.tasks.base_model import BaseModel
+from kashgari.tasks.classification.base_model import BaseClassificationModel
+from kashgari.tasks.labeling.base_model import BaseLabelingModel
 
 
 def unison_shuffled_copies(a, b):
@@ -42,7 +46,7 @@ def custom_object_scope():
     return tf.keras.utils.custom_object_scope(custom_objects)
 
 
-def load_model(model_path: str, load_weights: bool = True) -> BaseModel:
+def load_model(model_path: str, load_weights: bool = True) -> Union[BaseClassificationModel, BaseLabelingModel]:
     """
     Load saved model from saved model from `model.save` function
     Args:
@@ -58,7 +62,7 @@ def load_model(model_path: str, load_weights: bool = True) -> BaseModel:
     model_class = pydoc.locate(f"{model_info['module']}.{model_info['class_name']}")
     model_json_str = json.dumps(model_info['tf_model'])
 
-    model: BaseModel = model_class()
+    model = model_class()
     model.tf_model = tf.keras.models.model_from_json(model_json_str, custom_objects)
     if load_weights:
         model.tf_model.load_weights(os.path.join(model_path, 'model_weights.h5'))
@@ -70,6 +74,10 @@ def load_model(model_path: str, load_weights: bool = True) -> BaseModel:
                                                             model.tf_model)
 
     model.embedding = embedding
+
+    if type(model.tf_model.layers[-1]) == CRF:
+        model.layer_crf = model.tf_model.layers[-1]
+
     return model
 
 

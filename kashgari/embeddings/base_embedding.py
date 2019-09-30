@@ -8,8 +8,8 @@
 # time: 2019-05-20 17:40
 
 import json
-import pydoc
 import logging
+import pydoc
 from typing import Union, List, Optional, Dict
 
 import numpy as np
@@ -33,6 +33,7 @@ class Embedding(object):
             'config': {
                 'sequence_length': self.sequence_length,
                 'embedding_size': self.embedding_size,
+                'task': self.task
             },
             'embed_model': json.loads(self.embed_model.to_json()),
         }
