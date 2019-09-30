@@ -1,4 +1,4 @@
-   version: 2
+version: 2
 
 defualt_executer: &defualt_executer
   machine:
