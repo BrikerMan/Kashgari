@@ -124,6 +124,7 @@ class TestStackedEmbedding(unittest.TestCase):
         model.save(model_path)
 
         new_model = kashgari.utils.load_model(model_path)
+        new_model.predict(x)
 
 
 if __name__ == "__main__":

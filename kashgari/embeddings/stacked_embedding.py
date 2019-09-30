@@ -7,6 +7,8 @@
 # file: stacked_embedding.py
 # time: 2019-05-23 09:18
 
+import json
+import pydoc
 from typing import Union, Optional, Tuple, List, Dict
 
 import numpy as np
@@ -15,11 +17,10 @@ from tensorflow.python import keras
 
 import kashgari
 from kashgari.embeddings.base_embedding import Embedding
-from kashgari.processors.base_processor import BaseProcessor
 from kashgari.layers import L
+from kashgari.processors.base_processor import BaseProcessor
 
 
-# Todo: A better name for this class
 class StackedEmbedding(Embedding):
     """Embedding layer without pre-training, train embedding layer while training model"""
 
@@ -28,12 +29,30 @@ class StackedEmbedding(Embedding):
                              config_dict: Dict,
                              model_path: str,
                              tf_model: keras.Model):
-        pass
+        embeddings = []
+        for embed_info in config_dict['embeddings']:
+            embed_class = pydoc.locate(f"{embed_info['module']}.{embed_info['class_name']}")
+            embedding: Embedding = embed_class._load_saved_instance(embed_info,
+                                                                    model_path,
+                                                                    tf_model)
+            embeddings.append(embedding)
+        instance = cls(embeddings=embeddings,
+                       from_saved_model=True)
+        print('----')
+        print(instance.embeddings)
+
+        embed_model_json_str = json.dumps(config_dict['embed_model'])
+        instance.embed_model = keras.models.model_from_json(embed_model_json_str,
+                                                            custom_objects=kashgari.custom_objects)
+        # Load Weights from model
+        for layer in instance.embed_model.layers:
+            layer.set_weights(tf_model.get_layer(layer.name).get_weights())
+        return instance
 
     def info(self):
         info = super(StackedEmbedding, self).info()
         info['embeddings'] = [embed.info() for embed in self.embeddings]
-        info['config'] = []
+        info['config'] = {}
         return info
 
     def __init__(self,
@@ -58,9 +77,10 @@ class StackedEmbedding(Embedding):
                                                processor=processor,
                                                from_saved_model=from_saved_model)
 
+        self.embeddings = embeddings
+        self.processor = embeddings[0].processor
+
         if not from_saved_model:
-            self.embeddings = embeddings
-            self.processor = embeddings[0].processor
             self._build_model()
 
     def _build_model(self, **kwargs):
@@ -71,8 +91,6 @@ class StackedEmbedding(Embedding):
 
             for embed in self.embeddings:
                 inputs += embed.embed_model.inputs
-                print(embed.embed_model.input)
-                print(embed.embed_model.inputs)
 
             # inputs = [embed.embed_model.inputs for embed in self.embeddings]
             outputs = layer_concatenate([embed.embed_model.output for embed in self.embeddings])
