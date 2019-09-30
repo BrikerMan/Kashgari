@@ -142,7 +142,7 @@ Let's assume we have a dataset like this.
 
 ```python
 x = [
-   ['This','news',are',very','well','organized'],
+   ['This','news','are' , 'very','well','organized'],
    ['What','extremely','usefull','tv','show'],
    ['The','tv','presenter','were','very','well','dress'],
    ['Multi-class', 'classification', 'means', 'a', 'classification', 'task', 'with', 'more', 'than', 'two', 'classes']

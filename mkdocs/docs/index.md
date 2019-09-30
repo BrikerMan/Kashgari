@@ -121,6 +121,7 @@ Epoch 1/50
 ### Run with GPT-2 Embedding
 
 ```python
+import kashgari
 from kashgari.embeddings import GPT2Embedding
 from kashgari.corpus import ChineseDailyNerCorpus
 from kashgari.tasks.labeling import BiGRU_Model
@@ -128,7 +129,9 @@ from kashgari.tasks.labeling import BiGRU_Model
 train_x, train_y = ChineseDailyNerCorpus.load_data('train')
 valid_x, valid_y = ChineseDailyNerCorpus.load_data('valid')
 
-gpt2_embedding = GPT2Embedding('<path-to-gpt-model-folder>', sequence_length=30)
+gpt2_embedding = GPT2Embedding('<path-to-gpt-model-folder>',
+                               task=kashgari.LABELING,
+                               sequence_length=30)
 model = BiGRU_Model(gpt2_embedding)
 model.fit(train_x, train_y, valid_x, valid_y, epochs=50)
 ```
@@ -136,11 +139,14 @@ model.fit(train_x, train_y, valid_x, valid_y, epochs=50)
 ### Run with Bert Embedding
 
 ```python
+import kashgari
 from kashgari.embeddings import BERTEmbedding
 from kashgari.tasks.labeling import BiGRU_Model
 from kashgari.corpus import ChineseDailyNerCorpus
 
-bert_embedding = BERTEmbedding('<bert-model-folder>', sequence_length=30)
+bert_embedding = BERTEmbedding('<bert-model-folder>', 
+                               task=kashgari.LABELING,
+                               sequence_length=30)
 model = BiGRU_Model(bert_embedding)
 
 train_x, train_y = ChineseDailyNerCorpus.load_data()
