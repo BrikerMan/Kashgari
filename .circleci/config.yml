@@ -44,7 +44,7 @@ default_steps:
         command: >
           . venv/bin/activate
 
-          TESTFILES=$(circleci tests glob "tests/**/*.py" | circleci tests split --split-by=timings)
+          TESTFILES=$(circleci tests glob "tests/**/*.py" | circleci tests split)
 
           echo $TESTFILES
 
@@ -127,9 +127,8 @@ jobs:
       - run:
           name: Update Documents
           command: |
-            ls
+            source venv/bin/activate
             cd mkdocs
-            ls
             mkdocs build
 
 workflows:
