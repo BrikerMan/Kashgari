@@ -44,7 +44,7 @@ class BaseProcessor(object):
         self.add_bos_eos: bool = kwargs.get('add_bos_eos', False)
 
         self.sequence_length = kwargs.get('sequence_length', None)
-        
+
         self.min_count = kwargs.get('min_count', 3)
 
     def info(self):
