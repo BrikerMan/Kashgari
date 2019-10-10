@@ -44,6 +44,8 @@ class BaseProcessor(object):
         self.add_bos_eos: bool = kwargs.get('add_bos_eos', False)
 
         self.sequence_length = kwargs.get('sequence_length', None)
+        
+        self.min_count = kwargs.get('min_count', 3)
 
     def info(self):
         return {
@@ -65,13 +67,12 @@ class BaseProcessor(object):
     def analyze_corpus(self,
                        corpus: Union[List[List[str]]],
                        labels: Union[List[List[str]], List[str]],
-                       min_count: int = 3,
                        force: bool = False):
         rec_len = sorted([len(seq) for seq in corpus])[int(0.95 * len(corpus))]
         self.dataset_info['RECOMMEND_LEN'] = rec_len
 
         if len(self.token2idx) == 0 or force:
-            self._build_token_dict(corpus, min_count)
+            self._build_token_dict(corpus, self.min_count)
         if len(self.label2idx) == 0 or force:
             self._build_label_dict(labels)
 
@@ -103,7 +104,7 @@ class BaseProcessor(object):
         token2count = collections.OrderedDict(sorted_token2count)
 
         for token, token_count in token2count.items():
-            if token not in token2idx and token_count > min_count:
+            if token not in token2idx and token_count >= min_count:
                 token2idx[token] = len(token2idx)
 
         self.token2idx = token2idx
