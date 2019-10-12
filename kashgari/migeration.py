@@ -10,12 +10,7 @@ import subprocess
 import logging
 
 
-def show_migration_guide():
-    requirements = subprocess.getoutput("pip freeze")
-    for package in requirements.splitlines():
-        package_name, package_version = package.split('==')
-        if package_name == 'kashgari-tf':
-            guide = """
+guide = """
    ╭─────────────────────────────────────────────────────────────────────────────╮
    │                                                                             │
    │          We changed the package name for clarity and consistency.           │
@@ -30,7 +25,15 @@ def show_migration_guide():
    │                                                                             │
    ╰─────────────────────────────────────────────────────────────────────────────╯
 """
-            logging.warning(guide)
+
+
+def show_migration_guide():
+    requirements = subprocess.getoutput("pip freeze")
+    for package in requirements.splitlines():
+        if '==' in package:
+            package_name, package_version = package.split('==')
+            if package_name == 'kashgari-tf':
+                logging.warning(guide)
 
 
 if __name__ == "__main__":
