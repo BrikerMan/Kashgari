@@ -16,7 +16,8 @@ from seqeval import metrics as seq_metrics
 
 class EvalCallBack(keras.callbacks.Callback):
 
-    def __init__(self, kash_model: BaseModel, valid_x, valid_y, step=5, batch_size=256):
+    def __init__(self, kash_model: BaseModel, valid_x, valid_y,
+                 step=5, batch_size=256, average='weighted'):
         """
         Evaluate callback, calculate precision, recall and f1
         Args:
@@ -32,9 +33,8 @@ class EvalCallBack(keras.callbacks.Callback):
         self.valid_y = valid_y
         self.step = step
         self.batch_size = batch_size
-        self.logs = {}
-
-        self.average = 'weighted'
+        self.average = average
+        self.logs = []
 
     def on_epoch_end(self, epoch, logs=None):
         if (epoch + 1) % self.step == 0:
@@ -51,15 +51,13 @@ class EvalCallBack(keras.callbacks.Callback):
                 recall = metrics.recall_score(y_true, y_pred, average=self.average)
                 f1 = metrics.f1_score(y_true, y_pred, average=self.average)
 
-            self.logs[epoch] = {
+            self.logs.append({
                 'precision': precision,
                 'recall': recall,
                 'f1': f1
-            }
+            })
             print(f"\nepoch: {epoch} precision: {precision:.6f}, recall: {recall:.6f}, f1: {f1:.6f}")
 
 
 if __name__ == "__main__":
     print("Hello world")
-    config_path = '/Users/brikerman/Desktop/python/Kashgari/tests/test-data/bert/bert_config.json'
-    check_point_path = '/Users/brikerman/Desktop/python/Kashgari/tests/test-data/bert/bert_model.ckpt'
