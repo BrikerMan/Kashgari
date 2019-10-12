@@ -35,4 +35,6 @@ from kashgari import tasks
 from kashgari import utils
 from kashgari import callbacks
 
-import tensorflow as tf
+from kashgari import migeration
+
+migeration.show_migration_guide()
