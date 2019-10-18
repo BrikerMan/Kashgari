@@ -16,6 +16,31 @@ pip show kashgari-tf
 
 ## Current Release
 
+### [1.0.0] - 
+
+Unfortunately, we have to change the package name for clarity and consistency. Here is the new naming sytle.
+
+| Backend          | pypi version   | desc           |
+| ---------------- | -------------- | -------------- |
+| TensorFlow 2.x   | kashgari 2.x.x | coming soon    |
+| TensorFlow 1.14+ | kashgari 1.x.x |                |
+| Keras            | kashgari 0.x.x | legacy version |
+
+Here is how the existing versions changes
+
+| Supported Backend | Kashgari Versions | Kahgsari-tf Version |
+| ----------------- | ----------------- | ------------------- |
+| TensorFlow 2.x    | kashgari 2.x.x    | -                   |
+| TensorFlow 1.14+  | kashgari 1.0.1    | -                   |
+| TensorFlow 1.14+  | kashgari 1.0.0    | 0.5.5               |
+| TensorFlow 1.14+  | -                 | 0.5.4               |
+| TensorFlow 1.14+  | -                 | 0.5.3               |
+| TensorFlow 1.14+  | -                 | 0.5.2               |
+| TensorFlow 1.14+  | -                 | 0.5.1               |
+| Keras (legacy)    | kashgari 0.2.6    | -                   |
+| Keras (legacy)    | kashgari 0.2.5    | -                   |
+| Keras (legacy)    | kashgari 0.x.x    | -                   |
+
 ### [0.5.4] - 2019.09.30
 
 - ✨ Add shuffle parameter to fit function ([#249])
@@ -113,6 +138,7 @@ pip show kashgari-tf
 - fix classification model evaluate result output
 - change test settings
 
+[1.0.0]: https://github.com/BrikerMan/Kashgari/compare/v0.5.4...v1.0.0
 [0.5.4]: https://github.com/BrikerMan/Kashgari/compare/v0.5.3...v0.5.4
 [0.5.3]: https://github.com/BrikerMan/Kashgari/compare/v0.5.2...v0.5.3
 [0.5.2]: https://github.com/BrikerMan/Kashgari/compare/v0.5.1...v0.5.2

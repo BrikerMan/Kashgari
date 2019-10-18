@@ -64,17 +64,17 @@ There are also articles and posts that illustrate how to use Kashgari:
 
 ### Requirements and Installation
 
-🎉🎉🎉 We renamed the tf.keras version as **kashgari-tf** 🎉🎉🎉
+🎉🎉🎉 We renamed again for consistency and clarity. From now on, it is all `kashgari`. 🎉🎉🎉
 
-The project is based on TenorFlow 1.14.0 and Python 3.6+, because it is 2019 and type hints is cool.
+The project is based on Python 3.6+, because it is 2019 and type hinting is cool.
 
-```bash
-pip install kashgari-tf
-# CPU
-pip install tensorflow==1.14.0
-# GPU
-pip install tensorflow-gpu==1.14.0
-```
+| Backend          | pypi version                           | desc           |
+| ---------------- | -------------------------------------- | -------------- |
+| TensorFlow 2.x   | `pip install 'kashgari>=2.0.0'`        | coming soon    |
+| TensorFlow 1.14+ | `pip install 'kashgari>=1.0.0,<2.0.0'` |                |
+| Keras            | `pip install 'kashgari<1.0.0'`         | legacy version |
+
+[Find more info about the name changing.](https://github.com/BrikerMan/Kashgari/releases/tag/v1.0.0)
 
 ### Example Usage
 
