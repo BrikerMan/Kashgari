@@ -68,11 +68,11 @@ There are also articles and posts that illustrate how to use Kashgari:
 
 The project is based on Python 3.6+, because it is 2019 and type hinting is cool.
 
-| Backend          | pypi version                           | desc           |
-| ---------------- | -------------------------------------- | -------------- |
-| TensorFlow 2.x   | `pip install 'kashgari>=2.0.0'`        | coming soon    |
-| TensorFlow 1.14+ | `pip install 'kashgari>=1.0.0,<2.0.0'` |                |
-| Keras            | `pip install 'kashgari<1.0.0'`         | legacy version |
+| Backend          | pypi version                           | desc            |
+| ---------------- | -------------------------------------- | --------------- |
+| TensorFlow 2.x   | `pip install 'kashgari>=2.0.0'`        | coming soon     |
+| TensorFlow 1.14+ | `pip install 'kashgari>=1.0.0,<2.0.0'` | current version |
+| Keras            | `pip install 'kashgari<1.0.0'`         | legacy version  |
 
 [Find more info about the name changing.](https://github.com/BrikerMan/Kashgari/releases/tag/v1.0.0)
 
