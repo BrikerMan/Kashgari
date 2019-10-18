@@ -16,7 +16,7 @@ pip show kashgari-tf
 
 ## Current Release
 
-### [1.0.0] - 
+### [1.0.0] - 2019.10.18
 
 Unfortunately, we have to change the package name for clarity and consistency. Here is the new naming sytle.
 

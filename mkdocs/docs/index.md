@@ -12,11 +12,11 @@
     <a href='https://coveralls.io/github/BrikerMan/Kashgari?branch=master'>
         <img src='https://coveralls.io/repos/github/BrikerMan/Kashgari/badge.svg?branch=master' alt='Coverage Status'/>
     </a>
-     <a href="https://pepy.tech/project/kashgari-tf">
-        <img src="https://pepy.tech/badge/kashgari-tf"/>
+    <a href="https://pepy.tech/project/kashgari">
+        <img src="https://pepy.tech/badge/kashgari"/>
     </a>
-    <a href="https://pypi.org/project/kashgari-tf/">
-        <img alt="PyPI" src="https://img.shields.io/pypi/v/kashgari-tf.svg">
+    <a href="https://pypi.org/project/kashgari/">
+        <img alt="PyPI" src="https://img.shields.io/pypi/v/kashgari.svg">
     </a>
 </p>
 
