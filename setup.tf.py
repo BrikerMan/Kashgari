@@ -35,7 +35,7 @@ def find_version(*file_paths):
     raise RuntimeError("Unable to find version string.")
 
 
-__name__ = 'kashgari'
+__name__ = 'kashgari-tf'
 __author__ = "BrikerMan"
 __copyright__ = "Copyright 2018, BrikerMan"
 __credits__ = []
@@ -49,7 +49,7 @@ __description__ = 'Simple, Keras-powered multilingual NLP framework,' \
                   ' part-of-speech tagging (PoS) and text classification tasks. ' \
                   'Includes BERT, GPT-2 and word2vec embedding.'
 
-__version__ = find_version('kashgari', 'version.py')
+__version__ = '0.5.5'
 README = (HERE / "README.md").read_text(encoding='utf-8')
 
 with codecs.open('requirements.txt', 'r', 'utf8') as reader:

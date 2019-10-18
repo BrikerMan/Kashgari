@@ -29,6 +29,7 @@ class Config(object):
 
     def __init__(self):
         self._use_cudnn_cell = False
+        self.disable_auto_summary = False
 
         if tf.test.is_gpu_available(cuda_only=True):
             logging.warning("CUDA GPU available, you can set `kashgari.config.use_cudnn_cell = True` to use CuDNNCell. "
