@@ -95,7 +95,8 @@ class GPT2Embedding(Embedding):
             model = gpt2.load_trained_model_from_checkpoint(config_path,
                                                             checkpoint_path,
                                                             self.sequence_length)
-            model.summary()
+            if not kashgari.config.disable_auto_summary:
+                model.summary()
             self.embed_model = model
         # if self.token_count == 0:
         #     logging.debug('need to build after build_word2idx')

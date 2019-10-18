@@ -383,7 +383,8 @@ class BaseModel(object):
             kwargs['metrics'] = ['accuracy']
 
         self.tf_model.compile(**kwargs)
-        self.tf_model.summary()
+        if not kashgari.config.disable_auto_summary:
+            self.tf_model.summary()
 
     def predict(self,
                 x_data,
