@@ -64,7 +64,7 @@ There are also articles and posts that illustrate how to use Kashgari:
 
 ### Requirements and Installation
 
-🎉🎉🎉 We renamed the again for consistency and clarity. From now on, it is all `kashgari`. 🎉🎉🎉
+🎉🎉🎉 We renamed again for consistency and clarity. From now on, it is all `kashgari`. 🎉🎉🎉
 
 The project is based on Python 3.6+, because it is 2019 and type hinting is cool.
 

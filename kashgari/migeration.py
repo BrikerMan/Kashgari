@@ -11,19 +11,21 @@ import logging
 
 
 guide = """
-   ╭─────────────────────────────────────────────────────────────────────────────╮
-   │                                                                             │
-   │          We changed the package name for clarity and consistency.           │
-   │                     From now on, it is all `kahgari`.                       │
-   │    Changelog: https://github.com/BrikerMan/Kashgari/releases/tag/v1.0.0     │
-   │                                                                             │
-   │            | Backend          | pypi version   | desc           |           │
-   │            | ---------------- | -------------- | -------------- |           │
-   │            | TensorFlow 2.x   | kashgari 2.x.x | coming soon    |           │
-   │            | TensorFlow 1.14+ | kashgari 1.x.x |                |           │
-   │            | Keras            | kashgari 0.x.x | legacy version |           │
-   │                                                                             │
-   ╰─────────────────────────────────────────────────────────────────────────────╯
+╭─────────────────────────────────────────────────────────────────────────╮
+│ ◎ ○ ○ ░░░░░░░░░░░░░░░░░░░░░  Important Message  ░░░░░░░░░░░░░░░░░░░░░░░░│
+├─────────────────────────────────────────────────────────────────────────┤
+│                                                                         │
+│              We renamed again for consistency and clarity.              │
+│                   From now on, it is all `kashgari`.                    │
+│  Changelog: https://github.com/BrikerMan/Kashgari/releases/tag/v1.0.0   │
+│                                                                         │
+│         | Backend          | pypi version   | desc           |          │
+│         | ---------------- | -------------- | -------------- |          │
+│         | TensorFlow 2.x   | kashgari 2.x.x | coming soon    |          │
+│         | TensorFlow 1.14+ | kashgari 1.x.x |                |          │
+│         | Keras            | kashgari 0.x.x | legacy version |          │
+│                                                                         │
+╰─────────────────────────────────────────────────────────────────────────╯
 """
 
 
