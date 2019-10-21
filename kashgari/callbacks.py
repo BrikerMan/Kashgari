@@ -47,8 +47,8 @@ class EvalCallBack(keras.callbacks.Callback):
             else:
                 y_true = self.valid_y
                 if self.kash_model.processor.multi_label:
-                    y_pred = self.processor.multi_label_binarizer.transform(y_pred)
-                    y_true = self.processor.multi_label_binarizer.transform(y_true)
+                    y_pred = self.kash_model.processor.multi_label_binarizer.transform(y_pred)
+                    y_true = self.kash_model.processor.multi_label_binarizer.transform(y_true)
                 precision = metrics.precision_score(y_true, y_pred, average=self.average)
                 recall = metrics.recall_score(y_true, y_pred, average=self.average)
                 f1 = metrics.f1_score(y_true, y_pred, average=self.average)
