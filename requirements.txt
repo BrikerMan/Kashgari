@@ -1,8 +1,8 @@
-numpy==1.16.4
-scikit-learn>=0.21.1
+numpy<1.17.0
 h5py
+scikit-learn>=0.21.1
 keras-bert>=0.50.0
 keras-gpt-2>=0.8.0
 gensim>=3.5.0
-seqeval==0.0.10
+seqeval>=0.0.10
 pandas>=0.23.0
