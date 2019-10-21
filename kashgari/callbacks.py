@@ -16,8 +16,7 @@ from seqeval import metrics as seq_metrics
 
 class EvalCallBack(keras.callbacks.Callback):
 
-    def __init__(self, kash_model: BaseModel, valid_x, valid_y,
-                 step=5, batch_size=256, average='weighted'):
+    def __init__(self, kash_model: BaseModel, valid_x, valid_y, step=5, batch_size=64, average='weighted'):
         """
         Evaluate callback, calculate precision, recall and f1
         Args:
@@ -47,6 +46,9 @@ class EvalCallBack(keras.callbacks.Callback):
                 f1 = seq_metrics.f1_score(y_true, y_pred)
             else:
                 y_true = self.valid_y
+                if self.kash_model.processor.multi_label:
+                    y_pred = self.processor.multi_label_binarizer.transform(y_pred)
+                    y_true = self.processor.multi_label_binarizer.transform(y_true)
                 precision = metrics.precision_score(y_true, y_pred, average=self.average)
                 recall = metrics.recall_score(y_true, y_pred, average=self.average)
                 f1 = metrics.f1_score(y_true, y_pred, average=self.average)
