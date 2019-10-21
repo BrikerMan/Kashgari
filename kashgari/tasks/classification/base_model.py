@@ -180,8 +180,8 @@ class BaseClassificationModel(BaseModel):
                 logging.debug('y_pred : {}'.format(y_pred[index]))
 
         if self.processor.multi_label:
-            y_pred_b = self.processor.multi_label_binarizer.fit_transform(y_pred)
-            y_true_b = self.processor.multi_label_binarizer.fit_transform(y_data)
+            y_pred_b = self.processor.multi_label_binarizer.transform(y_pred)
+            y_true_b = self.processor.multi_label_binarizer.transform(y_data)
             report = metrics.classification_report(y_pred_b,
                                                    y_true_b,
                                                    target_names=self.processor.multi_label_binarizer.classes_,
