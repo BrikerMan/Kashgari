@@ -96,6 +96,7 @@ class BaseProcessor(object):
             for token in sentence:
                 count = token2count.get(token, 0)
                 token2count[token] = count + 1
+        self.token2count = token2count
 
         # 按照词频降序排序
         sorted_token2count = sorted(token2count.items(),
