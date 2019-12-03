@@ -15,6 +15,15 @@
         "test",
         "code"
       ]
+    },
+    {
+      "login": "alexwwang",
+      "name": "Alex Wang",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/856746?v=4",
+      "profile": "http://www.chuanxilu.com",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
