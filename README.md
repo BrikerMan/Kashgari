@@ -1,4 +1,5 @@
 <h1 align="center">
+<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)<!-- ALL-CONTRIBUTORS-BADGE:END -->
     <a href='https://en.wikipedia.org/wiki/Mahmud_al-Kashgari'>Kashgari</a>
 </h1>
 
@@ -175,3 +176,22 @@ This library is inspired by and references following frameworks and papers.
 - [flair - A very simple framework for state-of-the-art Natural Language Processing (NLP)](https://github.com/zalandoresearch/flair)
 - [anago - Bidirectional LSTM-CRF and ELMo for Named-Entity Recognition, Part-of-Speech Tagging](https://github.com/Hironsan/anago)
 - [Chinese-Word-Vectors](https://github.com/Embedding/Chinese-Word-Vectors)
+
+## Contributors ✨
+
+Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+<table>
+  <tr>
+    <td align="center"><a href="https://developers.google.com/community/experts/directory/profile/profile-eliyar_eziz"><img src="https://avatars1.githubusercontent.com/u/9368907?v=4" width="100px;" alt="Eliyar Eziz"/><br /><sub><b>Eliyar Eziz</b></sub></a><br /><a href="https://github.com/BrikerMan/Kashgari/commits?author=BrikerMan" title="Documentation">📖</a> <a href="https://github.com/BrikerMan/Kashgari/commits?author=BrikerMan" title="Tests">⚠️</a> <a href="https://github.com/BrikerMan/Kashgari/commits?author=BrikerMan" title="Code">💻</a></td>
+  </tr>
+</table>
+
+<!-- markdownlint-enable -->
+<!-- prettier-ignore-end -->
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
+This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!

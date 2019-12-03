@@ -1,0 +1,26 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "contributors": [
+    {
+      "login": "BrikerMan",
+      "name": "Eliyar Eziz",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/9368907?v=4",
+      "profile": "https://developers.google.com/community/experts/directory/profile/profile-eliyar_eziz",
+      "contributions": [
+        "doc",
+        "test",
+        "code"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "projectName": "Kashgari",
+  "projectOwner": "BrikerMan",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "skipCi": true
+}
