@@ -161,7 +161,7 @@ model.fit(train_x, train_y)
 Support this project by becoming a sponsor. Your issues and feature request will be prioritized.[[Become a sponsor](https://www.patreon.com/join/brikerman?)]
 
 ## Contributors ✨
-<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->[![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat-square)](#contributors-)<!-- ALL-CONTRIBUTORS-BADGE:END -->
+<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->[![All Contributors](https://img.shields.io/badge/all_contributors-3-orange.svg?style=flat-square)](#contributors-)<!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
 
@@ -172,6 +172,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
   <tr>
     <td align="center"><a href="https://developers.google.com/community/experts/directory/profile/profile-eliyar_eziz"><img src="https://avatars1.githubusercontent.com/u/9368907?v=4" width="100px;" alt="Eliyar Eziz"/><br /><sub><b>Eliyar Eziz</b></sub></a><br /><a href="https://github.com/BrikerMan/Kashgari/commits?author=BrikerMan" title="Documentation">📖</a> <a href="https://github.com/BrikerMan/Kashgari/commits?author=BrikerMan" title="Tests">⚠️</a> <a href="https://github.com/BrikerMan/Kashgari/commits?author=BrikerMan" title="Code">💻</a></td>
     <td align="center"><a href="http://www.chuanxilu.com"><img src="https://avatars3.githubusercontent.com/u/856746?v=4" width="100px;" alt="Alex Wang"/><br /><sub><b>Alex Wang</b></sub></a><br /><a href="https://github.com/BrikerMan/Kashgari/commits?author=alexwwang" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/lsgrep"><img src="https://avatars3.githubusercontent.com/u/3893940?v=4" width="100px;" alt="Yusup"/><br /><sub><b>Yusup</b></sub></a><br /><a href="https://github.com/BrikerMan/Kashgari/commits?author=lsgrep" title="Code">💻</a></td>
   </tr>
 </table>
 
