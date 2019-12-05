@@ -1,3 +1,5 @@
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
 <h1 align="center">
     <a href='https://en.wikipedia.org/wiki/Mahmud_al-Kashgari'>Kashgari</a>
 </h1>
@@ -5,6 +7,9 @@
 <p align="center">
     <a href="https://github.com/BrikerMan/kashgari/blob/master/LICENSE">
         <img alt="GitHub" src="https://img.shields.io/github/license/BrikerMan/kashgari.svg?color=blue&style=popout">
+    </a>
+    <a href="https://join.slack.com/t/kashgari/shared_invite/enQtODU4OTEzNDExNjUyLTY0MzI4MGFkZmRkY2VmMzdmZjRkZTYxMmMwNjMyOTI1NGE5YzQ2OTZkYzA1YWY0NTkyMDdlZGY5MGI5N2U4YzM">
+        <img alt="Slack" src="https://img.shields.io/badge/chat-Slack-blueviolet?logo=Slack&style=popout">
     </a>
     <a href="https://travis-ci.com/BrikerMan/Kashgari">
         <img src="https://travis-ci.com/BrikerMan/Kashgari.svg?branch=master"/>
@@ -29,6 +34,9 @@
     <a href="https://kashgari.bmio.net/about/contributing/">Contributing</a>
 </h4>
 
+<!-- markdownlint-enable -->
+<!-- prettier-ignore-end -->
+
 🎉🎉🎉 We are proud to announce that we entirely rewrote Kashgari with tf.keras, now Kashgari comes with easier to understand API and is faster! 🎉🎉🎉
 
 ## Overview
@@ -49,8 +57,8 @@ Kashgari is a simple and powerful NLP Transfer learning framework, build a state
 
 ## Performance
 
-| Task                     | Language | Dataset                   | Score          | Detail                                                                                                             |
-| ------------------------ | -------- | ------------------------- | -------------- | ------------------------------------------------------------------------------------------------------------------ |
+| Task                     | Language | Dataset                   | Score          | Detail                                                                                                   |
+| ------------------------ | -------- | ------------------------- | -------------- | -------------------------------------------------------------------------------------------------------- |
 | Named Entity Recognition | Chinese  | People's Daily Ner Corpus | **94.46** (F1) | [Text Labeling Performance Report](https://kashgari.bmio.net/tutorial/text-labeling/#performance-report) |
 
 ## Tutorials
@@ -87,7 +95,7 @@ The project is based on Python 3.6+, because it is 2019 and type hinting is cool
 
 ### Example Usage
 
-Let's run an NER labeling model with Bi_LSTM Model.
+Let's run an NER labeling model with Bi\_LSTM Model.
 
 ```python
 from kashgari.corpus import ChineseDailyNerCorpus
@@ -161,18 +169,17 @@ model.fit(train_x, train_y)
 Support this project by becoming a sponsor. Your issues and feature request will be prioritized.[[Become a sponsor](https://www.patreon.com/join/brikerman?)]
 
 ## Contributors ✨
-<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->[![All Contributors](https://img.shields.io/badge/all_contributors-3-orange.svg?style=flat-square)](#contributors-)<!-- ALL-CONTRIBUTORS-BADGE:END -->
 
-Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
+Thanks goes to these wonderful people. And there are many ways to get involved. Start with the [contributor guidelines](https://kashgari.bmio.net/about/contributing/) and then check these open issues for specific tasks.
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
 <!-- markdownlint-disable -->
 <table>
   <tr>
-    <td align="center"><a href="https://developers.google.com/community/experts/directory/profile/profile-eliyar_eziz"><img src="https://avatars1.githubusercontent.com/u/9368907?v=4" width="100px;" alt="Eliyar Eziz"/><br /><sub><b>Eliyar Eziz</b></sub></a><br /><a href="https://github.com/BrikerMan/Kashgari/commits?author=BrikerMan" title="Documentation">📖</a> <a href="https://github.com/BrikerMan/Kashgari/commits?author=BrikerMan" title="Tests">⚠️</a> <a href="https://github.com/BrikerMan/Kashgari/commits?author=BrikerMan" title="Code">💻</a></td>
-    <td align="center"><a href="http://www.chuanxilu.com"><img src="https://avatars3.githubusercontent.com/u/856746?v=4" width="100px;" alt="Alex Wang"/><br /><sub><b>Alex Wang</b></sub></a><br /><a href="https://github.com/BrikerMan/Kashgari/commits?author=alexwwang" title="Code">💻</a></td>
-    <td align="center"><a href="https://github.com/lsgrep"><img src="https://avatars3.githubusercontent.com/u/3893940?v=4" width="100px;" alt="Yusup"/><br /><sub><b>Yusup</b></sub></a><br /><a href="https://github.com/BrikerMan/Kashgari/commits?author=lsgrep" title="Code">💻</a></td>
+    <td align="center"><a href="https://developers.google.com/community/experts/directory/profile/profile-eliyar_eziz"><img src="https://avatars1.githubusercontent.com/u/9368907?v=4" width="100px;" alt=""/><br /><sub><b>Eliyar Eziz</b></sub></a><br /><a href="https://github.com/BrikerMan/Kashgari/commits?author=BrikerMan" title="Documentation">📖</a> <a href="https://github.com/BrikerMan/Kashgari/commits?author=BrikerMan" title="Tests">⚠️</a> <a href="https://github.com/BrikerMan/Kashgari/commits?author=BrikerMan" title="Code">💻</a></td>
+    <td align="center"><a href="http://www.chuanxilu.com"><img src="https://avatars3.githubusercontent.com/u/856746?v=4" width="100px;" alt=""/><br /><sub><b>Alex Wang</b></sub></a><br /><a href="https://github.com/BrikerMan/Kashgari/commits?author=alexwwang" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/lsgrep"><img src="https://avatars3.githubusercontent.com/u/3893940?v=4" width="100px;" alt=""/><br /><sub><b>Yusup</b></sub></a><br /><a href="https://github.com/BrikerMan/Kashgari/commits?author=lsgrep" title="Code">💻</a></td>
   </tr>
 </table>
 
@@ -180,11 +187,9 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <!-- prettier-ignore-end -->
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
-Thanks for your interest in contributing! There are many ways to get involved; start with the [contributor guidelines](https://kashgari.bmio.net/about/contributing/) and then check these open issues for specific tasks.
+Feel free to join the Slack group if you want to more involved in Kashgari's development.
 
-Feel free to join the WeChat group if you want to more involved in Kashgari's development.
-
-![](http://s3.bmio.net/kashgari-qr-code.jpeg)
+[Slack Group Link](https://join.slack.com/t/kashgari/shared_invite/enQtODU4OTEzNDExNjUyLTY0MzI4MGFkZmRkY2VmMzdmZjRkZTYxMmMwNjMyOTI1NGE5YzQ2OTZkYzA1YWY0NTkyMDdlZGY5MGI5N2U4YzM)
 
 ## Reference
 
