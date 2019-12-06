@@ -41,6 +41,7 @@ class TestBiLSTM_Model(unittest.TestCase):
 
         new_model.compile_model()
         model.fit(x, y, x, y, epochs=1)
+        model.evaluate(x, y)
 
 
 if __name__ == "__main__":

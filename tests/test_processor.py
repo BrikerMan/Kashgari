@@ -133,19 +133,13 @@ class TestScoringProcessor(unittest.TestCase):
         y = [[random.random(), random.random(), random.random()] for _ in range(len(x))]
         p = ScoringProcessor()
         p.analyze_corpus(x, y)
+
         assert p.output_dim == 3
-
-        y = [[random.random(), random.random(), 5] for _ in range(len(x))]
-        p = ScoringProcessor()
-        self.assertRaises(ValueError, p.analyze_corpus, x, y)
-
-        y = [[random.random(), random.random(), -2] for _ in range(len(x))]
-        p = ScoringProcessor()
-        self.assertRaises(ValueError, p.analyze_corpus, x, y)
 
         y = np.random.random((len(x), 3))
         p = ScoringProcessor()
         p.analyze_corpus(x, y)
+        print(p.output_dim)
         assert p.output_dim == 3
 
 

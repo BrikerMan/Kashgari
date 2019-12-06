@@ -45,12 +45,12 @@ class ScoringProcessor(BaseProcessor):
         """
         if self.output_dim is None:
             label_sample = label_list[0]
-            if is_numeric(label_sample):
+            if isinstance(label_sample, np.ndarray) and len(label_sample.shape) == 1:
+                self.output_dim = label_sample.shape[0]
+            elif is_numeric(label_sample):
                 self.output_dim = 1
             elif isinstance(label_sample, list):
                 self.output_dim = len(label_sample)
-            elif isinstance(label_sample, np.ndarray) and len(label_sample.shape) == 1:
-                self.output_dim = label_sample.shape[0]
             else:
                 raise ValueError('Scoring Label Sample must be a float, float array or 1D numpy array')
         # np_labels = np.array(label_list)
