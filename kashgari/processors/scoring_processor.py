@@ -16,6 +16,11 @@ from kashgari import utils
 from kashgari.processors.base_processor import BaseProcessor
 
 
+def is_numeric(obj):
+    attrs = ['__add__', '__sub__', '__mul__', '__truediv__', '__pow__']
+    return all(hasattr(obj, attr) for attr in attrs)
+
+
 class ScoringProcessor(BaseProcessor):
     """
     Corpus Pre Processor class
@@ -40,7 +45,7 @@ class ScoringProcessor(BaseProcessor):
         """
         if self.output_dim is None:
             label_sample = label_list[0]
-            if isinstance(label_sample, (float, int)):
+            if is_numeric(label_sample):
                 self.output_dim = 1
             elif isinstance(label_sample, list):
                 self.output_dim = len(label_sample)
