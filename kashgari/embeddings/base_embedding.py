@@ -16,7 +16,7 @@ import numpy as np
 from tensorflow import keras
 
 import kashgari
-from kashgari.processors import ClassificationProcessor, LabelingProcessor
+from kashgari.processors import ClassificationProcessor, LabelingProcessor, ScoringProcessor
 from kashgari.processors.base_processor import BaseProcessor
 
 L = keras.layers
@@ -74,8 +74,10 @@ class Embedding(object):
                 self.processor = ClassificationProcessor()
             elif task == kashgari.LABELING:
                 self.processor = LabelingProcessor()
+            elif task == kashgari.SCORING:
+                self.processor = ScoringProcessor()
             else:
-                raise ValueError()
+                raise ValueError('Need to set the processor param, value: {labeling, classification, scoring}')
         else:
             self.processor = processor
 

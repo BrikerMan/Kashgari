@@ -62,6 +62,10 @@ class BaseModel(object):
         return self.embedding.label2idx
 
     @property
+    def task(self) -> str:
+        return self.__task__
+
+    @property
     def pre_processor(self):
         warnings.warn("The 'pre_processor' property is deprecated, "
                       "use 'processor' instead", DeprecationWarning, 2)
@@ -414,12 +418,16 @@ class BaseModel(object):
                 lengths = [len(sen) for sen in x_data]
             tensor = self.embedding.process_x_dataset(x_data)
             pred = self.tf_model.predict(tensor, batch_size=batch_size, **predict_kwargs)
-            res = self.embedding.reverse_numerize_label_sequences(pred.argmax(-1),
+            if self.task == 'scoring':
+                t_pred = pred
+            else:
+                t_pred = pred.argmax(-1)
+            res = self.embedding.reverse_numerize_label_sequences(t_pred,
                                                                   lengths)
             if debug_info:
-                logging.info('input: {}'.format(tensor))
-                logging.info('output: {}'.format(pred))
-                logging.info('output argmax: {}'.format(pred.argmax(-1)))
+                print('input: {}'.format(tensor))
+                print('output: {}'.format(pred))
+                print('output argmax: {}'.format(t_pred))
         return res
 
     def evaluate(self,

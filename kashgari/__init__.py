@@ -23,6 +23,7 @@ from kashgari.macros import TaskType, config
 custom_objects = keras_bert.get_custom_objects()
 CLASSIFICATION = TaskType.CLASSIFICATION
 LABELING = TaskType.LABELING
+SCORING = TaskType.SCORING
 
 from kashgari.version import __version__
 

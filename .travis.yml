@@ -67,7 +67,7 @@ jobs:
     - stage: Document
       python: "3.6"
       install:
-        - echo -e "machine github.com\n  login ${GITHUB_TOKEN}" > ~/.netrc
+        - echo -e "machine github.com\n login ${GITHUB_TOKEN}" > ~/.netrc
         - pip install mkdocs mkdocs-material pymdown-extensions
       script:
         - cd mkdocs

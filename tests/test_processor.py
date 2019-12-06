@@ -12,8 +12,9 @@ import logging
 import tempfile
 import unittest
 import numpy as np
+import random
 from kashgari import utils
-from kashgari.processors import ClassificationProcessor, LabelingProcessor
+from kashgari.processors import ClassificationProcessor, LabelingProcessor, ScoringProcessor
 from kashgari.corpus import SMP2018ECDTCorpus, ChineseDailyNerCorpus
 from kashgari.tasks.classification import BiGRU_Model
 
@@ -118,6 +119,34 @@ class TestClassificationProcessor(unittest.TestCase):
         process_x_0 = processor.process_x_dataset(class_train_x[:10])
         process_x_1 = model.embedding.process_x_dataset(class_train_x[:10])
         assert np.array_equal(process_x_0, process_x_1)
+
+
+class TestScoringProcessor(unittest.TestCase):
+
+    def test_build_dict(self):
+        x = sample_train_x
+        y = [random.random() for _ in range(len(x))]
+        p = ScoringProcessor()
+        p.analyze_corpus(x, y)
+        assert p.output_dim == 1
+
+        y = [[random.random(), random.random(), random.random()] for _ in range(len(x))]
+        p = ScoringProcessor()
+        p.analyze_corpus(x, y)
+        assert p.output_dim == 3
+
+        y = [[random.random(), random.random(), 5] for _ in range(len(x))]
+        p = ScoringProcessor()
+        self.assertRaises(ValueError, p.analyze_corpus, x, y)
+
+        y = [[random.random(), random.random(), -2] for _ in range(len(x))]
+        p = ScoringProcessor()
+        self.assertRaises(ValueError, p.analyze_corpus, x, y)
+
+        y = np.random.random((len(x), 3))
+        p = ScoringProcessor()
+        p.analyze_corpus(x, y)
+        assert p.output_dim == 3
 
 
 if __name__ == "__main__":
