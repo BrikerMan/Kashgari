@@ -10,10 +10,7 @@
 
 from typing import Dict, Any, Tuple
 
-import random
-import logging
-from seqeval.metrics import classification_report
-from seqeval.metrics.sequence_labeling import get_entities
+from sklearn import metrics
 
 from kashgari.tasks.base_model import BaseModel
 
@@ -55,8 +52,15 @@ class BaseScoringModel(BaseModel):
         Returns:
 
         """
-        pass
-        return {}
+        y_pred = self.predict(x_data, batch_size=batch_size)
+        y_true = [seq[:len(y_pred[index])] for index, seq in enumerate(y_data)]
+        mean_squared_error = metrics.mean_squared_error(y_true, y_pred)
+        r2_score = metrics.r2_score(y_true, y_pred)
+        data = {
+            'mean_squared_error': mean_squared_error,
+            'r2_score': r2_score
+        }
+        return mean_squared_error, r2_score, data
 
 
 if __name__ == "__main__":

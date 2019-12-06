@@ -62,10 +62,6 @@ class BaseModel(object):
         return self.embedding.label2idx
 
     @property
-    def task(self) -> str:
-        return self.__task__
-
-    @property
     def pre_processor(self):
         warnings.warn("The 'pre_processor' property is deprecated, "
                       "use 'processor' instead", DeprecationWarning, 2)
