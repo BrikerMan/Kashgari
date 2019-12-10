@@ -72,5 +72,6 @@ jobs:
         - echo -e "machine github.com\n login ${GITHUB_TOKEN}" > ~/.netrc
         - pip install mkdocs mkdocs-material pymdown-extensions
       script:
+        - cp README.md mkdocs/docs/index.md
         - cd mkdocs
         - mkdocs gh-deploy --force --clean

@@ -3,7 +3,9 @@
 Run with command.
 
 ```bash
+cd mkdocs
 pip install mkdocs mkdocs-material pymdown-extensions
+cp ../README.md ./docs/index.md
 mkdocs serve
 ```
 

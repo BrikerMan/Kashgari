@@ -67,7 +67,8 @@ Here is a set of quick tutorials to get you started with the library:
 
 - [Tutorial 1: Text Classification](https://kashgari.bmio.net/tutorial/text-classification/)
 - [Tutorial 2: Text Labeling](https://kashgari.bmio.net/tutorial/text-labeling/)
-- [Tutorial 3: Language Embedding](https://kashgari.bmio.net/embeddings/)
+- [Tutorial 3: Text Scoring](https://kashgari.bmio.net/tutorial/text-scoring/)
+- [Tutorial 4: Language Embedding](https://kashgari.bmio.net/embeddings/)
 
 There are also articles and posts that illustrate how to use Kashgari:
 
