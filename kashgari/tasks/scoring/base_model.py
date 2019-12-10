@@ -8,8 +8,10 @@
 # time: 11:36 上午
 
 
-from typing import Dict, Any, Tuple
+from typing import Callable
+from typing import Dict, Any
 
+import numpy as np
 from sklearn import metrics
 
 from kashgari.tasks.base_model import BaseModel
@@ -37,8 +39,10 @@ class BaseScoringModel(BaseModel):
                  x_data,
                  y_data,
                  batch_size=None,
+                 should_round: bool = False,
+                 round_func: Callable = None,
                  digits=4,
-                 debug_info=False) -> Tuple[float, float, Dict]:
+                 debug_info=False) -> Dict:
         """
         Build a text report showing the main classification metrics.
 
@@ -46,6 +50,8 @@ class BaseScoringModel(BaseModel):
             x_data:
             y_data:
             batch_size:
+            should_round:
+            round_func:
             digits:
             debug_info:
 
@@ -53,14 +59,29 @@ class BaseScoringModel(BaseModel):
 
         """
         y_pred = self.predict(x_data, batch_size=batch_size)
-        y_true = [seq[:len(y_pred[index])] for index, seq in enumerate(y_data)]
-        mean_squared_error = metrics.mean_squared_error(y_true, y_pred)
-        r2_score = metrics.r2_score(y_true, y_pred)
-        data = {
-            'mean_squared_error': mean_squared_error,
-            'r2_score': r2_score
-        }
-        return mean_squared_error, r2_score, data
+
+        if should_round:
+            if round_func is None:
+                round_func = np.round
+            y_pred = [round_func(i) for i in y_pred]
+            report = metrics.classification_report(y_data,
+                                                   y_pred,
+                                                   digits=digits)
+
+            report_dic = metrics.classification_report(y_data,
+                                                       y_pred,
+                                                       output_dict=True,
+                                                       digits=digits)
+            print(report)
+        else:
+            mean_squared_error = metrics.mean_squared_error(y_data, y_pred)
+            r2_score = metrics.r2_score(y_data, y_pred)
+            report_dic = {
+                'mean_squared_error': mean_squared_error,
+                'r2_score': r2_score
+            }
+            print(report_dic)
+        return report_dic
 
 
 if __name__ == "__main__":

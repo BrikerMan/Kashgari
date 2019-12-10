@@ -43,6 +43,9 @@ class TestBiLSTM_Model(unittest.TestCase):
         model.fit(x, y, x, y, epochs=1)
         model.evaluate(x, y)
 
+        rounded_y = np.round(y)
+        model.evaluate(x, rounded_y, should_round=True)
+
 
 if __name__ == "__main__":
     pass
