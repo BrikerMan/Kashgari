@@ -1,0 +1,152 @@
+version: 2
+
+defualt_executer: &defualt_executer
+  machine:
+    image: circleci/classic:201808-01
+
+default_steps:
+  - switch_to_3_7: &switch_to_3_7
+      run:
+        name: "Switch to Python v3.7"
+        command: |
+          pyenv versions
+          pyenv global 3.7.0
+
+  - create_env: &create_env
+      run:
+        name: create venv
+        command: |
+          python3 -m venv venv
+
+  - save_3_7_cache: &save_3_7_cache
+      save_cache:
+        paths:
+          - ./venv
+        key: py3.7-{{ checksum "requirements.dev.txt" }}
+
+  - restore_3_7_cache: &restore_3_7_cache
+      restore_cache:
+        keys:
+          - py3.7-{{ checksum "requirements.dev.txt" }}
+
+  - install_dependencies: &install_dependencies
+      run:
+        name: install dependencies
+        command: |
+          ls .
+          source venv/bin/activate
+          pip install -r requirements.dev.txt
+
+  - run_tests: &run_tests
+      run:
+        name: run tests
+        no_output_timeout: 1800
+        command: >
+          . venv/bin/activate
+
+          TESTFILES=$(circleci tests glob "tests/**/*.py" | circleci tests split)
+
+          echo $TESTFILES
+
+          mkdir -pv test-reports
+
+          pytest --doctest-modules --junitxml=test-reports/junit.xml --cov=kashgari --cov-report=xml --cov-report=html $TESTFILES
+
+jobs:
+  lint:
+    <<: *defualt_executer
+
+    steps:
+      - checkout
+      - *switch_to_3_7
+      - *create_env
+      - *restore_3_7_cache
+      - *install_dependencies
+      - *save_3_7_cache
+      - run:
+          name: run lint
+          command: |
+            source venv/bin/activate
+            flake8 kashgari
+
+  test_3.6:
+    <<: *defualt_executer
+    parallelism: 4
+    steps:
+      - checkout
+      - run:
+          name: "Switch to Python v3.6"
+          command: |
+            pyenv versions
+            pyenv global 3.6.5
+      - *create_env
+      - restore_cache:
+          keys:
+            - py3.6-{{ checksum "requirements.dev.txt" }}
+            - py3.6-
+      - *install_dependencies
+      - save_cache:
+          paths:
+            - ./venv
+          key: py3.6-{{ checksum "requirements.dev.txt" }}
+      - *run_tests
+      - store_test_results:
+          path: test-reports
+
+      - store_artifacts:
+          path: test-reports
+
+  test_3.7:
+    <<: *defualt_executer
+    parallelism: 4
+
+    steps:
+      - checkout
+      - *switch_to_3_7
+      - *create_env
+      - *restore_3_7_cache
+      - *install_dependencies
+      - *save_3_7_cache
+      - *run_tests
+      - store_test_results:
+          path: test-reports
+
+      - store_artifacts:
+          path: test-reports
+
+  document:
+    <<: *defualt_executer
+
+    steps:
+      - checkout
+      - *switch_to_3_7
+      - *create_env
+      - *restore_3_7_cache
+      - *install_dependencies
+      - *save_3_7_cache
+      - run:
+          name: Update Documents
+          command: |
+            source venv/bin/activate
+            cd mkdocs
+            mkdocs build
+
+workflows:
+  version: 2
+  lint-test-and-deploy:
+    jobs:
+      - lint
+      - test_3.6:
+          requires:
+            - lint
+      - test_3.7:
+          requires:
+            - lint
+      - document:
+          filters:
+            branches:
+              only:
+                - master
+          requires:
+            - test_3.6
+            - test_3.7

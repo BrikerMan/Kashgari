@@ -1,0 +1,8 @@
+body, h1, h2, h3, h4, h5, h6, input { font-family: "Roboto", "Helvetica Neue", Helvetica, Arial, "Microsoft YaHei", "微软正黑体", "Microsoft JhengHei", sans-serif; }
+
+@media only screen and (min-width: 100em) {
+    html {
+        font-size: 125%;
+    }
+}
+

@@ -11,56 +11,64 @@
 @time: 2019-01-24 16:42
 
 """
+import codecs
+import os
 import pathlib
+import re
 
 from setuptools import find_packages, setup
 
-from version import __version__
-
-# Package meta-data.
-NAME = 'kashgari'
-DESCRIPTION = 'Simple and powerful NLP framework, ' \
-              'build your state-of-art model in 5 minutes for ' \
-              'named entity recognition (NER), part-of-speech ' \
-              'tagging (PoS) and text classification tasks.'
-URL = 'https://github.com/BrikerMan/Kashgari'
-EMAIL = 'eliyar917@gmail.com'
-AUTHOR = 'BrikerMan'
-LICENSE = 'Apache License 2.0'
-
 HERE = pathlib.Path(__file__).parent
-README = (HERE / "README.md").read_text()
 
-required = [
-    'Keras>=2.2.0',
-    'h5py>=2.7.1',
-    'keras-bert==0.29.0',
-    'scikit-learn>=0.19.1',
-    'numpy>=1.14.3',
-    'download>=0.3.3',
-    'seqeval >=0.0.3',
-    'colorlog>=4.0.0',
-    'gensim>=3.5.0',
-    # 'bz2file>=0.98',
-    'sklearn',
-    'pandas>=0.23.0'
-]
 
-# long_description = ""
+def read(*parts):
+    with codecs.open(os.path.join(HERE, *parts), 'r') as fp:
+        return fp.read()
+
+
+def find_version(*file_paths):
+    version_file = read(*file_paths)
+    version_match = re.search(r"^__version__ = ['\"]([^'\"]*)['\"]",
+                              version_file, re.M)
+    if version_match:
+        return version_match.group(1)
+    raise RuntimeError("Unable to find version string.")
+
+
+__name__ = 'kashgari'
+__author__ = "BrikerMan"
+__copyright__ = "Copyright 2018, BrikerMan"
+__credits__ = []
+__license__ = "Apache License 2.0"
+__maintainer__ = "BrikerMan"
+__email__ = "eliyar917@gmail.com"
+
+__url__ = 'https://github.com/BrikerMan/Kashgari'
+__description__ = 'Simple, Keras-powered multilingual NLP framework,' \
+                  ' allows you to build your models in 5 minutes for named entity recognition (NER),' \
+                  ' part-of-speech tagging (PoS) and text classification tasks. ' \
+                  'Includes BERT, GPT-2 and word2vec embedding.'
+
+__version__ = find_version('kashgari', 'version.py')
+README = (HERE / "README.md").read_text(encoding='utf-8')
+
+with codecs.open('requirements.txt', 'r', 'utf8') as reader:
+    install_requires = list(map(lambda x: x.strip(), reader.readlines()))
 
 setup(
-    name=NAME,
+    name=__name__,
     version=__version__,
-    description=DESCRIPTION,
+    description=__description__,
+    python_requires='>3.6',
     long_description=README,
     long_description_content_type="text/markdown",
-    author=AUTHOR,
-    author_email=EMAIL,
-    url=URL,
+    author=__author__,
+    author_email=__email__,
+    url=__url__,
     packages=find_packages(exclude=('tests',)),
-    install_requires=required,
+    install_requires=install_requires,
     include_package_data=True,
-    license=LICENSE,
+    license=__license__,
     classifiers=[
         'License :: OSI Approved :: Apache Software License',
         # 'Programming Language :: Python',
@@ -69,7 +77,6 @@ setup(
         'Programming Language :: Python :: Implementation :: PyPy'
     ],
 )
-
 
 if __name__ == "__main__":
     print("Hello world")

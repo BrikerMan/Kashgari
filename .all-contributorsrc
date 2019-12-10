@@ -1,0 +1,44 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "contributors": [
+    {
+      "login": "BrikerMan",
+      "name": "Eliyar Eziz",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/9368907?v=4",
+      "profile": "https://developers.google.com/community/experts/directory/profile/profile-eliyar_eziz",
+      "contributions": [
+        "doc",
+        "test",
+        "code"
+      ]
+    },
+    {
+      "login": "alexwwang",
+      "name": "Alex Wang",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/856746?v=4",
+      "profile": "http://www.chuanxilu.com",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "lsgrep",
+      "name": "Yusup",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/3893940?v=4",
+      "profile": "https://github.com/lsgrep",
+      "contributions": [
+        "code"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "projectName": "Kashgari",
+  "projectOwner": "BrikerMan",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "skipCi": true
+}

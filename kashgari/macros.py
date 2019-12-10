@@ -7,90 +7,62 @@
 @version: 1.0
 @license: Apache Licence
 @file: macros.py
-@time: 2019-01-19 09:58
+@time: 2019-05-17 11:38
 
 """
-import bz2
 import os
-import pathlib
-from enum import Enum
+import logging
 from pathlib import Path
+import tensorflow as tf
 
-import download
+DATA_PATH = os.path.join(str(Path.home()), '.kashgari')
 
-PAD = "[PAD]"
-BOS = "[BOS]"
-EOS = "[EOS]"
-UNK = "[UNK]"
-
-MARKED_KEYS = [PAD, BOS, EOS, UNK]
-
-NO_TAG = 'O'
-
-home = str(Path.home())
-
-DATA_PATH = os.path.join(home, '.kashgari')
-STORAGE_HOST = 'http://storage.eliyar.biz/'
-PROCESSED_CORPUS_PATH = os.path.join(DATA_PATH, 'pre_processed')
-
-pathlib.Path(PROCESSED_CORPUS_PATH).mkdir(parents=True, exist_ok=True)
+Path(DATA_PATH).mkdir(exist_ok=True, parents=True)
 
 
-class _Config(object):
+class TaskType(object):
+    CLASSIFICATION = 'classification'
+    LABELING = 'labeling'
+
+
+class Config(object):
+
     def __init__(self):
-        self.use_CuDNN_cell = False
+        self._use_cudnn_cell = False
+        self.disable_auto_summary = False
+
+        if tf.test.is_gpu_available(cuda_only=True):
+            logging.warning("CUDA GPU available, you can set `kashgari.config.use_cudnn_cell = True` to use CuDNNCell. "
+                            "This will speed up the training, "
+                            "but will make model incompatible with CPU device.")
+
+    @property
+    def use_cudnn_cell(self):
+        return self._use_cudnn_cell
+
+    @use_cudnn_cell.setter
+    def use_cudnn_cell(self, value):
+        self._use_cudnn_cell = value
+        from kashgari.layers import L
+        if value:
+            if tf.test.is_gpu_available(cuda_only=True):
+                L.LSTM = tf.compat.v1.keras.layers.CuDNNLSTM
+                L.GRU = tf.compat.v1.keras.layers.CuDNNGRU
+                logging.warning("CuDNN enabled, this will speed up the training, "
+                                "but will make model incompatible with CPU device.")
+            else:
+                logging.warning("Unable to use CuDNN cell, no GPU available.")
+        else:
+            L.LSTM = tf.keras.layers.LSTM
+            L.GRU = tf.keras.layers.GRU
+
+    def to_dict(self):
+        return {
+            'use_cudnn_cell': self.use_cudnn_cell
+        }
 
 
-config = _Config()
-
-
-class CustomEmbedding(object):
-    def __init__(self, embedding_size=100):
-        self.embedding_size = embedding_size
-
-
-class TaskType(Enum):
-    classification = 'classification'
-    tagging = 'tagging'
-
-
-class DataSetType(Enum):
-    train = 'train'
-    test = 'test'
-    validate = 'validate'
-
-
-class SegmenterType(Enum):
-    space = 'space'
-    jieba = 'jieba'
-    char = 'char'
-
-
-URL_MAP = {
-    'w2v.sgns.weibo.bigram': 'embedding/word2vev/sgns.weibo.bigram.bz2'
-}
-
-
-def download_file(file: str):
-    url = STORAGE_HOST + file
-    target_path = os.path.join(DATA_PATH, file)
-    download.download(url, target_path)
-
-
-def download_if_not_existed(file_path: str) -> str:
-    target_path = os.path.join(DATA_PATH, file_path)
-    if not os.path.exists(target_path[:-4]):
-        download_file(file_path)
-        with open(target_path, 'rb') as source, open(target_path[:-4], 'wb') as dest:
-            dest.write(bz2.decompress(source.read()))
-    return target_path[:-4]
-
-
-def get_model_path(file: str) -> str:
-    file_path = URL_MAP.get(file, file)
-    return download_if_not_existed(file_path)
-
+config = Config()
 
 if __name__ == "__main__":
-    from kashgari.utils.logger import init_logger
-    init_logger()
+    print("Hello world")
