@@ -704,4 +704,3 @@ if __name__ == "__main__":
     print(m.predict(x[:10]))
     # m.evaluate(x, y)
     print(m.predict_top_k_class(x[:10]))
->>>>>>> 771434224e811c298fa2461fef230f0ab303d77c
