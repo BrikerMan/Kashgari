@@ -28,4 +28,6 @@ jobs:
     - name: Test with pytest
       run: |
         pip install pytest
+        pip install .
+        rm -rf kashgari
         pytest tests
