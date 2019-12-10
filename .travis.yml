@@ -17,6 +17,8 @@ env:
     - TEST_FILE=tests/test_custom_multi_output_classification.py
     # Embedding
     - TEST_FILE=tests/embedding/
+    # Scoring
+    - TEST_FILE=tests/scoring
 
 python:
   - "3.6"
