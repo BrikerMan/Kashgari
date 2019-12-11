@@ -47,6 +47,7 @@ install:
   - pip install nose
   - python -c "import kashgari;print(f'kashgari version {kashgari.__version__}')"
   - git fetch --unshallow --quiet
+  - export PYTHONPATH=`pwd`
 
 script: nosetests --with-coverage --cover-html --cover-html-dir=htmlcov
   --cover-xml --cover-xml-file=coverage.xml --with-xunit
