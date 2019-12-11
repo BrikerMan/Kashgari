@@ -17,6 +17,7 @@ env:
     - TEST_FILE=tests/test_custom_multi_output_classification.py
     # Embedding
     - TEST_FILE=tests/embedding/
+    - TEST_FILE=tests/test_tokenizer.py
 
 python:
   - "3.6"
