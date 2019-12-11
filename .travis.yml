@@ -5,6 +5,8 @@ env:
   global:
     - COVERALLS_PARALLEL=true
   matrix:
+    # Scoring
+    - TEST_FILE=tests/scoring
     # Labeling
     - TEST_FILE=tests/labeling/
     # classification part 1
@@ -17,6 +19,7 @@ env:
     - TEST_FILE=tests/test_custom_multi_output_classification.py
     # Embedding
     - TEST_FILE=tests/embedding/
+    # Tokenizer
     - TEST_FILE=tests/test_tokenizer.py
 
 python:
@@ -44,6 +47,7 @@ install:
   - pip install nose
   - python -c "import kashgari;print(f'kashgari version {kashgari.__version__}')"
   - git fetch --unshallow --quiet
+  - export PYTHONPATH=`pwd`
 
 script: nosetests --with-coverage --cover-html --cover-html-dir=htmlcov
   --cover-xml --cover-xml-file=coverage.xml --with-xunit
@@ -68,8 +72,9 @@ jobs:
     - stage: Document
       python: "3.6"
       install:
-        - echo -e "machine github.com\n  login ${GITHUB_TOKEN}" > ~/.netrc
+        - echo -e "machine github.com\n login ${GITHUB_TOKEN}" > ~/.netrc
         - pip install mkdocs mkdocs-material pymdown-extensions
       script:
+        - cp README.md mkdocs/docs/index.md
         - cd mkdocs
         - mkdocs gh-deploy --force --clean
