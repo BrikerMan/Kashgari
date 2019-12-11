@@ -5,6 +5,8 @@ env:
   global:
     - COVERALLS_PARALLEL=true
   matrix:
+    # Scoring
+    - TEST_FILE=tests/scoring
     # Labeling
     - TEST_FILE=tests/labeling/
     # classification part 1
@@ -17,8 +19,8 @@ env:
     - TEST_FILE=tests/test_custom_multi_output_classification.py
     # Embedding
     - TEST_FILE=tests/embedding/
-    # Scoring
-    - TEST_FILE=tests/scoring
+    # Tokenizer
+    - TEST_FILE=tests/test_tokenizer.py
 
 python:
   - "3.6"
