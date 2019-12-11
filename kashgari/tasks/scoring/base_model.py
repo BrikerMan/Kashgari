@@ -63,6 +63,9 @@ class BaseScoringModel(BaseModel):
         if should_round:
             if round_func is None:
                 round_func = np.round
+            print(self.processor.output_dim)
+            if self.processor.output_dim != 1:
+                raise ValueError('Evaluate with round function only accept 1D output')
             y_pred = [round_func(i) for i in y_pred]
             report = metrics.classification_report(y_data,
                                                    y_pred,
@@ -80,7 +83,8 @@ class BaseScoringModel(BaseModel):
                 'mean_squared_error': mean_squared_error,
                 'r2_score': r2_score
             }
-            print(report_dic)
+            print(f"mean_squared_error : {mean_squared_error}\n"
+                  f"r2_score           : {r2_score}")
         return report_dic
 
 

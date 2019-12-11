@@ -24,9 +24,9 @@ class TestBiLSTM_Model(unittest.TestCase):
 
     def test_basic_use_build(self):
         x, _ = NERCorpus.load_corpus()
-        y = np.random.random((len(x), 4))
+        y = np.random.random((len(x),))
         model = self.model_class()
-        model.fit(x, y)
+        model.fit(x, y, epochs=1)
         res = model.predict(x[:20])
         model_path = os.path.join(tempfile.gettempdir(), str(time.time()))
         model.save(model_path)
@@ -45,6 +45,14 @@ class TestBiLSTM_Model(unittest.TestCase):
 
         rounded_y = np.round(y)
         model.evaluate(x, rounded_y, should_round=True)
+
+    def test_multi_output(self):
+        x, _ = NERCorpus.load_corpus()
+        y = np.random.random((len(x), 4))
+        model = self.model_class()
+        model.fit(x, y, x, y, epochs=1)
+        with self.assertRaises(ValueError):
+            model.evaluate(x, y, should_round=True)
 
 
 if __name__ == "__main__":
