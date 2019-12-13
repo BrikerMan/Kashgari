@@ -6,10 +6,10 @@
 # file: attention_weighted_average.py
 # time: 2019-06-24 19:35
 
-import kashgari
-import tensorflow as tf
 from tensorflow.python import keras
 from tensorflow.python.keras import backend as K
+
+import kashgari
 
 L = keras.layers
 initializers = keras.initializers

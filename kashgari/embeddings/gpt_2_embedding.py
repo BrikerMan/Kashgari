@@ -17,9 +17,7 @@ from typing import Union, Optional, Any, List, Tuple
 import numpy as np
 import kashgari
 import pathlib
-import tensorflow as tf
 from tensorflow.python.keras.utils import get_file
-from kashgari.layers import NonMaskingLayer, L
 from kashgari.embeddings.base_embedding import Embedding
 from kashgari.processors.base_processor import BaseProcessor
 import keras_gpt_2 as gpt2
