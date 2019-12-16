@@ -36,6 +36,6 @@ from kashgari import tasks
 from kashgari import utils
 from kashgari import callbacks
 
-from kashgari import migeration
+from kashgari import migration
 
-migeration.show_migration_guide()
+migration.show_migration_guide()

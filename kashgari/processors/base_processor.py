@@ -7,17 +7,15 @@
 # file: base_processor.py
 # time: 2019-05-21 11:27
 
-import os
-import json
-import logging
-import pathlib
-import operator
 import collections
+import logging
+import operator
 from typing import List, Optional, Union, Dict, Any
+
+import numpy as np
 from tensorflow.python.keras.preprocessing.sequence import pad_sequences
 
 from kashgari import utils
-import numpy as np
 
 
 class BaseProcessor(object):
