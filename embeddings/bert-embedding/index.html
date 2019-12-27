@@ -1,0 +1,1110 @@
+
+
+
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      <meta http-equiv="x-ua-compatible" content="ie=edge">
+      
+      
+      
+      
+        <meta name="lang:clipboard.copy" content="Copy to clipboard">
+      
+        <meta name="lang:clipboard.copied" content="Copied to clipboard">
+      
+        <meta name="lang:search.language" content="en">
+      
+        <meta name="lang:search.pipeline.stopwords" content="True">
+      
+        <meta name="lang:search.pipeline.trimmer" content="True">
+      
+        <meta name="lang:search.result.none" content="No matching documents">
+      
+        <meta name="lang:search.result.one" content="1 matching document">
+      
+        <meta name="lang:search.result.other" content="# matching documents">
+      
+        <meta name="lang:search.tokenizer" content="[\s\-]+">
+      
+      <link rel="shortcut icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.6.0">
+    
+    
+      
+        <title>BERT Embedding - Kashgari</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/application.1b62728e.css">
+      
+        <link rel="stylesheet" href="../../assets/stylesheets/application-palette.a8b3c06d.css">
+      
+      
+        
+        
+        <meta name="theme-color" content="#ef5350">
+      
+    
+    
+      <script src="../../assets/javascripts/modernizr.268332fc.js"></script>
+    
+    
+      
+        <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
+      
+    
+    <link rel="stylesheet" href="../../assets/fonts/material-icons.css">
+    
+    
+      <link rel="stylesheet" href="../../static/css/extra.css">
+    
+    
+      
+        
+<script>
+  window.ga = window.ga || function() {
+    (ga.q = ga.q || []).push(arguments)
+  }
+  ga.l = +new Date
+  /* Setup integration and send page view */
+  ga("create", "UA-78705624-3", "auto")
+  ga("set", "anonymizeIp", true)
+  ga("send", "pageview")
+  /* Register handler to log search on blur */
+  document.addEventListener("DOMContentLoaded", () => {
+    if (document.forms.search) {
+      var query = document.forms.search.query
+      query.addEventListener("blur", function() {
+        if (this.value) {
+          var path = document.location.pathname;
+          ga("send", "pageview", path + "?q=" + this.value)
+        }
+      })
+    }
+  })
+</script>
+<script async src="https://www.google-analytics.com/analytics.js"></script>
+      
+    
+    
+  </head>
+  
+    
+    
+    <body dir="ltr" data-md-color-primary="red" data-md-color-accent="red">
+  
+    <svg class="md-svg">
+      <defs>
+        
+        
+          <svg xmlns="http://www.w3.org/2000/svg" width="416" height="448" viewBox="0 0 416 448" id="__github"><path fill="currentColor" d="M160 304q0 10-3.125 20.5t-10.75 19T128 352t-18.125-8.5-10.75-19T96 304t3.125-20.5 10.75-19T128 256t18.125 8.5 10.75 19T160 304zm160 0q0 10-3.125 20.5t-10.75 19T288 352t-18.125-8.5-10.75-19T256 304t3.125-20.5 10.75-19T288 256t18.125 8.5 10.75 19T320 304zm40 0q0-30-17.25-51T296 232q-10.25 0-48.75 5.25Q229.5 240 208 240t-39.25-2.75Q130.75 232 120 232q-29.5 0-46.75 21T56 304q0 22 8 38.375t20.25 25.75 30.5 15 35 7.375 37.25 1.75h42q20.5 0 37.25-1.75t35-7.375 30.5-15 20.25-25.75T360 304zm56-44q0 51.75-15.25 82.75-9.5 19.25-26.375 33.25t-35.25 21.5-42.5 11.875-42.875 5.5T212 416q-19.5 0-35.5-.75t-36.875-3.125-38.125-7.5-34.25-12.875T37 371.5t-21.5-28.75Q0 312 0 260q0-59.25 34-99-6.75-20.5-6.75-42.5 0-29 12.75-54.5 27 0 47.5 9.875t47.25 30.875Q171.5 96 212 96q37 0 70 8 26.25-20.5 46.75-30.25T376 64q12.75 25.5 12.75 54.5 0 21.75-6.75 42 34 40 34 99.5z"/></svg>
+        
+      </defs>
+    </svg>
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
+    
+      <a href="#bert-embedding" tabindex="1" class="md-skip">
+        Skip to content
+      </a>
+    
+    
+      <header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid">
+    <div class="md-flex">
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <a href="../.." title="Kashgari" class="md-header-nav__button md-logo">
+          
+            <i class="md-icon"></i>
+          
+        </a>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <label class="md-icon md-icon--menu md-header-nav__button" for="__drawer"></label>
+      </div>
+      <div class="md-flex__cell md-flex__cell--stretch">
+        <div class="md-flex__ellipsis md-header-nav__title" data-md-component="title">
+          
+            <span class="md-header-nav__topic">
+              Kashgari
+            </span>
+            <span class="md-header-nav__topic">
+              
+                BERT Embedding
+              
+            </span>
+          
+        </div>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        
+          <label class="md-icon md-icon--search md-header-nav__button" for="__search"></label>
+          
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="query" data-md-state="active">
+      <label class="md-icon md-search__icon" for="__search"></label>
+      <button type="reset" class="md-icon md-search__icon" data-md-component="reset" tabindex="-1">
+        &#xE5CD;
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="result">
+          <div class="md-search-result__meta">
+            Type to start searching
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+        
+      </div>
+      
+        <div class="md-flex__cell md-flex__cell--shrink">
+          <div class="md-header-nav__source">
+            
+
+
+  
+
+<a href="https://github.com/BrikerMan/Kashgari/" title="Go to repository" class="md-source" data-md-source="github">
+  
+    <div class="md-source__icon">
+      <svg viewBox="0 0 24 24" width="24" height="24">
+        <use xlink:href="#__github" width="24" height="24"></use>
+      </svg>
+    </div>
+  
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+          </div>
+        </div>
+      
+    </div>
+  </nav>
+</header>
+    
+    <div class="md-container">
+      
+        
+      
+      
+        
+
+  
+
+<nav class="md-tabs md-tabs--active" data-md-component="tabs">
+  <div class="md-tabs__inner md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  <li class="md-tabs__item">
+    
+      <a href="../.." class="md-tabs__link">
+        Introduction
+      </a>
+    
+  </li>
+
+      
+        
+      
+        
+  
+  
+    <li class="md-tabs__item">
+      
+        <a href="../../tutorial/text-classification/" class="md-tabs__link">
+          Tutorials
+        </a>
+      
+    </li>
+  
+
+      
+        
+  
+  
+    <li class="md-tabs__item">
+      
+        <a href="../" class="md-tabs__link md-tabs__link--active">
+          Embeddings
+        </a>
+      
+    </li>
+  
+
+      
+        
+  
+  
+    <li class="md-tabs__item">
+      
+        <a href="../../advance-use/multi-output-model/" class="md-tabs__link">
+          Advanced
+        </a>
+      
+    </li>
+  
+
+      
+        
+  
+  
+    <li class="md-tabs__item">
+      
+        <a href="../../api/corpus/" class="md-tabs__link">
+          API
+        </a>
+      
+    </li>
+  
+
+      
+        
+  
+  
+    <li class="md-tabs__item">
+      
+        <a href="../../FAQ/" class="md-tabs__link">
+          FAQ
+        </a>
+      
+    </li>
+  
+
+      
+        
+  
+  
+    <li class="md-tabs__item">
+      
+        <a href="../../about/contributing/" class="md-tabs__link">
+          About
+        </a>
+      
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+      
+      <main class="md-main" role="main">
+        <div class="md-main__inner md-grid" data-md-component="container">
+          
+            
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    <nav class="md-nav md-nav--primary" data-md-level="0">
+  <label class="md-nav__title md-nav__title--site" for="__drawer">
+    <a href="../.." title="Kashgari" class="md-nav__button md-logo">
+      
+        <i class="md-icon"></i>
+      
+    </a>
+    Kashgari
+  </label>
+  
+    <div class="md-nav__source">
+      
+
+
+  
+
+<a href="https://github.com/BrikerMan/Kashgari/" title="Go to repository" class="md-source" data-md-source="github">
+  
+    <div class="md-source__icon">
+      <svg viewBox="0 0 24 24" width="24" height="24">
+        <use xlink:href="#__github" width="24" height="24"></use>
+      </svg>
+    </div>
+  
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../.." title="Introduction" class="md-nav__link">
+      Introduction
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="https://kashgari-zh.bmio.net" title="中文文档" class="md-nav__link">
+      中文文档
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-3" type="checkbox" id="nav-3">
+    
+    <label class="md-nav__link" for="nav-3">
+      Tutorials
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-3">
+        Tutorials
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../tutorial/text-classification/" title="Text Classification Model" class="md-nav__link">
+      Text Classification Model
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../tutorial/text-labeling/" title="Text Labeling Model" class="md-nav__link">
+      Text Labeling Model
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../tutorial/text-scoring/" title="Text Scoring Model" class="md-nav__link">
+      Text Scoring Model
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-4" type="checkbox" id="nav-4" checked>
+    
+    <label class="md-nav__link" for="nav-4">
+      Embeddings
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-4">
+        Embeddings
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../" title="Language Embeddings" class="md-nav__link">
+      Language Embeddings
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../bare-embedding/" title="Bare Embedding" class="md-nav__link">
+      Bare Embedding
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../word-embedding/" title="Word Embedding" class="md-nav__link">
+      Word Embedding
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+      
+    
+    
+      <label class="md-nav__link md-nav__link--active" for="__toc">
+        BERT Embedding
+      </label>
+    
+    <a href="./" title="BERT Embedding" class="md-nav__link md-nav__link--active">
+      BERT Embedding
+    </a>
+    
+      
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#example-usage-text-classification" class="md-nav__link">
+    Example Usage - Text Classification
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#use-sentence-pairs-for-input" class="md-nav__link">
+    Use sentence pairs for input
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pre-trained-models" class="md-nav__link">
+    Pre-trained models
+  </a>
+  
+</li>
+      
+      
+      
+      
+      
+    </ul>
+  
+</nav>
+    
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../gpt2-embedding/" title="GPT2 Embedding" class="md-nav__link">
+      GPT2 Embedding
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../numeric-features-embedding/" title="Numeric Features Embedding" class="md-nav__link">
+      Numeric Features Embedding
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../stacked-embedding/" title="Stacked Embedding" class="md-nav__link">
+      Stacked Embedding
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-5" type="checkbox" id="nav-5">
+    
+    <label class="md-nav__link" for="nav-5">
+      Advanced
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-5">
+        Advanced
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../advance-use/multi-output-model/" title="Customize Multi Output Model" class="md-nav__link">
+      Customize Multi Output Model
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../advance-use/handle-numeric-features/" title="Handle Numeric features" class="md-nav__link">
+      Handle Numeric features
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../advance-use/tensorflow-serving/" title="Tensorflow Serving" class="md-nav__link">
+      Tensorflow Serving
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-6" type="checkbox" id="nav-6">
+    
+    <label class="md-nav__link" for="nav-6">
+      API
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-6">
+        API
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../api/corpus/" title="corpus" class="md-nav__link">
+      corpus
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../api/embeddings/" title="embeddings" class="md-nav__link">
+      embeddings
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../api/tasks.classification/" title="tasks.classification" class="md-nav__link">
+      tasks.classification
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../api/tasks.labeling/" title="tasks.labeling" class="md-nav__link">
+      tasks.labeling
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../api/utils/" title="utils" class="md-nav__link">
+      utils
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../api/callbacks/" title="callbacks" class="md-nav__link">
+      callbacks
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-7" type="checkbox" id="nav-7">
+    
+    <label class="md-nav__link" for="nav-7">
+      FAQ
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-7">
+        FAQ
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../FAQ/" title="FAQ" class="md-nav__link">
+      FAQ
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-8" type="checkbox" id="nav-8">
+    
+    <label class="md-nav__link" for="nav-8">
+      About
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-8">
+        About
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../about/contributing/" title="Contributing & Support" class="md-nav__link">
+      Contributing &amp; Support
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../about/release-notes/" title="Release notes" class="md-nav__link">
+      Release notes
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#example-usage-text-classification" class="md-nav__link">
+    Example Usage - Text Classification
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#use-sentence-pairs-for-input" class="md-nav__link">
+    Use sentence pairs for input
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pre-trained-models" class="md-nav__link">
+    Pre-trained models
+  </a>
+  
+</li>
+      
+      
+      
+      
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                  <a href="https://github.com/BrikerMan/Kashgari/edit/master/docs/embeddings/bert-embedding.md" title="Edit this page" class="md-icon md-content__icon">&#xE3C9;</a>
+                
+                
+                <h1 id="bert-embedding">BERT Embedding<a class="headerlink" href="#bert-embedding" title="Permanent link">#</a></h1>
+<p>BERTEmbedding is based on <a href="https://github.com/CyberZHG/keras-bert">keras-bert</a>. The embeddings itself are wrapped into our simple embedding interface so that they can be used like any other embedding.</p>
+<p>BERTEmbedding support BERT variants like <strong>ERNIE</strong>, but need to load the <strong>tensorflow checkpoint</strong>. If you intrested to use ERNIE, just download <a href="https://github.com/ArthurRizar/tensorflow_ernie">tensorflow_ernie</a> and load like BERT Embedding.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>When using pre-trained embedding, remember to use same tokenize tool with the embedding model, this will allow to access the full power of the embedding</p>
+</div>
+<div class="highlight"><pre><span></span><span class="n">kashgari</span><span class="o">.</span><span class="n">embeddings</span><span class="o">.</span><span class="n">BERTEmbedding</span><span class="p">(</span><span class="n">model_folder</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                                  <span class="n">layer_nums</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
+                                  <span class="n">trainable</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                                  <span class="n">task</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                                  <span class="n">sequence_length</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;auto&#39;</span><span class="p">,</span>
+                                  <span class="n">processor</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">BaseProcessor</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span>
+</pre></div>
+
+<p><strong>Arguments</strong></p>
+<ul>
+<li><strong>model_folder</strong>: path of checkpoint folder.</li>
+<li><strong>layer_nums</strong>: number of layers whose outputs will be concatenated into a single tensor, default <code>4</code>, output the last 4 hidden layers as the thesis suggested.</li>
+<li><strong>trainable</strong>: whether if the model is trainable, default <code>False</code> and set it to <code>True</code> for fine-tune this embedding layer during your training.</li>
+<li><strong>task</strong>: <code>kashgari.CLASSIFICATION</code> <code>kashgari.LABELING</code>. Downstream task type, If you only need to feature extraction, just set it as <code>kashgari.CLASSIFICATION</code>.</li>
+<li><strong>sequence_length</strong>: <code>'auto'</code>, <code>'variable'</code> or integer. When using <code>'auto'</code>, use the 95% of corpus length as sequence length. When using <code>'variable'</code>, model input shape will set to None, which can handle various length of input, it will use the length of max sequence in every batch for sequence length. If using an integer, let's say <code>50</code>, the input output sequence length will set to 50.</li>
+</ul>
+<h2 id="example-usage-text-classification">Example Usage - Text Classification<a class="headerlink" href="#example-usage-text-classification" title="Permanent link">#</a></h2>
+<p>Let's run a text classification model with BERT.</p>
+<div class="highlight"><pre><span></span><span class="n">sentences</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;Jim Henson was a puppeteer.&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;This here&#39;s an example of using the BERT tokenizer.&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Why did the chicken cross the road?&quot;</span>
+            <span class="p">]</span>
+<span class="n">labels</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;class1&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;class2&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;class1&quot;</span>
+<span class="p">]</span>
+<span class="c1">########## Load Bert Embedding ##########</span>
+<span class="kn">import</span> <span class="nn">kashgari</span>
+<span class="kn">from</span> <span class="nn">kashgari.embeddings</span> <span class="kn">import</span> <span class="n">BERTEmbedding</span>
+
+<span class="n">bert_embedding</span> <span class="o">=</span> <span class="n">BERTEmbedding</span><span class="p">(</span><span class="n">bert_model_path</span><span class="p">,</span>
+                               <span class="n">task</span><span class="o">=</span><span class="n">kashgari</span><span class="o">.</span><span class="n">CLASSIFICATION</span><span class="p">,</span>
+                               <span class="n">sequence_length</span><span class="o">=</span><span class="mi">128</span><span class="p">)</span>
+
+<span class="n">tokenizer</span> <span class="o">=</span> <span class="n">bert_embedding</span><span class="o">.</span><span class="n">tokenizer</span>
+<span class="n">sentences_tokenized</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">sentence</span> <span class="ow">in</span> <span class="n">sentences</span><span class="p">:</span>
+    <span class="n">sentence_tokenized</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="o">.</span><span class="n">tokenize</span><span class="p">(</span><span class="n">sentence</span><span class="p">)</span>
+    <span class="n">sentences_tokenized</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sentence_tokenized</span><span class="p">)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">The sentences will become tokenized into:</span>
+<span class="sd">[</span>
+<span class="sd">    [&#39;[CLS]&#39;, &#39;jim&#39;, &#39;henson&#39;, &#39;was&#39;, &#39;a&#39;, &#39;puppet&#39;, &#39;##eer&#39;, &#39;.&#39;, &#39;[SEP]&#39;],</span>
+<span class="sd">    [&#39;[CLS]&#39;, &#39;this&#39;, &#39;here&#39;, &quot;&#39;&quot;, &#39;s&#39;, &#39;an&#39;, &#39;example&#39;, &#39;of&#39;, &#39;using&#39;, &#39;the&#39;, &#39;bert&#39;, &#39;token&#39;, &#39;##izer&#39;, &#39;.&#39;, &#39;[SEP]&#39;],</span>
+<span class="sd">    [&#39;[CLS]&#39;, &#39;why&#39;, &#39;did&#39;, &#39;the&#39;, &#39;chicken&#39;, &#39;cross&#39;, &#39;the&#39;, &#39;road&#39;, &#39;?&#39;, &#39;[SEP]&#39;]</span>
+<span class="sd">]</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1"># Our tokenizer already added the BOS([CLS]) and EOS([SEP]) token</span>
+<span class="c1"># so we need to disable the default add_bos_eos setting.</span>
+<span class="n">bert_embedding</span><span class="o">.</span><span class="n">processor</span><span class="o">.</span><span class="n">add_bos_eos</span> <span class="o">=</span> <span class="kc">False</span>
+
+<span class="n">train_x</span><span class="p">,</span> <span class="n">train_y</span> <span class="o">=</span> <span class="n">sentences_tokenized</span><span class="p">[:</span><span class="mi">2</span><span class="p">],</span> <span class="n">labels</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
+<span class="n">validate_x</span><span class="p">,</span> <span class="n">validate_y</span> <span class="o">=</span> <span class="n">sentences_tokenized</span><span class="p">[</span><span class="mi">2</span><span class="p">:],</span> <span class="n">labels</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span>
+
+<span class="c1">########## build model ##########</span>
+<span class="kn">from</span> <span class="nn">kashgari.tasks.classification</span> <span class="kn">import</span> <span class="n">CNNLSTMModel</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">CNNLSTMModel</span><span class="p">(</span><span class="n">bert_embedding</span><span class="p">)</span>
+
+<span class="c1">########## /build model ##########</span>
+<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span>
+    <span class="n">train_x</span><span class="p">,</span> <span class="n">train_y</span><span class="p">,</span>
+    <span class="n">validate_x</span><span class="p">,</span> <span class="n">validate_y</span><span class="p">,</span>
+    <span class="n">epochs</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+    <span class="n">batch_size</span><span class="o">=</span><span class="mi">32</span>
+<span class="p">)</span>
+<span class="c1"># save model</span>
+<span class="n">model</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s1">&#39;path/to/save/model/to&#39;</span><span class="p">)</span>
+</pre></div>
+
+<h2 id="use-sentence-pairs-for-input">Use sentence pairs for input<a class="headerlink" href="#use-sentence-pairs-for-input" title="Permanent link">#</a></h2>
+<p>let's assume input pair sample is <code>"First do it" "then do it right"</code>, Then first tokenize the sentences using bert tokenizer. Then</p>
+<div class="highlight"><pre><span></span><span class="n">sentence1</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;First&#39;</span><span class="p">,</span> <span class="s1">&#39;do&#39;</span><span class="p">,</span> <span class="s1">&#39;it&#39;</span><span class="p">]</span>
+<span class="n">sentence2</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;then&#39;</span><span class="p">,</span> <span class="s1">&#39;do&#39;</span><span class="p">,</span> <span class="s1">&#39;it&#39;</span><span class="p">,</span> <span class="s1">&#39;right&#39;</span><span class="p">]</span>
+
+<span class="n">sample</span> <span class="o">=</span> <span class="n">sentence1</span> <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;[SEP]&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">sentence2</span>
+<span class="c1"># Add a special separation token `[SEP]` between two sentences tokens</span>
+<span class="c1"># Generate a new token list</span>
+<span class="c1"># [&#39;First&#39;, &#39;do&#39;, &#39;it&#39;, &#39;[SEP]&#39;, &#39;then&#39;, &#39;do&#39;, &#39;it&#39;, &#39;right&#39;]</span>
+
+<span class="n">train_x</span> <span class="o">=</span> <span class="p">[</span><span class="n">sample</span><span class="p">]</span>
+</pre></div>
+
+<h2 id="pre-trained-models">Pre-trained models<a class="headerlink" href="#pre-trained-models" title="Permanent link">#</a></h2>
+<table>
+<thead>
+<tr>
+<th>model</th>
+<th>provider</th>
+<th>Language</th>
+<th>Link</th>
+<th>info</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>BERT official</td>
+<td>Google</td>
+<td>Multi Language</td>
+<td><a href="https://github.com/google-research/bert">link</a></td>
+<td></td>
+</tr>
+<tr>
+<td>ERNIE</td>
+<td>Baidu</td>
+<td>Chinese</td>
+<td><a href="https://github.com/ArthurRizar/tensorflow_ernie">link</a></td>
+<td>Unofficial Tensorflow Version</td>
+</tr>
+<tr>
+<td>Chinese BERT WWM</td>
+<td>哈工大讯飞联合实验室</td>
+<td>Chinese</td>
+<td><a href="https://github.com/ymcui/Chinese-BERT-wwm#%E4%B8%AD%E6%96%87%E6%A8%A1%E5%9E%8B%E4%B8%8B%E8%BD%BD">link</a></td>
+<td>Use Tensorflow Version</td>
+</tr>
+</tbody>
+</table>
+                
+                  
+                
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid">
+        
+          <a href="../word-embedding/" title="Word Embedding" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+            <div class="md-flex__cell md-flex__cell--shrink">
+              <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
+            </div>
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  Previous
+                </span>
+                Word Embedding
+              </span>
+            </div>
+          </a>
+        
+        
+          <a href="../gpt2-embedding/" title="GPT2 Embedding" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  Next
+                </span>
+                GPT2 Embedding
+              </span>
+            </div>
+            <div class="md-flex__cell md-flex__cell--shrink">
+              <i class="md-icon md-icon--arrow-forward md-footer-nav__button"></i>
+            </div>
+          </a>
+        
+      </nav>
+    </div>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+          <div class="md-footer-copyright__highlight">
+            Copyright &copy; 2018 - 2018 BrikerMan
+          </div>
+        
+        powered by
+        <a href="https://www.mkdocs.org">MkDocs</a>
+        and
+        <a href="https://squidfunk.github.io/mkdocs-material/">
+          Material for MkDocs</a>
+      </div>
+      
+  <div class="md-footer-social">
+    <link rel="stylesheet" href="../../assets/fonts/font-awesome.css">
+    
+      <a href="https://github.com/BrikerMan" class="md-footer-social__link fa fa-github-alt"></a>
+    
+  </div>
+
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../../assets/javascripts/application.808e90bb.js"></script>
+      
+      <script>app.initialize({version:"1.0.4",url:{base:"../.."}})</script>
+      
+        <script src="../../static/js/baidu-static.js"></script>
+      
+    
+  </body>
+</html>
