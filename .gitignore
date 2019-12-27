@@ -111,3 +111,4 @@ venv.bak/
 venv-tf/*
 .pytype/
 mkdocs/site
+node_modules

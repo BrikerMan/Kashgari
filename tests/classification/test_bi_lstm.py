@@ -133,6 +133,12 @@ class TestBi_LSTM_Model(unittest.TestCase):
         assert isinstance(model.predict(sample_eval_x)[0], tuple)
         report_dict = model.evaluate(sample_eval_x, sample_eval_y, output_dict=True)
         assert isinstance(report_dict, dict)
+        res = model.predict(valid_x[:20])
+        model_path = os.path.join(tempfile.gettempdir(), str(time.time()))
+        model.save(model_path)
+
+        new_model = kashgari.utils.load_model(model_path)
+        assert res == new_model.predict(valid_x[:20])
 
 
 if __name__ == "__main__":

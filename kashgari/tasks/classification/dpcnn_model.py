@@ -12,10 +12,11 @@
 # https://github.com/miracleyoo/DPCNN-TextCNN-Pytorch-Inception
 # https://www.kaggle.com/michaelsnell/conv1d-dpcnn-in-keras
 
-import logging
 from math import log2, floor
-import tensorflow as tf
 from typing import Dict, Any
+
+import tensorflow as tf
+
 from kashgari.layers import L, KMaxPoolingLayer
 from kashgari.tasks.classification.base_model import BaseClassificationModel
 

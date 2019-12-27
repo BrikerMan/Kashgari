@@ -4,7 +4,9 @@
 # contact: eliyar917@gmail.com
 # blog: https://eliyar.biz
 
-# file: __version__.py.py
-# time: 2019-05-20 16:32
+# file: __init__.py
+# time: 10:50 上午
 
-__version__ = '1.1.0'
+
+if __name__ == "__main__":
+    pass

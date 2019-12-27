@@ -17,7 +17,11 @@ class ClassificationProcessor(BaseProcessor):
     def __init__(self, multi_label=False, **kwargs):
         super(ClassificationProcessor, self).__init__(**kwargs)
         self.multi_label = multi_label
-        self.multi_label_binarizer: MultiLabelBinarizer = None
+        if self.label2idx:
+            self.multi_label_binarizer: MultiLabelBinarizer = MultiLabelBinarizer(classes=list(self.label2idx.keys()))
+            self.multi_label_binarizer.fit([])
+        else:
+            self.multi_label_binarizer: MultiLabelBinarizer = None
 
     def info(self):
         info = super(ClassificationProcessor, self).info()

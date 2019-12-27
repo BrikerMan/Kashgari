@@ -69,6 +69,7 @@ nav:
   - Tutorials:
       - tutorial/text-classification.md
       - tutorial/text-labeling.md
+      - tutorial/text-scoring.md
 
   - Embeddings:
       - embeddings/index.md

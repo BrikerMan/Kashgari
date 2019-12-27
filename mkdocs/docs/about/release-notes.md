@@ -16,6 +16,12 @@ pip show kashgari-tf
 
 ## Current Release
 
+### [1.1.0] - 2019.12.27
+
+- ✨ Add Scoring task. ([#303])
+- ✨ Add tokenizers.
+- 🐛 Fixing multi-label classification model loading. #304
+
 ### [1.0.0] - 2019.10.18
 
 Unfortunately, we have to change the package name for clarity and consistency. Here is the new naming sytle.
@@ -138,6 +144,7 @@ Here is how the existing versions changes
 - fix classification model evaluate result output
 - change test settings
 
+[1.1.0]: https://github.com/BrikerMan/Kashgari/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/BrikerMan/Kashgari/compare/v0.5.4...v1.0.0
 [0.5.4]: https://github.com/BrikerMan/Kashgari/compare/v0.5.3...v0.5.4
 [0.5.3]: https://github.com/BrikerMan/Kashgari/compare/v0.5.2...v0.5.3
@@ -155,3 +162,4 @@ Here is how the existing versions changes
 [#244]: https://github.com/BrikerMan/Kashgari/issues/244
 [#248]: https://github.com/BrikerMan/Kashgari/issues/248
 [#249]: https://github.com/BrikerMan/Kashgari/issues/249
+[#303]: https://github.com/BrikerMan/Kashgari/issues/303

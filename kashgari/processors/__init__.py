@@ -10,3 +10,4 @@
 
 from kashgari.processors.classification_processor import ClassificationProcessor
 from kashgari.processors.labeling_processor import LabelingProcessor
+from kashgari.processors.scoring_processor import ScoringProcessor

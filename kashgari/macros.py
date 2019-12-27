@@ -23,6 +23,7 @@ Path(DATA_PATH).mkdir(exist_ok=True, parents=True)
 class TaskType(object):
     CLASSIFICATION = 'classification'
     LABELING = 'labeling'
+    SCORING = 'scoring'
 
 
 class Config(object):
