@@ -33,6 +33,7 @@ kashgari.embeddings.BERTEmbedding(vacab_path: str,
 - **vacab_path**: path of model's `vacab.txt` file
 - **config_path**: path of model's `model.json` file
 - **checkpoint_path**: path of model's checkpoint file
+- **bert_type**: `bert`, `albert`, `nezha`. Type of BERT model.
 - **task**: `kashgari.CLASSIFICATION` `kashgari.LABELING`. Downstream task type, If you only need to feature extraction, just set it as `kashgari.CLASSIFICATION`.
 - **sequence_length**: `'auto'` or integer. When using `'auto'`, use the 95% of corpus length as sequence length. If using an integer, let's say `50`, the input output sequence length will set to 50.
 
