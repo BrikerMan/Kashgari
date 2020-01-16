@@ -6,3 +6,4 @@ keras-gpt-2>=0.8.0
 gensim>=3.5.0
 seqeval==0.0.10
 pandas>=0.23.0
+-e git+https://www.github.com/bojone/bert4keras.git@b55629253bd9206d0fe953145f2e6a14a47dca83#egg=bert4keras
