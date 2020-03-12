@@ -1,4 +1,4 @@
-root {
+:root {
     /* Colors */
     --color--white: #fff;
     --color--lightwash: #f7fbfb;
@@ -14,6 +14,7 @@ root {
     --color--pink: #e6a2e4;
     --color--magenta: #dd5ce5;
     --color--red: #bd1c5f;
+    --color--kashgarired: #ef5350;
     --color--brightred: #ef4146;
     --color--orange: #e86c09;
     --color--golden: #f4ac36;
@@ -71,7 +72,7 @@ h1, h2, .rst-content .toctree-wrapper p.caption, h3, h4, h5, h6, legend {
 }
 
 .wy-body-for-nav {
-  background-color: var(--color--coolgray1) !important;
+  background-color: var(--color--coolgray4) !important;
 }
 
 .wy-menu-vertical li span.toctree-expand {
@@ -88,11 +89,11 @@ h1, h2, .rst-content .toctree-wrapper p.caption, h3, h4, h5, h6, legend {
 }
 
 a {
-  color: var(--color--mediumblue) !important;
+  color: var(--color--kashgarired) !important;
 }
 
 a:visited {
-  color: #9B59B6 !important;
+  color: #ff1744 !important;
 }
 
 .wy-menu-vertical a {
@@ -118,7 +119,7 @@ a:visited {
 }
 
 .wy-alert-title, .rst-content .admonition-title {
-  background-color: var(--color--mediumblue) !important;
+  background-color: var(--color--kashgarired) !important;
 }
 
 .wy-alert, .rst-content .note, .rst-content .attention, .rst-content .caution, .rst-content .danger, .rst-content .error, .rst-content .hint, .rst-content .important, .rst-content .tip, .rst-content .warning, .rst-content .seealso, .rst-content .admonition-todo, .rst-content .admonition {
@@ -126,7 +127,7 @@ a:visited {
 }
 
 .rst-content dl:not(.docutils) dt {
-  border-color: var(--color--mediumblue) !important;
+  border-color: var(--color--kashgarired) !important;
   background-color: var(--color--warmgraylight) !important;
 }
 

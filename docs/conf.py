@@ -133,10 +133,10 @@ html_theme = "sphinx_rtd_theme"
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
 
-html_logo = 'images/spinning-up-logo2.png'
-html_theme_options = {
-    'logo_only': True
-}
+# html_logo = 'images/logo.png'
+# html_theme_options = {
+#     'logo_only': True
+# }
 # html_favicon = 'openai-favicon2_32x32.ico'
 html_favicon = 'openai_icon.ico'
 
@@ -224,8 +224,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'SpinningUp', 'Spinning Up Documentation',
-     author, 'SpinningUp', 'One line description of project.',
+    (master_doc, 'Kashgari', 'Kashgari Documentation',
+     author, 'Kashgari', 'One line description of project.',
      'Miscellaneous'),
 ]
 
@@ -238,3 +238,4 @@ def setup(app):
     shutil.copyfile(os.path.join(docs_path.parent, 'README.md'),
                     os.path.join(docs_path, 'README.md'))
     app.add_stylesheet('css/modify.css')
+    app.add_stylesheet('css/extra.css')
