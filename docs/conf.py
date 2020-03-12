@@ -240,7 +240,10 @@ def setup(app):
     rst_readme = os.path.join(docs_path, 'README.rst')
 
     with open(rst_readme, 'w') as f:
-        f.write(convert(open(original_readme, 'r').read()))
+        md_content = open(original_readme, 'r').read()
+        md_content = md_content.replace('(./docs/', '(./')
+        md_content = md_content.replace('.md)', '.html)')
+        f.write(convert(md_content))
         print(f'Saved RST file to {rst_readme}')
 
     app.add_stylesheet('css/modify.css')
