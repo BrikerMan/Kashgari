@@ -1,6 +1,6 @@
 # Numeric Features Embedding
 
-NumericFeaturesEmbedding is a random init `tf.keras.layers.Embedding` layer for numeric feature embedding. Which usally comes togather with [StackedEmbedding](./stacked-embedding.md) for represent non text features.
+NumericFeaturesEmbedding is a random init `tf.keras.layers.Embedding` layer for numeric feature embedding. Which usally comes togather with [StackedEmbedding](stacked-embedding.md) for represent non text features.
 
 More details checkout the example: [Handle Numeric features](../advance-use/handle-numeric-features.md)
 

@@ -65,10 +65,10 @@ Kashgari is a simple and powerful NLP Transfer learning framework, build a state
 
 Here is a set of quick tutorials to get you started with the library:
 
-- [Tutorial 1: Text Classification](https://kashgari.bmio.net/tutorial/text-classification/)
-- [Tutorial 2: Text Labeling](https://kashgari.bmio.net/tutorial/text-labeling/)
-- [Tutorial 3: Text Scoring](https://kashgari.bmio.net/tutorial/text-scoring/)
-- [Tutorial 4: Language Embedding](https://kashgari.bmio.net/embeddings/)
+- [Tutorial 1: Text Classification](./docs/tutorial/text-classification.md)
+- [Tutorial 2: Text Labeling](./docs/tutorial/text-labeling.md)
+- [Tutorial 3: Text Scoring](./docs/tutorial/text-scoring.md)
+- [Tutorial 4: Language Embedding](./docs/embeddings/index.md)
 
 There are also articles and posts that illustrate how to use Kashgari:
 
