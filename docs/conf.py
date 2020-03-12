@@ -76,7 +76,7 @@ templates_path = ['_templates']
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
 #
-source_suffix = ['.rst', '.md']
+source_suffix = ['.md', '.rst']
 # source_suffix = '.rst'
 
 # The master toctree document.
@@ -138,7 +138,7 @@ html_static_path = ['_static']
 #     'logo_only': True
 # }
 # html_favicon = 'openai-favicon2_32x32.ico'
-html_favicon = 'openai_icon.ico'
+# html_favicon = 'openai_icon.ico'
 
 # -- Options for HTMLHelp output ------------------------------------------
 
@@ -233,9 +233,15 @@ texinfo_documents = [
 def setup(app):
     import pathlib
 
-    import shutil
+    from m2r import convert
+
     docs_path = pathlib.Path(__file__).parent
-    shutil.copyfile(os.path.join(docs_path.parent, 'README.md'),
-                    os.path.join(docs_path, 'README.md'))
+    original_readme = os.path.join(docs_path.parent, 'README.md')
+    rst_readme = os.path.join(docs_path, 'README.rst')
+
+    with open(rst_readme, 'w') as f:
+        f.write(convert(open(original_readme, 'r').read()))
+        print(f'Saved RST file to {rst_readme}')
+
     app.add_stylesheet('css/modify.css')
     app.add_stylesheet('css/extra.css')

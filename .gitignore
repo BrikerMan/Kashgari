@@ -106,7 +106,7 @@ venv.bak/
 # mypy
 .mypy_cache/
 
-
+docs/README.rst
 .idea
 .vscode
 venv-tf/*

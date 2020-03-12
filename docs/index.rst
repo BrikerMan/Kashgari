@@ -1,14 +1,12 @@
-
-Welcome to Spinning Up in Deep RL!
-==================================
-
-.. mdinclude:: ../README.md
+.. include:: README.rst
 
 .. toctree::
-  :maxdepth: 2
-  :caption: Introduction
+  :maxdepth: 1
+  :caption: Overview
 
-  README.md
+  README.rst
+  FAQ.md
+   
 
 .. toctree::
   :maxdepth: 1
@@ -17,7 +15,6 @@ Welcome to Spinning Up in Deep RL!
   tutorial/text-classification.md
   tutorial/text-labeling.md
   tutorial/text-scoring.md
-  FAQ.md
 
 .. toctree::
   :maxdepth: 1
@@ -30,6 +27,14 @@ Welcome to Spinning Up in Deep RL!
   embeddings/gpt2-embedding.md
   embeddings/numeric-features-embedding.md
   embeddings/stacked-embedding.md
+
+.. toctree::
+  :maxdepth: 1
+  :caption: Advanced Use Cases
+
+  advance-use/multi-output-model.md
+  advance-use/handle-numeric-features.md
+  advance-use/tensorflow-serving.md
 
 .. toctree::
   :maxdepth: 1
