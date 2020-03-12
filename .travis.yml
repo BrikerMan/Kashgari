@@ -24,7 +24,6 @@ env:
 
 python:
   - "3.6"
-  - "3.7"
 
 cache: pip
 
@@ -49,9 +48,13 @@ install:
   - git fetch --unshallow --quiet
   - export PYTHONPATH=`pwd`
 
-script: nosetests --with-coverage --cover-html --cover-html-dir=htmlcov
-  --cover-xml --cover-xml-file=coverage.xml --with-xunit
-  --cover-package="kashgari"
+#script: nosetests --with-coverage --cover-html --cover-html-dir=htmlcov
+#  --cover-xml --cover-xml-file=coverage.xml --with-xunit
+#  --cover-package="kashgari"
+#  $TEST_FILE
+
+script: pytest --doctest-modules --junitxml=test-reports/junit.xml
+  --cov=kashgari --cov-report=xml:coverage.xml --cov-report=html:htmlcov
   $TEST_FILE
 
 after_script:

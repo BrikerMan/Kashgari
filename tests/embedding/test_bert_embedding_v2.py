@@ -8,12 +8,13 @@
 # time: 2019-05-31 19:32
 
 import os
+import pytest
 import unittest
 import kashgari
 from kashgari.embeddings.bert_embedding_v2 import BERTEmbeddingV2
 from kashgari.tokenizer import BertTokenizer
 
-
+@pytest.mark.skip
 class TestBERTEmbedding(unittest.TestCase):
 
     def test_basic_use(self):
