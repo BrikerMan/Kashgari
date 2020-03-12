@@ -25,3 +25,4 @@ sphinx-autobuild
 sphinx-rtd-theme
 sphinx-markdown-tables
 recommonmark
+m2r
