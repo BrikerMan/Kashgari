@@ -4,11 +4,11 @@ Kashgari provides several embeddings for language representation. Embedding laye
 
 | class name                                                  | description                                                                 |
 | ----------------------------------------------------------- | --------------------------------------------------------------------------- |
-| [BareEmbedding](./bare-embedding.md)                        | random init `tf.keras.layers.Embedding` layer for text sequence embedding   |
-| [WordEmbedding](./word-embedding.md)                        | pre-trained Word2Vec embedding                                              |
-| [BERTEmbedding](./bert-embedding.md)                        | pre-trained BERT embedding                                                  |
-| [GPT2Embedding](./gpt2-embedding.md)                        | pre-trained GPT-2 embedding                                                 |
-| [NumericFeaturesEmbedding](./numeric-features-embedding.md) | random init `tf.keras.layers.Embedding` layer for numeric feature embedding |
+| [BareEmbedding](bare-embedding.md)                        | random init `tf.keras.layers.Embedding` layer for text sequence embedding   |
+| [WordEmbedding](word-embedding.md)                        | pre-trained Word2Vec embedding                                              |
+| [BERTEmbedding](bert-embedding.md)                        | pre-trained BERT embedding                                                  |
+| [GPT2Embedding](gpt2-embedding.md)                        | pre-trained GPT-2 embedding                                                 |
+| [NumericFeaturesEmbedding](numeric-features-embedding.md) | random init `tf.keras.layers.Embedding` layer for numeric feature embedding |
 | [StackedEmbedding](./stacked-embeddingmd)                   | stack other embeddings for multi-input model                                |
 
 All embedding classes inherit from the `Embedding` class and implement the `embed()` to embed your input sequence and `embed_model` property which you need to build you own Model. By providing the `embed()` function and `embed_model` property, Kashgari hides the the complexity of different language embedding from users, all you need to care is which language embedding you need.

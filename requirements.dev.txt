@@ -20,6 +20,7 @@ pytest
 pytest-cov
 
 # documents
-mkdocs
-mkdocs-material
-pymdown-extensions
+sphinx
+sphinx-autobuild
+sphinx-rtd-theme
+sphinx-markdown-tables

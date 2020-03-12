@@ -134,7 +134,7 @@ model.build_model(train_x, train_y, valid_x, valid_y)
 optimizer = RAdam()
 model.compile_model(optimizer=optimizer)
 
-# Train model 
+# Train model
 model.fit(train_x, train_y, valid_x, valid_y)
 ```
 
@@ -289,4 +289,4 @@ reduse_lr_callback = keras.callbacks.ReduceLROnPlateau(factor=0.1, patience=5)
 | BiGRU_Model      | ERNIE       | 0.93512  | 165.7s     | 98958336             | 2461192          |
 | BiGRU_CRF_Model  | ERNIE       | 0.94218  | 250.4s     | 98958336             | 2476184          |
 
-![](../static/images/ner_f1_scores.png)
+![](../_static/images/ner_f1_scores.png)
