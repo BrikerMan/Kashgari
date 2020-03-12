@@ -29,9 +29,8 @@
     <a href="#overview">Overview</a> |
     <a href="#performance">Performance</a> |
     <a href="#quick-start">Quick start</a> |
-    <a href="https://kashgari.bmio.net/">Documentation</a> |
-    <a href="https://kashgari-zh.bmio.net/">中文文档</a> |
-    <a href="https://kashgari.bmio.net/about/contributing/">Contributing</a>
+    <a href="https://kashgari.readthedocs.io/">Documentation</a> |
+    <a href="https://kashgari.readthedocs.io/about/contributing/">Contributing</a>
 </h4>
 
 <!-- markdownlint-enable -->
@@ -46,8 +45,8 @@ Kashgari is a simple and powerful NLP Transfer learning framework, build a state
 - **Human-friendly**. Kashgari's code is straightforward, well documented and tested, which makes it very easy to understand and modify.
 - **Powerful and simple**. Kashgari allows you to apply state-of-the-art natural language processing (NLP) models to your text, such as named entity recognition (NER), part-of-speech tagging (PoS) and classification.
 - **Built-in transfer learning**. Kashgari built-in pre-trained BERT and Word2vec embedding models, which makes it very simple to transfer learning to train your model.
-- **Fully scalable**. Kashgari provides a simple, fast, and scalable environment for fast experimentation, train your models and experiment with new approaches using different embeddings and model structure. 
-- **Production Ready**. Kashgari could export model with `SavedModel` format for tensorflow serving, you could directly deploy it on the cloud. 
+- **Fully scalable**. Kashgari provides a simple, fast, and scalable environment for fast experimentation, train your models and experiment with new approaches using different embeddings and model structure.
+- **Production Ready**. Kashgari could export model with `SavedModel` format for tensorflow serving, you could directly deploy it on the cloud.
 
 ## Our Goal
 

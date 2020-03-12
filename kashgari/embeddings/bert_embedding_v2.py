@@ -14,14 +14,12 @@ os.environ['TF_KERAS'] = '1'
 import json
 import codecs
 import logging
-from typing import Union, Optional, Any, List, Tuple
-from bert4keras.bert import BertModel
-import numpy as np
+from typing import Union, Optional
+from bert4keras.models import build_transformer_model
 import kashgari
 import tensorflow as tf
 from kashgari.embeddings.bert_embedding import BERTEmbedding
 from kashgari.layers import NonMaskingLayer
-from kashgari.embeddings.base_embedding import Embedding
 from kashgari.processors.base_processor import BaseProcessor
 import keras_bert
 
@@ -91,59 +89,18 @@ class BERTEmbeddingV2(BERTEmbedding):
                 return
 
             config_path = self.config_path
-            check_point_path = self.checkpoint_path
 
             config = json.load(open(config_path))
             if seq_len > config.get('max_position_embeddings'):
                 seq_len = config.get('max_position_embeddings')
                 logging.warning(f"Max seq length is {seq_len}")
 
-            with_pool = False
-            with_nsp = False
-            with_mlm = False
+            bert_model = build_transformer_model(config_path=self.config_path,
+                                           checkpoint_path=self.checkpoint_path,
+                                           model=self.bert_type,
+                                           application='encoder',
+                                           return_keras_model=True)
 
-            attention_mask = None
-            keep_words = None
-            position_ids = None
-            layer_norm_cond = None
-            layer_norm_cond_size = None
-            layer_norm_cond_hidden_size = None
-            layer_norm_cond_hidden_act = None
-            additional_input_layers = None
-            att_pool_size = None
-            ffn_pool_size = None
-
-            bert = BertModel(vocab_size=config['vocab_size'],
-                             max_position_embeddings=config.get('max_position_embeddings'),
-                             hidden_size=config['hidden_size'],
-                             num_hidden_layers=config['num_hidden_layers'],
-                             num_attention_heads=config['num_attention_heads'],
-                             intermediate_size=config['intermediate_size'],
-                             hidden_act=config['hidden_act'],
-                             dropout_rate=config['hidden_dropout_prob'],
-                             initializer_range=config.get('initializer_range'),
-                             embedding_size=config.get('embedding_size'),
-                             max_relative_position=(64 if self.bert_type == 'nezha' else None),
-                             num_feed_forward_groups=config.get('num_feed_forward_groups'),
-                             with_pool=with_pool,
-                             with_nsp=with_nsp,
-                             with_mlm=with_mlm,
-                             keep_words=keep_words,
-                             block_sharing=(self.bert_type == 'albert'),
-                             att_pool_size=att_pool_size,
-                             ffn_pool_size=ffn_pool_size)
-
-            bert.build(position_ids=position_ids,
-                       layer_norm_cond=layer_norm_cond,
-                       layer_norm_cond_size=layer_norm_cond_size,
-                       layer_norm_cond_hidden_size=layer_norm_cond_hidden_size,
-                       layer_norm_cond_hidden_act=layer_norm_cond_hidden_act,
-                       additional_input_layers=additional_input_layers)
-
-            if check_point_path is not None:
-                bert.load_weights_from_checkpoint(check_point_path)
-
-            bert_model = bert.model
             self.embed_model = bert_model
 
             self.embedding_size = int(bert_model.output.shape[-1])
