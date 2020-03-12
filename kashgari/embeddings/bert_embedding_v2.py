@@ -85,7 +85,7 @@ class BERTEmbeddingV2(BERTEmbedding):
             if isinstance(seq_len, tuple):
                 seq_len = seq_len[0]
             if isinstance(seq_len, str):
-                logging.warning(f"Model will be built until sequence length is determined")
+                logging.warning(f"Model will be built when sequence length is determined")
                 return
 
             config_path = self.config_path
@@ -96,10 +96,10 @@ class BERTEmbeddingV2(BERTEmbedding):
                 logging.warning(f"Max seq length is {seq_len}")
 
             bert_model = build_transformer_model(config_path=self.config_path,
-                                           checkpoint_path=self.checkpoint_path,
-                                           model=self.bert_type,
-                                           application='encoder',
-                                           return_keras_model=True)
+                                                 checkpoint_path=self.checkpoint_path,
+                                                 model=self.bert_type,
+                                                 application='encoder',
+                                                 return_keras_model=True)
 
             self.embed_model = bert_model
 
