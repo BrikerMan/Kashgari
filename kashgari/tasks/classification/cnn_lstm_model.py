@@ -58,3 +58,10 @@ if __name__ == "__main__":
     model = BiLSTM_Model(embedding=w2v)
     model.fit(x, y)
 
+    # 或者集成 CorpusGenerator 实现自己的数据迭代器
+    # train_gen = CorpusGenerator()
+    # model.fit_generator(train_gen=train_gen,
+    #                     valid_gen=valid_gen,
+    #                     batch_size=batch_size,
+    #                     epochs=epochs)
+
