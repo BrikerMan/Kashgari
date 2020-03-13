@@ -66,11 +66,21 @@ class BertTokenizer(Tokenizer):
                 token2idx[token] = len(token2idx)
         return BertTokenizer(token_dict=token2idx)
 
+    @classmethod
+    def load_from_vacab_file(cls, vacab_path: str):
+        token2idx = {}
+        with codecs.open(vacab_path, 'r', 'utf8') as reader:
+            for line in reader:
+                token = line.strip()
+                token2idx[token] = len(token2idx)
+        return BertTokenizer(token_dict=token2idx)
+
     def tokenize(self, first):
         """Split text to tokens.
 
         :param first: First text.
         :param second: Second text.
+
         :return: A list of strings.
         """
         tokens = self._tokenize(first)

@@ -49,7 +49,7 @@ __description__ = 'Simple, Keras-powered multilingual NLP framework,' \
                   ' part-of-speech tagging (PoS) and text classification tasks. ' \
                   'Includes BERT, GPT-2 and word2vec embedding.'
 
-__version__ = find_version('kashgari', 'version.py')
+__version__ = find_version('kashgari', '__version__.py')
 README = (HERE / "README.md").read_text(encoding='utf-8')
 
 with codecs.open('requirements.txt', 'r', 'utf8') as reader:

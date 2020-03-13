@@ -9,6 +9,7 @@ __pycache__/
 # Distribution / packaging
 .Python
 build/
+_build/
 develop-eggs/
 dist/
 downloads/
@@ -105,7 +106,7 @@ venv.bak/
 # mypy
 .mypy_cache/
 
-
+docs/README.rst
 .idea
 .vscode
 venv-tf/*

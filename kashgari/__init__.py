@@ -25,7 +25,7 @@ CLASSIFICATION = TaskType.CLASSIFICATION
 LABELING = TaskType.LABELING
 SCORING = TaskType.SCORING
 
-from kashgari.version import __version__
+from kashgari.__version__ import __version__
 
 from kashgari import layers
 from kashgari import corpus

@@ -16,6 +16,11 @@ pip show kashgari-tf
 
 ## Current Release
 
+### [1.1.1] - 2020.03.13
+
+- ✨ Add BERTEmbeddingV2.
+- 💥 Migrate documents to https://readthedoc.org for the version control.
+
 ### [1.1.0] - 2019.12.27
 
 - ✨ Add Scoring task. ([#303])
@@ -110,7 +115,7 @@ Here is how the existing versions changes
 
 - multi-label classification for all classification models
 - support cuDNN cell for sequence labeling
-- add option for output `BOS` and `EOS` in sequence labeling result, fix #31 
+- add option for output `BOS` and `EOS` in sequence labeling result, fix #31
 
 ### 0.1.9
 
@@ -119,7 +124,7 @@ Here is how the existing versions changes
 
 ### 0.1.8
 
-- fix BERT Embedding  model's `to_json` function, issue #19 
+- fix BERT Embedding  model's `to_json` function, issue #19
 
 ### 0.1.7
 

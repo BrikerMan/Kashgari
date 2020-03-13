@@ -4,7 +4,7 @@
 
 https://github.com/BrikerMan/Kashgari/issues/90
 
-At times there have some additional features like text formatting (italic, bold, centered), 
+At times there have some additional features like text formatting (italic, bold, centered),
 position in text and more. Kashgari provides `NumericFeaturesEmbedding` and `StackedEmbedding` for this kind data. Here is the details:
 
 If you have a dataset like this.
@@ -96,4 +96,4 @@ print(model.predict_entities(x))
 
 This is the structurer of this model.
 
-![](../static/images/multi_feature_model.png)
+![](../_static/images/multi_feature_model.png)

@@ -29,9 +29,8 @@
     <a href="#overview">Overview</a> |
     <a href="#performance">Performance</a> |
     <a href="#quick-start">Quick start</a> |
-    <a href="https://kashgari.bmio.net/">Documentation</a> |
-    <a href="https://kashgari-zh.bmio.net/">中文文档</a> |
-    <a href="https://kashgari.bmio.net/about/contributing/">Contributing</a>
+    <a href="https://kashgari.readthedocs.io/">Documentation</a> |
+    <a href="https://kashgari.readthedocs.io/about/contributing/">Contributing</a>
 </h4>
 
 <!-- markdownlint-enable -->
@@ -46,8 +45,8 @@ Kashgari is a simple and powerful NLP Transfer learning framework, build a state
 - **Human-friendly**. Kashgari's code is straightforward, well documented and tested, which makes it very easy to understand and modify.
 - **Powerful and simple**. Kashgari allows you to apply state-of-the-art natural language processing (NLP) models to your text, such as named entity recognition (NER), part-of-speech tagging (PoS) and classification.
 - **Built-in transfer learning**. Kashgari built-in pre-trained BERT and Word2vec embedding models, which makes it very simple to transfer learning to train your model.
-- **Fully scalable**. Kashgari provides a simple, fast, and scalable environment for fast experimentation, train your models and experiment with new approaches using different embeddings and model structure. 
-- **Production Ready**. Kashgari could export model with `SavedModel` format for tensorflow serving, you could directly deploy it on the cloud. 
+- **Fully scalable**. Kashgari provides a simple, fast, and scalable environment for fast experimentation, train your models and experiment with new approaches using different embeddings and model structure.
+- **Production Ready**. Kashgari could export model with `SavedModel` format for tensorflow serving, you could directly deploy it on the cloud.
 
 ## Our Goal
 
@@ -65,10 +64,10 @@ Kashgari is a simple and powerful NLP Transfer learning framework, build a state
 
 Here is a set of quick tutorials to get you started with the library:
 
-- [Tutorial 1: Text Classification](https://kashgari.bmio.net/tutorial/text-classification/)
-- [Tutorial 2: Text Labeling](https://kashgari.bmio.net/tutorial/text-labeling/)
-- [Tutorial 3: Text Scoring](https://kashgari.bmio.net/tutorial/text-scoring/)
-- [Tutorial 4: Language Embedding](https://kashgari.bmio.net/embeddings/)
+- [Tutorial 1: Text Classification](./docs/tutorial/text-classification.md)
+- [Tutorial 2: Text Labeling](./docs/tutorial/text-labeling.md)
+- [Tutorial 3: Text Scoring](./docs/tutorial/text-scoring.md)
+- [Tutorial 4: Language Embedding](./docs/embeddings/index.md)
 
 There are also articles and posts that illustrate how to use Kashgari:
 

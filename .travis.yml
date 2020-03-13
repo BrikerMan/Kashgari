@@ -24,7 +24,6 @@ env:
 
 python:
   - "3.6"
-  - "3.7"
 
 cache: pip
 
@@ -35,23 +34,25 @@ stages:
   - Lint
   - name: Test
     if: (branch = master) OR (type IN (pull_request))
-  - name: Document
-    if: branch = master AND (NOT (type IN (pull_request)))
 
 install:
   - pip install jieba
   - pip install python-coveralls
   - pip install -e .
   - pip install tensorflow==1.14.0
-  - pip install coverage
-  - pip install nose
+  - pip install pytest-cov
+  - pip install pytest
   - python -c "import kashgari;print(f'kashgari version {kashgari.__version__}')"
   - git fetch --unshallow --quiet
   - export PYTHONPATH=`pwd`
 
-script: nosetests --with-coverage --cover-html --cover-html-dir=htmlcov
-  --cover-xml --cover-xml-file=coverage.xml --with-xunit
-  --cover-package="kashgari"
+#script: nosetests --with-coverage --cover-html --cover-html-dir=htmlcov
+#  --cover-xml --cover-xml-file=coverage.xml --with-xunit
+#  --cover-package="kashgari"
+#  $TEST_FILE
+
+script: pytest --doctest-modules --junitxml=test-reports/junit.xml
+  --cov=kashgari --cov-report=xml:coverage.xml --cov-report=html:htmlcov
   $TEST_FILE
 
 after_script:
@@ -68,13 +69,3 @@ jobs:
         - pip install flake8 flake8-builtins
       script:
         - flake8 kashgari
-
-    - stage: Document
-      python: "3.6"
-      install:
-        - echo -e "machine github.com\n login ${GITHUB_TOKEN}" > ~/.netrc
-        - pip install mkdocs mkdocs-material pymdown-extensions
-      script:
-        - cp README.md mkdocs/docs/index.md
-        - cd mkdocs
-        - mkdocs gh-deploy --force --clean
