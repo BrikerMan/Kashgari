@@ -230,6 +230,27 @@ texinfo_documents = [
 ]
 
 
+def update_markdown_content(folder: str):
+    import os
+    import glob
+    files = []
+    print(os.path.join(folder, "*.md"))
+    for file in glob.glob(os.path.join(folder, "*.md")):
+        files.append(file)
+    for file in glob.glob(os.path.join(folder, "*/*.md")):
+        files.append(file)
+    for file in glob.glob(os.path.join(folder, "*/*/*.md")):
+        files.append(file)
+
+    for file in files:
+        print(f'update markdown file: {file}')
+        with open(file, 'r') as original:
+            content = original.read()
+        with open(file, 'w') as new:
+            new_content = content.replace('.md)', '.html)')
+            new.write(new_content)
+
+
 def setup(app):
     import pathlib
 
@@ -239,10 +260,13 @@ def setup(app):
     original_readme = os.path.join(docs_path.parent, 'README.md')
     rst_readme = os.path.join(docs_path, 'README.rst')
 
+    # Update all .md files， for fixing links
+    update_markdown_content(docs_path)
+
+    # Change readme to rst file, and include in Sphinx index
     with open(rst_readme, 'w') as f:
         md_content = open(original_readme, 'r').read()
         md_content = md_content.replace('(./docs/', '(./')
-        md_content = md_content.replace('.md)', '.html)')
         f.write(convert(md_content))
         print(f'Saved RST file to {rst_readme}')
 
