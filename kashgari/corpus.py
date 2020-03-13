@@ -9,6 +9,7 @@
 
 import os
 import logging
+import pandas as pd
 from kashgari import macros as K
 from typing import Tuple, List
 from tensorflow.keras.utils import get_file
@@ -147,7 +148,7 @@ class SMP2018ECDTCorpus(object):
 
         corpus_path = get_file(cls.__corpus_name__,
                                cls.__zip_file__name,
-                               cache_dir=k.DATA_PATH,
+                               cache_dir=K.DATA_PATH,
                                untar=True)
 
         if cutter not in ['char', 'jieba', 'none']:

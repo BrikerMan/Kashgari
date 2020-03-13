@@ -16,7 +16,19 @@ class ABCProcessor(ABC):
         self.vocab2idx = {}
         self.idx2vocab = {}
 
-    def build_vocab_dict(self, generator: Generator, min_count: int=3):
+        self.sequence_length = None
+
+        print('ABCProcessorABCProcessorABCProcessorABCProcessorABCProcessorABCProcessor')
+
+    @property
+    def vocab_size(self) -> int:
+        return len(self.vocab2idx)
+
+    @property
+    def is_vocab_build(self) -> bool:
+        return self.vocab_size != 0
+
+    def build_vocab_dict_if_needs(self, generator: Generator, min_count: int = 3):
         raise NotImplementedError
 
 

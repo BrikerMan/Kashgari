@@ -9,13 +9,16 @@
 
 import operator
 import collections
-from typing import Generator
+import logging
 from kashgari.processor.abs_processor import ABCProcessor
+from kashgari.typing import TextSamplesVar, NumSamplesListVar
+from tensorflow.keras.preprocessing.sequence import pad_sequences
+from kashgari.generator import CorpusGenerator
 
 
 class TextProcessor(ABCProcessor):
     def __init__(self, **kwargs):
-        super(ABCProcessor, self).__init__(**kwargs)
+        super(TextProcessor, self).__init__(**kwargs)
         self.token_pad: str = kwargs.get('token_pad', '<PAD>')
         self.token_unk: str = kwargs.get('token_unk', '<UNK>')
         self.token_bos: str = kwargs.get('token_bos', '<BOS>')
@@ -24,8 +27,7 @@ class TextProcessor(ABCProcessor):
         self.vocab2idx = {}
         self.idx2vocab = {}
 
-    def build_vocab_dict(self, generator: Generator, min_count: int=3):
-        generator.reset()
+    def build_vocab_dict_if_needs(self, generator: CorpusGenerator, min_count: int = 3):
         if not self.vocab2idx:
             vocab2idx = {
                 self.token_pad: 0,
@@ -35,12 +37,13 @@ class TextProcessor(ABCProcessor):
             }
 
             token2count = {}
-
-            for x_set, _ in generator:
-                for sentence in x_set:
-                    for token in sentence:
-                        count = token2count.get(token, 0)
-                        token2count[token] = count + 1
+            seq_lens = []
+            generator.reset()
+            for sentence, _ in generator:
+                seq_lens.append(len(sentence))
+                for token in sentence:
+                    count = token2count.get(token, 0)
+                    token2count[token] = count + 1
 
             sorted_token2count = sorted(token2count.items(),
                                         key=operator.itemgetter(1),
@@ -53,6 +56,31 @@ class TextProcessor(ABCProcessor):
             self.vocab2idx = vocab2idx
             self.idx2vocab = dict([(v, k) for k, v in self.vocab2idx.items()])
 
+            if self.sequence_length is None:
+                self.sequence_length = sorted(seq_lens)[int(0.95 * len(seq_lens))]
+        else:
+            if self.sequence_length is None:
+                logging.debug('Start calculating the sequence length')
+                seq_lens = []
+                generator.reset()
+                for sentence, _ in generator:
+                    seq_lens.append(len(sentence))
+                self.sequence_length = sorted(seq_lens)[int(0.95 * len(seq_lens))]
+                logging.debug(f'Sequence length set to {self.sequence_length}')
+
+    def numerize_samples(self, samples: TextSamplesVar) -> NumSamplesListVar:
+        if self.sequence_length is None:
+            sequence_length = max([len(i) for i in samples])
+        else:
+            sequence_length = self.sequence_length
+
+        numerized_samples = []
+        for seq in samples:
+            unk_index = self.vocab2idx[self.token_unk]
+            numerized_samples.append([self.vocab2idx.get(token, unk_index) for token in seq])
+
+        return pad_sequences(numerized_samples, sequence_length, padding='post', truncating='post')
+
 
 if __name__ == "__main__":
     from kashgari.corpus import ChineseDailyNerCorpus
@@ -61,5 +89,5 @@ if __name__ == "__main__":
     x, y = ChineseDailyNerCorpus.load_data()
     gen = CorpusGenerator(x, y)
     p = TextProcessor()
-    p.build_vocab_dict(gen)
+    p.build_vocab_dict_if_needs(gen)
     print(p.vocab2idx)

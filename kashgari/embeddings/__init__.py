@@ -5,9 +5,9 @@
 # blog: https://eliyar.biz
 
 # file: __init__.py
-# time: 12:27 下午
+# time: 3:06 下午
 
-from .text_processor import TextProcessor
+from .word_embedding import WordEmbedding
 
 if __name__ == "__main__":
     pass

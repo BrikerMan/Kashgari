@@ -5,9 +5,8 @@
 # blog: https://eliyar.biz
 
 # file: __init__.py
-# time: 12:27 下午
+# time: 4:05 下午
 
-from .text_processor import TextProcessor
 
 if __name__ == "__main__":
     pass
