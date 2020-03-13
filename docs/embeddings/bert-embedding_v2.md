@@ -11,7 +11,7 @@ BERTEmbeddingV2 support models:
 | ALBERT  | brightmart   | https://github.com/brightmart/albert_zh                                    |     |         |
 | RoBERTa | brightmart   | https://github.com/brightmart/roberta_zh                                   |     |         |
 | RoBERTa | 哈工大 | https://github.com/ymcui/Chinese-BERT-wwm                                  |     |         |
-| RoBERTa | ZhuiyiTechnology | https://github.com/ZhuiyiTechnology/pretrained-models                      |     |         |
+| RoBERTa | 苏剑林 | https://github.com/ZhuiyiTechnology/pretrained-models                      |     |         |
 | NEZHA   | Huawei | https://github.com/huawei-noah/Pretrained-Language-Model/tree/master/NEZHA |     |         |
 
 !!! tip
