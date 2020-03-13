@@ -8,10 +8,10 @@ BERTEmbeddingV2 support models:
 | ------- | ------ | -------------------------------------------------------------------------- | --- | ------- |
 | BERT    | Google | https://github.com/google-research/bert                                    |     |         |
 | ALBERT  | Google | https://github.com/google-research/ALBERT                                  |     |         |
-| ALBERT  | 徐亮   | https://github.com/brightmart/albert_zh                                    |     |         |
-| RoBERTa | 徐亮   | https://github.com/brightmart/roberta_zh                                   |     |         |
+| ALBERT  | brightmart   | https://github.com/brightmart/albert_zh                                    |     |         |
+| RoBERTa | brightmart   | https://github.com/brightmart/roberta_zh                                   |     |         |
 | RoBERTa | 哈工大 | https://github.com/ymcui/Chinese-BERT-wwm                                  |     |         |
-| RoBERTa | 苏建林 | https://github.com/ZhuiyiTechnology/pretrained-models                      |     |         |
+| RoBERTa | ZhuiyiTechnology | https://github.com/ZhuiyiTechnology/pretrained-models                      |     |         |
 | NEZHA   | Huawei | https://github.com/huawei-noah/Pretrained-Language-Model/tree/master/NEZHA |     |         |
 
 !!! tip
