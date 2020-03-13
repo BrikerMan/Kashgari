@@ -10,9 +10,11 @@
 @time: 2019-05-17 11:15
 
 """
+
 import os
 from kashgari.__version__ import __version__
 
 os.environ['TF_KERAS'] = '1'
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
+from kashgari.corpus import SMP2018ECDTCorpus, ChineseDailyNerCorpus

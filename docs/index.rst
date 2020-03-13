@@ -8,6 +8,12 @@
 
 .. toctree::
   :maxdepth: 2
+  :caption: API
+
+  apis/corpus.rst
+
+.. toctree::
+  :maxdepth: 2
   :caption: About
 
   about/contributing.md
