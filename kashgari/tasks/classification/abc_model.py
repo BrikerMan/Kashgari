@@ -14,6 +14,7 @@ from kashgari.typing import NumSamplesListVar, TextSamplesVar
 from kashgari.generators import CorpusGenerator
 
 from tensorflow import keras
+from tensorflow.keras.callbacks import Callback
 
 
 class ABCClassificationModel(ABC):
@@ -75,7 +76,7 @@ class ABCClassificationModel(ABC):
             y_validate: NumSamplesListVar = None,
             batch_size: int = 64,
             epochs: int = 5,
-            callbacks: List[keras.callbacks.Callback] = None,
+            callbacks: List[Callback] = None,
             fit_kwargs: Dict = None, ):
         """
         Trains the model for a given number of epochs with fit_generator (iterations on a dataset).

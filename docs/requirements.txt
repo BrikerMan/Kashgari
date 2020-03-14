@@ -1,0 +1,14 @@
+# documents
+sphinx
+sphinx-autobuild
+sphinx-rtd-theme
+sphinx-markdown-tables
+sphinx-autodoc-typehints
+recommonmark
+m2r
+
+# dependence
+numpy==1.18.1
+gensim>=3.8.1
+pandas>=1.0.1
+

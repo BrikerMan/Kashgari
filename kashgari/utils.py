@@ -18,10 +18,28 @@ T2 = TypeVar("T2")
 
 
 def get_list_subset(target: List[T], index_list: List[int]) -> List[T]:
+    """
+    Get the subset of the target list
+    Args:
+        target: target list
+        index_list: subset items index
+
+    Returns:
+        subset of the original list
+    """
     return [target[i] for i in index_list if i < len(target)]
 
 
 def unison_shuffled_copies(a: T1, b: T2) -> Tuple[T1, T2]:
+    """
+    Union shuffle two arrays
+    Args:
+        a:
+        b:
+
+    Returns:
+
+    """
     data_type = type(a)
     assert len(a) == len(b)
     c = list(zip(a, b))

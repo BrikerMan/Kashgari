@@ -16,9 +16,20 @@ from tensorflow.keras.preprocessing.sequence import pad_sequences
 from kashgari.generators import CorpusGenerator
 
 
-class TextProcessor(ABCProcessor):
-    def __init__(self, **kwargs):
-        super(TextProcessor, self).__init__(**kwargs)
+class SequenceProcessor(ABCProcessor):
+    """
+    Generic processor for the sequence samples.
+    """
+    def __init__(self,
+                 vocab_dict_type:str='text',
+                 **kwargs):
+        """
+
+        Args:
+            vocab_dict_type: initial vocab dict type, one of `text` `labeling`.
+            **kwargs:
+        """
+        super(SequenceProcessor, self).__init__(**kwargs)
         self.token_pad: str = kwargs.get('token_pad', '<PAD>')
         self.token_unk: str = kwargs.get('token_unk', '<UNK>')
         self.token_bos: str = kwargs.get('token_bos', '<BOS>')
@@ -27,14 +38,23 @@ class TextProcessor(ABCProcessor):
         self.vocab2idx = {}
         self.idx2vocab = {}
 
-    def build_vocab_dict_if_needs(self, generator: CorpusGenerator, min_count: int = 3):
-        if not self.vocab2idx:
-            vocab2idx = {
+        if vocab_dict_type == 'text':
+            self._initial_vocab_dic = {
                 self.token_pad: 0,
                 self.token_unk: 1,
                 self.token_bos: 2,
                 self.token_eos: 3
             }
+        elif vocab_dict_type == 'labeling':
+            self._initial_vocab_dic = {
+                self.token_pad: 0
+            }
+        else:
+            self._initial_vocab_dic = { }
+
+    def build_vocab_dict_if_needs(self, generator: CorpusGenerator, min_count: int = 3):
+        if not self.vocab2idx:
+            vocab2idx = self._initial_vocab_dic
 
             token2count = {}
             seq_lens = []
@@ -79,7 +99,7 @@ class TextProcessor(ABCProcessor):
             unk_index = self.vocab2idx[self.token_unk]
             numerized_samples.append([self.vocab2idx.get(token, unk_index) for token in seq])
 
-        return pad_sequences(numerized_samples, sequence_length, padding='post', truncating='post')
+        return sequence.pad_sequences(numerized_samples, sequence_length, padding='post', truncating='post')
 
 
 if __name__ == "__main__":
@@ -88,6 +108,6 @@ if __name__ == "__main__":
 
     x, y = ChineseDailyNerCorpus.load_data()
     gen = CorpusGenerator(x, y)
-    p = TextProcessor()
+    p = SequenceProcessor()
     p.build_vocab_dict_if_needs(gen)
     print(p.vocab2idx)

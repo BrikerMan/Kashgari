@@ -12,7 +12,7 @@ import numpy as np
 from typing import Dict, Any, List
 from gensim.models import KeyedVectors
 from kashgari.processor.abs_processor import ABCProcessor
-from kashgari.processor import TextProcessor
+from kashgari.processor import SequenceProcessor
 from tensorflow import keras
 from kashgari.generators import CorpusGenerator
 
@@ -29,7 +29,7 @@ class WordEmbedding:
             w2v_kwargs = {}
 
         if text_processor is None:
-            text_processor = TextProcessor()
+            text_processor = SequenceProcessor()
 
         self.w2v_path = w2v_path
         self.w2v_kwargs = w2v_kwargs

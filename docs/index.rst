@@ -10,6 +10,7 @@
   :maxdepth: 2
   :caption: API
 
+  apis/processors.rst
   apis/corpus.rst
   apis/generators.rst
   apis/classification.rst
