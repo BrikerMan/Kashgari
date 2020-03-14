@@ -149,6 +149,7 @@ Here is how the existing versions changes
 - fix classification model evaluate result output
 - change test settings
 
+[1.1.1]: https://github.com/BrikerMan/Kashgari/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/BrikerMan/Kashgari/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/BrikerMan/Kashgari/compare/v0.5.4...v1.0.0
 [0.5.4]: https://github.com/BrikerMan/Kashgari/compare/v0.5.3...v0.5.4
