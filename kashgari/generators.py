@@ -8,9 +8,7 @@
 # time: 4:53 下午
 
 import random
-from types import TracebackType
-from typing import List, Generator, Type, Optional
-from kashgari.utils import get_list_subset
+from typing import List
 
 
 class CorpusGenerator:
@@ -73,8 +71,7 @@ class BatchDataGenerator:
             x_set.append(x)
             y_set.append(y)
 
-        return self.text_processor.numerize_samples(x_set), \
-               self.label_processor.numerize_samples(y_set)
+        return self.text_processor.numerize_samples(x_set), self.label_processor.numerize_samples(y_set)
 
     def __call__(self, *args, **kwargs):
         return self

@@ -16,7 +16,6 @@ from kashgari.processor import TextProcessor
 from tensorflow import keras
 from kashgari.generator import CorpusGenerator
 
-
 L = keras.layers
 
 
@@ -47,7 +46,7 @@ class WordEmbedding:
         del self.embed_model
         self.build_embedding_model()
 
-    def build(self, gen: CorpusGenerator=None):
+    def build(self, gen: CorpusGenerator = None):
         self.build_text_vocab(gen=gen)
         self.build_embedding_model()
         if self.label_processor and gen:
@@ -123,4 +122,3 @@ class WordEmbedding:
 
 if __name__ == "__main__":
     pass
-

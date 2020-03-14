@@ -102,6 +102,7 @@ class ChineseDailyNerCorpus(object):
                       f"y[0]: {y_data[0]}")
         return x_data, y_data
 
+
 class SMP2018ECDTCorpus(object):
     """
     https://worksheets.codalab.org/worksheets/0x27203f932f8341b79841d50ce0fd684f/

@@ -11,6 +11,7 @@
   :caption: API
 
   apis/corpus.rst
+  apis/generators.rst
 
 .. toctree::
   :maxdepth: 2
