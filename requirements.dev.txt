@@ -9,6 +9,7 @@ sphinx
 sphinx-autobuild
 sphinx-rtd-theme
 sphinx-markdown-tables
+sphinx-autodoc-typehints
 recommonmark
 m2r
 

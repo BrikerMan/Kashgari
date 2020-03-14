@@ -61,8 +61,12 @@ extensions = [
     'sphinx.ext.imgmath',
     'sphinx.ext.viewcode',
     'sphinx.ext.autodoc',
-    'sphinx.ext.napoleon'
+    'sphinx.ext.napoleon',
+    'sphinx_autodoc_typehints'
 ]
+
+# sphinx_autodoc_typehints settings
+typehints_document_rtype = True
 
 # 'sphinx.ext.mathjax', ??
 
