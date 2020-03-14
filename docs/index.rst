@@ -12,6 +12,7 @@
 
   apis/corpus.rst
   apis/generators.rst
+  apis/classification.rst
 
 .. toctree::
   :maxdepth: 2

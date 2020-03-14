@@ -7,6 +7,7 @@
 # file: __init__.py
 # time: 4:05 下午
 
+from .bi_lstm_model import BiLSTM_Model
 
 if __name__ == "__main__":
     pass

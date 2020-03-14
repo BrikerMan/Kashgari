@@ -14,7 +14,7 @@ from typing import List
 
 from tensorflow.keras.utils import to_categorical
 
-from kashgari.generator import CorpusGenerator
+from kashgari.generators import CorpusGenerator
 from kashgari.processor.abs_processor import ABCProcessor
 
 

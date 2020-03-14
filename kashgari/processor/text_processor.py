@@ -13,7 +13,7 @@ import logging
 from kashgari.processor.abs_processor import ABCProcessor
 from kashgari.typing import TextSamplesVar, NumSamplesListVar
 from tensorflow.keras.preprocessing.sequence import pad_sequences
-from kashgari.generator import CorpusGenerator
+from kashgari.generators import CorpusGenerator
 
 
 class TextProcessor(ABCProcessor):

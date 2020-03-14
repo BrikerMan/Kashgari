@@ -7,6 +7,7 @@
 # file: __init__.py
 # time: 4:04 下午
 
+from kashgari.tasks import classification
 
 if __name__ == "__main__":
     pass

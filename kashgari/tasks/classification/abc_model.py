@@ -8,9 +8,10 @@
 # time: 4:05 下午
 
 from abc import ABC
+from typing import List, Dict
 from kashgari.embeddings import WordEmbedding
 from kashgari.typing import NumSamplesListVar, TextSamplesVar
-from kashgari.generator import CorpusGenerator
+from kashgari.generators import CorpusGenerator
 
 from tensorflow import keras
 
@@ -73,16 +74,39 @@ class ABCClassificationModel(ABC):
             x_validate: NumSamplesListVar = None,
             y_validate: NumSamplesListVar = None,
             batch_size: int = 64,
-            epochs: int = 5):
+            epochs: int = 5,
+            callbacks: List[keras.callbacks.Callback] = None,
+            fit_kwargs: Dict = None, ):
+        """
+        Trains the model for a given number of epochs with fit_generator (iterations on a dataset).
+
+        Args:
+            x_train: Array of train feature data (if the model has a single input),
+                or tuple of train feature data array (if the model has multiple inputs)
+            y_train: Array of train label data
+            x_validate: Array of validation feature data (if the model has a single input),
+                or tuple of validation feature data array (if the model has multiple inputs)
+            y_validate: Array of validation label data
+            batch_size: Number of samples per gradient update, default to 64.
+            epochs: Integer. Number of epochs to train the model. default 5.
+            callbacks:
+            fit_kwargs: fit_kwargs: additional arguments passed to ``fit()`` function from
+                ``tensorflow.keras.Model`` - https://www.tensorflow.org/api_docs/python/tf/keras/Model#fit
+        Returns:
+            A `History` object. Its `History.history` attribute is
+            a record of training loss values and metrics values
+            at successive epochs, as well as validation loss values
+            and validation metrics values (if applicable).
+        """
         train_gen = CorpusGenerator(x_train, y_train)
         if x_validate is not None:
             valid_gen = CorpusGenerator(x_validate, y_validate)
         else:
             valid_gen = None
-        self.fit_generator(train_gen=train_gen,
-                           valid_gen=valid_gen,
-                           batch_size=batch_size,
-                           epochs=epochs)
+        return self.fit_generator(train_gen=train_gen,
+                                  valid_gen=valid_gen,
+                                  batch_size=batch_size,
+                                  epochs=epochs)
 
     def fit_generator(self,
                       train_gen: CorpusGenerator,
@@ -91,13 +115,15 @@ class ABCClassificationModel(ABC):
                       epochs: int = 5):
         self.build_model(train_gen)
         self.tf_model.summary()
-        from kashgari.generator import BatchDataGenerator
+        from kashgari.generators import BatchDataGenerator
         train_gen_batch = BatchDataGenerator(train_gen,
                                              self.embedding.text_processor,
                                              self.embedding.label_processor,
                                              batch_size=batch_size)
 
-        self.tf_model.fit(train_gen_batch, steps_per_epoch=train_gen_batch.steps, epochs=epochs)
+        return self.tf_model.fit(train_gen_batch,
+                                 steps_per_epoch=train_gen_batch.steps,
+                                 epochs=epochs)
 
 
 if __name__ == "__main__":

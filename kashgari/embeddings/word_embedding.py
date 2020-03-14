@@ -14,7 +14,7 @@ from gensim.models import KeyedVectors
 from kashgari.processor.abs_processor import ABCProcessor
 from kashgari.processor import TextProcessor
 from tensorflow import keras
-from kashgari.generator import CorpusGenerator
+from kashgari.generators import CorpusGenerator
 
 L = keras.layers
 
