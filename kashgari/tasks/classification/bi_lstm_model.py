@@ -18,7 +18,7 @@ L = keras.layers
 
 class BiLSTM_Model(ABCClassificationModel):
     @classmethod
-    def get_default_hyper_parameters(cls) -> Dict[str, Dict[str, Any]]:
+    def default_hyper_parameters(cls) -> Dict[str, Dict[str, Any]]:
         return {
             'layer_bi_lstm': {
                 'units': 128,
@@ -32,7 +32,7 @@ class BiLSTM_Model(ABCClassificationModel):
     def build_model_arc(self):
         output_dim = self.label_processor.vocab_size
 
-        config = self.get_default_hyper_parameters()
+        config = self.default_hyper_parameters()
         embed_model = self.embedding.embed_model
 
         layer_bi_lstm = L.Bidirectional(L.LSTM(**config['layer_bi_lstm']))
