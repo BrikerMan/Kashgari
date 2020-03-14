@@ -21,12 +21,7 @@ stages:
     if: (branch = master) OR (type IN (pull_request))
 
 install:
-  - pip install jieba
-  - pip install python-coveralls
-  - pip install -e .
-  - pip install tensorflow==1.14.0
-  - pip install pytest-cov
-  - pip install pytest
+  - pip install -r requirements.dev.txt
   - python -c "import kashgari;print(f'kashgari version {kashgari.__version__}')"
   - git fetch --unshallow --quiet
   - export PYTHONPATH=`pwd`
