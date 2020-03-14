@@ -54,179 +54,29 @@ Kashgari is a simple and powerful NLP Transfer learning framework, build a state
 - **NLP beginners** Learn how to build an NLP project with production level code quality.
 - **NLP developers** Build a production level classification/labeling model within minutes.
 
-## Performance
+## Road Map
 
-| Task                     | Language | Dataset                   | Score          | Detail                                                                                                   |
-| ------------------------ | -------- | ------------------------- | -------------- | -------------------------------------------------------------------------------------------------------- |
-| Named Entity Recognition | Chinese  | People's Daily Ner Corpus | **94.46** (F1) | [Text Labeling Performance Report](https://kashgari.bmio.net/tutorial/text-labeling/#performance-report) |
-
-## Tutorials
-
-Here is a set of quick tutorials to get you started with the library:
-
-- [Tutorial 1: Text Classification](./docs/tutorial/text-classification.md)
-- [Tutorial 2: Text Labeling](./docs/tutorial/text-labeling.md)
-- [Tutorial 3: Text Scoring](./docs/tutorial/text-scoring.md)
-- [Tutorial 4: Language Embedding](./docs/embeddings/index.md)
-
-There are also articles and posts that illustrate how to use Kashgari:
-
-- [15 分钟搭建中文文本分类模型](https://eliyar.biz/nlp_chinese_text_classification_in_15mins/)
-- [基于 BERT 的中文命名实体识别（NER)](https://eliyar.biz/nlp_chinese_bert_ner/)
-- [BERT/ERNIE 文本分类和部署](https://eliyar.biz/nlp_train_and_deploy_bert_text_classification/)
-- [五分钟搭建一个基于BERT的NER模型](https://www.jianshu.com/p/1d6689851622)
-- [Multi-Class Text Classification with Kashgari in 15 minutes](https://medium.com/@BrikerMan/multi-class-text-classification-with-kashgari-in-15mins-c3e744ce971d)
-
-## Quick start
-
-### Requirements and Installation
-
-🎉🎉🎉 We renamed again for consistency and clarity. From now on, it is all `kashgari`. 🎉🎉🎉
-
-The project is based on Python 3.6+, because it is 2019 and type hinting is cool.
-
-| Backend          | pypi version                           | desc            |
-| ---------------- | -------------------------------------- | --------------- |
-| TensorFlow 2.x   | `pip install 'kashgari>=2.0.0'`        | coming soon     |
-| TensorFlow 1.14+ | `pip install 'kashgari>=1.0.0,<2.0.0'` | current version |
-| Keras            | `pip install 'kashgari<1.0.0'`         | legacy version  |
-
-[Find more info about the name changing.](https://github.com/BrikerMan/Kashgari/releases/tag/v1.0.0)
-
-### Example Usage
-
-Let's run an NER labeling model with Bi\_LSTM Model.
-
-```python
-from kashgari.corpus import ChineseDailyNerCorpus
-from kashgari.tasks.labeling import BiLSTM_Model
-
-train_x, train_y = ChineseDailyNerCorpus.load_data('train')
-test_x, test_y = ChineseDailyNerCorpus.load_data('test')
-valid_x, valid_y = ChineseDailyNerCorpus.load_data('valid')
-
-model = BiLSTM_Model()
-model.fit(train_x, train_y, valid_x, valid_y, epochs=50)
-
-"""
-_________________________________________________________________
-Layer (type)                 Output Shape              Param #
-=================================================================
-input (InputLayer)           (None, 97)                0
-_________________________________________________________________
-layer_embedding (Embedding)  (None, 97, 100)           320600
-_________________________________________________________________
-layer_blstm (Bidirectional)  (None, 97, 256)           235520
-_________________________________________________________________
-layer_dropout (Dropout)      (None, 97, 256)           0
-_________________________________________________________________
-layer_time_distributed (Time (None, 97, 8)             2056
-_________________________________________________________________
-activation_7 (Activation)    (None, 97, 8)             0
-=================================================================
-Total params: 558,176
-Trainable params: 558,176
-Non-trainable params: 0
-_________________________________________________________________
-Train on 20864 samples, validate on 2318 samples
-Epoch 1/50
-20864/20864 [==============================] - 9s 417us/sample - loss: 0.2508 - acc: 0.9333 - val_loss: 0.1240 - val_acc: 0.9607
-
-"""
-```
-
-### Run with GPT-2 Embedding
-
-```python
-from kashgari.embeddings import GPT2Embedding
-from kashgari.corpus import ChineseDailyNerCorpus
-from kashgari.tasks.labeling import BiGRU_Model
-
-train_x, train_y = ChineseDailyNerCorpus.load_data('train')
-valid_x, valid_y = ChineseDailyNerCorpus.load_data('valid')
-
-gpt2_embedding = GPT2Embedding('<path-to-gpt-model-folder>', sequence_length=30)
-model = BiGRU_Model(gpt2_embedding)
-model.fit(train_x, train_y, valid_x, valid_y, epochs=50)
-```
-
-### Run with Bert Embedding
-
-```python
-from kashgari.embeddings import BERTEmbedding
-from kashgari.tasks.labeling import BiGRU_Model
-from kashgari.corpus import ChineseDailyNerCorpus
-
-bert_embedding = BERTEmbedding('<bert-model-folder>', sequence_length=30)
-model = BiGRU_Model(bert_embedding)
-
-train_x, train_y = ChineseDailyNerCorpus.load_data()
-model.fit(train_x, train_y)
-```
-
-## Sponsors
-
-Support this project by becoming a sponsor. Your issues and feature request will be prioritized.[[Become a sponsor](https://www.patreon.com/join/brikerman?)]
-
-## Contributors ✨
-
-Thanks goes to these wonderful people. And there are many ways to get involved. Start with the [contributor guidelines](https://kashgari.bmio.net/about/contributing/) and then check these open issues for specific tasks.
-
-<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
-<!-- prettier-ignore-start -->
-<!-- markdownlint-disable -->
-<table>
-  <tr>
-    <td align="center"><a href="https://developers.google.com/community/experts/directory/profile/profile-eliyar_eziz"><img src="https://avatars1.githubusercontent.com/u/9368907?v=4" width="100px;" alt=""/><br /><sub><b>Eliyar Eziz</b></sub></a><br /><a href="https://github.com/BrikerMan/Kashgari/commits?author=BrikerMan" title="Documentation">📖</a> <a href="https://github.com/BrikerMan/Kashgari/commits?author=BrikerMan" title="Tests">⚠️</a> <a href="https://github.com/BrikerMan/Kashgari/commits?author=BrikerMan" title="Code">💻</a></td>
-    <td align="center"><a href="http://www.chuanxilu.com"><img src="https://avatars3.githubusercontent.com/u/856746?v=4" width="100px;" alt=""/><br /><sub><b>Alex Wang</b></sub></a><br /><a href="https://github.com/BrikerMan/Kashgari/commits?author=alexwwang" title="Code">💻</a></td>
-    <td align="center"><a href="https://github.com/lsgrep"><img src="https://avatars3.githubusercontent.com/u/3893940?v=4" width="100px;" alt=""/><br /><sub><b>Yusup</b></sub></a><br /><a href="https://github.com/BrikerMan/Kashgari/commits?author=lsgrep" title="Code">💻</a></td>
-  </tr>
-</table>
-
-<!-- markdownlint-enable -->
-<!-- prettier-ignore-end -->
-<!-- ALL-CONTRIBUTORS-LIST:END -->
-
-Feel free to join the Slack group if you want to more involved in Kashgari's development.
-
-[Slack Group Link](https://join.slack.com/t/kashgari/shared_invite/enQtODU4OTEzNDExNjUyLTY0MzI4MGFkZmRkY2VmMzdmZjRkZTYxMmMwNjMyOTI1NGE5YzQ2OTZkYzA1YWY0NTkyMDdlZGY5MGI5N2U4YzM)
-
-## Reference
-
-This library is inspired by and references following frameworks and papers.
-
-- [flair - A very simple framework for state-of-the-art Natural Language Processing (NLP)](https://github.com/zalandoresearch/flair)
-- [anago - Bidirectional LSTM-CRF and ELMo for Named-Entity Recognition, Part-of-Speech Tagging](https://github.com/Hironsan/anago)
-- [Chinese-Word-Vectors](https://github.com/Embedding/Chinese-Word-Vectors)
-
-This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
-
-## Contributors
-
-### Code Contributors
-
-This project exists thanks to all the people who contribute. [[Contribute](CONTRIBUTING.md)].
-<a href="https://github.com/BrikerMan/Kashgari/graphs/contributors"><img src="https://opencollective.com/Kashgari/contributors.svg?width=890&button=false" /></a>
-
-### Financial Contributors
-
-Become a financial contributor and help us sustain our community. [[Contribute](https://opencollective.com/Kashgari/contribute)]
-
-#### Individuals
-
-<a href="https://opencollective.com/Kashgari"><img src="https://opencollective.com/Kashgari/individuals.svg?width=890"></a>
-
-#### Organizations
-
-Support this project with your organization. Your logo will show up here with a link to your website. [[Contribute](https://opencollective.com/Kashgari/contribute)]
-
-<a href="https://opencollective.com/Kashgari/organization/0/website"><img src="https://opencollective.com/Kashgari/organization/0/avatar.svg"></a>
-<a href="https://opencollective.com/Kashgari/organization/1/website"><img src="https://opencollective.com/Kashgari/organization/1/avatar.svg"></a>
-<a href="https://opencollective.com/Kashgari/organization/2/website"><img src="https://opencollective.com/Kashgari/organization/2/avatar.svg"></a>
-<a href="https://opencollective.com/Kashgari/organization/3/website"><img src="https://opencollective.com/Kashgari/organization/3/avatar.svg"></a>
-<a href="https://opencollective.com/Kashgari/organization/4/website"><img src="https://opencollective.com/Kashgari/organization/4/avatar.svg"></a>
-<a href="https://opencollective.com/Kashgari/organization/5/website"><img src="https://opencollective.com/Kashgari/organization/5/avatar.svg"></a>
-<a href="https://opencollective.com/Kashgari/organization/6/website"><img src="https://opencollective.com/Kashgari/organization/6/avatar.svg"></a>
-<a href="https://opencollective.com/Kashgari/organization/7/website"><img src="https://opencollective.com/Kashgari/organization/7/avatar.svg"></a>
-<a href="https://opencollective.com/Kashgari/organization/8/website"><img src="https://opencollective.com/Kashgari/organization/8/avatar.svg"></a>
-<a href="https://opencollective.com/Kashgari/organization/9/website"><img src="https://opencollective.com/Kashgari/organization/9/avatar.svg"></a>
+- [ ] Based on TensorFlow 2.1+ [@BrikerMan]
+- [ ] Fully support generator based training (#336 ,#273) [@BrikerMan]
+- [ ] Clean code and full document
+- [ ] Multi GPU/TPU Support [@BrikerMan]
+- [ ] Embeddings
+    - [ ] Bare Embedding [@BrikerMan]
+    - [ ] Word Embedding (Load trained W2V) [@BrikerMan]
+    - [ ] BERT Embedding (Based on bert4keras, support BERT, RoBERTa, ALBERT...) (#316) [@BrikerMan]
+    - [ ] GPT-2 Embedding
+    - [ ] FeaturesEmbedding (Support Numeric feature as input)
+    - [ ] Stacked Embedding (Stack Text embedding and features Embedding)
+- [ ] Classification Task
+    - [ ] Traditional models (CCN/LSTM/GRU) [@BrikerMan]
+    - [ ] Transformer models (Transformer/Transformer XL/Attention)
+- [ ] Labeling Task
+    - [ ] Traditional models (CCN/LSTM/GRU)
+    - [ ] Transformer models (Transformer/Transformer XL/Attention)
+- [ ] Seq2Seq Task
+    - [ ] Traditional models (CCN/LSTM/GRU)
+    - [ ] Transformer models (Transformer/Transformer XL/Attention)
+- [ ] Built-in Callbacks
+    - [ ] Evaluate Callback
+    - [ ] Save Best Callback
+- [ ] Support TensorFlow Hub (Optional)
