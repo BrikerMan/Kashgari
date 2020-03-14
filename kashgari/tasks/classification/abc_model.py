@@ -10,11 +10,10 @@
 from abc import ABC
 from typing import List, Dict
 from kashgari.embeddings import WordEmbedding
-from kashgari.typing import NumSamplesListVar, TextSamplesVar
+from kashgari.typing import NumSamplesListVar
 from kashgari.generators import CorpusGenerator
 
 from tensorflow import keras
-from tensorflow.keras.callbacks import Callback
 
 
 class ABCClassificationModel(ABC):
@@ -76,10 +75,10 @@ class ABCClassificationModel(ABC):
             y_validate: NumSamplesListVar = None,
             batch_size: int = 64,
             epochs: int = 5,
-            callbacks: List[Callback] = None,
+            callbacks: List = None,
             fit_kwargs: Dict = None, ):
         """
-        Trains the model for a given number of epochs with fit_generator (iterations on a dataset).
+        Trains the model for a given number of epochs with given data set list.
 
         Args:
             x_train: Array of train feature data (if the model has a single input),
@@ -89,8 +88,14 @@ class ABCClassificationModel(ABC):
                 or tuple of validation feature data array (if the model has multiple inputs)
             y_validate: Array of validation label data
             batch_size: Number of samples per gradient update, default to 64.
-            epochs: Integer. Number of epochs to train the model. default 5.
-            callbacks:
+            epochs: Number of epochs to train the model.
+                An epoch is an iteration over the entire `x` and `y` data provided.
+                Note that in conjunction with `initial_epoch`, `epochs` is to be understood as "final epoch".
+                The model is not trained for a number of iterations given by `epochs`, but merely until the epoch
+                of index `epochs` is reached.
+            callbacks: List of `keras.callbacks.Callback` instances.
+                List of callbacks to apply during training.
+                See `tf.keras.callbacks`.
             fit_kwargs: fit_kwargs: additional arguments passed to ``fit()`` function from
                 ``tensorflow.keras.Model`` - https://www.tensorflow.org/api_docs/python/tf/keras/Model#fit
         Returns:
@@ -114,6 +119,27 @@ class ABCClassificationModel(ABC):
                       valid_gen: CorpusGenerator = None,
                       batch_size: int = 64,
                       epochs: int = 5):
+        """
+        Trains the model for a given number of epochs with given data generator.
+
+        Data generator must be the subclass of `CorpusGenerator`
+
+        Args:
+            train_gen: train data generator.
+            valid_gen: valid data generator.
+            batch_size: Number of samples per gradient update, default to 64.
+            epochs: Number of epochs to train the model.
+                An epoch is an iteration over the entire `x` and `y` data provided.
+                Note that in conjunction with `initial_epoch`, `epochs` is to be understood as "final epoch".
+                The model is not trained for a number of iterations given by `epochs`, but merely until the epoch
+                of index `epochs` is reached.
+
+        Returns:
+            A `History` object. Its `History.history` attribute is
+            a record of training loss values and metrics values
+            at successive epochs, as well as validation loss values
+            and validation metrics values (if applicable).
+        """
         self.build_model(train_gen)
         self.tf_model.summary()
         from kashgari.generators import BatchDataGenerator

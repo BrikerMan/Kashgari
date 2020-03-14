@@ -73,6 +73,14 @@ extensions = [
 
 # sphinx_autodoc_typehints settings
 
+autodoc_default_options = {
+    'member-order': 'groupwise',
+    'special-members': '__init__',
+    'undoc-members': True,
+    'inherited-members': True,
+    'show-inheritance': True,
+}
+
 # 'sphinx.ext.mathjax', ??
 
 # imgmath settings
