@@ -2,16 +2,17 @@
 
 ## Upgrading
 
-To upgrade Material to the latest version, use `pip`:
+To upgrade Kashgari to the latest version, use `pip`:
 
 ``` sh
-pip install --upgrade kashgari-tf
+pip uninstall -y kashgari-tf
+pip install --upgrade kashgari
 ```
 
 To inspect the currently installed version, use the following command:
 
 ``` sh
-pip show kashgari-tf
+pip show kashgari
 ```
 
 ## Current Release
