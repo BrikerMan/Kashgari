@@ -18,3 +18,9 @@ Bidirectional GRU Model
 .. autoclass:: kashgari.tasks.classification.BiGRU_Model
   :members:
   :undoc-members:
+
+
+CNN Model
+---------
+
+.. autoclass:: kashgari.tasks.classification.CNN_Model

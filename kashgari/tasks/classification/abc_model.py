@@ -8,65 +8,24 @@
 # time: 4:05 下午
 
 from abc import ABC
-from typing import List, Dict
+from typing import List, Dict, Any
 from kashgari.embeddings import WordEmbedding
 from kashgari.typing import NumSamplesListVar
 from kashgari.generators import CorpusGenerator
+from kashgari.tasks.abs_task_model import ABCTaskModel
+from kashgari.processor.class_processor import ClassificationProcessor
+from kashgari.generators import BatchDataGenerator
 
-from tensorflow import keras
 
-
-class ABCClassificationModel(ABC):
-    def __init__(self, embedding: WordEmbedding = None):
-        self.embedding = embedding
-
-        self.tf_model: keras.Model = None
-
-    @property
-    def text_processor(self):
-        return self.embedding.text_processor
-
-    @property
-    def label_processor(self):
-        return self.embedding.label_processor
-
-    def build_model(self,
-                    train_gen: CorpusGenerator):
-        if self.embedding.label_processor is None:
-            from kashgari.processor.class_processor import ClassificationProcessor
-            self.embedding.label_processor = ClassificationProcessor()
-        self.embedding.build(train_gen)
-        if self.tf_model is None:
-            self.build_model_arc()
-            self.compile_model()
-
-    def build_model_arc(self):
-        raise NotImplementedError
-
-    def compile_model(self, **kwargs):
-        """Configures the model for training.
-
-        Using ``compile()`` function of ``tf.keras.Model`` -
-        https://www.tensorflow.org/api_docs/python/tf/keras/models/Model#compile
-
-        Args:
-            **kwargs: arguments passed to ``compile()`` function of ``tf.keras.Model``
-
-        Defaults:
-            - loss: ``categorical_crossentropy``
-            - optimizer: ``adam``
-            - metrics: ``['accuracy']``
-        """
-        if kwargs.get('loss') is None:
-            kwargs['loss'] = 'categorical_crossentropy'
-        if kwargs.get('optimizer') is None:
-            kwargs['optimizer'] = 'adam'
-        if kwargs.get('metrics') is None:
-            kwargs['metrics'] = ['accuracy']
-
-        self.tf_model.compile(**kwargs)
-        # if not kashgari.config.disable_auto_summary:
-        #     self.tf_model.summary()
+class ABCClassificationModel(ABCTaskModel, ABC):
+    def __init__(self,
+                 embedding: WordEmbedding = None,
+                 hyper_parameters: Dict[str, Dict[str, Any]] = None,
+                 **kwargs):
+        super(ABCClassificationModel, self).__init__(embedding=embedding,
+                                                     hyper_parameters=hyper_parameters,
+                                                     **kwargs)
+        self.default_labeling_class = ClassificationProcessor
 
     def fit(self,
             x_train: NumSamplesListVar,
@@ -76,7 +35,7 @@ class ABCClassificationModel(ABC):
             batch_size: int = 64,
             epochs: int = 5,
             callbacks: List = None,
-            fit_kwargs: Dict = None, ):
+            fit_kwargs: Dict = None):
         """
         Trains the model for a given number of epochs with given data set list.
 
@@ -109,30 +68,39 @@ class ABCClassificationModel(ABC):
             valid_gen = CorpusGenerator(x_validate, y_validate)
         else:
             valid_gen = None
-        return self.fit_generator(train_gen=train_gen,
-                                  valid_gen=valid_gen,
+        return self.fit_generator(train_sample_gen=train_gen,
+                                  valid_sample_gen=valid_gen,
                                   batch_size=batch_size,
-                                  epochs=epochs)
+                                  epochs=epochs,
+                                  callbacks=callbacks,
+                                  fit_kwargs=fit_kwargs)
 
     def fit_generator(self,
-                      train_gen: CorpusGenerator,
-                      valid_gen: CorpusGenerator = None,
+                      train_sample_gen: CorpusGenerator,
+                      valid_sample_gen: CorpusGenerator = None,
                       batch_size: int = 64,
-                      epochs: int = 5):
+                      epochs: int = 5,
+                      callbacks: List = None,
+                      fit_kwargs: Dict = None):
         """
         Trains the model for a given number of epochs with given data generator.
 
         Data generator must be the subclass of `CorpusGenerator`
 
         Args:
-            train_gen: train data generator.
-            valid_gen: valid data generator.
+            train_sample_gen: train data generator.
+            valid_sample_gen: valid data generator.
             batch_size: Number of samples per gradient update, default to 64.
             epochs: Number of epochs to train the model.
                 An epoch is an iteration over the entire `x` and `y` data provided.
                 Note that in conjunction with `initial_epoch`, `epochs` is to be understood as "final epoch".
                 The model is not trained for a number of iterations given by `epochs`, but merely until the epoch
                 of index `epochs` is reached.
+            callbacks: List of `keras.callbacks.Callback` instances.
+                List of callbacks to apply during training.
+                See `tf.keras.callbacks`.
+            fit_kwargs: fit_kwargs: additional arguments passed to ``fit()`` function from
+                ``tensorflow.keras.Model`` - https://www.tensorflow.org/api_docs/python/tf/keras/Model#fit
 
         Returns:
             A `History` object. Its `History.history` attribute is
@@ -140,17 +108,30 @@ class ABCClassificationModel(ABC):
             at successive epochs, as well as validation loss values
             and validation metrics values (if applicable).
         """
-        self.build_model(train_gen)
+        self.build_model(train_sample_gen)
         self.tf_model.summary()
-        from kashgari.generators import BatchDataGenerator
-        train_gen_batch = BatchDataGenerator(train_gen,
-                                             self.embedding.text_processor,
-                                             self.embedding.label_processor,
-                                             batch_size=batch_size)
 
-        return self.tf_model.fit(train_gen_batch,
-                                 steps_per_epoch=train_gen_batch.steps,
-                                 epochs=epochs)
+        train_gen = BatchDataGenerator(train_sample_gen,
+                                       self.embedding.text_processor,
+                                       self.embedding.label_processor,
+                                       batch_size=batch_size)
+        valid_gen = BatchDataGenerator(valid_sample_gen,
+                                       self.embedding.text_processor,
+                                       self.embedding.label_processor,
+                                       batch_size=batch_size)
+
+        if fit_kwargs is None:
+            fit_kwargs = {}
+        if valid_gen:
+            fit_kwargs['validation_data'] = valid_gen
+            fit_kwargs['validation_steps'] = valid_gen.steps
+        if callbacks:
+            fit_kwargs['callbacks'] = callbacks
+
+        return self.tf_model.fit(train_gen,
+                                 steps_per_epoch=train_gen.steps,
+                                 epochs=epochs,
+                                 callbacks=callbacks)
 
 
 if __name__ == "__main__":

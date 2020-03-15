@@ -7,7 +7,7 @@ exclude =
     .git,
     __pycache__,
 
-max-line-length=120
+max-line-length=160
 max-complexity=12
 format=pylint
 show_source = True

@@ -9,5 +9,7 @@
 
 from .bi_lstm_model import BiLSTM_Model
 from .bi_gru_model import BiGRU_Model
+from .cnn_model import CNN_Model
+
 if __name__ == "__main__":
     pass

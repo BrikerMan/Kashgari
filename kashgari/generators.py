@@ -13,11 +13,11 @@ from typing import List
 
 class CorpusGenerator:
 
-    def __init__(self, x: List, y: List):
-        self.x = x
-        self.y = y
+    def __init__(self, x_data: List, y_data: List):
+        self.x_data = x_data
+        self.y_data = y_data
 
-        self._index_list = list(range(len(self.x)))
+        self._index_list = list(range(len(self.x_data)))
         self._current_index = 0
 
         random.shuffle(self._index_list)
@@ -27,18 +27,18 @@ class CorpusGenerator:
 
     @property
     def steps(self) -> int:
-        return len(self.x)
+        return len(self.x_data)
 
     def __iter__(self):
         return self
 
     def __next__(self):
         self._current_index += 1
-        if self._current_index >= len(self.x) - 1:
+        if self._current_index >= len(self.x_data) - 1:
             raise StopIteration()
 
         sample_index = self._index_list[self._current_index]
-        return self.x[sample_index], self.y[sample_index]
+        return self.x_data[sample_index], self.y_data[sample_index]
 
     def __call__(self, *args, **kwargs):
         return self

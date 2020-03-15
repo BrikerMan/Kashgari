@@ -17,6 +17,7 @@ L = keras.layers
 
 
 class BiGRU_Model(ABCClassificationModel):
+
     @classmethod
     def default_hyper_parameters(cls) -> Dict[str, Dict[str, Any]]:
         return {
@@ -31,7 +32,7 @@ class BiGRU_Model(ABCClassificationModel):
 
     def build_model_arc(self):
         output_dim = self.label_processor.vocab_size
-        config = self.default_hyper_parameters()
+        config = self.hyper_parameters
         embed_model = self.embedding.embed_model
 
         layer_bi_gru = L.Bidirectional(L.GRU(**config['layer_bi_gru']))

@@ -7,22 +7,24 @@
 # file: text_processor.py
 # time: 12:27 下午
 
-import operator
 import collections
 import logging
-from kashgari.processor.abs_processor import ABCProcessor
-from kashgari.typing import TextSamplesVar, NumSamplesListVar
+import operator
+
+import tqdm
 from tensorflow.keras.preprocessing.sequence import pad_sequences
+
 from kashgari.generators import CorpusGenerator
+from kashgari.processor.abc_processor import ABCProcessor
+from kashgari.typing import TextSamplesVar, NumSamplesListVar
 
 
 class SequenceProcessor(ABCProcessor):
     """
     Generic processor for the sequence samples.
     """
-    def __init__(self,
-                 vocab_dict_type:str='text',
-                 **kwargs):
+
+    def __init__(self, vocab_dict_type: str = 'text', **kwargs):
         """
 
         Args:
@@ -50,7 +52,7 @@ class SequenceProcessor(ABCProcessor):
                 self.token_pad: 0
             }
         else:
-            self._initial_vocab_dic = { }
+            self._initial_vocab_dic = {}
 
     def build_vocab_dict_if_needs(self, generator: CorpusGenerator, min_count: int = 3):
         if not self.vocab2idx:
@@ -59,7 +61,7 @@ class SequenceProcessor(ABCProcessor):
             token2count = {}
             seq_lens = []
             generator.reset()
-            for sentence, _ in generator:
+            for sentence, _ in tqdm.tqdm(generator, total=generator.steps, desc="Preparing text vocab dict"):
                 seq_lens.append(len(sentence))
                 for token in sentence:
                     count = token2count.get(token, 0)
@@ -78,6 +80,7 @@ class SequenceProcessor(ABCProcessor):
 
             if self.sequence_length is None:
                 self.sequence_length = sorted(seq_lens)[int(0.95 * len(seq_lens))]
+                logging.warning(f'Sequence length set to {self.sequence_length}')
         else:
             if self.sequence_length is None:
                 logging.debug('Start calculating the sequence length')
@@ -86,11 +89,13 @@ class SequenceProcessor(ABCProcessor):
                 for sentence, _ in generator:
                     seq_lens.append(len(sentence))
                 self.sequence_length = sorted(seq_lens)[int(0.95 * len(seq_lens))]
-                logging.debug(f'Sequence length set to {self.sequence_length}')
+                logging.warning(f'Sequence length set to {self.sequence_length}')
 
     def numerize_samples(self, samples: TextSamplesVar) -> NumSamplesListVar:
         if self.sequence_length is None:
             sequence_length = max([len(i) for i in samples])
+            logging.warning(
+                f'Sequence length is None, will use the max length of the samples, which is {sequence_length}')
         else:
             sequence_length = self.sequence_length
 
@@ -99,7 +104,7 @@ class SequenceProcessor(ABCProcessor):
             unk_index = self.vocab2idx[self.token_unk]
             numerized_samples.append([self.vocab2idx.get(token, unk_index) for token in seq])
 
-        return sequence.pad_sequences(numerized_samples, sequence_length, padding='post', truncating='post')
+        return pad_sequences(numerized_samples, sequence_length, padding='post', truncating='post')
 
 
 if __name__ == "__main__":

@@ -18,8 +18,6 @@ class ABCProcessor(ABC):
 
         self.sequence_length = None
 
-        print('ABCProcessorABCProcessorABCProcessorABCProcessorABCProcessorABCProcessor')
-
     @property
     def vocab_size(self) -> int:
         return len(self.vocab2idx)

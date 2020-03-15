@@ -7,7 +7,7 @@
 # file: __init__.py
 # time: 12:27 下午
 
-from .text_processor import SequenceProcessor
+from .sequence_processor import SequenceProcessor
 from .class_processor import ClassificationProcessor
 
 if __name__ == "__main__":

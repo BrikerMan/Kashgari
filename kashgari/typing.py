@@ -11,6 +11,7 @@ from typing import List, Union, Dict
 
 TextSamplesVar = List[List[str]]
 NumSamplesListVar = List[List[int]]
+LabelSamplesVar = Union[TextSamplesVar, List[str]]
 
 if __name__ == "__main__":
     pass

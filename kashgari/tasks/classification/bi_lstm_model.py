@@ -32,7 +32,7 @@ class BiLSTM_Model(ABCClassificationModel):
     def build_model_arc(self):
         output_dim = self.label_processor.vocab_size
 
-        config = self.default_hyper_parameters()
+        config = self.hyper_parameters
         embed_model = self.embedding.embed_model
 
         layer_bi_lstm = L.Bidirectional(L.LSTM(**config['layer_bi_lstm']))
@@ -46,13 +46,16 @@ class BiLSTM_Model(ABCClassificationModel):
 
 if __name__ == "__main__":
     import logging
+
     logging.basicConfig(level='DEBUG')
 
     from kashgari.embeddings import WordEmbedding
+
     w2v_path = '/Users/brikerman/Desktop/nlp/language_models/w2v/sgns.weibo.bigram-char'
     w2v = WordEmbedding(w2v_path, w2v_kwargs={'limit': 10000})
 
     from kashgari.corpus import SMP2018ECDTCorpus
+
     x, y = SMP2018ECDTCorpus.load_data()
 
     model = BiLSTM_Model(embedding=w2v)
@@ -64,4 +67,3 @@ if __name__ == "__main__":
     #                     valid_gen=valid_gen,
     #                     batch_size=batch_size,
     #                     epochs=epochs)
-

@@ -7,15 +7,16 @@
 # file: label_processor.py
 # time: 2:53 下午
 
-import numpy as np
 import collections
 import operator
+
+import numpy as np
+import tqdm
+from tensorflow.keras.utils import to_categorical
 from typing import List
 
-from tensorflow.keras.utils import to_categorical
-
 from kashgari.generators import CorpusGenerator
-from kashgari.processor.abs_processor import ABCProcessor
+from kashgari.processor.abc_processor import ABCProcessor
 
 
 class ClassificationProcessor(ABCProcessor):
@@ -31,7 +32,7 @@ class ClassificationProcessor(ABCProcessor):
 
             token2count = {}
 
-            for _, label in generator:
+            for _, label in tqdm.tqdm(generator, total=generator.steps, desc="Preparing classification label vocab dict"):
                 count = token2count.get(label, 0)
                 token2count[label] = count + 1
 
