@@ -10,10 +10,11 @@
   :maxdepth: 3
   :caption: API
 
-  apis/processors.rst
   apis/corpus.rst
-  apis/generators.rst
   apis/classification.rst
+  apis/labeling.rst
+  apis/processors.rst
+  apis/generators.rst
 
 .. toctree::
   :maxdepth: 2

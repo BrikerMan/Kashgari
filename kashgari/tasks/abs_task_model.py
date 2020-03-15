@@ -37,13 +37,13 @@ class ABCTaskModel(ABC):
         """
         The default hyper parameters of the model dict, **all models must implement this function.**
 
-        You could easily change model's hyper-parameters. For example, change the LSTM unit in BiLSTM_Model from 128 to 32.
+        You could easily change model's hyper-parameters.
 
-        Example::
+        For example, change the LSTM unit in BiLSTM_Model from 128 to 32.::
 
             from kashgari.tasks.classification import BiLSTM_Model
 
-            hyper = BiLSTM_Model.get_default_hyper_parameters()
+            hyper = BiLSTM_Model.default_hyper_parameters()
             print(hyper)
             # {'layer_bi_lstm': {'units': 128, 'return_sequences': False}, 'layer_dense': {'activation': 'softmax'}}
 
@@ -98,12 +98,10 @@ class ABCTaskModel(ABC):
         https://www.tensorflow.org/api_docs/python/tf/keras/models/Model#compile
 
         Args:
-            **kwargs: arguments passed to ``compile()`` function of ``tf.keras.Model``
-
-                Defaults:
-                    - loss: ``categorical_crossentropy``
-                    - optimizer: ``adam``
-                    - metrics: ``['accuracy']``
+            **kwargs: arguments passed to ``compile()`` function of ``tf.keras.Model``. Default values:
+                `loss = categorical_crossentropy`,
+                `optimizer = adam`,
+                `metrics = ['accuracy']`.
         """
         if kwargs.get('loss') is None:
             kwargs['loss'] = 'categorical_crossentropy'
