@@ -47,8 +47,12 @@ class ClassificationProcessor(ABCProcessor):
             self.vocab2idx = vocab2idx
             self.idx2vocab = dict([(v, k) for k, v in self.vocab2idx.items()])
 
-    def numerize_samples(self, samples: List[str]) -> np.ndarray:
-        return to_categorical([self.vocab2idx[i] for i in samples], self.vocab_size)
+    def numerize_samples(self, samples: List[str], one_hot: bool = False) -> np.ndarray:
+        sample_index = [self.vocab2idx[i] for i in samples]
+        if one_hot:
+            return to_categorical(sample_index, self.vocab_size)
+        else:
+            return np.array(sample_index)
 
 
 if __name__ == "__main__":

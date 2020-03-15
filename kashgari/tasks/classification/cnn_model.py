@@ -42,7 +42,7 @@ class CNN_Model(ABCClassificationModel):
         embed_model = self.embedding.embed_model
 
         # build model structure in sequent way
-        layers_seq = [
+        layer_stack = [
             L.Conv1D(**config['conv1d_layer']),
             L.GlobalMaxPooling1D(**config['max_pool_layer']),
             L.Dense(**config['dense_layer']),
@@ -50,7 +50,7 @@ class CNN_Model(ABCClassificationModel):
         ]
 
         tensor = embed_model.output
-        for layer in layers_seq:
+        for layer in layer_stack:
             tensor = layer(tensor)
 
         self.tf_model = keras.Model(embed_model.inputs, tensor)

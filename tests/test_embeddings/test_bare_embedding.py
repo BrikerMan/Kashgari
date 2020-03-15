@@ -8,7 +8,7 @@
 # time: 2:29 下午
 
 import unittest
-from kashgari.corpus import SMP2018ECDTCorpus
+from kashgari.corpus import SMP2018ECDTCorpus, ChineseDailyNerCorpus
 from kashgari.embeddings import BareEmbedding
 
 
@@ -25,6 +25,12 @@ class TestBareEmbedding(unittest.TestCase):
         res = embedding.embed(x[:2])
         assert res.shape == (2, 30, 100)
 
+        x, y = ChineseDailyNerCorpus.load_data()
+        embedding2 = BareEmbedding(sequence_length=30, embedding_size=32)
+        embedding2.build(x, y)
+        res = embedding2.embed(x[:2])
+        assert res.shape == (2, 30, 32)
+
 
 if __name__ == "__main__":
-    pass
+    unittest.main()

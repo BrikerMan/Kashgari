@@ -30,7 +30,7 @@ class ABCTaskModel(ABC):
         self.hyper_parameters = self.default_hyper_parameters().copy()
         if hyper_parameters:
             self.hyper_parameters.update(hyper_parameters)
-        self.default_labeling_class = None
+        self.default_labeling_processor = None
 
     @classmethod
     def default_hyper_parameters(cls) -> Dict[str, Dict[str, Any]]:
@@ -74,9 +74,10 @@ class ABCTaskModel(ABC):
 
         """
         if self.embedding.label_processor is None:
-            if self.default_labeling_class is None:
-                raise ValueError('Need to set default_labeling_class')
-            self.embedding.label_processor = self.default_labeling_class()
+            if self.default_labeling_processor is None:
+                raise ValueError('Need to set default_labeling_processor')
+            self.embedding.label_processor = self.default_labeling_processor
+            self.label_processor.sequence_length = self.text_processor.sequence_length
         self.embedding.build_generator(train_gen)
         if self.tf_model is None:
             self.build_model_arc()

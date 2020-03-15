@@ -71,7 +71,7 @@ class BatchDataGenerator:
             x_set.append(x)
             y_set.append(y)
 
-        return self.text_processor.numerize_samples(x_set), self.label_processor.numerize_samples(y_set)
+        return self.text_processor.numerize_samples(x_set), self.label_processor.numerize_samples(y_set, one_hot=True)
 
     def __call__(self, *args, **kwargs):
         return self

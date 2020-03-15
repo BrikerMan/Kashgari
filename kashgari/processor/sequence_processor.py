@@ -12,7 +12,9 @@ import logging
 import operator
 
 import tqdm
+import numpy as np
 from tensorflow.keras.preprocessing.sequence import pad_sequences
+from tensorflow.keras.utils import to_categorical
 
 from kashgari.generators import CorpusGenerator
 from kashgari.processor.abc_processor import ABCProcessor
@@ -40,6 +42,8 @@ class SequenceProcessor(ABCProcessor):
         self.vocab2idx = {}
         self.idx2vocab = {}
 
+        self.vocab_dict_type = vocab_dict_type
+
         if vocab_dict_type == 'text':
             self._initial_vocab_dic = {
                 self.token_pad: 0,
@@ -61,9 +65,13 @@ class SequenceProcessor(ABCProcessor):
             token2count = {}
             seq_lens = []
             generator.reset()
-            for sentence, _ in tqdm.tqdm(generator, total=generator.steps, desc="Preparing text vocab dict"):
-                seq_lens.append(len(sentence))
-                for token in sentence:
+            for sentence, label in tqdm.tqdm(generator, total=generator.steps, desc="Preparing text vocab dict"):
+                if self.vocab_dict_type == 'text':
+                    target = sentence
+                else:
+                    target = label
+                seq_lens.append(len(target))
+                for token in target:
                     count = token2count.get(token, 0)
                     token2count[token] = count + 1
 
@@ -81,6 +89,11 @@ class SequenceProcessor(ABCProcessor):
             if self.sequence_length is None:
                 self.sequence_length = sorted(seq_lens)[int(0.95 * len(seq_lens))]
                 logging.warning(f'Sequence length set to {self.sequence_length}')
+
+            logging.info("------ Build vocab dict finished, Top 10 token ------")
+            for token, index in list(self.vocab2idx.items())[:10]:
+                logging.info(f"Token: {token:8s} -> {index}")
+            logging.info("------ Build vocab dict finished, Top 10 token ------")
         else:
             if self.sequence_length is None:
                 logging.debug('Start calculating the sequence length')
@@ -91,7 +104,7 @@ class SequenceProcessor(ABCProcessor):
                 self.sequence_length = sorted(seq_lens)[int(0.95 * len(seq_lens))]
                 logging.warning(f'Sequence length set to {self.sequence_length}')
 
-    def numerize_samples(self, samples: TextSamplesVar) -> NumSamplesListVar:
+    def numerize_samples(self, samples: TextSamplesVar, one_hot: bool = False) -> np.ndarray:
         if self.sequence_length is None:
             sequence_length = max([len(i) for i in samples])
             logging.warning(
@@ -101,18 +114,31 @@ class SequenceProcessor(ABCProcessor):
 
         numerized_samples = []
         for seq in samples:
-            unk_index = self.vocab2idx[self.token_unk]
-            numerized_samples.append([self.vocab2idx.get(token, unk_index) for token in seq])
+            if self.vocab_dict_type == 'text':
+                unk_index = self.vocab2idx[self.token_unk]
+                numerized_samples.append([self.vocab2idx.get(token, unk_index) for token in seq])
+            else:
+                numerized_samples.append([self.vocab2idx[token] for token in seq])
 
-        return pad_sequences(numerized_samples, sequence_length, padding='post', truncating='post')
+        sample_index = pad_sequences(numerized_samples, sequence_length, padding='post', truncating='post')
+        if one_hot:
+            return to_categorical(sample_index, self.vocab_size)
+        else:
+            return np.array(sample_index)
 
 
 if __name__ == "__main__":
+    import logging
     from kashgari.corpus import ChineseDailyNerCorpus
-    from kashgari.utils import CorpusGenerator
+    from kashgari.generators import CorpusGenerator
 
+    logging.basicConfig(level='DEBUG')
     x, y = ChineseDailyNerCorpus.load_data()
     gen = CorpusGenerator(x, y)
-    p = SequenceProcessor()
+    p = SequenceProcessor(vocab_dict_type='labeling')
     p.build_vocab_dict_if_needs(gen)
     print(p.vocab2idx)
+
+    p2 = SequenceProcessor()
+    p2.build_vocab_dict_if_needs(gen)
+    print(p2.vocab2idx)

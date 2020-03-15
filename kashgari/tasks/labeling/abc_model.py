@@ -4,8 +4,8 @@
 # contact: eliyar917@gmail.com
 # blog: https://eliyar.biz
 
-# file: abs_model.py
-# time: 4:05 下午
+# file: abc_model.py
+# time: 4:30 下午
 
 from abc import ABC
 from typing import List, Dict, Any
@@ -13,25 +13,25 @@ from kashgari.embeddings import WordEmbedding
 from kashgari.typing import TextSamplesVar
 from kashgari.generators import CorpusGenerator
 from kashgari.tasks.abs_task_model import ABCTaskModel
-from kashgari.processor.class_processor import ClassificationProcessor
+from kashgari.processor import SequenceProcessor
 from kashgari.generators import BatchDataGenerator
 
 
-class ABCClassificationModel(ABCTaskModel, ABC):
+class ABCLabelingModel(ABCTaskModel, ABC):
     def __init__(self,
                  embedding: WordEmbedding = None,
                  hyper_parameters: Dict[str, Dict[str, Any]] = None,
                  **kwargs):
-        super(ABCClassificationModel, self).__init__(embedding=embedding,
-                                                     hyper_parameters=hyper_parameters,
-                                                     **kwargs)
-        self.default_labeling_processor = ClassificationProcessor()
+        super(ABCLabelingModel, self).__init__(embedding=embedding,
+                                               hyper_parameters=hyper_parameters,
+                                               **kwargs)
+        self.default_labeling_processor = SequenceProcessor(vocab_dict_type='labeling')
 
     def fit(self,
             x_train: TextSamplesVar,
-            y_train: List[str],
+            y_train: TextSamplesVar,
             x_validate: TextSamplesVar = None,
-            y_validate: List[str] = None,
+            y_validate: TextSamplesVar = None,
             batch_size: int = 64,
             epochs: int = 5,
             callbacks: List = None,
@@ -115,14 +115,14 @@ class ABCClassificationModel(ABCTaskModel, ABC):
                                        self.embedding.text_processor,
                                        self.embedding.label_processor,
                                        batch_size=batch_size)
-        valid_gen = BatchDataGenerator(valid_sample_gen,
-                                       self.embedding.text_processor,
-                                       self.embedding.label_processor,
-                                       batch_size=batch_size)
 
         if fit_kwargs is None:
             fit_kwargs = {}
-        if valid_gen:
+        if valid_sample_gen:
+            valid_gen = BatchDataGenerator(valid_sample_gen,
+                                           self.embedding.text_processor,
+                                           self.embedding.label_processor,
+                                           batch_size=batch_size)
             fit_kwargs['validation_data'] = valid_gen
             fit_kwargs['validation_steps'] = valid_gen.steps
         if callbacks:
