@@ -18,7 +18,7 @@ before_install:
 stages:
   - Lint
   - name: Test
-    if: (branch = master) OR (branch = kashgari2) OR (type IN (pull_request))
+    #if: (branch = master) OR (branch = kashgari2) OR (type IN (pull_request))
 
 install:
   - pip install -r requirements.dev.txt
