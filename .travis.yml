@@ -17,6 +17,9 @@ stages:
   - name: Test
     #if: (branch = master) OR (branch = kashgari2) OR (type IN (pull_request))
 
+notifications:
+  webhooks: https://coveralls.io/webhook
+
 jobs:
   include:
     - stage: Lint
@@ -40,5 +43,4 @@ jobs:
       after_script:
         - coveralls
 
-      notifications:
-        webhooks: https://coveralls.io/webhook
+

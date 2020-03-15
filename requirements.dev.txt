@@ -3,6 +3,7 @@ flake8
 flake8-builtins
 pytest
 pytest-cov
+python-coveralls
 
 # documents
 sphinx
