@@ -83,9 +83,6 @@ class BatchDataGenerator(Iterable):
             y_tensor = self.label_processor.numerize_samples(y_set, seq_length=self.seq_length, one_hot=True)
             yield x_tensor, y_tensor
 
-    def __next__(self):
-        return self
-
     def generator(self):
         for item in self:
             yield item
