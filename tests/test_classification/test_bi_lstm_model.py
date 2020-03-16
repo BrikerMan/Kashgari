@@ -33,7 +33,7 @@ class TestBiLSTM_Model(unittest.TestCase):
         cls.w2v_embedding = None
 
     def test_basic_use(self):
-        model = self.TASK_MODEL_CLASS()
+        model = self.TASK_MODEL_CLASS(sequence_length=20)
         train_x, train_y = SMP2018ECDTCorpus.load_data()
         valid_x, valid_y = train_x, train_y
 
@@ -63,6 +63,10 @@ class TestBiLSTM_Model(unittest.TestCase):
                   x_validate=valid_x,
                   y_validate=valid_y,
                   epochs=self.EPOCH_COUNT)
+
+        with self.assertRaises(ValueError):
+            model = self.TASK_MODEL_CLASS(embedding=self.w2v_embedding,
+                                          sequence_length=100)
 
 
 if __name__ == '__main__':

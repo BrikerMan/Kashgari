@@ -26,10 +26,6 @@ class TestBiLSTM_Model(unittest.TestCase):
         cls.EPOCH_COUNT = 1
         cls.TASK_MODEL_CLASS = BiLSTM_Model
 
-    @classmethod
-    def tearDownClass(cls) -> None:
-        del cls.w2v_embedding
-
     def test_basic_use(self):
         model = self.TASK_MODEL_CLASS()
         train_x, train_y = TestMacros.load_labeling_corpus('custom_1')

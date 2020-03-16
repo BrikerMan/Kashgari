@@ -20,9 +20,19 @@ from kashgari.generators import BatchDataGenerator
 class ABCLabelingModel(ABCTaskModel, ABC):
     def __init__(self,
                  embedding: ABCEmbedding = None,
+                 sequence_length: int = None,
                  hyper_parameters: Dict[str, Dict[str, Any]] = None,
                  **kwargs):
+        """
+        Abstract Labeling Model
+        Args:
+            embedding: embedding object
+            sequence_length: target sequence length
+            hyper_parameters: hyper_parameters to overwrite
+            **kwargs:
+        """
         super(ABCLabelingModel, self).__init__(embedding=embedding,
+                                               sequence_length=sequence_length,
                                                hyper_parameters=hyper_parameters,
                                                **kwargs)
         self.default_labeling_processor = SequenceProcessor(vocab_dict_type='labeling',

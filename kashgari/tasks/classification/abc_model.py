@@ -23,9 +23,19 @@ from kashgari.generators import BatchDataGenerator
 class ABCClassificationModel(ABCTaskModel, ABC):
     def __init__(self,
                  embedding: WordEmbedding = None,
+                 sequence_length: int = None,
                  hyper_parameters: Dict[str, Dict[str, Any]] = None,
                  **kwargs):
+        """
+        Abstract Classification Model
+        Args:
+            embedding: embedding object
+            sequence_length: target sequence length
+            hyper_parameters: hyper_parameters to overwrite
+            **kwargs:
+        """
         super(ABCClassificationModel, self).__init__(embedding=embedding,
+                                                     sequence_length=sequence_length,
                                                      hyper_parameters=hyper_parameters,
                                                      **kwargs)
         self.default_labeling_processor = ClassificationProcessor()

@@ -44,6 +44,7 @@ class ABCTaskModel(ABC):
 
     def __init__(self,
                  embedding: WordEmbedding = None,
+                 sequence_length: int = None,
                  hyper_parameters: Dict[str, Dict[str, Any]] = None,
                  **kwargs):
         self.tf_model: keras.Model = None
@@ -51,6 +52,14 @@ class ABCTaskModel(ABC):
             self.embedding = BareEmbedding()
         else:
             self.embedding = embedding
+
+        if sequence_length:
+            if self.embedding.sequence_length is None:
+                self.embedding.set_sequence_length(sequence_length)
+            else:
+                raise ValueError("Already setup embedding's sequence_length, if need to change sequence length, call "
+                                 "`model.embedding.set_sequence_length(sequence_length)`")
+
         self.hyper_parameters = self.default_hyper_parameters().copy()
         if hyper_parameters:
             self.hyper_parameters.update(hyper_parameters)
