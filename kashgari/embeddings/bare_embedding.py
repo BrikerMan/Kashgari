@@ -5,56 +5,39 @@
 # blog: https://eliyar.biz
 
 # file: bare_embedding.py
-# time: 2019-05-20 10:36
-import logging
-from typing import Union, Optional
+# time: 2:17 下午
 
 from tensorflow import keras
 
-from kashgari.embeddings.base_embedding import Embedding
-from kashgari.processors.base_processor import BaseProcessor
+from kashgari.embeddings.abc_embedding import ABCEmbedding
+from kashgari.generators import CorpusGenerator
+from kashgari.processors.abc_processor import ABCProcessor
 
 L = keras.layers
 
 
-# Todo: A better name for this class
-class BareEmbedding(Embedding):
-
-    """Embedding layer without pre-training, train embedding layer while training model"""
-
+class BareEmbedding(ABCEmbedding):
     def __init__(self,
-                 task: str = None,
-                 sequence_length: Union[int, str] = 'auto',
+                 sequence_length: int = None,
                  embedding_size: int = 100,
-                 processor: Optional[BaseProcessor] = None,
-                 from_saved_model: bool = False):
-        """
-        Init bare embedding (embedding without pre-training)
+                 text_processor: ABCProcessor = None,
+                 label_processor: ABCProcessor = None,
+                 **kwargs):
+        super(BareEmbedding, self).__init__(sequence_length=sequence_length,
+                                            text_processor=text_processor,
+                                            label_processor=label_processor,
+                                            **kwargs)
+        self.embedding_size = embedding_size
 
-        Args:
-            sequence_length: ``'auto'``, ``'variable'`` or integer. When using ``'auto'``, use the 95% of corpus length
-                as sequence length. When using ``'variable'``, model input shape will set to None, which can handle
-                various length of input, it will use the length of max sequence in every batch for sequence length.
-                If using an integer, let's say ``50``, the input output sequence length will set to 50.
-            embedding_size: Dimension of the dense embedding.
-        """
-        super(BareEmbedding, self).__init__(task=task,
-                                            sequence_length=sequence_length,
-                                            embedding_size=embedding_size,
-                                            processor=processor,
-                                            from_saved_model=from_saved_model)
-        if not from_saved_model:
-            self._build_model()
+    def build_text_vocab(self, gen: CorpusGenerator = None, force=False):
+        if force or not self.text_processor.is_vocab_build:
+            self.text_processor.build_vocab_dict_if_needs(generator=gen)
 
-    def _build_model(self, **kwargs):
-        if self.sequence_length == 0 or \
-                self.sequence_length == 'auto' or \
-                self.token_count == 0:
-            logging.debug('need to build after build_word2idx')
-        else:
-            input_tensor = L.Input(shape=(self.sequence_length,),
+    def build_embedding_model(self):
+        if self.embed_model is None:
+            input_tensor = L.Input(shape=(None,),
                                    name=f'input')
-            layer_embedding = L.Embedding(self.token_count,
+            layer_embedding = L.Embedding(self.text_processor.vocab_size,
                                           self.embedding_size,
                                           name=f'layer_embedding')
 
@@ -63,4 +46,4 @@ class BareEmbedding(Embedding):
 
 
 if __name__ == "__main__":
-    print('hello world')
+    pass

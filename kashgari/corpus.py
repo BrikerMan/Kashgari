@@ -1,14 +1,21 @@
 # encoding: utf-8
 
+# author: BrikerMan
+# contact: eliyar917@gmail.com
+# blog: https://eliyar.biz
+
+# file: corpus.py
+# time: 12:38 下午
+
 import os
 import logging
 import pandas as pd
-from kashgari import macros as k
+from kashgari import macros as K
 from typing import Tuple, List
-from tensorflow.python.keras.utils import get_file
+from tensorflow.keras.utils import get_file
 from kashgari import utils
 
-CORPUS_PATH = os.path.join(k.DATA_PATH, 'corpus')
+CORPUS_PATH = os.path.join(K.DATA_PATH, 'corpus')
 
 
 class DataReader(object):
@@ -77,7 +84,7 @@ class ChineseDailyNerCorpus(object):
         """
         corpus_path = get_file(cls.__corpus_name__,
                                cls.__zip_file__name,
-                               cache_dir=k.DATA_PATH,
+                               cache_dir=K.DATA_PATH,
                                untar=True)
 
         if subset_name == 'train':
@@ -88,42 +95,6 @@ class ChineseDailyNerCorpus(object):
             file_path = os.path.join(corpus_path, 'example.dev')
 
         x_data, y_data = DataReader.read_conll_format_file(file_path)
-        if shuffle:
-            x_data, y_data = utils.unison_shuffled_copies(x_data, y_data)
-        logging.debug(f"loaded {len(x_data)} samples from {file_path}. Sample:\n"
-                      f"x[0]: {x_data[0]}\n"
-                      f"y[0]: {y_data[0]}")
-        return x_data, y_data
-
-
-class CONLL2003ENCorpus(object):
-    __corpus_name__ = 'conll2003_en'
-    __zip_file__name = 'http://s3.bmio.net/kashgari/conll2003_en.tar.gz'
-
-    @classmethod
-    def load_data(cls,
-                  subset_name: str = 'train',
-                  task_name: str = 'ner',
-                  shuffle: bool = True) -> Tuple[List[List[str]], List[List[str]]]:
-        """
-
-        """
-        corpus_path = get_file(cls.__corpus_name__,
-                               cls.__zip_file__name,
-                               cache_dir=k.DATA_PATH,
-                               untar=True)
-
-        if subset_name not in {'train', 'test', 'valid'}:
-            raise ValueError()
-
-        file_path = os.path.join(corpus_path, f'{subset_name}.txt')
-
-        if task_name not in {'pos', 'chunking', 'ner'}:
-            raise ValueError()
-
-        data_index = ['pos', 'chunking', 'ner'].index(task_name) + 1
-
-        x_data, y_data = DataReader.read_conll_format_file(file_path, label_index=data_index)
         if shuffle:
             x_data, y_data = utils.unison_shuffled_copies(x_data, y_data)
         logging.debug(f"loaded {len(x_data)} samples from {file_path}. Sample:\n"
@@ -178,7 +149,7 @@ class SMP2018ECDTCorpus(object):
 
         corpus_path = get_file(cls.__corpus_name__,
                                cls.__zip_file__name,
-                               cache_dir=k.DATA_PATH,
+                               cache_dir=K.DATA_PATH,
                                untar=True)
 
         if cutter not in ['char', 'jieba', 'none']:
@@ -206,7 +177,5 @@ class SMP2018ECDTCorpus(object):
 
 
 if __name__ == "__main__":
-    a, b = CONLL2003ENCorpus.load_data()
-    print(a[:2])
-    print(b[:2])
-    print("Hello world")
+    x, y = ChineseDailyNerCorpus.load_data()
+    print(x)

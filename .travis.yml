@@ -5,22 +5,10 @@ env:
   global:
     - COVERALLS_PARALLEL=true
   matrix:
-    # Scoring
-    - TEST_FILE=tests/scoring
-    # Labeling
-    - TEST_FILE=tests/labeling/
-    # classification part 1
-    - TEST_FILE="tests/classification/test_cnn_lstm.py tests/classification/test_cnn_gru.py tests/classification/test_cnn.py tests/classification/test_kmax_cnn.py"
-    # classification part 2
-    - TEST_FILE="tests/classification/test_r_cnn.py tests/classification/test_dropout_bigru.py tests/classification/test_avcnn.py tests/classification/test_bi_gru.py"
-    # classification part 3
-    - TEST_FILE="tests/classification/test_dpcnn.py tests/classification/test_bi_lstm.py tests/classification/test_avrnn_model.py tests/classification/test_dropout_avrnn.py"
-    - TEST_FILE="tests/test_callbacks.py tests/test_corpus.py tests/test_processor.py"
-    - TEST_FILE=tests/test_custom_multi_output_classification.py
-    # Embedding
-    - TEST_FILE=tests/embedding/
-    # Tokenizer
-    - TEST_FILE=tests/test_tokenizer.py
+    - TEST_FILE="tests/test_labeling/"
+    - TEST_FILE="tests/test_classification/"
+    - TEST_FILE="tests/test_embeddings/"
+    - TEST_FILE="tests/test_corpus.py tests/test_utils.py"
 
 python:
   - "3.6"
@@ -32,24 +20,13 @@ before_install:
 
 stages:
   - Lint
-  - name: Test
-    if: (branch = master) OR (type IN (pull_request))
+  - Test
 
 install:
-  - pip install jieba
-  - pip install python-coveralls
-  - pip install -e .
-  - pip install tensorflow==1.14.0
-  - pip install pytest-cov
-  - pip install pytest
+  - pip install -r requirements.dev.txt
   - python -c "import kashgari;print(f'kashgari version {kashgari.__version__}')"
   - git fetch --unshallow --quiet
   - export PYTHONPATH=`pwd`
-
-#script: nosetests --with-coverage --cover-html --cover-html-dir=htmlcov
-#  --cover-xml --cover-xml-file=coverage.xml --with-xunit
-#  --cover-package="kashgari"
-#  $TEST_FILE
 
 script: pytest --doctest-modules --junitxml=test-reports/junit.xml
   --cov=kashgari --cov-report=xml:coverage.xml --cov-report=html:htmlcov

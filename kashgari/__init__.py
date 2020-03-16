@@ -10,22 +10,21 @@
 @time: 2019-05-17 11:15
 
 """
+
 import os
+from kashgari.__version__ import __version__
+import logging
+
 os.environ['TF_KERAS'] = '1'
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
-import tensorflow as tf
-tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
+custom_objects = {}
+logger = logging.Logger('kashgari', level='DEBUG')
+stream_handler = logging.StreamHandler()
+stream_handler.setFormatter(logging.Formatter('%(asctime)s | %(levelname)-7s | %(message)s'))
+logger.addHandler(stream_handler)
 
-import keras_bert
-from kashgari.macros import TaskType, config
-
-custom_objects = keras_bert.get_custom_objects()
-CLASSIFICATION = TaskType.CLASSIFICATION
-LABELING = TaskType.LABELING
-SCORING = TaskType.SCORING
-
-from kashgari.__version__ import __version__
+from kashgari.macros import config
 
 from kashgari import layers
 from kashgari import corpus
@@ -34,8 +33,3 @@ from kashgari import macros
 from kashgari import processors
 from kashgari import tasks
 from kashgari import utils
-from kashgari import callbacks
-
-from kashgari import migration
-
-migration.show_migration_guide()

@@ -4,12 +4,13 @@
 # contact: eliyar917@gmail.com
 # blog: https://eliyar.biz
 
-# file: __init__.py.py
-# time: 2019-05-20 11:21
+# file: __init__.py
+# time: 3:06 下午
 
-from kashgari.embeddings.bare_embedding import BareEmbedding
-from kashgari.embeddings.bert_embedding import BERTEmbedding
-from kashgari.embeddings.word_embedding import WordEmbedding
-from kashgari.embeddings.numeric_feature_embedding import NumericFeaturesEmbedding
-from kashgari.embeddings.stacked_embedding import StackedEmbedding
-from kashgari.embeddings.gpt_2_embedding import GPT2Embedding
+from .bare_embedding import BareEmbedding
+from .word_embedding import WordEmbedding
+from .bert_embedding import BertEmbedding
+from .transformer_embedding import TransformerEmbedding
+
+if __name__ == "__main__":
+    pass

@@ -9,16 +9,15 @@ input {
     font-family: "Roboto", "Helvetica Neue", Helvetica, Arial, "Microsoft YaHei", "微软正黑体", "Microsoft JhengHei", sans-serif;
 }
 
-@media only screen and (min-width: 100em) {
-    html {
-        font-size: 125%;
-    }
-}
-
 .wy-side-nav-search>div.version {
     margin-top: 5px;
 }
 
 .wy-nav-content {
-    max-width: none;
+    max-width: 1024px;
+}
+
+
+.wy-nav-side {
+    font-family: "JetBrains Mono", "Roboto", "Helvetica Neue", Helvetica, Arial, "Microsoft YaHei", "微软正黑体", "Microsoft JhengHei", sans-serif;
 }

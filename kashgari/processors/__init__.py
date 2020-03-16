@@ -4,10 +4,11 @@
 # contact: eliyar917@gmail.com
 # blog: https://eliyar.biz
 
-# file: __init__.py.py
-# time: 2019-05-20 10:54
+# file: __init__.py
+# time: 12:27 下午
 
+from .sequence_processor import SequenceProcessor
+from .class_processor import ClassificationProcessor
 
-from kashgari.processors.classification_processor import ClassificationProcessor
-from kashgari.processors.labeling_processor import LabelingProcessor
-from kashgari.processors.scoring_processor import ScoringProcessor
+if __name__ == "__main__":
+    pass

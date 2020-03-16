@@ -35,7 +35,13 @@ class Mock(MagicMock):
         return MagicMock()
 
 
-MOCK_MODULES = []
+MOCK_MODULES = [
+    'tensorflow',
+    'tensorflow.keras',
+    'tensorflow.keras.utils',
+    'tensorflow.keras.preprocessing.sequence',
+    'tensorflow.keras.callbacks'
+]
 sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 
 import kashgari
@@ -61,8 +67,19 @@ extensions = [
     'sphinx.ext.imgmath',
     'sphinx.ext.viewcode',
     'sphinx.ext.autodoc',
-    'sphinx.ext.napoleon'
+    'sphinx.ext.napoleon',
+    'sphinx_autodoc_typehints'
 ]
+
+# sphinx_autodoc_typehints settings
+
+autodoc_default_options = {
+    'member-order': 'groupwise',
+    'special-members': '__init__',
+    'undoc-members': True,
+    'inherited-members': True,
+    'show-inheritance': True,
+}
 
 # 'sphinx.ext.mathjax', ??
 
