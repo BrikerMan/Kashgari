@@ -30,7 +30,7 @@ class TestBiLSTM_Model(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls) -> None:
-        del cls.w2v_embedding
+        cls.w2v_embedding = None
 
     def test_basic_use(self):
         model = self.TASK_MODEL_CLASS()
