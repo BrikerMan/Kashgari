@@ -42,7 +42,7 @@ class BiLSTM_Model(ABCLabelingModel):
             L.Bidirectional(L.LSTM(**config['layer_blstm']), name='layer_blstm'),
             L.Dropout(**config['layer_dropout'], name='layer_dropout'),
             # L.Dense(output_dim, **config['layer_time_distributed']),
-            L.TimeDistributed(L.Dense(output_dim, **config['layer_time_distributed']),name='layer_time_distributed'),
+            L.TimeDistributed(L.Dense(output_dim, **config['layer_time_distributed']), name='layer_time_distributed'),
             L.Activation(**config['layer_activation'])
         ]
 

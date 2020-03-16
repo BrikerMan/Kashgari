@@ -24,6 +24,7 @@ stages:
 
 install:
   - pip install -r requirements.dev.txt
+  - pip install -r requirements.txt
   - python -c "import kashgari;print(f'kashgari version {kashgari.__version__}')"
   - git fetch --unshallow --quiet
   - export PYTHONPATH=`pwd`

@@ -14,14 +14,5 @@ sphinx-autodoc-typehints
 recommonmark
 m2r
 
-
-# dependence
-numpy==1.18.1
-gensim>=3.8.1
-pandas>=1.0.1
-tensorflow==2.1.0
-tqdm
-
-
 # develop
 jupyterlab

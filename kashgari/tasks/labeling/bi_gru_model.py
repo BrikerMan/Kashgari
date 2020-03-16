@@ -42,7 +42,7 @@ class BiGRU_Model(ABCLabelingModel):
             L.Bidirectional(L.GRU(**config['layer_bgru']), name='layer_bgru'),
             L.Dropout(**config['layer_dropout'], name='layer_dropout'),
             # L.Dense(output_dim, **config['layer_time_distributed']),
-            L.TimeDistributed(L.Dense(output_dim, **config['layer_time_distributed']),name='layer_time_distributed'),
+            L.TimeDistributed(L.Dense(output_dim, **config['layer_time_distributed']), name='layer_time_distributed'),
             L.Activation(**config['layer_activation'])
         ]
 
