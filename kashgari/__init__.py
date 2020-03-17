@@ -12,7 +12,6 @@
 """
 
 import os
-from kashgari.__version__ import __version__
 import logging
 
 os.environ['TF_KERAS'] = '1'
@@ -24,8 +23,8 @@ stream_handler = logging.StreamHandler()
 stream_handler.setFormatter(logging.Formatter('%(asctime)s | %(levelname)-7s | %(message)s'))
 logger.addHandler(stream_handler)
 
+from kashgari.__version__ import __version__
 from kashgari.macros import config
-
 from kashgari import layers
 from kashgari import corpus
 from kashgari import embeddings

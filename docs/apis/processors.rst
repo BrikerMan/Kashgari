@@ -7,18 +7,8 @@ Data Processors
 SequenceProcessor
 =================
 
-.. autoclass:: kashgari.processor.SequenceProcessor
-  :members:
-  :undoc-members:
-  :inherited-members:
-
-  .. automethod:: kashgari.processor.SequenceProcessor.__init__
+.. autoclass:: kashgari.processors.SequenceProcessor
 
 ClassificationProcessor
 =======================
-.. autoclass:: kashgari.processor.ClassificationProcessor
-  :members:
-  :undoc-members:
-  :inherited-members:
-
-  .. automethod:: kashgari.processor.ClassificationProcessor.__init__
+.. autoclass:: kashgari.processors.ClassificationProcessor

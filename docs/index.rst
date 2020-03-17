@@ -7,6 +7,23 @@
   README.rst
 
 .. toctree::
+  :maxdepth: 2
+  :caption: Tutorials
+
+  tutorial/text-classification.md
+  tutorial/text-labeling.md
+  tutorial/text-scoring.md
+
+.. toctree::
+  :maxdepth: 2
+  :caption: Embeddings
+
+  embeddings/index.md
+  embeddings/bare-embedding.md
+  embeddings/word-embedding.md
+  embeddings/bert-embedding.md
+
+.. toctree::
   :maxdepth: 3
   :caption: API
 

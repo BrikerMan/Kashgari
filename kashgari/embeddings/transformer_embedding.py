@@ -29,6 +29,7 @@ class TransformerEmbedding(ABCEmbedding):
                  checkpoint_path: str,
                  model_type: str = 'bert',
                  sequence_length: int = None,
+                 layer_nums: int = 4,
                  text_processor: ABCProcessor = None,
                  label_processor: ABCProcessor = None,
                  **kwargs):
@@ -41,6 +42,8 @@ class TransformerEmbedding(ABCEmbedding):
             config_path: model config path, example `config.json`
             checkpoint_path: model weight path, example `model.ckpt-100000`
             model_type: transfer model type, {bert, albert, nezha, gpt2_ml, t5}
+            layer_nums: number of layers whose outputs will be concatenated into a single tensor, default 1,
+                output the last 1 hidden layers.
             sequence_length:
             text_processor:
             label_processor:
@@ -98,12 +101,13 @@ class TransformerEmbedding(ABCEmbedding):
 
 
 if __name__ == "__main__":
-    vocab_path = '/Users/brikerman/Desktop/nlp/language_models/albert_base/vocab_chinese.txt'
-    config_path = '/Users/brikerman/Desktop/nlp/language_models/albert_base/albert_config.json'
-    checkpoint_path = '/Users/brikerman/Desktop/nlp/language_models/albert_base/model.ckpt-best'
-
-    embed = TransformerEmbedding(vocab_path=vocab_path,
-                                 config_path=config_path,
-                                 checkpoint_path=checkpoint_path,
-                                 model_type='albert')
-    print(embed.embed(['你', '好', '啊'], debug=True).shape)
+    pass
+    # vocab_path = '/Users/brikerman/Desktop/nlp/language_models/albert_base/vocab_chinese.txt'
+    # config_path = '/Users/brikerman/Desktop/nlp/language_models/albert_base/albert_config.json'
+    # checkpoint_path = '/Users/brikerman/Desktop/nlp/language_models/albert_base/model.ckpt-best'
+    #
+    # embed = TransformerEmbedding(vocab_path=vocab_path,
+    #                              config_path=config_path,
+    #                              checkpoint_path=checkpoint_path,
+    #                              model_type='albert')
+    # print(embed.embed(['你', '好', '啊'], debug=True).shape)

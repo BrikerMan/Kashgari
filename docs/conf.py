@@ -35,16 +35,26 @@ class Mock(MagicMock):
         return MagicMock()
 
 
-MOCK_MODULES = [
+if os.environ.get('READTHEDOCS') == 'True':
+    MOCK_MODULES = [
     'tensorflow',
     'tensorflow.keras',
     'tensorflow.keras.utils',
     'tensorflow.keras.preprocessing.sequence',
-    'tensorflow.keras.callbacks'
+    'tensorflow.keras.callbacks',
+    'tensorflow.keras.backend',
+    'keras.layers'
 ]
+else:
+    MOCK_MODULES = [
+
+    ]
+
 sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 
 import kashgari
+from kashgari.tasks.classification.abc_model import ABCClassificationModel
+from kashgari.tasks.labeling.abc_model import ABCLabelingModel
 
 # Finish imports
 from recommonmark.parser import CommonMarkParser
