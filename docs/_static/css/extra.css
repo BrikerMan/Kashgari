@@ -14,10 +14,9 @@ input {
 }
 
 .wy-nav-content {
-    max-width: 1024px;
+    max-width: 1280px;
 }
 
-
-.wy-nav-side {
-    font-family: "JetBrains Mono", "Roboto", "Helvetica Neue", Helvetica, Arial, "Microsoft YaHei", "微软正黑体", "Microsoft JhengHei", sans-serif;
+.pre {
+    font-family: "JetBrains Mono",SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",Courier,monospace
 }

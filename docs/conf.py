@@ -260,22 +260,22 @@ texinfo_documents = [
 def update_markdown_content(folder: str):
     import os
     import glob
-    files = []
-    print(os.path.join(folder, "*.md"))
-    for file in glob.glob(os.path.join(folder, "*.md")):
-        files.append(file)
-    for file in glob.glob(os.path.join(folder, "*/*.md")):
-        files.append(file)
-    for file in glob.glob(os.path.join(folder, "*/*/*.md")):
-        files.append(file)
-
-    for file in files:
-        print(f'update markdown file: {file}')
-        with open(file, 'r') as original:
-            content = original.read()
-        with open(file, 'w') as new:
-            new_content = content.replace('.md)', '.html)')
-            new.write(new_content)
+    # files = []
+    #
+    # for file in glob.glob(os.path.join(folder, "*.md")):
+    #     files.append(file)
+    # for file in glob.glob(os.path.join(folder, "*/*.md")):
+    #     files.append(file)
+    # for file in glob.glob(os.path.join(folder, "*/*/*.md")):
+    #     files.append(file)
+    #
+    # for file in files:
+    #     print(f'update markdown file: {file}')
+    #     with open(file, 'r') as original:
+    #         content = original.read()
+    #     with open(file, 'w') as new:
+    #         new_content = content.replace('.md)', '.html)')
+    #         new.write(new_content)
 
 
 def setup(app):
