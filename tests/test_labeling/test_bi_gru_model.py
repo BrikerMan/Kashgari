@@ -9,10 +9,11 @@
 
 import unittest
 
-from kashgari.tasks.classification import BiGRU_Model
+import tests.test_labeling.test_bi_lstm_model as base
+from kashgari.tasks.labeling import BiGRU_Model
 
 
-class TestBiLSTM_Model(unittest.TestCase):
+class TestBiLSTM_Model(base.TestBiLSTM_Model):
 
     @classmethod
     def setUpClass(cls):

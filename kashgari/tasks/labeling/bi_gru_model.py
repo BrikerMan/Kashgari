@@ -16,6 +16,9 @@ from kashgari.tasks.labeling.abc_model import ABCLabelingModel
 
 
 class BiGRU_Model(ABCLabelingModel):
+
+    __task__ = 'labeling'
+
     @classmethod
     def default_hyper_parameters(cls) -> Dict[str, Dict[str, Any]]:
         return {

@@ -21,6 +21,9 @@ from kashgari.generators import BatchDataGenerator
 
 
 class ABCClassificationModel(ABCTaskModel, ABC):
+
+    __task__ = 'classification'
+
     def __init__(self,
                  embedding: WordEmbedding = None,
                  sequence_length: int = None,
