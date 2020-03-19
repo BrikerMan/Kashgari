@@ -309,6 +309,45 @@ class BaseModel(object):
                                                callbacks=callbacks,
                                                **fit_kwargs)
 
+    def fit_and_save(self,
+                     model_path: str,
+                     model: tf.keras.Model,
+                     x_train: Union[Tuple[List[List[str]], ...], List[List[str]]],
+                     y_train: Union[List[List[str]], List[str]],
+                     x_validate: Union[Tuple[List[List[str]], ...], List[List[str]]] = None,
+                     y_validate: Union[List[List[str]], List[str]] = None,
+                     batch_size: int = 64,
+                     epochs: int = 5,
+                     callbacks: List[keras.callbacks.Callback] = None,
+                     fit_kwargs: Dict = None,
+                     shuffle: bool = True):
+        if not callbacks:
+            checkpoint_path = os.path.join(model_path, 'checkpoint.ckpt')
+            checkpoint = keras.callbacks.ModelCheckpoint(filepath=checkpoint_path,
+                                                         monitor='loss',
+                                                         save_weights_only=True,
+                                                         save_best_only=True,
+                                                         verbose=0)
+            callbacks = [checkpoint]
+        else:
+            callbacks = callbacks
+        model.fit(x_train=x_train,
+                  y_train=y_train,
+                  x_validate=x_validate,
+                  y_validate=y_validate,
+                  batch_size=batch_size,
+                  epochs=epochs,
+                  callbacks=callbacks,
+                  shuffle=shuffle,
+                  fit_kwargs=fit_kwargs)
+        pathlib.Path(model_path).mkdir(exist_ok=True, parents=True)
+
+        with open(os.path.join(model_path, 'model_info.json'), 'w') as f:
+            f.write(json.dumps(self.info(), indent=2, ensure_ascii=True))
+            f.close()
+        print('model saved to {}'.format(os.path.abspath(model_path)))
+        logging.info('model saved to {}'.format(os.path.abspath(model_path)))
+
     def fit_without_generator(self,
                               x_train: Union[Tuple[List[List[str]], ...], List[List[str]]],
                               y_train: Union[List[List[str]], List[str]],
