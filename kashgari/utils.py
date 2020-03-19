@@ -47,7 +47,6 @@ def custom_object_scope():
 
 
 def load_model(model_path: str,
-               is_checkpoint_model: bool,
                load_weights: bool = True) -> Union[BaseClassificationModel, BaseLabelingModel]:
     """
     Load saved model from saved model from `model.save` function
@@ -67,10 +66,7 @@ def load_model(model_path: str,
     model = model_class()
     model.tf_model = tf.keras.models.model_from_json(model_json_str, custom_objects)
     if load_weights:
-        if is_checkpoint_model:
-            model.tf_model.load_weights(os.path.join(model_path, 'checkpoint.ckpt'))
-        else:
-            model.tf_model.load_weights(os.path.join(model_path, 'model_weights.h5'))
+        model.tf_model.load_weights(os.path.join(model_path, 'model_weights.h5'))
 
     embed_info = model_info['embedding']
     embed_class = pydoc.locate(f"{embed_info['module']}.{embed_info['class_name']}")

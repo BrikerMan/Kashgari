@@ -6,7 +6,7 @@
 
 # file: test_utils.py
 # time: 14:46
-
+import os
 import unittest
 from kashgari import callbacks
 from kashgari.tasks.classification import BLSTMModel
@@ -35,6 +35,36 @@ class TestCallbacks(unittest.TestCase):
         model = BLSTMModel()
         eval_callback = callbacks.EvalCallBack(model, test_x, test_y, step=1)
         model.fit(train_x, train_y, callbacks=[eval_callback], epochs=1)
+
+    def test_classification_checkpoint_callback(self):
+        train_x, train_y = SMP2018ECDTCorpus.load_data()
+        test_x, test_y = SMP2018ECDTCorpus.load_data('test')
+
+        train_x = train_x[:1000]
+        train_y = train_y[:1000]
+        model = BLSTMModel()
+        model_path = os.path.join('model_saved', 'test_classification_checkpoint')
+        checkpoint = callbacks.KashgariModelCheckpoint(model_path,
+                                                       verbose=1,
+                                                       save_best_only=True,
+                                                       save_weights_only=False,
+                                                       kash_model=model)
+        model.fit(train_x, train_y, test_x, test_y, epochs=2, callbacks=[checkpoint])
+
+    def test_labeling_checkpoint_callback(self):
+        train_x, train_y = ChineseDailyNerCorpus.load_data()
+        test_x, test_y = ChineseDailyNerCorpus.load_data('test')
+
+        train_x = train_x[:1000]
+        train_y = train_y[:1000]
+        model = Labeling_BiLSTM_Model()
+        model_path = os.path.join('model_saved', 'test_labelling_checkpoint')
+        checkpoint = callbacks.KashgariModelCheckpoint(model_path,
+                                                       verbose=1,
+                                                       save_best_only=True,
+                                                       save_weights_only=False,
+                                                       kash_model=model)
+        model.fit(train_x, train_y, test_x, test_y, epochs=2, callbacks=[checkpoint])
 
 
 if __name__ == "__main__":
