@@ -7,7 +7,6 @@
 # file: models.py
 # time: 2019-05-22 11:26
 
-import logging
 import tensorflow as tf
 from typing import Dict, Any
 from kashgari.layers import L, AttentionWeightedAverageLayer, KMaxPoolingLayer
@@ -681,22 +680,62 @@ class Dropout_AVRNN_Model(BaseClassificationModel):
         self.tf_model = tf.keras.Model(embed_model.inputs, tensor_output)
 
 
+def load_data_from_file():
+    import pandas as pd
+    df = pd.read_csv('/Users/adline/Desktop/train.csv', sep='\t')
+    print(df.head())
+
+    x_data = [[hq] + [player_faction] + troop.split(',')
+                if isinstance(troop, str) else print(f'clide {clide} troop is null, set None')
+                for clide, troop, hq, player_faction in zip(df['clide'], df['troop'], df['hq'], df['player_faction'])]
+    y_data = df['bundle_bought'].to_list()
+    x_data_filter = []
+    for item in zip(x_data, y_data):
+        if item[0]:
+             x_data_filter.append(item)
+
+    x_data, y_data = zip(*x_data_filter)
+    return x_data, y_data
+
+
 if __name__ == "__main__":
-    print(BiLSTM_Model.get_default_hyper_parameters())
-    logging.basicConfig(level=logging.DEBUG)
-    from kashgari.corpus import SMP2018ECDTCorpus
+    # print(BiLSTM_Model.get_default_hyper_parameters())
+    # logging.basicConfig(level=logging.DEBUG)
+    # from kashgari.corpus import SMP2018ECDTCorpus
+    #
+    # x, y = SMP2018ECDTCorpus.load_data()
+    #
+    # import kashgari
+    # from kashgari.processors.classification_processor import ClassificationProcessor
+    # from kashgari.embeddings import BareEmbedding
+    #
+    # processor = ClassificationProcessor(multi_label=False)
+    # embed = BareEmbedding(task=kashgari.CLASSIFICATION, sequence_length=30, processor=processor)
+    # m = BiLSTM_Model(embed)
+    # # m.build_model(x, y)
+    # m.fit(x, y, epochs=2)
+    # print(m.predict(x[:10]))
+    # # m.evaluate(x, y)
+    # print(m.predict_top_k_class(x[:10]))
 
-    x, y = SMP2018ECDTCorpus.load_data()
-
+    x, y = x_data_str, y_data = load_data_from_file()
+    model_path = 'model_saved'
     import kashgari
     from kashgari.processors.classification_processor import ClassificationProcessor
     from kashgari.embeddings import BareEmbedding
+    from kashgari import utils
+    from kashgari.callbacks import KashgariModelCheckpoint
 
     processor = ClassificationProcessor(multi_label=False)
     embed = BareEmbedding(task=kashgari.CLASSIFICATION, sequence_length=30, processor=processor)
     m = BiLSTM_Model(embed)
-    # m.build_model(x, y)
-    m.fit(x, y, epochs=2)
-    print(m.predict(x[:10]))
-    # m.evaluate(x, y)
-    print(m.predict_top_k_class(x[:10]))
+    checkpoint = KashgariModelCheckpoint(model_path,
+                                         verbose=1,
+                                         save_best_only=True,
+                                         save_weights_only=False,
+                                         kash_model=m)
+    checkpoint.kash_model.fit_without_generator(x, y, epochs=2, callbacks=[checkpoint])
+
+    new_model = utils.load_model(model_path)
+    print(new_model.predict(x[:10]))
+    print(new_model.predict_top_k_class(x[:10]))

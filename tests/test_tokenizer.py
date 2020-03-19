@@ -10,7 +10,7 @@
 import os
 import unittest
 
-from tensorflow.keras.utils import get_file
+from tensorflow.python.keras.utils import get_file
 
 from kashgari.macros import DATA_PATH
 from kashgari.tokenizer import BertTokenizer, JiebaTokenizer, Tokenizer
