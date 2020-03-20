@@ -686,39 +686,16 @@ if __name__ == "__main__":
     from kashgari.corpus import SMP2018ECDTCorpus
 
     x, y = SMP2018ECDTCorpus.load_data()
-    #
-    # import kashgari
-    # from kashgari.processors.classification_processor import ClassificationProcessor
-    # from kashgari.embeddings import BareEmbedding
-    #
-    # processor = ClassificationProcessor(multi_label=False)
-    # embed = BareEmbedding(task=kashgari.CLASSIFICATION, sequence_length=30, processor=processor)
-    # m = BiLSTM_Model(embed)
-    # # m.build_model(x, y)
-    # m.fit(x, y, epochs=2)
-    # print(m.predict(x[:10]))
-    # # m.evaluate(x, y)
-    # print(m.predict_top_k_class(x[:10]))
 
-    # train and save
-    model_path = 'model_saved'
     import kashgari
     from kashgari.processors.classification_processor import ClassificationProcessor
     from kashgari.embeddings import BareEmbedding
-    from kashgari import utils
-    from kashgari.callbacks import KashgariModelCheckpoint
 
     processor = ClassificationProcessor(multi_label=False)
     embed = BareEmbedding(task=kashgari.CLASSIFICATION, sequence_length=30, processor=processor)
     m = BiLSTM_Model(embed)
-    checkpoint = KashgariModelCheckpoint(model_path,
-                                         verbose=1,
-                                         save_best_only=True,
-                                         save_weights_only=False,
-                                         kash_model=m)
-    m.fit(x, y, epochs=2, callbacks=[checkpoint])
-
-    # load and predict
-    new_model = utils.load_model(model_path)
-    print(new_model.predict(x[:10]))
-    print(new_model.predict_top_k_class(x[:10]))
+    # m.build_model(x, y)
+    m.fit(x, y, epochs=2)
+    print(m.predict(x[:10]))
+    # m.evaluate(x, y)
+    print(m.predict_top_k_class(x[:10]))
