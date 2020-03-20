@@ -4,4 +4,4 @@ pandas>=1.0.1
 tqdm
 tensorflow>=2.0.0
 bert4keras>=0.6.0
-seqeval-0.0.12
+seqeval==0.0.12
