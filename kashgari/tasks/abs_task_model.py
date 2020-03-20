@@ -189,8 +189,10 @@ class ABCTaskModel(ABC):
                                                                     seq_length=self.embedding.sequence_length)
             pred = self.tf_model.predict(tensor, batch_size=batch_size, **predict_kwargs)
             pred = pred.argmax(-1)
+            lengths = [len(sen) for sen in x_data]
 
-            res = self.embedding.label_processor.reverse_numerize(pred)
+            res = self.embedding.label_processor.reverse_numerize(pred,
+                                                                  lengths=lengths)
             if debug_info:
                 logging.info('input: {}'.format(tensor))
                 logging.info('output: {}'.format(pred))
