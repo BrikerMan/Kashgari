@@ -69,19 +69,21 @@ class BatchDataGenerator(Iterable):
 
     def __iter__(self):
         x_set, y_set = [], []
-        for x, y in self.corpus:
-            x_set.append(x)
-            y_set.append(y)
-            if len(x_set) == self.batch_size:
+        while True:
+            for x, y in self.corpus:
+                x_set.append(x)
+                y_set.append(y)
+                if len(x_set) == self.batch_size:
+                    x_tensor = self.text_processor.numerize_samples(x_set, seq_length=self.seq_length,
+                                                                    segment=self.segment)
+                    y_tensor = self.label_processor.numerize_samples(y_set, seq_length=self.seq_length, one_hot=True)
+                    yield x_tensor, y_tensor
+                    x_set, y_set = [], []
+            # final step
+            if x_set:
                 x_tensor = self.text_processor.numerize_samples(x_set, seq_length=self.seq_length, segment=self.segment)
                 y_tensor = self.label_processor.numerize_samples(y_set, seq_length=self.seq_length, one_hot=True)
                 yield x_tensor, y_tensor
-                x_set, y_set = [], []
-        # final step
-        if x_set:
-            x_tensor = self.text_processor.numerize_samples(x_set, seq_length=self.seq_length, segment=self.segment)
-            y_tensor = self.label_processor.numerize_samples(y_set, seq_length=self.seq_length, one_hot=True)
-            yield x_tensor, y_tensor
 
     def generator(self):
         for item in self:
