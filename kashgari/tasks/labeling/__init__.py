@@ -9,6 +9,7 @@
 
 from .bi_gru_model import BiGRU_Model
 from .bi_lstm_model import BiLSTM_Model
+from .bi_lstm_crt_model import BiLSTM_CRF_Model
 
 if __name__ == "__main__":
     pass
