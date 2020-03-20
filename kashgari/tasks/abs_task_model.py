@@ -186,6 +186,7 @@ class ABCTaskModel(ABC):
             predict_kwargs = {}
         with kashgari.utils.custom_object_scope():
             tensor = self.embedding.text_processor.numerize_samples(x_data,
+                                                                    segment=self.embedding.segment,
                                                                     seq_length=self.embedding.sequence_length)
             pred = self.tf_model.predict(tensor, batch_size=batch_size, **predict_kwargs)
             pred = pred.argmax(-1)

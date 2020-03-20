@@ -42,19 +42,29 @@ class BiLSTM_CRF_Model(ABCLabelingModel):
         config = self.hyper_parameters
         embed_model = self.embedding.embed_model
 
+        crf = ConditionalRandomField(output_dim, name='layer_crf')
+
         layer_stack = [
             L.Bidirectional(L.LSTM(**config['layer_blstm']), name='layer_blstm'),
             L.Dropout(**config['layer_dropout'], name='layer_dropout'),
             L.Dense(**config['layer_dense'], name='layer_dense'),
             L.Dense(output_dim, name='layer_crf_dense'),
-            ConditionalRandomField(output_dim, name='layer_crf')
+            crf
         ]
 
         tensor = embed_model.output
         for layer in layer_stack:
             tensor = layer(tensor)
 
+        self.layer_crf = crf
         self.tf_model = keras.Model(embed_model.inputs, tensor)
+
+    def compile_model(self, **kwargs):
+        if kwargs.get('loss') is None:
+            kwargs['loss'] = self.layer_crf.dense_loss
+        if kwargs.get('metrics') is None:
+            kwargs['metrics'] = [self.layer_crf.dense_accuracy]
+        super(BiLSTM_CRF_Model, self).compile_model(**kwargs)
 
 
 if __name__ == "__main__":
@@ -62,6 +72,6 @@ if __name__ == "__main__":
 
     x, y = ChineseDailyNerCorpus.load_data('valid')
     model = BiLSTM_CRF_Model()
-    model.fit(x, y, epochs=1)
+    model.fit(x, y, epochs=10)
     print(model.info())
     model.save('./model')
