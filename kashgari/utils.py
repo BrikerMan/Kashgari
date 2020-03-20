@@ -73,6 +73,7 @@ def load_model(model_path: str, load_weights: bool = True) -> Union[ABCClassific
     Returns:
         Loaded kashgari model
     """
+    from bert4keras.layers import ConditionalRandomField
     with open(os.path.join(model_path, 'model_info.json'), 'r') as f:
         model_info = json.load(f)
 
@@ -91,6 +92,9 @@ def load_model(model_path: str, load_weights: bool = True) -> Union[ABCClassific
     # Load Weights from model
     for layer in embedding.embed_model.layers:
         layer.set_weights(model.tf_model.get_layer(layer.name).get_weights())
+
+    if isinstance(model.tf_model.layers[-1], ConditionalRandomField):
+        model.layer_crf = model.tf_model.layers[-1]
 
     return model
 

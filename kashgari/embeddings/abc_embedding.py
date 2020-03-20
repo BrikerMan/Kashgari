@@ -26,12 +26,16 @@ L = keras.layers
 
 class ABCEmbedding:
     def info(self) -> Dict:
+        config = {
+            'sequence_length': self.sequence_length,
+            **self.kwargs
+        }
         return {
             'class_name': self.__class__.__name__,
             'module': self.__class__.__module__,
             'text_processor': self.text_processor.info(),
             'label_processor': self.label_processor.info(),
-            'config': self.kwargs,
+            'config': config,
             'embed_model': json.loads(self.embed_model.to_json())
         }
 

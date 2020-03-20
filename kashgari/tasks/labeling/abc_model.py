@@ -8,13 +8,16 @@
 # time: 4:30 下午
 
 from abc import ABC
+
+from seqeval.metrics.sequence_labeling import get_entities
 from typing import List, Dict, Any
+
 from kashgari.embeddings.abc_embedding import ABCEmbedding
-from kashgari.types import TextSamplesVar
-from kashgari.generators import CorpusGenerator
-from kashgari.tasks.abs_task_model import ABCTaskModel
-from kashgari.processors import SequenceProcessor
 from kashgari.generators import BatchDataGenerator
+from kashgari.generators import CorpusGenerator
+from kashgari.processors import SequenceProcessor
+from kashgari.tasks.abs_task_model import ABCTaskModel
+from kashgari.types import TextSamplesVar
 
 
 class ABCLabelingModel(ABCTaskModel, ABC):
@@ -147,6 +150,52 @@ class ABCLabelingModel(ABCTaskModel, ABC):
                                  steps_per_epoch=train_gen.steps,
                                  epochs=epochs,
                                  callbacks=callbacks)
+
+    def predict_entities(self,
+                         x_data,
+                         batch_size=None,
+                         join_chunk=' ',
+                         debug_info=False,
+                         predict_kwargs: Dict = None):
+        """Gets entities from sequence.
+
+        Args:
+            x_data: The input data, as a Numpy array (or list of Numpy arrays if the model has multiple inputs).
+            batch_size: Integer. If unspecified, it will default to 32.
+            join_chunk: str or False,
+            debug_info: Bool, Should print out the logging info.
+            predict_kwargs: arguments passed to ``predict()`` function of ``tf.keras.Model``
+
+        Returns:
+            list: list of entity.
+        """
+        if isinstance(x_data, tuple):
+            text_seq = x_data[0]
+        else:
+            text_seq = x_data
+        res = self.predict(x_data, batch_size, debug_info, predict_kwargs)
+        new_res = [get_entities(seq) for seq in res]
+        final_res = []
+        for index, seq in enumerate(new_res):
+            seq_data = []
+            for entity in seq:
+                if join_chunk is False:
+                    value = text_seq[index][entity[1]:entity[2] + 1],
+                else:
+                    value = join_chunk.join(text_seq[index][entity[1]:entity[2] + 1])
+
+                seq_data.append({
+                    "entity": entity[0],
+                    "start": entity[1],
+                    "end": entity[2],
+                    "value": value,
+                })
+            final_res.append({
+                'text': join_chunk.join(text_seq[index]),
+                'text_raw': text_seq[index],
+                'labels': seq_data
+            })
+        return final_res
 
 
 if __name__ == "__main__":

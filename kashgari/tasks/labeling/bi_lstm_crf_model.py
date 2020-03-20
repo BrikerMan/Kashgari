@@ -70,8 +70,9 @@ class BiLSTM_CRF_Model(ABCLabelingModel):
 if __name__ == "__main__":
     from kashgari.corpus import ChineseDailyNerCorpus
 
-    x, y = ChineseDailyNerCorpus.load_data('valid')
+    x, y = ChineseDailyNerCorpus.load_data('test')
     model = BiLSTM_CRF_Model()
-    model.fit(x, y, epochs=10)
+    model.fit(x, y, epochs=4)
     print(model.info())
+    print(model.predict_entities(x[:3]))
     model.save('./model')
