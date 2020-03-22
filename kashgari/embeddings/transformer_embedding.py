@@ -95,7 +95,8 @@ class TransformerEmbedding(ABCEmbedding):
                                                  model=self.model_type,
                                                  application='encoder',
                                                  return_keras_model=True)
-
+            for layer in bert_model.layers:
+                layer.trainable = False
             self.embed_model = bert_model
             self.embedding_size = bert_model.output.shape[-1]
 
