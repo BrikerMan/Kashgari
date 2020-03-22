@@ -182,8 +182,8 @@ class ABCLabelingModel(ABCTaskModel, ABC):
                 res_entities = []
                 for i, e in enumerate(text_seq[index][entity[1]:entity[2] + 1]):
                     # Handle bert tokenizer
-                    if e.startswith('##'):
-                        res_entities[i - 1] += e.replace('##', '')
+                    if e.startswith('##') and len(res_entities) > 0:
+                        res_entities[-1] += e.replace('##', '')
                     else:
                         res_entities.append(e)
                 if join_chunk is False:
