@@ -179,10 +179,17 @@ class ABCLabelingModel(ABCTaskModel, ABC):
         for index, seq in enumerate(new_res):
             seq_data = []
             for entity in seq:
+                res_entities = []
+                for i, e in enumerate(text_seq[index][entity[1]:entity[2] + 1]):
+                    # Handle bert tokenizer
+                    if e.startswith('##'):
+                        res_entities[i - 1] += e.replace('##', '')
+                    else:
+                        res_entities.append(e)
                 if join_chunk is False:
-                    value = text_seq[index][entity[1]:entity[2] + 1],
+                    value = res_entities
                 else:
-                    value = join_chunk.join(text_seq[index][entity[1]:entity[2] + 1])
+                    value = join_chunk.join(res_entities)
 
                 seq_data.append({
                     "entity": entity[0],
@@ -190,8 +197,12 @@ class ABCLabelingModel(ABCTaskModel, ABC):
                     "end": entity[2],
                     "value": value,
                 })
+            if join_chunk is False:
+                text = text_seq[index]
+            else:
+                text = join_chunk.join(text_seq[index])
             final_res.append({
-                'text': join_chunk.join(text_seq[index]),
+                'text': text,
                 'text_raw': text_seq[index],
                 'labels': seq_data
             })
