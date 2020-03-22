@@ -53,7 +53,8 @@ class BatchDataGenerator(Iterable):
                  label_processor,
                  seq_length: int = None,
                  segment: bool = False,
-                 batch_size=64):
+                 batch_size=64,
+                 buffer_size=None):
         self.corpus = corpus
         self.text_processor = text_processor
         self.label_processor = label_processor
@@ -62,28 +63,46 @@ class BatchDataGenerator(Iterable):
         self.segment = segment
 
         self.batch_size = batch_size
+        if buffer_size is None:
+            self.buffer_size = min(self.batch_size * 200, self.corpus.steps)
+        else:
+            self.buffer_size = min(buffer_size, self.corpus.steps)
+        self.forever = True
 
     @property
     def steps(self) -> int:
         return self.corpus.steps // self.batch_size
 
     def __iter__(self):
-        x_set, y_set = [], []
+        from kashgari.utils import unison_shuffled_copies
         while True:
+            x_buffer, y_buffer = [], []
             for x, y in self.corpus:
-                x_set.append(x)
-                y_set.append(y)
-                if len(x_set) == self.batch_size:
-                    x_tensor = self.text_processor.numerize_samples(x_set, seq_length=self.seq_length,
-                                                                    segment=self.segment)
-                    y_tensor = self.label_processor.numerize_samples(y_set, seq_length=self.seq_length, one_hot=True)
-                    yield x_tensor, y_tensor
+                x_buffer.append(x)
+                y_buffer.append(y)
+
+                if len(x_buffer) == self.buffer_size:
+                    x_buffer, y_buffer = unison_shuffled_copies(x_buffer, y_buffer)
+
                     x_set, y_set = [], []
+                    for x, y in zip(x_buffer, y_buffer):
+                        x_set.append(x)
+                        y_set.append(y)
+                        if len(x_set) == self.batch_size:
+                            x_tensor = self.text_processor.numerize_samples(x_set, seq_length=self.seq_length,
+                                                                            segment=self.segment)
+                            y_tensor = self.label_processor.numerize_samples(y_set, seq_length=self.seq_length,
+                                                                             one_hot=True)
+                            yield x_tensor, y_tensor
+                            x_set, y_set = [], []
+                        x_buffer, y_buffer = [], []
             # final step
             if x_set:
                 x_tensor = self.text_processor.numerize_samples(x_set, seq_length=self.seq_length, segment=self.segment)
                 y_tensor = self.label_processor.numerize_samples(y_set, seq_length=self.seq_length, one_hot=True)
                 yield x_tensor, y_tensor
+            if not self.forever:
+                break
 
     def generator(self):
         for item in self:

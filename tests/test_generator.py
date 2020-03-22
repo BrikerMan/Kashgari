@@ -24,7 +24,7 @@ class TestGenerator(unittest.TestCase):
     def test_batch_generator(self):
         from kashgari.processors import SequenceProcessor
         x_set, y_set = [], []
-        for i in range(22):
+        for i in range(100):
             x_set.append([f'x{i}'] * 4)
             y_set.append([f'y{i}'] * 4)
         corpus_gen = CorpusGenerator(x_set, y_set, shuffle=False)
@@ -59,6 +59,7 @@ class TestGenerator(unittest.TestCase):
                 print(x)
         except StopIteration:
             pass
+
 
 if __name__ == '__main__':
     unittest.main()
