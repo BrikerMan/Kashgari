@@ -153,8 +153,9 @@ class ABCLabelingModel(ABCTaskModel, ABC):
 
     def predict_entities(self,
                          x_data,
-                         batch_size=None,
+                         batch_size=32,
                          join_chunk=' ',
+                         truncating=False,
                          debug_info=False,
                          predict_kwargs: Dict = None):
         """Gets entities from sequence.
@@ -162,6 +163,7 @@ class ABCLabelingModel(ABCTaskModel, ABC):
         Args:
             x_data: The input data, as a Numpy array (or list of Numpy arrays if the model has multiple inputs).
             batch_size: Integer. If unspecified, it will default to 32.
+            truncating: remove values from sequences larger than `model.embedding.sequence_length`
             join_chunk: str or False,
             debug_info: Bool, Should print out the logging info.
             predict_kwargs: arguments passed to ``predict()`` function of ``tf.keras.Model``
@@ -173,7 +175,11 @@ class ABCLabelingModel(ABCTaskModel, ABC):
             text_seq = x_data[0]
         else:
             text_seq = x_data
-        res = self.predict(x_data, batch_size, debug_info, predict_kwargs)
+        res = self.predict(x_data,
+                           batch_size=batch_size,
+                           truncating=truncating,
+                           debug_info=debug_info,
+                           predict_kwargs=predict_kwargs)
         new_res = [get_entities(seq) for seq in res]
         final_res = []
         for index, seq in enumerate(new_res):

@@ -165,6 +165,7 @@ class ABCTaskModel(ABC):
     def predict(self,
                 x_data,
                 batch_size=32,
+                truncating=False,
                 debug_info=False,
                 predict_kwargs: Dict = None,
                 **kwargs):
@@ -176,6 +177,7 @@ class ABCTaskModel(ABC):
         Args:
             x_data: The input data, as a Numpy array (or list of Numpy arrays if the model has multiple inputs).
             batch_size: Integer. If unspecified, it will default to 32.
+            truncating: remove values from sequences larger than `model.embedding.sequence_length`
             debug_info: Bool, Should print out the logging info.
             predict_kwargs: arguments passed to ``predict()`` function of ``tf.keras.Model``
 
@@ -185,9 +187,13 @@ class ABCTaskModel(ABC):
         if predict_kwargs is None:
             predict_kwargs = {}
         with kashgari.utils.custom_object_scope():
+            if truncating:
+                seq_length = self.embedding.sequence_length
+            else:
+                seq_length = None
             tensor = self.embedding.text_processor.numerize_samples(x_data,
                                                                     segment=self.embedding.segment,
-                                                                    seq_length=self.embedding.sequence_length)
+                                                                    seq_lengtg=seq_length)
             pred = self.tf_model.predict(tensor, batch_size=batch_size, **predict_kwargs)
             pred = pred.argmax(-1)
             lengths = [len(sen) for sen in x_data]
