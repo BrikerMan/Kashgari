@@ -8,10 +8,15 @@
 # time: 2019-05-22 15:00
 
 from sklearn import metrics
+from tensorflow.python.distribute import multi_worker_util
+
 from kashgari import macros
 from tensorflow.python import keras
 from kashgari.tasks.base_model import BaseModel
 from seqeval import metrics as seq_metrics
+import logging
+import os
+from tensorflow.python.keras import backend as K
 
 
 class EvalCallBack(keras.callbacks.Callback):
@@ -57,6 +62,109 @@ class EvalCallBack(keras.callbacks.Callback):
                 'f1': f1
             })
             print(f"\nepoch: {epoch} precision: {precision:.6f}, recall: {recall:.6f}, f1: {f1:.6f}")
+
+
+class KashgariModelCheckpoint(keras.callbacks.ModelCheckpoint):
+    """Save the model after every epoch.
+
+     Arguments:
+         filepath: string, path to save the model file.
+         monitor: quantity to monitor.
+         verbose: verbosity mode, 0 or 1.
+         save_best_only: if `save_best_only=True`, the latest best model according
+           to the quantity monitored will not be overwritten.
+         mode: one of {auto, min, max}. If `save_best_only=True`, the decision to
+           overwrite the current save file is made based on either the maximization
+           or the minimization of the monitored quantity. For `val_acc`, this
+           should be `max`, for `val_loss` this should be `min`, etc. In `auto`
+           mode, the direction is automatically inferred from the name of the
+           monitored quantity.
+         save_weights_only: if True, then only the model's weights will be saved
+           (`model.save_weights(filepath)`), else the full model is saved
+           (`model.save(filepath)`).
+         save_freq: `'epoch'` or integer. When using `'epoch'`, the callback saves
+           the model after each epoch. When using integer, the callback saves the
+           model at end of a batch at which this many samples have been seen since
+           last saving. Note that if the saving isn't aligned to epochs, the
+           monitored metric may potentially be less reliable (it could reflect as
+           little as 1 batch, since the metrics get reset every epoch). Defaults to
+           `'epoch'`
+         **kwargs: Additional arguments for backwards compatibility. Possible key
+           is `period`.
+     """
+    def __init__(self,
+                 filepath,
+                 monitor='val_loss',
+                 verbose=0,
+                 save_best_only=False,
+                 save_weights_only=False,
+                 mode='auto',
+                 save_freq='epoch',
+                 kash_model: BaseModel = None,
+                 **kwargs):
+        super(KashgariModelCheckpoint, self).__init__(
+            filepath=filepath,
+            monitor=monitor,
+            verbose=verbose,
+            save_best_only=save_best_only,
+            save_weights_only=save_weights_only,
+            mode=mode,
+            save_freq=save_freq,
+            **kwargs)
+        self.kash_model = kash_model
+
+    def _save_model(self, epoch, logs):
+        """Saves the model.
+
+            Arguments:
+                epoch: the epoch this iteration is in.
+                logs: the `logs` dict passed in to `on_batch_end` or `on_epoch_end`.
+            """
+        logs = logs or {}
+
+        if isinstance(self.save_freq,
+                      int) or self.epochs_since_last_save >= self.period:
+            self.epochs_since_last_save = 0
+            file_handle, filepath = self._get_file_handle_and_path(epoch, logs)
+
+            if self.save_best_only:
+                current = logs.get(self.monitor)
+                if current is None:
+                    logging.warning('Can save best model only with %s available, '
+                                    'skipping.', self.monitor)
+                else:
+                    if self.monitor_op(current, self.best):
+                        if self.verbose > 0:
+                            print('\nEpoch %05d: %s improved from %0.5f to %0.5f,'
+                                  ' saving model to %s' % (epoch + 1, self.monitor, self.best,
+                                                           current, filepath))
+                        self.best = current
+                        if self.save_weights_only:
+                            filepath = os.path.join(filepath, 'cp')
+                            self.model.save_weights(filepath, overwrite=True)
+                        else:
+                            self.kash_model.save(filepath)
+                    else:
+                        if self.verbose > 0:
+                            print('\nEpoch %05d: %s did not improve from %0.5f' %
+                                  (epoch + 1, self.monitor, self.best))
+            else:
+                if self.verbose > 0:
+                    print('\nEpoch %05d: saving model to %s' % (epoch + 1, filepath))
+                if self.save_weights_only:
+                    if K.in_multi_worker_mode():
+                        # TODO(rchao): Save to an additional training state file for FT,
+                        # instead of adding an attr to weight file. With this we can support
+                        # the cases of all combinations with `save_weights_only`,
+                        # `save_best_only`, and `save_format` parameters.
+                        # pylint: disable=protected-access
+                        self.model._ckpt_saved_epoch = epoch
+                    filepath = os.path.join(filepath, 'cp')
+                    self.model.save_weights(filepath, overwrite=True)
+                else:
+                    self.kash_model.save(filepath)
+
+            self._maybe_remove_file(file_handle, filepath)
 
 
 if __name__ == "__main__":

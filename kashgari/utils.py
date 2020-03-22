@@ -46,7 +46,8 @@ def custom_object_scope():
     return tf.keras.utils.custom_object_scope(custom_objects)
 
 
-def load_model(model_path: str, load_weights: bool = True) -> Union[BaseClassificationModel, BaseLabelingModel]:
+def load_model(model_path: str,
+               load_weights: bool = True) -> Union[BaseClassificationModel, BaseLabelingModel]:
     """
     Load saved model from saved model from `model.save` function
     Args:
