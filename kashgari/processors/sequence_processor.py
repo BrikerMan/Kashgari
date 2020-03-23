@@ -110,11 +110,14 @@ class SequenceProcessor(ABCProcessor):
     def numerize_samples(self,
                          samples: TextSamplesVar,
                          seq_length: int = None,
+                         max_position: int = None,
                          segment: bool = False,
                          one_hot: bool = False,
                          **kwargs) -> np.ndarray:
         if seq_length is None:
             seq_length = max([len(i) for i in samples])
+            if max_position and seq_length > max_position:
+                seq_length = max_position
             if not self._showed_seq_len_warning:
                 logging.warning(
                     f'Sequence length is None, will use the max length of the samples, which is {seq_length}')

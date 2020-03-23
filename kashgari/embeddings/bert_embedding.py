@@ -8,11 +8,17 @@
 # time: 2:49 下午
 
 import os
+from typing import Dict
 from kashgari.processors.abc_processor import ABCProcessor
 from kashgari.embeddings.transformer_embedding import TransformerEmbedding
 
 
 class BertEmbedding(TransformerEmbedding):
+    def info(self) -> Dict:
+        info_dic = super(BertEmbedding, self).info()
+        info_dic['config']['model_folder'] = self.model_folder
+        return info_dic
+
     def __init__(self,
                  model_folder: str,
                  layer_nums: int = 4,
@@ -34,13 +40,13 @@ class BertEmbedding(TransformerEmbedding):
         self.model_folder = model_folder
         vocab_path = os.path.join(self.model_folder, 'vocab.txt')
         config_path = os.path.join(self.model_folder, 'bert_config.json')
-        check_point_path = os.path.join(self.model_folder, 'bert_model.ckpt')
-        super(BertEmbedding, self).__init__(vocab_path=vocab_path,
-                                            config_path=config_path,
-                                            checkpoint_path=check_point_path,
-                                            model_type='bert',
-                                            layer_nums=layer_nums,
-                                            sequence_length=sequence_length,
+        checkpoint_path = os.path.join(self.model_folder, 'bert_model.ckpt')
+        kwargs['vocab_path'] = vocab_path
+        kwargs['config_path'] = config_path
+        kwargs['checkpoint_path'] = checkpoint_path
+        kwargs['model_type'] = 'bert'
+        kwargs['layer_nums'] = layer_nums
+        super(BertEmbedding, self).__init__(sequence_length=sequence_length,
                                             text_processor=text_processor,
                                             label_processor=label_processor,
                                             **kwargs)

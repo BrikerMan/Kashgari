@@ -193,7 +193,8 @@ class ABCTaskModel(ABC):
                 seq_length = None
             tensor = self.embedding.text_processor.numerize_samples(x_data,
                                                                     segment=self.embedding.segment,
-                                                                    seq_lengtg=seq_length)
+                                                                    seq_lengtg=seq_length,
+                                                                    max_position=self.embedding.max_position)
             pred = self.tf_model.predict(tensor, batch_size=batch_size, **predict_kwargs)
             pred = pred.argmax(-1)
             lengths = [len(sen) for sen in x_data]

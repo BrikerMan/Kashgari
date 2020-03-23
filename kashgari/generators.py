@@ -52,6 +52,7 @@ class BatchDataGenerator(Iterable):
                  text_processor,
                  label_processor,
                  seq_length: int = None,
+                 max_position: int = None,
                  segment: bool = False,
                  batch_size=64,
                  buffer_size=None):
@@ -60,6 +61,7 @@ class BatchDataGenerator(Iterable):
         self.label_processor = label_processor
 
         self.seq_length = seq_length
+        self.max_position = max_position
         self.segment = segment
 
         self.batch_size = batch_size
@@ -89,7 +91,9 @@ class BatchDataGenerator(Iterable):
                         x_set.append(x)
                         y_set.append(y)
                         if len(x_set) == self.batch_size:
-                            x_tensor = self.text_processor.numerize_samples(x_set, seq_length=self.seq_length,
+                            x_tensor = self.text_processor.numerize_samples(x_set,
+                                                                            seq_length=self.seq_length,
+                                                                            max_position=self.max_position,
                                                                             segment=self.segment)
                             y_tensor = self.label_processor.numerize_samples(y_set, seq_length=self.seq_length,
                                                                              one_hot=True)

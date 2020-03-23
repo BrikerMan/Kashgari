@@ -7,6 +7,7 @@
 # file: bare_embedding.py
 # time: 2:17 下午
 
+from typing import Dict
 from tensorflow import keras
 
 from kashgari.embeddings.abc_embedding import ABCEmbedding
@@ -17,6 +18,11 @@ L = keras.layers
 
 
 class BareEmbedding(ABCEmbedding):
+    def info(self) -> Dict:
+        info_dic = super(BareEmbedding, self).info()
+        info_dic['config']['embedding_size'] = self.embedding_size
+        return info_dic
+
     def __init__(self,
                  sequence_length: int = None,
                  embedding_size: int = 100,

@@ -14,7 +14,7 @@ os.environ['TF_KERAS'] = '1'
 import json
 import codecs
 import logging
-
+from typing import Dict
 from kashgari.embeddings.abc_embedding import ABCEmbedding
 from kashgari.generators import CorpusGenerator
 from kashgari.processors.abc_processor import ABCProcessor
@@ -22,6 +22,13 @@ from bert4keras.models import build_transformer_model
 
 
 class TransformerEmbedding(ABCEmbedding):
+    def info(self) -> Dict:
+        info_dic = super(TransformerEmbedding, self).info()
+        info_dic['config']['vocab_path'] = self.vocab_path
+        info_dic['config']['config_path'] = self.config_path
+        info_dic['config']['checkpoint_path'] = self.checkpoint_path
+        info_dic['config']['model_type'] = self.model_type
+        return info_dic
 
     def __init__(self,
                  vocab_path: str,
@@ -58,11 +65,8 @@ class TransformerEmbedding(ABCEmbedding):
         self.config_path = config_path
         self.checkpoint_path = checkpoint_path
         self.model_type = model_type
-
         self.segment = True
-
         self.vocab_list = []
-        self.max_sequence_length = None
 
     def build_text_vocab(self, gen: CorpusGenerator = None, force=False):
         if not self.text_processor.is_vocab_build:
@@ -86,9 +90,9 @@ class TransformerEmbedding(ABCEmbedding):
 
             config = json.load(open(config_path))
             if 'max_position' in config:
-                self.max_sequence_length = config['max_position']
+                self.max_position = config['max_position']
             else:
-                self.max_sequence_length = config.get('max_position_embeddings')
+                self.max_position = config.get('max_position_embeddings')
 
             bert_model = build_transformer_model(config_path=self.config_path,
                                                  checkpoint_path=self.checkpoint_path,

@@ -14,7 +14,7 @@ from typing import List, Dict, Any, Tuple
 import random
 from sklearn import metrics
 
-from kashgari.embeddings import WordEmbedding
+from kashgari.embeddings.abc_embedding import ABCEmbedding
 from kashgari.types import TextSamplesVar
 from kashgari.generators import CorpusGenerator
 from kashgari.tasks.abs_task_model import ABCTaskModel
@@ -26,7 +26,7 @@ class ABCClassificationModel(ABCTaskModel, ABC):
     __task__ = 'classification'
 
     def __init__(self,
-                 embedding: WordEmbedding = None,
+                 embedding: ABCEmbedding = None,
                  sequence_length: int = None,
                  hyper_parameters: Dict[str, Dict[str, Any]] = None,
                  **kwargs):

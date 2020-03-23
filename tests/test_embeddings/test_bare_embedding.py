@@ -7,9 +7,14 @@
 # file: test_bare_embedding.py
 # time: 2:29 下午
 
+import os
+import time
+import tempfile
 import unittest
 from kashgari.corpus import SMP2018ECDTCorpus, ChineseDailyNerCorpus
 from kashgari.embeddings import BareEmbedding
+from kashgari.tasks.classification import BiGRU_Model
+from kashgari.utils import load_model
 
 
 class TestBareEmbedding(unittest.TestCase):
@@ -31,6 +36,17 @@ class TestBareEmbedding(unittest.TestCase):
         embedding2.build(x, y)
         res = embedding2.embed(x[:2])
         assert res.shape == (2, 25, 32)
+
+    def test_with_model(self):
+        x, y = SMP2018ECDTCorpus.load_data('test')
+        model = BiGRU_Model()
+        model.fit(x, y, epochs=1)
+
+        model_path = os.path.join(tempfile.gettempdir(), str(time.time()))
+        model.save(model_path)
+
+        new_model = load_model(model_path)
+        new_model.predict(x[:10])
 
 
 if __name__ == "__main__":

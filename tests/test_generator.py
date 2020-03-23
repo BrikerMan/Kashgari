@@ -46,6 +46,7 @@ class TestGenerator(unittest.TestCase):
                                        label_processor=p2,
                                        seq_length=5,
                                        batch_size=4)
+        batch_gen.forever = False
         print('------ Iterator --------')
         for i in batch_gen:
             x, y = i

@@ -22,6 +22,11 @@ L = keras.layers
 
 
 class WordEmbedding(ABCEmbedding):
+    def info(self) -> Dict:
+        info_dic = super(WordEmbedding, self).info()
+        info_dic['config']['w2v_path'] = self.w2v_path
+        info_dic['config']['w2v_kwargs'] = self.w2v_kwargs
+        return info_dic
 
     def __init__(self,
                  w2v_path: str,
@@ -44,7 +49,7 @@ class WordEmbedding(ABCEmbedding):
         self.w2v_matrix = None
 
     def build_text_vocab(self, gen: CorpusGenerator = None, force=False):
-        if force or self.w2v_matrix is None:
+        if force or not self.text_processor.is_vocab_build:
             w2v = KeyedVectors.load_word2vec_format(self.w2v_path, **self.w2v_kwargs)
 
             token2idx = {

@@ -28,6 +28,8 @@ class ABCEmbedding:
     def info(self) -> Dict:
         config = {
             'sequence_length': self.sequence_length,
+            'segment': self.segment,
+            'max_position': self.max_position,
             **self.kwargs
         }
         return {
@@ -75,10 +77,11 @@ class ABCEmbedding:
         self.embed_model: keras.Model = None
 
         self.sequence_length = sequence_length
-        self.segment = False  # 默认不需要添加 segment
+        self.segment = kwargs.get('segment', False)  # 默认不需要添加 segment
         self.kwargs = kwargs
 
-        self.embedding_size = None
+        self.embedding_size = kwargs.get('embedding_size', None)
+        self.max_position = kwargs.get('max_position', None)
 
     def set_sequence_length(self, length: int):
         self.sequence_length = length

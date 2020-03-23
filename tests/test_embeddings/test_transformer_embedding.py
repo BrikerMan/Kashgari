@@ -7,13 +7,18 @@
 # file: test_transformer_embedding.py
 # time: 2:47 下午
 
+import os
+import tempfile
+import time
 import unittest
-from tensorflow.keras.utils import get_file
-from kashgari.macros import DATA_PATH
-from kashgari.embeddings import BertEmbedding, TransformerEmbedding
-from kashgari.tasks.labeling import BiLSTM_Model
-from kashgari.tasks.classification import BiLSTM_Model as Classification_BiLSTM_Model
 
+from tensorflow.keras.utils import get_file
+
+from kashgari.embeddings import BertEmbedding
+from kashgari.macros import DATA_PATH
+from kashgari.tasks.classification import BiLSTM_Model as Classification_BiLSTM_Model
+from kashgari.tasks.labeling import BiLSTM_Model
+from kashgari.utils import load_model
 from tests.test_macros import TestMacros
 
 bert_path = get_file('bert_sample_model',
@@ -39,6 +44,12 @@ class TestTransferEmbedding(unittest.TestCase):
         x, y = TestMacros.load_classification_corpus()
         model.fit(x, y, epochs=1)
 
+        model_path = os.path.join(tempfile.gettempdir(), str(time.time()))
+        model.save(model_path)
+
+        new_model = load_model(model_path)
+        new_model.predict(x[:10])
+
     def test_label_task(self):
         # ------ labeling -------
         embedding = BertEmbedding(model_folder=bert_path, sequence_length=12)
@@ -46,6 +57,12 @@ class TestTransferEmbedding(unittest.TestCase):
 
         model = BiLSTM_Model(embedding=embedding)
         model.fit(x, y, epochs=1)
+
+        model_path = os.path.join(tempfile.gettempdir(), str(time.time()))
+        model.save(model_path)
+
+        new_model = load_model(model_path)
+        new_model.predict(x[:10])
 
 
 if __name__ == "__main__":
