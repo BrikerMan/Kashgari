@@ -43,6 +43,8 @@ class TestBiLSTM_Model(unittest.TestCase):
         new_y = new_model.predict(train_x[:20])
         assert new_y == original_y
 
+        new_model.evaluate(train_x, train_y)
+
     def test_with_word_embedding(self):
         w2v_embedding = WordEmbedding(TestMacros.w2v_path, sequence_length=80)
         w2v_embedding.set_sequence_length(120)

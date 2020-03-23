@@ -71,7 +71,7 @@ class BatchDataGenerator(Iterable):
 
     @property
     def steps(self) -> int:
-        return self.corpus.steps // self.batch_size
+        return max(self.corpus.steps // self.batch_size, 1)
 
     def __iter__(self):
         from kashgari.utils import unison_shuffled_copies

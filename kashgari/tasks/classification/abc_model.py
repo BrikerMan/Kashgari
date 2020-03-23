@@ -9,9 +9,11 @@
 
 import logging
 from abc import ABC
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Tuple
 
-import kashgari
+import random
+from sklearn import metrics
+
 from kashgari.embeddings import WordEmbedding
 from kashgari.types import TextSamplesVar
 from kashgari.generators import CorpusGenerator
@@ -21,7 +23,6 @@ from kashgari.generators import BatchDataGenerator
 
 
 class ABCClassificationModel(ABCTaskModel, ABC):
-
     __task__ = 'classification'
 
     def __init__(self,
@@ -154,6 +155,35 @@ class ABCClassificationModel(ABCTaskModel, ABC):
                                  steps_per_epoch=train_gen.steps,
                                  epochs=epochs,
                                  callbacks=callbacks)
+
+    def evaluate(self,
+                 x_data,
+                 y_data,
+                 batch_size=None,
+                 digits=4,
+                 truncating=False,
+                 debug_info=False) -> Tuple[float, float, Dict]:
+        y_pred = self.predict(x_data,
+                              batch_size=batch_size,
+                              truncating=truncating,
+                              debug_info=debug_info)
+
+        if debug_info:
+            for index in random.sample(list(range(len(x_data))), 5):
+                logging.debug('------ sample {} ------'.format(index))
+                logging.debug('x      : {}'.format(x_data[index]))
+                logging.debug('y      : {}'.format(y_data[index]))
+                logging.debug('y_pred : {}'.format(y_pred[index]))
+
+        report = metrics.classification_report(y_data,
+                                               y_pred,
+                                               output_dict=True,
+                                               digits=digits)
+        print(metrics.classification_report(y_data,
+                                            y_pred,
+                                            output_dict=False,
+                                            digits=digits))
+        return report
 
 
 if __name__ == "__main__":

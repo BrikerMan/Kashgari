@@ -7,10 +7,13 @@
 # file: abc_model.py
 # time: 4:30 下午
 
+import random
+import logging
 from abc import ABC
 
+from seqeval.metrics import classification_report
 from seqeval.metrics.sequence_labeling import get_entities
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Tuple
 
 from kashgari.embeddings.abc_embedding import ABCEmbedding
 from kashgari.generators import BatchDataGenerator
@@ -203,16 +206,47 @@ class ABCLabelingModel(ABCTaskModel, ABC):
                     "end": entity[2],
                     "value": value,
                 })
-            if join_chunk is False:
-                text = text_seq[index]
-            else:
-                text = join_chunk.join(text_seq[index])
+
             final_res.append({
-                'text': text,
-                'text_raw': text_seq[index],
+                'tokenized': x_data[index],
                 'labels': seq_data
             })
         return final_res
+
+    def evaluate(self,
+                 x_data,
+                 y_data,
+                 batch_size=None,
+                 digits=4,
+                 truncating=False,
+                 debug_info=False) -> Tuple[float, float, Dict]:
+        """
+        Build a text report showing the main labeling metrics.
+
+
+        """
+        y_pred = self.predict(x_data,
+                              batch_size=batch_size,
+                              truncating=truncating,
+                              debug_info=debug_info)
+        y_true = [seq[:len(y_pred[index])] for index, seq in enumerate(y_data)]
+
+        new_y_pred = []
+        for x in y_pred:
+            new_y_pred.append([str(i) for i in x])
+        new_y_true = []
+        for x in y_true:
+            new_y_true.append([str(i) for i in x])
+
+        if debug_info:
+            for index in random.sample(list(range(len(x_data))), 5):
+                logging.debug('------ sample {} ------'.format(index))
+                logging.debug('x      : {}'.format(x_data[index]))
+                logging.debug('y_true : {}'.format(y_true[index]))
+                logging.debug('y_pred : {}'.format(y_pred[index]))
+        report = classification_report(y_true, y_pred, digits=digits)
+        print(classification_report(y_true, y_pred, digits=digits))
+        return report
 
 
 if __name__ == "__main__":

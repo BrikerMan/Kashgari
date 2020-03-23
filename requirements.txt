@@ -5,3 +5,4 @@ tqdm
 tensorflow>=2.0.0
 bert4keras>=0.6.0
 seqeval==0.0.12
+scikit-learn>=0.21.1

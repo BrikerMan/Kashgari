@@ -13,7 +13,7 @@ import pathlib
 import logging
 
 from abc import ABC
-from typing import Dict, Any
+from typing import Dict, Any, Tuple
 
 import kashgari
 from kashgari.embeddings import WordEmbedding
@@ -205,6 +205,26 @@ class ABCTaskModel(ABC):
                 logging.info('output: {}'.format(pred))
                 logging.info('output argmax: {}'.format(pred.argmax(-1)))
         return res
+
+    def evaluate(self,
+                 x_data,
+                 y_data,
+                 batch_size=None,
+                 digits=4,
+                 debug_info=False) -> Tuple[float, float, Dict]:
+        """
+        Evaluate model
+        Args:
+            x_data:
+            y_data:
+            batch_size:
+            digits:
+            debug_info:
+
+        Returns:
+
+        """
+        raise NotImplementedError
 
 
 if __name__ == "__main__":
