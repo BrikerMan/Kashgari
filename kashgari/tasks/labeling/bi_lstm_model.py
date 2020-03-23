@@ -59,5 +59,5 @@ if __name__ == "__main__":
     x, y = ChineseDailyNerCorpus.load_data()
     x_valid, y_valid = ChineseDailyNerCorpus.load_data('valid')
     model = BiLSTM_Model()
-    model.fit(x, y, x_valid, y_valid,  epochs=2)
+    model.fit(x, y, x_valid, y_valid, epochs=2)
     model.evaluate(*ChineseDailyNerCorpus.load_data('test'))
