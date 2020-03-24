@@ -82,7 +82,7 @@ class SequenceProcessor(ABCProcessor):
 
             token2count = {}
 
-            for sentence, label in tqdm.tqdm(generator, total=generator.steps, desc="Preparing text vocab dict"):
+            for sentence, label in tqdm.tqdm(generator, desc="Preparing text vocab dict"):
                 if self.vocab_dict_type == 'text':
                     target = sentence
                 else:

@@ -27,7 +27,7 @@ class ClassificationProcessor(ABCProcessor):
 
             token2count = {}
 
-            for _, label in tqdm.tqdm(generator, total=generator.steps, desc="Preparing classification label vocab dict"):
+            for _, label in tqdm.tqdm(generator, desc="Preparing classification label vocab dict"):
                 count = token2count.get(label, 0)
                 token2count[label] = count + 1
 

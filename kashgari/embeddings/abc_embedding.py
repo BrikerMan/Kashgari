@@ -93,7 +93,7 @@ class ABCEmbedding:
     def calculate_sequence_length_if_needs(self, corpus_gen: CorpusGenerator, cover_rate: float = 0.95):
         if self.sequence_length is None:
             seq_lens = []
-            for sentence, _ in tqdm.tqdm(corpus_gen, total=corpus_gen.steps,
+            for sentence, _ in tqdm.tqdm(corpus_gen,
                                          desc="Calculating sequence length"):
                 seq_lens.append(len(sentence))
             self.sequence_length = sorted(seq_lens)[int(cover_rate * len(seq_lens))]

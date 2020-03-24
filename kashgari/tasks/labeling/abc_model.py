@@ -147,12 +147,12 @@ class ABCLabelingModel(ABCTaskModel, ABC):
                                            max_position=self.embedding.max_position,
                                            batch_size=batch_size)
             fit_kwargs['validation_data'] = valid_gen.generator()
-            fit_kwargs['validation_steps'] = valid_gen.steps
+            fit_kwargs['validation_steps'] = len(valid_gen)
         if callbacks:
             fit_kwargs['callbacks'] = callbacks
 
         return self.tf_model.fit(train_gen.generator(),
-                                 steps_per_epoch=train_gen.steps,
+                                 steps_per_epoch=len(train_gen),
                                  epochs=epochs,
                                  callbacks=callbacks)
 

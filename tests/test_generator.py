@@ -27,7 +27,7 @@ class TestGenerator(unittest.TestCase):
         for i in range(100):
             x_set.append([f'x{i}'] * 4)
             y_set.append([f'y{i}'] * 4)
-        corpus_gen = CorpusGenerator(x_set, y_set, shuffle=False)
+        corpus_gen = CorpusGenerator(x_set, y_set)
 
         a = []
         for x, y in corpus_gen:
