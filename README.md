@@ -180,6 +180,7 @@ Thanks goes to these wonderful people. And there are many ways to get involved. 
     <td align="center"><a href="https://developers.google.com/community/experts/directory/profile/profile-eliyar_eziz"><img src="https://avatars1.githubusercontent.com/u/9368907?v=4" width="100px;" alt=""/><br /><sub><b>Eliyar Eziz</b></sub></a><br /><a href="https://github.com/BrikerMan/Kashgari/commits?author=BrikerMan" title="Documentation">📖</a> <a href="https://github.com/BrikerMan/Kashgari/commits?author=BrikerMan" title="Tests">⚠️</a> <a href="https://github.com/BrikerMan/Kashgari/commits?author=BrikerMan" title="Code">💻</a></td>
     <td align="center"><a href="http://www.chuanxilu.com"><img src="https://avatars3.githubusercontent.com/u/856746?v=4" width="100px;" alt=""/><br /><sub><b>Alex Wang</b></sub></a><br /><a href="https://github.com/BrikerMan/Kashgari/commits?author=alexwwang" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/lsgrep"><img src="https://avatars3.githubusercontent.com/u/3893940?v=4" width="100px;" alt=""/><br /><sub><b>Yusup</b></sub></a><br /><a href="https://github.com/BrikerMan/Kashgari/commits?author=lsgrep" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/adlinex"><img src="https://avatars1.githubusercontent.com/u/5442229?v=4" width="100px;" alt=""/><br /><sub><b>Adline</b></sub></a><br /><a href="https://github.com/BrikerMan/Kashgari/commits?author=adlinex" title="Code">💻</a></td>
   </tr>
 </table>
 
