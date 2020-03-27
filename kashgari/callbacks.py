@@ -7,16 +7,16 @@
 # file: callbacks.py
 # time: 2019-05-22 15:00
 
-from sklearn import metrics
-from tensorflow.python.distribute import multi_worker_util
-
-from kashgari import macros
-from tensorflow.python import keras
-from kashgari.tasks.base_model import BaseModel
-from seqeval import metrics as seq_metrics
 import logging
 import os
+
+from seqeval import metrics as seq_metrics
+from sklearn import metrics
+from tensorflow.python import keras
 from tensorflow.python.keras import backend as K
+
+from kashgari import macros
+from kashgari.tasks.base_model import BaseModel
 
 
 class EvalCallBack(keras.callbacks.Callback):
@@ -92,6 +92,7 @@ class KashgariModelCheckpoint(keras.callbacks.ModelCheckpoint):
          **kwargs: Additional arguments for backwards compatibility. Possible key
            is `period`.
      """
+
     def __init__(self,
                  filepath,
                  monitor='val_loss',
