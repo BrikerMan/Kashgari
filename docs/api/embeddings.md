@@ -11,7 +11,7 @@ Embedding layers have its own \_\_init\_\_ function, check it out from their doc
 | [BERTEmbedding](../embeddings/bert-embedding.md)                        | pre-trained BERT embedding                                                  |
 | [GPT2Embedding](../embeddings/gpt2-embedding.md)                        | pre-trained GPT-2 embedding                                                 |
 | [NumericFeaturesEmbedding](../embeddings/numeric-features-embedding.md) | random init `tf.keras.layers.Embedding` layer for numeric feature embedding |
-| [StackedEmbedding](../embeddings/stacked-embeddingmd)                   | stack other embeddings for multi-input model                                |
+| [StackedEmbedding](../embeddings/stacked-embedding.md)                  | stack other embeddings for multi-input model                                |
 
 All embedding layer shares same API except the `__init__` function.
 

@@ -261,12 +261,14 @@ def setup(app):
     rst_readme = os.path.join(docs_path, 'README.rst')
 
     # Update all .md files， for fixing links
-    update_markdown_content(docs_path)
+    if os.environ.get('READTHEDOCS') == 'True':
+        update_markdown_content(docs_path)
 
     # Change readme to rst file, and include in Sphinx index
     with open(rst_readme, 'w') as f:
         md_content = open(original_readme, 'r').read()
         md_content = md_content.replace('(./docs/', '(./')
+        md_content = md_content.replace('.md)', '.html)')
         f.write(convert(md_content))
         print(f'Saved RST file to {rst_readme}')
 
