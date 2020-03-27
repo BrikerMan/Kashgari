@@ -18,7 +18,7 @@ BERTEmbeddingV2 support models:
 When using pre-trained embedding, remember to use same tokenize tool with the embedding model, this will allow to access the full power of the embedding
 
 ```python
-kashgari.embeddings.BERTEmbedding(vacab_path: str,
+kashgari.embeddings.BERTEmbedding(vocab_path: str,
                                   config_path: str,
                                   checkpoint_path: str,
                                   bert_type: str = 'bert',
@@ -30,10 +30,10 @@ kashgari.embeddings.BERTEmbedding(vacab_path: str,
 
 **Arguments**
 
-- **vacab_path**: path of model's `vacab.txt` file
+- **vocab_path**: path of model's `vacab.txt` file
 - **config_path**: path of model's `model.json` file
 - **checkpoint_path**: path of model's checkpoint file
-- **bert_type**: `bert`, `albert`, `nezha`. Type of BERT model.
+- **bert_type**: `bert`, `albert`, `nezha`, `electra`, `gpt2_ml`, `t5`. Type of BERT model.
 - **task**: `kashgari.CLASSIFICATION` `kashgari.LABELING`. Downstream task type, If you only need to feature extraction, just set it as `kashgari.CLASSIFICATION`.
 - **sequence_length**: `'auto'` or integer. When using `'auto'`, use the 95% of corpus length as sequence length. If using an integer, let's say `50`, the input output sequence length will set to 50.
 
