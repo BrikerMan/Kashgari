@@ -30,13 +30,16 @@ class BERTEmbeddingV2(BERTEmbedding):
     def info(self):
         info = super(BERTEmbedding, self).info()
         info['config'] = {
-            'model_folder': self.model_folder,
+            'vocab_path': self.vocab_path,
+            'config_path': self.config_path,
+            'checkpoint_path': self.checkpoint_path,
+            'bert_type': self.bert_type,
             'sequence_length': self.sequence_length
         }
         return info
 
     def __init__(self,
-                 vacab_path: str,
+                 vocab_path: str,
                  config_path: str,
                  checkpoint_path: str,
                  bert_type: str = 'bert',
@@ -47,7 +50,7 @@ class BERTEmbeddingV2(BERTEmbedding):
         """
         """
         self.model_folder = ''
-        self.vacab_path = vacab_path
+        self.vocab_path = vocab_path
         self.config_path = config_path
         self.checkpoint_path = checkpoint_path
         super(BERTEmbedding, self).__init__(task=task,

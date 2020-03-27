@@ -14,7 +14,7 @@ You could easily switch from one model to another just by changing one line of c
 | CNN\_LSTM\_Model      |      |
 | CNN\_GRU\_Model       |      |
 | AVCNN\_Model          |      |
-| KMax\_CNN]\_Model     |      |
+| KMax\_CNN\_Model     |      |
 | R\_CNN\_Model         |      |
 | AVRNN\_Model          |      |
 | Dropout\_BiGRU\_Model |      |
@@ -128,7 +128,7 @@ model.build_model(train_x, train_y, valid_x, valid_y)
 optimizer = RAdam()
 model.compile_model(optimizer=optimizer)
 
-# Train model 
+# Train model
 model.fit(train_x, train_y, valid_x, valid_y)
 ```
 

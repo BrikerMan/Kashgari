@@ -58,7 +58,7 @@ Kashgari is a simple and powerful NLP Transfer learning framework, build a state
 
 | Task                     | Language | Dataset                   | Score          | Detail                                                                                                   |
 | ------------------------ | -------- | ------------------------- | -------------- | -------------------------------------------------------------------------------------------------------- |
-| Named Entity Recognition | Chinese  | People's Daily Ner Corpus | **94.46** (F1) | [Text Labeling Performance Report](https://kashgari.bmio.net/tutorial/text-labeling/#performance-report) |
+| Named Entity Recognition | Chinese  | People's Daily Ner Corpus | **94.46** (F1) | [Text Labeling Performance Report](https://kashgari.rtfd.io/tutorial/text-labeling.html#performance-report) |
 
 ## Tutorials
 
@@ -170,7 +170,7 @@ Support this project by becoming a sponsor. Your issues and feature request will
 
 ## Contributors ✨
 
-Thanks goes to these wonderful people. And there are many ways to get involved. Start with the [contributor guidelines](https://kashgari.bmio.net/about/contributing/) and then check these open issues for specific tasks.
+Thanks goes to these wonderful people. And there are many ways to get involved. Start with the [contributor guidelines](./docs/about/contributing.md) and then check these open issues for specific tasks.
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
@@ -199,35 +199,4 @@ This library is inspired by and references following frameworks and papers.
 - [flair - A very simple framework for state-of-the-art Natural Language Processing (NLP)](https://github.com/zalandoresearch/flair)
 - [anago - Bidirectional LSTM-CRF and ELMo for Named-Entity Recognition, Part-of-Speech Tagging](https://github.com/Hironsan/anago)
 - [Chinese-Word-Vectors](https://github.com/Embedding/Chinese-Word-Vectors)
-
-This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
-
-## Contributors
-
-### Code Contributors
-
-This project exists thanks to all the people who contribute. [[Contribute](CONTRIBUTING.md)].
-<a href="https://github.com/BrikerMan/Kashgari/graphs/contributors"><img src="https://opencollective.com/Kashgari/contributors.svg?width=890&button=false" /></a>
-
-### Financial Contributors
-
-Become a financial contributor and help us sustain our community. [[Contribute](https://opencollective.com/Kashgari/contribute)]
-
-#### Individuals
-
-<a href="https://opencollective.com/Kashgari"><img src="https://opencollective.com/Kashgari/individuals.svg?width=890"></a>
-
-#### Organizations
-
-Support this project with your organization. Your logo will show up here with a link to your website. [[Contribute](https://opencollective.com/Kashgari/contribute)]
-
-<a href="https://opencollective.com/Kashgari/organization/0/website"><img src="https://opencollective.com/Kashgari/organization/0/avatar.svg"></a>
-<a href="https://opencollective.com/Kashgari/organization/1/website"><img src="https://opencollective.com/Kashgari/organization/1/avatar.svg"></a>
-<a href="https://opencollective.com/Kashgari/organization/2/website"><img src="https://opencollective.com/Kashgari/organization/2/avatar.svg"></a>
-<a href="https://opencollective.com/Kashgari/organization/3/website"><img src="https://opencollective.com/Kashgari/organization/3/avatar.svg"></a>
-<a href="https://opencollective.com/Kashgari/organization/4/website"><img src="https://opencollective.com/Kashgari/organization/4/avatar.svg"></a>
-<a href="https://opencollective.com/Kashgari/organization/5/website"><img src="https://opencollective.com/Kashgari/organization/5/avatar.svg"></a>
-<a href="https://opencollective.com/Kashgari/organization/6/website"><img src="https://opencollective.com/Kashgari/organization/6/avatar.svg"></a>
-<a href="https://opencollective.com/Kashgari/organization/7/website"><img src="https://opencollective.com/Kashgari/organization/7/avatar.svg"></a>
-<a href="https://opencollective.com/Kashgari/organization/8/website"><img src="https://opencollective.com/Kashgari/organization/8/avatar.svg"></a>
-<a href="https://opencollective.com/Kashgari/organization/9/website"><img src="https://opencollective.com/Kashgari/organization/9/avatar.svg"></a>
+- [bert4keras - Our light reimplement of bert for keras](https://github.com/bojone/bert4keras/)

@@ -7,7 +7,6 @@
 # file: models.py
 # time: 2019-05-22 11:26
 
-import logging
 import tensorflow as tf
 from typing import Dict, Any
 from kashgari.layers import L, AttentionWeightedAverageLayer, KMaxPoolingLayer
@@ -683,7 +682,7 @@ class Dropout_AVRNN_Model(BaseClassificationModel):
 
 if __name__ == "__main__":
     print(BiLSTM_Model.get_default_hyper_parameters())
-    logging.basicConfig(level=logging.DEBUG)
+    # logging.basicConfig(level=logging.DEBUG)
     from kashgari.corpus import SMP2018ECDTCorpus
 
     x, y = SMP2018ECDTCorpus.load_data()

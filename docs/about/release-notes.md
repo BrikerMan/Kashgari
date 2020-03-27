@@ -17,6 +17,11 @@ pip show kashgari
 
 ## Current Release
 
+### [1.1.2] - 2020.03.27
+
+- ✨ Add save best model callback `KashgariModelCheckpoint`.
+- ⬆️ Upgrading `bert4keras` version to `0.6.5`.
+
 ### [1.1.1] - 2020.03.13
 
 - ✨ Add BERTEmbeddingV2.
