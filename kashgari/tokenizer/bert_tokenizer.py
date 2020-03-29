@@ -9,8 +9,9 @@
 
 # flake8: noqa: E127
 
-import codecs
 import os
+import codecs
+import warnings
 import unicodedata
 
 from kashgari.tokenizer.base_tokenizer import Tokenizer
@@ -68,8 +69,14 @@ class BertTokenizer(Tokenizer):
 
     @classmethod
     def load_from_vacab_file(cls, vacab_path: str):
+        warnings.warn("The 'load_from_vacab_file' function is deprecated, "
+                      "use 'load_from_vocab_file' instead", DeprecationWarning, 2)
+        return cls.load_from_vocab_file(vacab_path)
+
+    @classmethod
+    def load_from_vocab_file(cls, vocab_path: str):
         token2idx = {}
-        with codecs.open(vacab_path, 'r', 'utf8') as reader:
+        with codecs.open(vocab_path, 'r', 'utf8') as reader:
             for line in reader:
                 token = line.strip()
                 token2idx[token] = len(token2idx)

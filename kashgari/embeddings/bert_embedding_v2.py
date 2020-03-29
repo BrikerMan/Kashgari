@@ -72,7 +72,7 @@ class BERTEmbeddingV2(BERTEmbedding):
 
     def _build_token2idx_from_bert(self):
         token2idx = {}
-        with codecs.open(self.vacab_path, 'r', 'utf8') as reader:
+        with codecs.open(self.vocab_path, 'r', 'utf8') as reader:
             for line in reader:
                 token = line.strip()
                 token2idx[token] = len(token2idx)
@@ -116,8 +116,8 @@ if __name__ == "__main__":
     model_folder = '/Users/brikerman/Desktop/nlp/language_models/albert_base'
     checkpoint_path = os.path.join(model_folder, 'model.ckpt-best')
     config_path = os.path.join(model_folder, 'albert_config.json')
-    vacab_path = os.path.join(model_folder, 'vocab_chinese.txt')
-    embed = BERTEmbeddingV2(vacab_path, config_path, checkpoint_path,
+    v_path = os.path.join(model_folder, 'vocab_chinese.txt')
+    embed = BERTEmbeddingV2(v_path, config_path, checkpoint_path,
                             bert_type='albert',
                             task=kashgari.CLASSIFICATION,
                             sequence_length=100)
