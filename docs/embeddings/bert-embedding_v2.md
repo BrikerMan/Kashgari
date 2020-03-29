@@ -62,10 +62,10 @@ from kashgari.tokenizer import BertTokenizer
 model_folder = '/Users/brikerman/Desktop/nlp/language_models/albert_base'
 checkpoint_path = os.path.join(model_folder, 'model.ckpt-best')
 config_path = os.path.join(model_folder, 'albert_config.json')
-vacab_path = os.path.join(model_folder, 'vocab_chinese.txt')
+vocab_path = os.path.join(model_folder, 'vocab_chinese.txt')
 
-tokenizer = BertTokenizer.load_from_vacab_file(vacab_path)
-embed = BERTEmbeddingV2(vacab_path, config_path, checkpoint_path,
+tokenizer = BertTokenizer.load_from_vacob_file(vocab_path)
+embed = BERTEmbeddingV2(vocab_path, config_path, checkpoint_path,
                         bert_type='albert',
                         task=kashgari.CLASSIFICATION,
                         sequence_length=100)

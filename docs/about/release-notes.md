@@ -17,6 +17,10 @@ pip show kashgari
 
 ## Current Release
 
+### [1.1.3] - 2020.03.28
+
+- 🐛 Fixing vocab_path typo.
+
 ### [1.1.2] - 2020.03.27
 
 - ✨ Add save best model callback `KashgariModelCheckpoint`.
