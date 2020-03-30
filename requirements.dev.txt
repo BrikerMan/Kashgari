@@ -6,6 +6,8 @@ keras-gpt-2>=0.8.0
 gensim>=3.5.0
 seqeval==0.0.10
 pandas>=0.23.0
+bert4keras==0.6.5
+
 jieba
 tensorflow==1.14.0
 google-compute-engine
