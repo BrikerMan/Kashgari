@@ -1,8 +1,8 @@
-# BERT Embedding V2
+# Transformer Embedding
 
-BERTEmbeddingV2 is based on [bert4keras](https://github.com/bojone/bert4keras). The embeddings itself are wrapped into our simple embedding interface so that they can be used like any other embedding.
+TransformerEmbedding is based on [bert4keras](https://github.com/bojone/bert4keras). The embeddings itself are wrapped into our simple embedding interface so that they can be used like any other embedding.
 
-BERTEmbeddingV2 support models:
+TransformerEmbedding support models:
 
 | Model   | Author | Link                                                                       |     | Example |
 | ------- | ------ | -------------------------------------------------------------------------- | --- | ------- |
@@ -18,14 +18,14 @@ BERTEmbeddingV2 support models:
 When using pre-trained embedding, remember to use same tokenize tool with the embedding model, this will allow to access the full power of the embedding
 
 ```python
-kashgari.embeddings.BERTEmbedding(vocab_path: str,
-                                  config_path: str,
-                                  checkpoint_path: str,
-                                  bert_type: str = 'bert',
-                                  task: str = None,
-                                  sequence_length: Union[str, int] = 'auto',
-                                  processor: Optional[BaseProcessor] = None,
-                                  from_saved_model: bool = False):
+kashgari.embeddings.TransformerEmbedding(vocab_path: str,
+                                          config_path: str,
+                                          checkpoint_path: str,
+                                          bert_type: str = 'bert',
+                                          task: str = None,
+                                          sequence_length: Union[str, int] = 'auto',
+                                          processor: Optional[BaseProcessor] = None,
+                                          from_saved_model: bool = False):
 ```
 
 **Arguments**
@@ -55,7 +55,7 @@ labels = [
 # ------------ Load Bert Embedding ------------
 import os
 import kashgari
-from kashgari.embeddings.bert_embedding_v2 import BERTEmbeddingV2
+from kashgari.embeddings import TransformerEmbedding
 from kashgari.tokenizer import BertTokenizer
 
 # Setup paths
@@ -65,10 +65,10 @@ config_path = os.path.join(model_folder, 'albert_config.json')
 vocab_path = os.path.join(model_folder, 'vocab_chinese.txt')
 
 tokenizer = BertTokenizer.load_from_vacob_file(vocab_path)
-embed = BERTEmbeddingV2(vocab_path, config_path, checkpoint_path,
-                        bert_type='albert',
-                        task=kashgari.CLASSIFICATION,
-                        sequence_length=100)
+embed = TransformerEmbedding(vocab_path, config_path, checkpoint_path,
+                             bert_type='albert',
+                             task=kashgari.CLASSIFICATION,
+                             sequence_length=100)
 
 sentences_tokenized = [tokenizer.tokenize(s) for s in sentences]
 """
@@ -85,7 +85,7 @@ validate_x, validate_y = sentences_tokenized[2:], labels[2:]
 
 # ------------ Build Model Start ------------
 from kashgari.tasks.classification import CNNLSTMModel
-model = CNNLSTMModel(bert_embedding)
+model = CNNLSTMModel(embed)
 
 # ------------ Build Model End ------------
 

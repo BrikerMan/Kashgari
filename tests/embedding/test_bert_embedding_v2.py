@@ -11,8 +11,9 @@ import os
 import pytest
 import unittest
 import kashgari
-from kashgari.embeddings.bert_embedding_v2 import BERTEmbeddingV2
+from kashgari.embeddings import BERTEmbeddingV2
 from kashgari.tokenizer import BertTokenizer
+
 
 @pytest.mark.skip
 class TestBERTEmbedding(unittest.TestCase):

@@ -4,8 +4,9 @@
 # contact: eliyar917@gmail.com
 # blog: https://eliyar.biz
 
-# file: bert_embedding_v2.py
-# time: 10:03 上午
+# file: transformer_embedding.py
+# time: 2:22 下午
+
 
 import os
 
@@ -24,7 +25,7 @@ from kashgari.processors.base_processor import BaseProcessor
 import keras_bert
 
 
-class BERTEmbeddingV2(BERTEmbedding):
+class TransformerEmbedding(BERTEmbedding):
     """Pre-trained BERT embedding"""
 
     def info(self):
@@ -47,8 +48,6 @@ class BERTEmbeddingV2(BERTEmbedding):
                  sequence_length: Union[str, int] = 'auto',
                  processor: Optional[BaseProcessor] = None,
                  from_saved_model: bool = False):
-        """
-        """
         self.model_folder = ''
         self.vocab_path = vocab_path
         self.config_path = config_path
@@ -104,6 +103,8 @@ class BERTEmbeddingV2(BERTEmbedding):
                                                  application='encoder',
                                                  return_keras_model=True)
 
+            bert_model.trainable = False
+
             self.embed_model = bert_model
 
             self.embedding_size = int(bert_model.output.shape[-1])
@@ -111,15 +112,16 @@ class BERTEmbeddingV2(BERTEmbedding):
             self.embed_model = tf.keras.Model(bert_model.inputs, output_features)
 
 
+BERTEmbeddingV2 = TransformerEmbedding
+
 if __name__ == "__main__":
-    # BERT_PATH = '/Users/brikerman/Desktop/nlp/language_models/bert/chinese_L-12_H-768_A-12'
     model_folder = '/Users/brikerman/Desktop/nlp/language_models/albert_base'
-    checkpoint_path = os.path.join(model_folder, 'model.ckpt-best')
-    config_path = os.path.join(model_folder, 'albert_config.json')
-    v_path = os.path.join(model_folder, 'vocab_chinese.txt')
-    embed = BERTEmbeddingV2(v_path, config_path, checkpoint_path,
-                            bert_type='albert',
-                            task=kashgari.CLASSIFICATION,
-                            sequence_length=100)
+
+    embed = TransformerEmbedding(os.path.join(model_folder, 'vocab_chinese.txt'),
+                                 os.path.join(model_folder, 'model_config.json'),
+                                 os.path.join(model_folder, 'model.ckpt-best'),
+                                 bert_type='albert',
+                                 task=kashgari.CLASSIFICATION,
+                                 sequence_length=100)
     x = embed.embed_one(list('今天天气不错'))
     print(x)
