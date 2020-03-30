@@ -17,6 +17,10 @@ pip show kashgari
 
 ## Current Release
 
+### [1.1.4] - 2020.03.30
+
+- 🐛 Fix bert embedding v2 error, set default to not-trainable. ([#354], [#346])
+
 ### [1.1.3] - 2020.03.28
 
 - 🐛 Fixing vocab_path typo.
@@ -179,3 +183,5 @@ Here is how the existing versions changes
 [#248]: https://github.com/BrikerMan/Kashgari/issues/248
 [#249]: https://github.com/BrikerMan/Kashgari/issues/249
 [#303]: https://github.com/BrikerMan/Kashgari/issues/303
+[#346]: https://github.com/BrikerMan/Kashgari/issues/346
+[#354]: https://github.com/BrikerMan/Kashgari/issues/354
