@@ -13,8 +13,6 @@ from tensorflow import keras
 
 from kashgari.tasks.classification.abc_model import ABCClassificationModel
 
-L = keras.layers
-
 
 class CNN_Attention_Model(ABCClassificationModel, ABC):
 
