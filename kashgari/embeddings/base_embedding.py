@@ -43,7 +43,7 @@ class Embedding(object):
                              config_dict: Dict,
                              model_path: str,
                              tf_model: keras.Model):
-
+        from kashgari import utils
         processor_info = config_dict['processor']
         processor_class = pydoc.locate(f"{processor_info['module']}.{processor_info['class_name']}")
         processor = processor_class(**processor_info['config'])
@@ -52,8 +52,7 @@ class Embedding(object):
                        from_saved_model=True, **config_dict['config'])
 
         embed_model_json_str = json.dumps(config_dict['embed_model'])
-        instance.embed_model = keras.models.model_from_json(embed_model_json_str,
-                                                            custom_objects=kashgari.custom_objects)
+        instance.embed_model = utils._custom_load_keras_model_from_json(embed_model_json_str)
 
         # Load Weights from model
         for layer in instance.embed_model.layers:

@@ -16,7 +16,7 @@ from kashgari.tasks.labeling.base_model import BaseLabelingModel
 from kashgari.layers import L
 from kashgari.layers.crf import CRF
 
-from kashgari.utils import custom_objects
+from kashgari import custom_objects
 
 custom_objects['CRF'] = CRF
 
