@@ -19,8 +19,10 @@ tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 
 import keras_bert
 from kashgari.macros import TaskType, config
+from bert4keras.layers import custom_objects as bert4keras_custom_objects
 
 custom_objects = keras_bert.get_custom_objects()
+custom_objects.update(bert4keras_custom_objects)
 CLASSIFICATION = TaskType.CLASSIFICATION
 LABELING = TaskType.LABELING
 SCORING = TaskType.SCORING
