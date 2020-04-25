@@ -21,7 +21,7 @@ from typing import List, Optional, Dict, Union
 import tensorflow as tf
 from tensorflow.python import keras, saved_model
 
-from kashgari import custom_objects
+import kashgari
 from kashgari.embeddings.base_embedding import Embedding
 from kashgari.layers.crf import CRF
 from kashgari.processors.base_processor import BaseProcessor
@@ -43,7 +43,7 @@ def get_list_subset(target: List, index_list: List[int]) -> List:
 
 
 def custom_object_scope():
-    return tf.keras.utils.custom_object_scope(custom_objects)
+    return tf.keras.utils.custom_object_scope(kashgari.custom_objects)
 
 
 def load_model(model_path: str,
@@ -57,6 +57,7 @@ def load_model(model_path: str,
     Returns:
 
     """
+    import keras_bert
     with open(os.path.join(model_path, 'model_info.json'), 'r') as f:
         model_info = json.load(f)
 
@@ -64,7 +65,14 @@ def load_model(model_path: str,
     model_json_str = json.dumps(model_info['tf_model'])
 
     model = model_class()
-    model.tf_model = tf.keras.models.model_from_json(model_json_str, custom_objects)
+
+    # Fix loading bug caused by custom objects naming duplication in keras_bert and bert4keras
+    custom_obj_1 = kashgari.custom_objects
+    custom_obj_2 = dict(custom_obj_1)
+    custom_obj_2.update(keras_bert.get_custom_objects())
+
+    model.tf_model = _custom_load_keras_model_from_json(model_json_str)
+
     if load_weights:
         model.tf_model.load_weights(os.path.join(model_path, 'model_weights.h5'))
 
@@ -80,6 +88,30 @@ def load_model(model_path: str,
         model.layer_crf = model.tf_model.layers[-1]
 
     return model
+
+
+def _custom_load_keras_model_from_json(json_str):
+    # Fix loading bug caused by custom objects naming duplication in keras_bert and bert4keras
+    import keras_bert
+    custom_obj_1 = kashgari.custom_objects
+    custom_obj_2 = dict(custom_obj_1)
+    custom_obj_2.update(keras_bert.get_custom_objects())
+
+    model, exp = None, None
+    for custom_obj in [
+        custom_obj_1,
+        custom_obj_2
+    ]:
+        try:
+            model = tf.keras.models.model_from_json(json_str, custom_obj)
+            break
+        except Exception as e:
+            exp = e
+
+    if model:
+        return model
+    else:
+        raise exp
 
 
 def load_processor(model_path: str) -> BaseProcessor:

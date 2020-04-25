@@ -103,10 +103,6 @@ train_x = [sample]
 
 | model            | provider             | Language       | Link             | info                          |
 | ---------------- | -------------------- | -------------- | ---------------- | ----------------------------- |
-| BERT official    | Google               | Multi Language | [link][bert]     |                               |
-| ERNIE            | Baidu                | Chinese        | [link][ernie]    | Unofficial Tensorflow Version |
-| Chinese BERT WWM | 哈工大讯飞联合实验室 | Chinese        | [link][bert-wwm] | Use Tensorflow Version        |
-
-[bert]: https://github.com/google-research/bert
-[ernie]: https://github.com/ArthurRizar/tensorflow_ernie
-[bert-wwm]: https://github.com/ymcui/Chinese-BERT-wwm#%E4%B8%AD%E6%96%87%E6%A8%A1%E5%9E%8B%E4%B8%8B%E8%BD%BD
+| BERT official    | Google               | Multi Language | [link](https://github.com/google-research/bert)     |                               |
+| ERNIE            | Baidu                | Chinese        | [link](https://github.com/ArthurRizar/tensorflow_ernie)    | Unofficial Tensorflow Version |
+| Chinese BERT WWM | 哈工大讯飞联合实验室 | Chinese        | [link](https://github.com/ymcui/Chinese-BERT-wwm#%E4%B8%AD%E6%96%87%E6%A8%A1%E5%9E%8B%E4%B8%8B%E8%BD%BD) | Use Tensorflow Version        |
