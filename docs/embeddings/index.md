@@ -6,7 +6,8 @@ Kashgari provides several embeddings for language representation. Embedding laye
 | ----------------------------------------------------------- | --------------------------------------------------------------------------- |
 | [BareEmbedding](bare-embedding.md)                        | random init `tf.keras.layers.Embedding` layer for text sequence embedding   |
 | [WordEmbedding](word-embedding.md)                        | pre-trained Word2Vec embedding                                              |
-| [BERTEmbedding](bert-embedding.md)                        | pre-trained BERT embedding                                                  |
+| [BERTEmbedding](bert-embedding.md)                        | pre-trained BERT embedding (BERT, ERNIE)                                    |
+| [TransformerEmbedding](bert-embedding_v2.md)              | pre-trained TransferEmbedding embedding (BERT, ALBERT, RoBERTa, NEZHA)      |
 | [GPT2Embedding](gpt2-embedding.md)                        | pre-trained GPT-2 embedding                                                 |
 | [NumericFeaturesEmbedding](numeric-features-embedding.md) | random init `tf.keras.layers.Embedding` layer for numeric feature embedding |
 | [StackedEmbedding](./stacked-embedding.md)                   | stack other embeddings for multi-input model                                |
