@@ -14,3 +14,9 @@ SMP2018ECDTCorpus
 =================
 .. autoclass:: kashgari.corpus.SMP2018ECDTCorpus
     :members:
+
+
+JigsawToxicCommentCorpus
+========================
+.. autoclass:: kashgari.corpus.JigsawToxicCommentCorpus
+    :members:

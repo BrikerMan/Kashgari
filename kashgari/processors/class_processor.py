@@ -12,6 +12,7 @@ import operator
 
 import numpy as np
 import tqdm
+from typing import Dict
 from tensorflow.keras.utils import to_categorical
 from typing import List
 
@@ -20,6 +21,17 @@ from kashgari.processors.abc_processor import ABCProcessor
 
 
 class ClassificationProcessor(ABCProcessor):
+
+    def info(self) -> Dict:
+        data = super(ClassificationProcessor, self).info()
+        data['config']['multi_label'] = self.multi_label
+        return data
+
+    def __init__(self,
+                 multi_label: bool = False,
+                 **kwargs):
+        super(ClassificationProcessor, self).__init__(**kwargs)
+        self.multi_label = multi_label
 
     def build_vocab_dict_if_needs(self, generator: CorpusGenerator):
         if not self.vocab2idx:

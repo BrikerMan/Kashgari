@@ -9,16 +9,17 @@
 
 import os
 import logging
+import numpy as np
 import pandas as pd
 from kashgari import macros as K
-from typing import Tuple, List
+from typing import Tuple, List, Callable
 from tensorflow.keras.utils import get_file
 from kashgari import utils
 
 CORPUS_PATH = os.path.join(K.DATA_PATH, 'corpus')
 
 
-class DataReader(object):
+class DataReader:
 
     @staticmethod
     def read_conll_format_file(file_path: str,
@@ -51,7 +52,7 @@ class DataReader(object):
         return x_data, y_data
 
 
-class ChineseDailyNerCorpus(object):
+class ChineseDailyNerCorpus:
     """
     Chinese Daily New New Corpus
     https://github.com/zjy-ucas/ChineseNER/
@@ -103,7 +104,7 @@ class ChineseDailyNerCorpus(object):
         return x_data, y_data
 
 
-class SMP2018ECDTCorpus(object):
+class SMP2018ECDTCorpus:
     """
     https://worksheets.codalab.org/worksheets/0x27203f932f8341b79841d50ce0fd684f/
 
@@ -176,6 +177,89 @@ class SMP2018ECDTCorpus(object):
         return x_data, y_data
 
 
+class JigsawToxicCommentCorpus:
+    """
+    Kaggle Toxic Comment Classification Challenge corpus
+    You need to download corpus from https://www.kaggle.com/c/jigsaw-toxic-comment-classification-challenge/overview
+    to a folder. Then init a JigsawToxicCommentCorpus object with `train.csv` path.
+    """
+
+    def __init__(self, corpus_train_csv_path: str):
+        self.file_path = corpus_train_csv_path
+        self.train_ids = []
+        self.test_ids = []
+        self.valid_ids = []
+
+        for i in range(159571):
+            prob = np.random.random()
+            if prob <= 0.7:
+                self.train_ids.append(i)
+            elif prob <= 0.85:
+                self.test_ids.append(i)
+            else:
+                self.valid_ids.append(i)
+
+    @classmethod
+    def _extract_label(cls, row) -> List[str]:
+        y = []
+        for label in ['toxic', 'severe_toxic', 'obscene', 'threat', 'insult', 'identity_hate']:
+            if row[label] == 1:
+                y.append(label)
+        return y
+
+    @classmethod
+    def _text_process(cls, text: str) -> List[str]:
+        return text.split(' ')
+
+    def load_data(self,
+                  subset_name: str = 'train',
+                  shuffle: bool = True,
+                  text_process_func: Callable = None) -> Tuple[List[List[str]], List[List[str]]]:
+        """
+        Load dataset as sequence labeling format, char level tokenized
+
+        features: ``[['Please', 'stop', 'being', 'a', 'penis—', 'and', 'Grow', 'Up', 'Regards-'], ...]``
+
+        labels: ``[['obscene', 'insult'], ...]``
+
+        Sample::
+           corpus = JigsawToxicCommentCorpus('<train.csv file-path>')
+           train_x, train_y = corpus.load_data('train')
+           test_x, test_y = corpus.load_data('test')
+
+        Args:
+           subset_name: {train, test, valid}
+           shuffle: should shuffle or not, default True.
+           text_process_func: function to process sample text, default split by space.
+
+        Returns:
+           dataset_features and dataset labels
+        """
+
+        df = pd.read_csv(self.file_path)
+        df['y'] = df.apply(self._extract_label, axis=1)
+        if text_process_func is None:
+            text_process_func = self._text_process
+        df['x'] = df['comment_text'].apply(text_process_func)
+        df = df[['x', 'y']]
+        if subset_name == 'train':
+            df = df.loc[self.train_ids]
+        elif subset_name == 'valid':
+            df = df.loc[self.valid_ids]
+        else:
+            df = df.loc[self.test_ids]
+
+        xs, ys = list(df['x'].values), list(df['y'].values)
+        if shuffle:
+            xs, ys = utils.unison_shuffled_copies(xs, ys)
+        return xs, ys
+
+
 if __name__ == "__main__":
-    x, y = ChineseDailyNerCorpus.load_data()
-    print(x)
+    corpus = JigsawToxicCommentCorpus('/Users/brikerman/Downloads/jigsaw-toxic-comment-classification-challenge/train.csv')
+    x, y = corpus.load_data()
+    for i in x[:20]:
+        print(i)
+
+    for i in y[:20]:
+        print(i)
