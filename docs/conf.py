@@ -37,14 +37,22 @@ class Mock(MagicMock):
 
 if os.environ.get('READTHEDOCS') == 'True':
     MOCK_MODULES = [
-    'tensorflow',
-    'tensorflow.keras',
-    'tensorflow.keras.utils',
-    'tensorflow.keras.preprocessing.sequence',
-    'tensorflow.keras.callbacks',
-    'tensorflow.keras.backend',
-    'keras.layers'
-]
+        'keras.layers',
+        'tensorflow',
+        'tensorflow.keras',
+        'tensorflow.keras.utils',
+        'tensorflow.keras.preprocessing.sequence',
+        'tensorflow.keras.callbacks',
+        'tensorflow.keras.backend',
+        'tensorflow.python',
+        'bert4keras',
+        'bert4keras.models',
+        'sklearn',
+        'seqeval',
+        'seqeval.metrics',
+        'seqeval.metrics.sequence_labeling',
+        'bert4keras.layers'
+    ]
 else:
     MOCK_MODULES = [
 
