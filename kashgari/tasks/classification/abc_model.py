@@ -14,12 +14,14 @@ from typing import List, Dict, Any, Tuple
 import random
 from sklearn import metrics
 
+import kashgari
 from kashgari.embeddings.abc_embedding import ABCEmbedding
 from kashgari.types import TextSamplesVar
 from kashgari.generators import CorpusGenerator
 from kashgari.tasks.abs_task_model import ABCTaskModel
 from kashgari.processors.class_processor import ClassificationProcessor
 from kashgari.generators import BatchDataGenerator
+from kashgari.layers import L
 
 
 class ABCClassificationModel(ABCTaskModel, ABC):
@@ -27,8 +29,10 @@ class ABCClassificationModel(ABCTaskModel, ABC):
 
     def __init__(self,
                  embedding: ABCEmbedding = None,
+                 *,
                  sequence_length: int = None,
                  hyper_parameters: Dict[str, Dict[str, Any]] = None,
+                 multi_label: bool = False,
                  **kwargs):
         """
         Abstract Classification Model
@@ -42,13 +46,30 @@ class ABCClassificationModel(ABCTaskModel, ABC):
                                                      sequence_length=sequence_length,
                                                      hyper_parameters=hyper_parameters,
                                                      **kwargs)
-        self.default_labeling_processor = ClassificationProcessor()
+        self.multi_label = multi_label
+        self.default_labeling_processor = ClassificationProcessor(multi_label=self.multi_label)
+
+    def _activation_layer(self) -> L.Layer:
+        if self.multi_label:
+            return L.Activation('sigmoid')
+        else:
+            return L.Activation('softmax')
+
+    def compile_model(self, **kwargs):
+        if kwargs.get('loss') is None:
+            if self.multi_label:
+                kwargs['loss'] = 'binary_crossentropy'
+            else:
+                kwargs['loss'] = 'categorical_crossentropy'
+
+        super(ABCClassificationModel, self).compile_model(**kwargs)
 
     def fit(self,
             x_train: TextSamplesVar,
             y_train: List[str],
             x_validate: TextSamplesVar = None,
             y_validate: List[str] = None,
+            *,
             batch_size: int = 64,
             epochs: int = 5,
             callbacks: List = None,
@@ -95,6 +116,7 @@ class ABCClassificationModel(ABCTaskModel, ABC):
     def fit_generator(self,
                       train_sample_gen: CorpusGenerator,
                       valid_sample_gen: CorpusGenerator = None,
+                      *,
                       batch_size: int = 64,
                       epochs: int = 5,
                       callbacks: List = None,
@@ -156,9 +178,65 @@ class ABCClassificationModel(ABCTaskModel, ABC):
                                  epochs=epochs,
                                  callbacks=callbacks)
 
+    def predict(self,
+                x_data,
+                *,
+                batch_size=32,
+                truncating=False,
+                multi_label_threshold=0.5,
+                debug_info=False,
+                predict_kwargs: Dict = None,
+                **kwargs):
+        """
+        Generates output predictions for the input samples.
+
+        Computation is done in batches.
+
+        Args:
+            x_data: The input data, as a Numpy array (or list of Numpy arrays if the model has multiple inputs).
+            batch_size: Integer. If unspecified, it will default to 32.
+            truncating: remove values from sequences larger than `model.embedding.sequence_length`
+            debug_info: Bool, Should print out the logging info.
+            predict_kwargs: arguments passed to ``predict()`` function of ``tf.keras.Model``
+
+        Returns:
+            array(s) of predictions.
+        """
+        if predict_kwargs is None:
+            predict_kwargs = {}
+        with kashgari.utils.custom_object_scope():
+            if truncating:
+                seq_length = self.embedding.sequence_length
+            else:
+                seq_length = None
+            tensor = self.embedding.text_processor.numerize_samples(x_data,
+                                                                    segment=self.embedding.segment,
+                                                                    seq_lengtg=seq_length,
+                                                                    max_position=self.embedding.max_position)
+            pred = self.tf_model.predict(tensor, batch_size=batch_size, **predict_kwargs)
+
+            if self.multi_label:
+                if debug_info:
+                    print('raw output: {}'.format(pred))
+                pred[pred >= multi_label_threshold] = 1
+                pred[pred < multi_label_threshold] = 0
+                res = self.label_processor.multi_label_binarizer.inverse_transform(pred)
+            else:
+                pred = pred.argmax(-1)
+                lengths = [len(sen) for sen in x_data]
+                res = self.embedding.label_processor.reverse_numerize(pred,
+                                                                      lengths=lengths)
+
+            if debug_info:
+                print('input: {}'.format(tensor))
+                print('output: {}'.format(pred))
+                print('output argmax: {}'.format(pred.argmax(-1)))
+        return res
+
     def evaluate(self,
                  x_data,
                  y_data,
+                 *,
                  batch_size=None,
                  digits=4,
                  truncating=False,

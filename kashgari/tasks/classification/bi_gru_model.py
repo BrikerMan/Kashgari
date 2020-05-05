@@ -23,8 +23,7 @@ class BiGRU_Model(ABCClassificationModel):
                 'units': 128,
                 'return_sequences': False
             },
-            'layer_dense': {
-                'activation': 'softmax'
+            'layer_output': {
             }
         }
 
@@ -35,7 +34,8 @@ class BiGRU_Model(ABCClassificationModel):
 
         layer_stack = [
             L.Bidirectional(L.GRU(**config['layer_bi_gru'])),
-            L.Dense(output_dim, **config['layer_dense'])
+            L.Dense(output_dim, **config['layer_output']),
+            self._activation_layer()
         ]
 
         tensor = embed_model.output
@@ -46,4 +46,16 @@ class BiGRU_Model(ABCClassificationModel):
 
 
 if __name__ == "__main__":
-    pass
+    from kashgari.corpus import JigsawToxicCommentCorpus
+    corpus = JigsawToxicCommentCorpus('/Users/brikerman/Downloads/'
+                                      'jigsaw-toxic-comment-classification-challenge/train.csv')
+    x, y = corpus.load_data()
+    model = BiGRU_Model(multi_label=True)
+    from kashgari.generators import CorpusGenerator
+    train_gen = CorpusGenerator(x, y)
+    model.build_model(train_gen)
+    model.tf_model.summary()
+    model.fit(x, y, epochs=1)
+
+    y = model.predict(x[:5], debug_info=True)
+    print(y)

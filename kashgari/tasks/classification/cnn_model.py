@@ -29,8 +29,8 @@ class CNN_Model(ABCClassificationModel):
                 'units': 64,
                 'activation': 'relu'
             },
-            'activation_layer': {
-                'activation': 'softmax'
+            'layer_output': {
+
             },
         }
 
@@ -45,7 +45,8 @@ class CNN_Model(ABCClassificationModel):
             L.Conv1D(**config['conv1d_layer']),
             L.GlobalMaxPooling1D(**config['max_pool_layer']),
             L.Dense(**config['dense_layer']),
-            L.Dense(output_dim, **config['activation_layer'])
+            L.Dense(output_dim, **config['layer_output']),
+            self._activation_layer()
         ]
 
         tensor = embed_model.output

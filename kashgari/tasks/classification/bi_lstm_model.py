@@ -23,8 +23,8 @@ class BiLSTM_Model(ABCClassificationModel):
                 'units': 128,
                 'return_sequences': False
             },
-            'layer_dense': {
-                'activation': 'softmax'
+            'layer_output': {
+
             }
         }
 
@@ -37,7 +37,8 @@ class BiLSTM_Model(ABCClassificationModel):
         # build model structure in sequent way
         layer_stack = [
             L.Bidirectional(L.LSTM(**config['layer_bi_lstm'])),
-            L.Dense(output_dim, **config['layer_dense'])
+            L.Dense(output_dim, **config['layer_output']),
+            self._activation_layer()
         ]
 
         tensor = embed_model.output

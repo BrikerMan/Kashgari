@@ -15,6 +15,7 @@ from kashgari import macros as K
 from typing import Tuple, List, Callable
 from tensorflow.keras.utils import get_file
 from kashgari import utils
+from kashgari.tokenizers.bert_tokenizer import BertTokenizer
 
 CORPUS_PATH = os.path.join(K.DATA_PATH, 'corpus')
 
@@ -190,6 +191,8 @@ class JigsawToxicCommentCorpus:
         self.test_ids = []
         self.valid_ids = []
 
+        self._tokenizer = None
+
         for i in range(159571):
             prob = np.random.random()
             if prob <= 0.7:
@@ -207,9 +210,10 @@ class JigsawToxicCommentCorpus:
                 y.append(label)
         return y
 
-    @classmethod
-    def _text_process(cls, text: str) -> List[str]:
-        return text.split(' ')
+    def _text_process(self, text: str) -> List[str]:
+        if self._tokenizer is None:
+            self._tokenizer = BertTokenizer()
+        return self._tokenizer.tokenize(text)
 
     def load_data(self,
                   subset_name: str = 'train',
@@ -256,7 +260,8 @@ class JigsawToxicCommentCorpus:
 
 
 if __name__ == "__main__":
-    corpus = JigsawToxicCommentCorpus('/Users/brikerman/Downloads/jigsaw-toxic-comment-classification-challenge/train.csv')
+    corpus = JigsawToxicCommentCorpus(
+        '/Users/brikerman/Downloads/jigsaw-toxic-comment-classification-challenge/train.csv')
     x, y = corpus.load_data()
     for i in x[:20]:
         print(i)

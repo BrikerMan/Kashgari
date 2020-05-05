@@ -38,6 +38,21 @@ text_x = [
      '究', '之', '间', '存', '在', '一', '个', '重', '要', '的', '主', '题', '划', '分']
 ]
 
+multi_label_y = [
+    ['b', 'c'],
+    ['a', 'b', 'c'],
+    ['b', 'c'],
+    ['a', 'b'],
+    [],
+    ['b'],
+    ['a'],
+    ['a', 'b', 'c'],
+    ['a', 'b', 'c'],
+    ['b'],
+    ['a', 'b'],
+    ['a', 'b']
+]
+
 ner_y = [
     ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
     ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
@@ -104,6 +119,10 @@ class TestMacros:
         if name is None:
             name = random.choice(list(data_dict.keys()))
         return data_dict[name]
+
+    @classmethod
+    def load_multi_label_classification_corpus(cls, name=None):
+        return text_x, multi_label_y
 
 
 if __name__ == "__main__":

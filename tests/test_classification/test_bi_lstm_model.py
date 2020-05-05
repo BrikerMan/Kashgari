@@ -54,6 +54,11 @@ class TestBiLSTM_Model(unittest.TestCase):
 
         new_model.evaluate(valid_x, valid_y)
 
+    def test_multi_label(self):
+        model = self.TASK_MODEL_CLASS(sequence_length=20, multi_label=True)
+        x, y = TestMacros.load_multi_label_classification_corpus()
+        model.fit(x, y, epochs=self.EPOCH_COUNT)
+
     def test_with_word_embedding(self):
         self.w2v_embedding.set_sequence_length(50)
         model = self.TASK_MODEL_CLASS(embedding=self.w2v_embedding)

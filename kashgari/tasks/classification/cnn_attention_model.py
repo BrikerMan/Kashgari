@@ -37,8 +37,7 @@ class CNN_Attention_Model(ABCClassificationModel, ABC):
                 'padding': 'same',
                 'activation': 'relu'
             },
-            'activation_layer': {
-                'activation': 'softmax'
+            'layer_output': {
             },
         }
 
@@ -82,7 +81,8 @@ class CNN_Attention_Model(ABCClassificationModel, ABC):
         input_layer = keras.layers.Concatenate(axis=-1)(
             [query_encoding, query_value_attention])
 
-        output = keras.layers.Dense(output_dim, **config['activation_layer'])(input_layer)
+        output = keras.layers.Dense(output_dim, **config['layer_output'])(input_layer)
+        output = self._activation_layer()(output)
 
         self.tf_model = keras.Model(embed_model.input, output)
         self.tf_model.summary()

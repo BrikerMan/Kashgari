@@ -16,6 +16,8 @@ from typing import Dict
 from tensorflow.keras.utils import to_categorical
 from typing import List
 
+from sklearn.preprocessing import MultiLabelBinarizer
+
 from kashgari.generators import CorpusGenerator
 from kashgari.processors.abc_processor import ABCProcessor
 
@@ -32,38 +34,52 @@ class ClassificationProcessor(ABCProcessor):
                  **kwargs):
         super(ClassificationProcessor, self).__init__(**kwargs)
         self.multi_label = multi_label
+        self.multi_label_binarizer = MultiLabelBinarizer()
 
     def build_vocab_dict_if_needs(self, generator: CorpusGenerator):
-        if not self.vocab2idx:
-            vocab2idx = {}
+        if self.vocab2idx:
+            return
+        vocab2idx = {}
 
-            token2count = {}
+        token2count = {}
 
+        if self.multi_label:
+            for _, label in tqdm.tqdm(generator, desc="Preparing classification label vocab dict"):
+                for token in label:
+                    count = token2count.get(token, 0)
+                    token2count[token] = count + 1
+        else:
             for _, label in tqdm.tqdm(generator, desc="Preparing classification label vocab dict"):
                 count = token2count.get(label, 0)
                 token2count[label] = count + 1
 
-            sorted_token2count = sorted(token2count.items(),
-                                        key=operator.itemgetter(1),
-                                        reverse=True)
-            token2count = collections.OrderedDict(sorted_token2count)
+        sorted_token2count = sorted(token2count.items(),
+                                    key=operator.itemgetter(1),
+                                    reverse=True)
+        token2count = collections.OrderedDict(sorted_token2count)
 
-            for token, token_count in token2count.items():
-                if token not in vocab2idx:
-                    vocab2idx[token] = len(vocab2idx)
-            self.vocab2idx = vocab2idx
-            self.idx2vocab = dict([(v, k) for k, v in self.vocab2idx.items()])
+        for token, token_count in token2count.items():
+            if token not in vocab2idx:
+                vocab2idx[token] = len(vocab2idx)
+        self.vocab2idx = vocab2idx
+        self.idx2vocab = dict([(v, k) for k, v in self.vocab2idx.items()])
+        if self.multi_label:
+            self.multi_label_binarizer.fit([list(self.vocab2idx.keys())])
 
     def numerize_samples(self,
                          samples: List[str],
                          seq_length: int = None,
                          one_hot: bool = False,
                          **kwargs) -> np.ndarray:
-        sample_index = [self.vocab2idx[i] for i in samples]
+        if self.multi_label:
+            sample_tensor = self.multi_label_binarizer.transform(samples)
+            return sample_tensor
+
+        sample_tensor = [self.vocab2idx[i] for i in samples]
         if one_hot:
-            return to_categorical(sample_index, self.vocab_size)
+            return to_categorical(sample_tensor, self.vocab_size)
         else:
-            return np.array(sample_index)
+            return np.array(sample_tensor)
 
     def reverse_numerize(self,
                          indexs: List[str],

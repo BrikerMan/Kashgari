@@ -44,6 +44,7 @@ class ABCTaskModel(ABC):
 
     def __init__(self,
                  embedding: WordEmbedding = None,
+                 *,
                  sequence_length: int = None,
                  hyper_parameters: Dict[str, Dict[str, Any]] = None,
                  **kwargs):
@@ -164,6 +165,7 @@ class ABCTaskModel(ABC):
 
     def predict(self,
                 x_data,
+                *,
                 batch_size=32,
                 truncating=False,
                 debug_info=False,
@@ -210,6 +212,7 @@ class ABCTaskModel(ABC):
     def evaluate(self,
                  x_data,
                  y_data,
+                 *,
                  batch_size=None,
                  digits=4,
                  debug_info=False) -> Tuple[float, float, Dict]:
