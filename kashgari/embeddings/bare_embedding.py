@@ -7,48 +7,48 @@
 # file: bare_embedding.py
 # time: 2:17 下午
 
-from typing import Dict
+from typing import Dict, Any, Optional
+
 from tensorflow import keras
 
 from kashgari.embeddings.abc_embedding import ABCEmbedding
-from kashgari.generators import CorpusGenerator
-from kashgari.processors.abc_processor import ABCProcessor
 
 L = keras.layers
 
 
 class BareEmbedding(ABCEmbedding):
+
+    def __init__(self,
+                 embedding_size: int = 100,
+                 **kwargs: Any) -> None:
+        self.embedding_size: int = embedding_size
+        super(BareEmbedding, self).__init__(embedding_size=embedding_size,
+                                            **kwargs)
+
     def info(self) -> Dict:
         info_dic = super(BareEmbedding, self).info()
         info_dic['config']['embedding_size'] = self.embedding_size
         return info_dic
 
-    def __init__(self,
-                 sequence_length: int = None,
-                 embedding_size: int = 100,
-                 text_processor: ABCProcessor = None,
-                 label_processor: ABCProcessor = None,
-                 **kwargs):
-        super(BareEmbedding, self).__init__(sequence_length=sequence_length,
-                                            text_processor=text_processor,
-                                            label_processor=label_processor,
-                                            **kwargs)
-        self.embedding_size = embedding_size
+    def load_embed_vocab(self) -> Optional[Dict[str, int]]:
+        return None
 
-    def build_text_vocab(self, gen: CorpusGenerator = None, force=False):
-        if force or not self.text_processor.is_vocab_build:
-            self.text_processor.build_vocab_dict_if_needs(generator=gen)
-
-    def build_embedding_model(self):
-        if self.embed_model is None:
+    def build_embedding_model(self,
+                              *,
+                              vocab_size: int = None,
+                              force: bool = False,
+                              **kwargs) -> None:
+        if self.embed_model is None or force:
             input_tensor = L.Input(shape=(None,),
                                    name=f'input')
-            layer_embedding = L.Embedding(self.text_processor.vocab_size,
+            layer_embedding = L.Embedding(vocab_size,
                                           self.embedding_size,
+                                          mask_zero=True,
                                           name=f'layer_embedding')
 
             embedded_tensor = layer_embedding(input_tensor)
             self.embed_model = keras.Model(input_tensor, embedded_tensor)
+            self.embed_model.summary()
 
 
 if __name__ == "__main__":

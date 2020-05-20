@@ -8,36 +8,22 @@
 # time: 12:37 下午
 
 import os
-import logging
 from pathlib import Path
-import tensorflow as tf
+from typing import Dict
 
 DATA_PATH = os.path.join(str(Path.home()), '.kashgari')
 
 Path(DATA_PATH).mkdir(exist_ok=True, parents=True)
 
 
-class Config(object):
+class Config:
 
-    def __init__(self):
-        self._log_level = False
+    def __init__(self) -> None:
+        self.verbose = False
 
-    @property
-    def log_level(self):
-        return self._log_level
-
-    @property
-    def logger(self):
-        return logging.getLogger('kashgari')
-
-    @log_level.setter
-    def log_level(self, value):
-        self._log_level = value
-        self.logger.setLevel(level=value)
-
-    def to_dict(self):
+    def to_dict(self) -> Dict:
         return {
-            'verbose': self._log_level
+            'verbose': self.verbose
         }
 
 

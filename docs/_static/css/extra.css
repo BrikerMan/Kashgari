@@ -9,7 +9,7 @@ input {
     font-family: "Roboto", "Helvetica Neue", Helvetica, Arial, "Microsoft YaHei", "微软正黑体", "Microsoft JhengHei", sans-serif;
 }
 
-.wy-side-nav-search>div.version {
+.wy-side-nav-search > div.version {
     margin-top: 5px;
 }
 
@@ -18,5 +18,5 @@ input {
 }
 
 .pre {
-    font-family: "JetBrains Mono",SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",Courier,monospace
+    font-family: "JetBrains Mono", SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", Courier, monospace
 }

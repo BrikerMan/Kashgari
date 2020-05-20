@@ -7,14 +7,13 @@
 # file: text_processor.py
 # time: 12:27 下午
 
-import logging
 import collections
+import logging
 import operator
+from typing import Dict, List, Any, Optional
 
-import tqdm
 import numpy as np
-from typing import Dict, List
-
+import tqdm
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 from tensorflow.keras.utils import to_categorical
 
@@ -31,20 +30,17 @@ class SequenceProcessor(ABCProcessor):
     def info(self) -> Dict:
         data = super(SequenceProcessor, self).info()
         data['config'].update({
-            'vocab2idx': self.vocab2idx,
-            'token_pad': self.token_pad,
-            'token_unk': self.token_unk,
-            'token_bos': self.token_bos,
-            'token_eos': self.token_eos,
-            'vocab_dict_type': self.vocab_dict_type,
-            'min_count': self.min_count
+            'build_in_vocab': self.build_in_vocab,
+            'min_count': self.min_count,
+            'allow_unk': self.allow_unk
         })
         return data
 
     def __init__(self,
-                 vocab_dict_type: str = 'text',
+                 build_in_vocab: str = 'text',
                  min_count: int = 3,
-                 **kwargs):
+                 build_vocab_from_labels: bool = False,
+                 **kwargs: Any) -> None:
         """
 
         Args:
@@ -52,22 +48,20 @@ class SequenceProcessor(ABCProcessor):
             **kwargs:
         """
         super(SequenceProcessor, self).__init__(**kwargs)
-        self.token_pad: str = kwargs.get('token_pad', '[PAD]')
-        self.token_unk: str = kwargs.get('token_unk', '[UNK]')
-        self.token_bos: str = kwargs.get('token_bos', '[BOS]')
-        self.token_eos: str = kwargs.get('token_eos', '[EOS]')
 
-        self.vocab_dict_type = vocab_dict_type
+        self.build_in_vocab = build_in_vocab
         self.min_count = min_count
+        self.allow_unk = True
+        self.build_vocab_from_labels = build_vocab_from_labels
 
-        if vocab_dict_type == 'text':
+        if build_in_vocab == 'text':
             self._initial_vocab_dic = {
                 self.token_pad: 0,
                 self.token_unk: 1,
                 self.token_bos: 2,
                 self.token_eos: 3
             }
-        elif vocab_dict_type == 'labeling':
+        elif build_in_vocab == 'labeling':
             self._initial_vocab_dic = {
                 self.token_pad: 0
             }
@@ -76,17 +70,18 @@ class SequenceProcessor(ABCProcessor):
 
         self._showed_seq_len_warning = False
 
-    def build_vocab_dict_if_needs(self, generator: CorpusGenerator):
+    def build_vocab_generator(self,
+                              generator: Optional[CorpusGenerator]) -> None:
         if not self.vocab2idx:
             vocab2idx = self._initial_vocab_dic
 
-            token2count = {}
+            token2count: Dict[str, int] = {}
 
             for sentence, label in tqdm.tqdm(generator, desc="Preparing text vocab dict"):
-                if self.vocab_dict_type == 'text':
-                    target = sentence
-                else:
+                if self.build_vocab_from_labels:
                     target = label
+                else:
+                    target = sentence
                 for token in target:
                     count = token2count.get(token, 0)
                     token2count[token] = count + 1
@@ -107,13 +102,12 @@ class SequenceProcessor(ABCProcessor):
                 logging.info(f"Token: {token:8s} -> {index}")
             logging.info("------ Build vocab dict finished, Top 10 token ------")
 
-    def numerize_samples(self,
-                         samples: TextSamplesVar,
-                         seq_length: int = None,
-                         max_position: int = None,
-                         segment: bool = False,
-                         one_hot: bool = False,
-                         **kwargs) -> np.ndarray:
+    def transform(self,
+                  samples: TextSamplesVar,
+                  seq_length: int = None,
+                  max_position: int = None,
+                  segment: bool = False,
+                  **kwargs: Any) -> np.ndarray:
         if seq_length is None:
             seq_length = max([len(i) for i in samples])
             if max_position and seq_length > max_position:
@@ -125,17 +119,15 @@ class SequenceProcessor(ABCProcessor):
 
         numerized_samples = []
         for seq in samples:
-            if self.vocab_dict_type == 'text':
+            seq = [self.token_bos] + seq + [self.token_eos]
+            if self.allow_unk:
                 unk_index = self.vocab2idx[self.token_unk]
                 numerized_samples.append([self.vocab2idx.get(token, unk_index) for token in seq])
             else:
                 numerized_samples.append([self.vocab2idx[token] for token in seq])
 
         sample_index = pad_sequences(numerized_samples, seq_length, padding='post', truncating='post')
-        if one_hot:
-            token_ids = to_categorical(sample_index, self.vocab_size)
-        else:
-            token_ids = np.array(sample_index)
+        token_ids = np.array(sample_index)
 
         if segment:
             segment_ids = np.zeros(token_ids.shape, dtype=np.int32)
@@ -143,18 +135,21 @@ class SequenceProcessor(ABCProcessor):
         else:
             return token_ids
 
-    def reverse_numerize(self,
-                         indexs: List[str],
-                         lengths: List[int] = None,
-                         **kwargs) -> List[List[str]]:
+    def inverse_transform(self,  # type: ignore[override]
+                          labels: List[List[int]],
+                          *,
+                          lengths: List[int] = None,
+                          **kwargs: Any) -> List[List[str]]:
         result = []
-        for index, seq in enumerate(indexs):
-            labels = []
+        for index, seq in enumerate(labels):
+            labels_ = []
             for idx in seq:
-                labels.append(self.idx2vocab[idx])
+                labels_.append(self.idx2vocab[idx])
             if lengths is not None:
-                labels = labels[:lengths[index]]
-            result.append(labels)
+                labels_ = labels_[1:lengths[index]]
+            else:
+                labels_ = labels_[:-1]
+            result.append(labels_)
         return result
 
 
@@ -168,4 +163,3 @@ if __name__ == "__main__":
     p = SequenceProcessor(vocab_dict_type='labeling')
     p.build_vocab_dict_if_needs(gen)
     print(p.vocab2idx)
-

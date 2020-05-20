@@ -6,11 +6,12 @@
 
 # file: cnn_attention_model.py
 # time: 3:05 下午
+
 from abc import ABC
 from typing import Dict, Any
 
 from tensorflow import keras
-
+import tensorflow.keras.layers as L
 from kashgari.tasks.classification.abc_model import ABCClassificationModel
 
 
@@ -41,7 +42,7 @@ class CNN_Attention_Model(ABCClassificationModel, ABC):
             },
         }
 
-    def build_model_arc(self):
+    def build_model_arc(self) -> None:
         output_dim = self.label_processor.vocab_size
         config = self.hyper_parameters
 
@@ -52,40 +53,36 @@ class CNN_Attention_Model(ABCClassificationModel, ABC):
         value_embeddings = embed_model.output
 
         # CNN layer.
-        cnn_layer_1 = keras.layers.Conv1D(**config['conv_layer1'])
+        cnn_layer_1 = L.Conv1D(**config['conv_layer1'])
         # Query encoding of shape [batch_size, Tq, filters].
         query_seq_encoding = cnn_layer_1(query_embeddings)
         # Value encoding of shape [batch_size, Tv, filters].
         value_seq_encoding = cnn_layer_1(value_embeddings)
 
-        cnn_layer_2 = keras.layers.Conv1D(**config['conv_layer2'])
+        cnn_layer_2 = L.Conv1D(**config['conv_layer2'])
         query_seq_encoding = cnn_layer_2(query_seq_encoding)
         value_seq_encoding = cnn_layer_2(value_seq_encoding)
 
-        cnn_layer_3 = keras.layers.Conv1D(**config['conv_layer3'])
+        cnn_layer_3 = L.Conv1D(**config['conv_layer3'])
         query_seq_encoding = cnn_layer_3(query_seq_encoding)
         value_seq_encoding = cnn_layer_3(value_seq_encoding)
 
         # Query-value attention of shape [batch_size, Tq, filters].
-        query_value_attention_seq = keras.layers.Attention()(
+        query_value_attention_seq = L.Attention()(
             [query_seq_encoding, value_seq_encoding])
 
         # Reduce over the sequence axis to produce encodings of shape
         # [batch_size, filters].
-        query_encoding = keras.layers.GlobalMaxPool1D()(
-            query_seq_encoding)
-        query_value_attention = keras.layers.GlobalMaxPool1D()(
-            query_value_attention_seq)
+        query_encoding = L.GlobalMaxPool1D()(query_seq_encoding)
+        query_value_attention = L.GlobalMaxPool1D()(query_value_attention_seq)
 
         # Concatenate query and document encodings to produce a DNN input layer.
-        input_layer = keras.layers.Concatenate(axis=-1)(
-            [query_encoding, query_value_attention])
+        input_layer = L.Concatenate(axis=-1)([query_encoding, query_value_attention])
 
-        output = keras.layers.Dense(output_dim, **config['layer_output'])(input_layer)
+        output = L.Dense(output_dim, **config['layer_output'])(input_layer)
         output = self._activation_layer()(output)
 
         self.tf_model = keras.Model(embed_model.input, output)
-        self.tf_model.summary()
 
 
 if __name__ == "__main__":

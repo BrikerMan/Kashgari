@@ -56,27 +56,27 @@ Kashgari is a simple and powerful NLP Transfer learning framework, build a state
 
 ## Road Map
 
-- [ ] Based on TensorFlow 2.1+ [@BrikerMan]
-- [ ] Fully support generator based training (#336 ,#273) [@BrikerMan]
+- [x] Based on TensorFlow 2.0+ [@BrikerMan]
+- [x] Fully support generator based training (#336 ,#273) [@BrikerMan]
 - [ ] Clean code and full document
 - [ ] Multi GPU/TPU Support [@BrikerMan]
-- [ ] Embeddings
-    - [ ] Bare Embedding [@BrikerMan]
-    - [ ] Word Embedding (Load trained W2V) [@BrikerMan]
-    - [ ] BERT Embedding (Based on bert4keras, support BERT, RoBERTa, ALBERT...) (#316) [@BrikerMan]
+- [x] Embeddings
+    - [x] Bare Embedding [@BrikerMan]
+    - [x] Word Embedding (Load trained W2V) [@BrikerMan]
+    - [x] BERT Embedding (Based on bert4keras, support BERT, RoBERTa, ALBERT...) (#316) [@BrikerMan]
     - [ ] GPT-2 Embedding
     - [ ] FeaturesEmbedding (Support Numeric feature as input)
     - [ ] Stacked Embedding (Stack Text embedding and features Embedding)
 - [ ] Classification Task
-    - [ ] Traditional models (CCN/LSTM/GRU) [@BrikerMan]
+    - [x] Basic models (CCN/LSTM/GRU) [@BrikerMan]
     - [ ] Transformer models (Transformer/Transformer XL/Attention)
 - [ ] Labeling Task
-    - [ ] Traditional models (CCN/LSTM/GRU)
+    - [x] Basic models (CCN/LSTM/GRU)
     - [ ] Transformer models (Transformer/Transformer XL/Attention)
 - [ ] Seq2Seq Task
     - [ ] Traditional models (CCN/LSTM/GRU)
     - [ ] Transformer models (Transformer/Transformer XL/Attention)
 - [ ] Built-in Callbacks
-    - [ ] Evaluate Callback
+    - [x] Evaluate Callback
     - [ ] Save Best Callback
 - [ ] Support TensorFlow Hub (Optional)

@@ -7,14 +7,18 @@
 # file: corpus.py
 # time: 12:38 下午
 
-import os
 import logging
+import os
+from typing import List
+from typing import Tuple
+
 import numpy as np
 import pandas as pd
-from kashgari import macros as K
-from typing import Tuple, List, Callable
 from tensorflow.keras.utils import get_file
+
+from kashgari import macros as K
 from kashgari import utils
+from kashgari.tokenizers.base_tokenizer import Tokenizer
 from kashgari.tokenizers.bert_tokenizer import BertTokenizer
 
 CORPUS_PATH = os.path.join(K.DATA_PATH, 'corpus')
@@ -39,7 +43,8 @@ class DataReader:
         x_data, y_data = [], []
         with open(file_path, 'r', encoding='utf-8') as f:
             lines = f.read().splitlines()
-            x, y = [], []
+            x: List[str] = []
+            y: List[str] = []
             for line in lines:
                 rows = line.split(' ')
                 if len(rows) == 1:
@@ -57,6 +62,16 @@ class ChineseDailyNerCorpus:
     """
     Chinese Daily New New Corpus
     https://github.com/zjy-ucas/ChineseNER/
+
+    Example:
+        >>> from kashgari.corpus import ChineseDailyNerCorpus
+        >>> train_x, train_y = ChineseDailyNerCorpus.load_data('train')
+        >>> test_x, test_y = ChineseDailyNerCorpus.load_data('test')
+        >>> valid_x, valid_y = ChineseDailyNerCorpus.load_data('valid')
+        >>> print(train_x)
+            [['海', '钓', '比', '赛', '地', '点', '在', '厦', '门', ...], ...]
+        >>> print(train_y)
+            [['O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-LOC', 'I-LOC', ...], ...]
     """
     __corpus_name__ = 'china-people-daily-ner-corpus'
     __zip_file__name = 'http://s3.bmio.net/kashgari/china-people-daily-ner-corpus.tar.gz'
@@ -67,15 +82,6 @@ class ChineseDailyNerCorpus:
                   shuffle: bool = True) -> Tuple[List[List[str]], List[List[str]]]:
         """
         Load dataset as sequence labeling format, char level tokenized
-
-        features: ``[['海', '钓', '比', '赛', '地', '点', '在', '厦', '门', ...], ...]``
-
-        labels: ``[['O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-LOC', 'I-LOC', ...], ...]``
-
-        Sample::
-
-            train_x, train_y = ChineseDailyNerCorpus.load_data('train')
-            test_x, test_y = ChineseDailyNerCorpus.load_data('test')
 
         Args:
             subset_name: {train, test, valid}
@@ -111,7 +117,8 @@ class SMP2018ECDTCorpus:
 
     This dataset is released by the Evaluation of Chinese Human-Computer Dialogue Technology (SMP2018-ECDT)
     task 1 and is provided by the iFLYTEK Corporation, which is a Chinese human-computer dialogue dataset.
-    sample::
+
+    Sample::
 
               label           query
         0   weather        今天东莞天气如何
@@ -119,6 +126,16 @@ class SMP2018ECDTCorpus:
         2  cookbook          鸭蛋怎么腌？
         3    health         怎么治疗牛皮癣
         4      chat             唠什么
+
+    Example:
+        >>> from kashgari.corpus import SMP2018ECDTCorpus
+        >>> train_x, train_y = SMP2018ECDTCorpus.load_data('train')
+        >>> test_x, test_y = SMP2018ECDTCorpus.load_data('test')
+        >>> valid_x, valid_y = SMP2018ECDTCorpus.load_data('valid')
+        >>> print(train_x)
+        [['听', '新', '闻', '。'], ['电', '视', '台', '在', '播', '什', '么'], ...]
+        >>> print(train_y)
+        ['news', 'epg', ...]
     """
 
     __corpus_name__ = 'SMP2018ECDTCorpus'
@@ -132,14 +149,6 @@ class SMP2018ECDTCorpus:
         """
         Load dataset as sequence classification format, char level tokenized
 
-        features: ``[['听', '新', '闻', '。'], ['电', '视', '台', '在', '播', '什', '么'], ...]``
-
-        labels: ``['news', 'epg', ...]``
-
-        Samples::
-            train_x, train_y = SMP2018ECDTCorpus.load_data('train')
-            test_x, test_y = SMP2018ECDTCorpus.load_data('test')
-
         Args:
             subset_name: {train, test, valid}
             shuffle: should shuffle or not, default True.
@@ -147,6 +156,7 @@ class SMP2018ECDTCorpus:
 
         Returns:
             dataset_features and dataset labels
+
         """
 
         corpus_path = get_file(cls.__corpus_name__,
@@ -181,19 +191,44 @@ class SMP2018ECDTCorpus:
 class JigsawToxicCommentCorpus:
     """
     Kaggle Toxic Comment Classification Challenge corpus
+
     You need to download corpus from https://www.kaggle.com/c/jigsaw-toxic-comment-classification-challenge/overview
     to a folder. Then init a JigsawToxicCommentCorpus object with `train.csv` path.
+
+    Examples:
+
+        >>> from kashgari.corpus import JigsawToxicCommentCorpus
+        >>> corpus = JigsawToxicCommentCorpus('<train.csv file-path>')
+        >>> train_x, train_y = corpus.load_data('train')
+        >>> test_x, test_y = corpus.load_data('test')
+        >>> print(train_x)
+        [['Please', 'stop', 'being', 'a', 'penis—', 'and', 'Grow', 'Up', 'Regards-'], ...]
+        >>> print(train_y)
+        [['obscene', 'insult'], ...]
     """
 
-    def __init__(self, corpus_train_csv_path: str):
+    def __init__(self,
+                 corpus_train_csv_path: str,
+                 sample_count: int = None,
+                 tokenizer: Tokenizer = None) -> None:
         self.file_path = corpus_train_csv_path
         self.train_ids = []
         self.test_ids = []
         self.valid_ids = []
 
-        self._tokenizer = None
+        self.tokenizer: Tokenizer
+        if tokenizer is None:
+            self.tokenizer = BertTokenizer()
+        else:
+            self.tokenizer = tokenizer
 
-        for i in range(159571):
+        if sample_count is None:
+            df = pd.read_csv(self.file_path)
+            sample_count = len(df)
+            del df
+        self.sample_count = sample_count
+
+        for i in range(self.sample_count):
             prob = np.random.random()
             if prob <= 0.7:
                 self.train_ids.append(i)
@@ -203,7 +238,7 @@ class JigsawToxicCommentCorpus:
                 self.valid_ids.append(i)
 
     @classmethod
-    def _extract_label(cls, row) -> List[str]:
+    def _extract_label(cls, row: pd.Series) -> List[str]:
         y = []
         for label in ['toxic', 'severe_toxic', 'obscene', 'threat', 'insult', 'identity_hate']:
             if row[label] == 1:
@@ -211,40 +246,26 @@ class JigsawToxicCommentCorpus:
         return y
 
     def _text_process(self, text: str) -> List[str]:
-        if self._tokenizer is None:
-            self._tokenizer = BertTokenizer()
-        return self._tokenizer.tokenize(text)
+        return self.tokenizer.tokenize(text)
 
     def load_data(self,
                   subset_name: str = 'train',
-                  shuffle: bool = True,
-                  text_process_func: Callable = None) -> Tuple[List[List[str]], List[List[str]]]:
+                  shuffle: bool = True) -> Tuple[List[List[str]], List[List[str]]]:
         """
         Load dataset as sequence labeling format, char level tokenized
-
-        features: ``[['Please', 'stop', 'being', 'a', 'penis—', 'and', 'Grow', 'Up', 'Regards-'], ...]``
-
-        labels: ``[['obscene', 'insult'], ...]``
-
-        Sample::
-           corpus = JigsawToxicCommentCorpus('<train.csv file-path>')
-           train_x, train_y = corpus.load_data('train')
-           test_x, test_y = corpus.load_data('test')
 
         Args:
            subset_name: {train, test, valid}
            shuffle: should shuffle or not, default True.
-           text_process_func: function to process sample text, default split by space.
 
         Returns:
            dataset_features and dataset labels
         """
 
         df = pd.read_csv(self.file_path)
+        df = df[:self.sample_count]
         df['y'] = df.apply(self._extract_label, axis=1)
-        if text_process_func is None:
-            text_process_func = self._text_process
-        df['x'] = df['comment_text'].apply(text_process_func)
+        df['x'] = df['comment_text'].apply(self._text_process)
         df = df[['x', 'y']]
         if subset_name == 'train':
             df = df.loc[self.train_ids]

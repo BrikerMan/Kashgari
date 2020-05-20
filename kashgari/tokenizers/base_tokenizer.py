@@ -7,12 +7,15 @@
 # file: base_tokenizer.py
 # time: 11:24 上午
 
+from typing import List
+
 
 class Tokenizer:
-    """Abstract base class for all implemented tokenizers.
+    """
+    Abstract base class for all implemented tokenizer.
     """
 
-    def tokenize(self, text: str):
+    def tokenize(self, text: str) -> List[str]:
         """
         Tokenize text into token sequence
         Args:
@@ -22,4 +25,3 @@ class Tokenizer:
             List of tokens in this sample
         """
         return text.split(' ')
-

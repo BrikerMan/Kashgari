@@ -1,8 +1,6 @@
-numpy==1.18.1
+numpy>=1.18.1
 gensim>=3.8.1
 pandas>=1.0.1
 tqdm
-tensorflow>=2.0.0
-bert4keras>=0.6.0
-seqeval==0.0.12
+bert4keras>=0.7.5
 scikit-learn>=0.21.1

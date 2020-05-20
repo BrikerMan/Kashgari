@@ -28,7 +28,7 @@ class BiLSTM_Model(ABCClassificationModel):
             }
         }
 
-    def build_model_arc(self):
+    def build_model_arc(self) -> None:
         output_dim = self.label_processor.vocab_size
 
         config = self.hyper_parameters
@@ -45,7 +45,7 @@ class BiLSTM_Model(ABCClassificationModel):
         for layer in layer_stack:
             tensor = layer(tensor)
 
-        self.tf_model = keras.Model(embed_model.inputs, tensor)
+        self.tf_model: keras.Model = keras.Model(embed_model.inputs, tensor)
 
 
 if __name__ == "__main__":

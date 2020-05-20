@@ -17,8 +17,6 @@ from kashgari.tasks.labeling.abc_model import ABCLabelingModel
 
 class BiGRU_Model(ABCLabelingModel):
 
-    __task__ = 'labeling'
-
     @classmethod
     def default_hyper_parameters(cls) -> Dict[str, Dict[str, Any]]:
         return {
@@ -35,7 +33,7 @@ class BiGRU_Model(ABCLabelingModel):
             }
         }
 
-    def build_model_arc(self):
+    def build_model_arc(self) -> None:
         output_dim = self.label_processor.vocab_size
 
         config = self.hyper_parameters
@@ -44,7 +42,6 @@ class BiGRU_Model(ABCLabelingModel):
         layer_stack = [
             L.Bidirectional(L.GRU(**config['layer_bgru']), name='layer_bgru'),
             L.Dropout(**config['layer_dropout'], name='layer_dropout'),
-            # L.Dense(output_dim, **config['layer_time_distributed']),
             L.TimeDistributed(L.Dense(output_dim, **config['layer_time_distributed']), name='layer_time_distributed'),
             L.Activation(**config['layer_activation'])
         ]
@@ -57,4 +54,11 @@ class BiGRU_Model(ABCLabelingModel):
 
 
 if __name__ == "__main__":
-    pass
+    from kashgari.corpus import ChineseDailyNerCorpus
+
+    x, y = ChineseDailyNerCorpus.load_data('test')
+    model = BiGRU_Model()
+    model.fit(x, y, epochs=1)
+    print(model.info())
+    print(model.predict(x[:3]))
+    model.save('./model')

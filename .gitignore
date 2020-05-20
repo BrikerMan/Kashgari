@@ -113,3 +113,11 @@ venv-tf/*
 .pytype/
 mkdocs/site
 node_modules
+test-reports
+
+
+_site
+_site_src
+examples/benchmarks/tf_dir
+examples/tf_dir/
+tf_dir/

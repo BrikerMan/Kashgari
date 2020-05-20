@@ -44,6 +44,6 @@ jobs:
     - stage: Lint
       python: "3.6"
       install:
-        - pip install flake8 flake8-builtins
+        - pip install -r requirements.dev.txt
       script:
-        - flake8 kashgari
+        - sh ./scripts/lint.sh

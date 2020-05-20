@@ -7,15 +7,15 @@
 # file: word_embedding.py
 # time: 3:06 下午
 
-import logging
+from typing import Dict, Any, Optional
 
 import numpy as np
 from gensim.models import KeyedVectors
 from tensorflow import keras
-from typing import Dict, Any
 
 from kashgari.embeddings.abc_embedding import ABCEmbedding
 from kashgari.generators import CorpusGenerator
+from kashgari.logger import logger
 from kashgari.processors.abc_processor import ABCProcessor
 
 L = keras.layers
@@ -30,15 +30,9 @@ class WordEmbedding(ABCEmbedding):
 
     def __init__(self,
                  w2v_path: str,
+                 *,
                  w2v_kwargs: Dict[str, Any] = None,
-                 sequence_length: int = None,
-                 text_processor: ABCProcessor = None,
-                 label_processor: ABCProcessor = None,
-                 **kwargs):
-        super(WordEmbedding, self).__init__(sequence_length=sequence_length,
-                                            text_processor=text_processor,
-                                            label_processor=label_processor,
-                                            **kwargs)
+                 **kwargs: Any) -> None:
         if w2v_kwargs is None:
             w2v_kwargs = {}
 
@@ -46,48 +40,53 @@ class WordEmbedding(ABCEmbedding):
         self.w2v_kwargs = w2v_kwargs
 
         self.embedding_size = None
-        self.w2v_matrix = None
+        self.w2v_matrix: np.ndarray = None
 
-    def build_text_vocab(self, gen: CorpusGenerator = None, force=False):
-        if force or not self.text_processor.is_vocab_build:
-            w2v = KeyedVectors.load_word2vec_format(self.w2v_path, **self.w2v_kwargs)
+        super(WordEmbedding, self).__init__(**kwargs)
 
-            token2idx = {
-                self.text_processor.token_pad: 0,
-                self.text_processor.token_unk: 1,
-                self.text_processor.token_bos: 2,
-                self.text_processor.token_eos: 3
-            }
+    def load_embed_vocab(self) -> Optional[Dict[str, int]]:
+        w2v = KeyedVectors.load_word2vec_format(self.w2v_path, **self.w2v_kwargs)
 
-            for token in w2v.index2word:
-                token2idx[token] = len(token2idx)
+        token2idx = {
+            '[PAD]': 0,
+            '[UNK]': 1,
+            '[BOS]': 2,
+            '[EOS]': 3
+        }
 
-            vector_matrix = np.zeros((len(token2idx), w2v.vector_size))
-            vector_matrix[1] = np.random.rand(w2v.vector_size)
-            vector_matrix[4:] = w2v.vectors
+        for token in w2v.index2word:
+            token2idx[token] = len(token2idx)
 
-            self.text_processor.vocab2idx = token2idx
-            self.text_processor.idx2vocab = dict([(v, k) for k, v in token2idx.items()])
-            self.text_processor.build_vocab_dict_if_needs(generator=gen)
-            self.embedding_size = w2v.vector_size
-            self.w2v_matrix = vector_matrix
-            w2v_top_words = w2v.index2entity[:50]
+        vector_matrix = np.zeros((len(token2idx), w2v.vector_size))
+        vector_matrix[1] = np.random.rand(w2v.vector_size)
+        vector_matrix[4:] = w2v.vectors
 
-            logging.debug('------------------------------------------------')
-            logging.debug('Loaded gensim word2vec model')
-            logging.debug('model        : {}'.format(self.w2v_path))
-            logging.debug('word count   : {}'.format(len(self.w2v_matrix)))
-            logging.debug('Top 50 words : {}'.format(w2v_top_words))
-            logging.debug('------------------------------------------------')
+        self.embedding_size = w2v.vector_size
+        self.w2v_matrix = vector_matrix
+        w2v_top_words = w2v.index2entity[:50]
 
-    def build_embedding_model(self):
+        logger.debug('------------------------------------------------')
+        logger.debug('Loaded gensim word2vec model')
+        logger.debug('model        : {}'.format(self.w2v_path))
+        logger.debug('word count   : {}'.format(len(self.w2v_matrix)))
+        logger.debug('Top 50 words : {}'.format(w2v_top_words))
+        logger.debug('------------------------------------------------')
+
+        return token2idx
+
+    def build_embedding_model(self,
+                              *,
+                              vocab_size: int = None,
+                              force: bool = False,
+                              **kwargs) -> None:
         if self.embed_model is None:
             input_tensor = L.Input(shape=(None,),
                                    name=f'input')
-            layer_embedding = L.Embedding(self.text_processor.vocab_size,
+            layer_embedding = L.Embedding(len(self.embedding_vocab2idx),
                                           self.embedding_size,
                                           weights=[self.w2v_matrix],
                                           trainable=False,
+                                          mask_zero=True,
                                           name=f'layer_embedding')
 
             embedded_tensor = layer_embedding(input_tensor)

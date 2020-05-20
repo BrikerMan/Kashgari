@@ -7,10 +7,11 @@
 # file: __init__.py
 # time: 3:06 下午
 
+from .abc_embedding import ABCEmbedding
 from .bare_embedding import BareEmbedding
-from .word_embedding import WordEmbedding
 from .bert_embedding import BertEmbedding
 from .transformer_embedding import TransformerEmbedding
+from .word_embedding import WordEmbedding
 
 if __name__ == "__main__":
     pass

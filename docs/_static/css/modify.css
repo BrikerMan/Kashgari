@@ -34,18 +34,18 @@
 }
 
 body {
-  color: var(--color--darkgray) !important;
-  fill: var(--color--darkgray) !important;
+    color: var(--color--darkgray) !important;
+    fill: var(--color--darkgray) !important;
 }
 
 h1, h2, .rst-content .toctree-wrapper p.caption, h3, h4, h5, h6, legend {
-  /* font-weight: 500;
-  font-family: Colfax, sans-serif !important; */
-  font-family: "Lato","proxima-nova","Helvetica Neue",Arial,sans-serif !important;
+    /* font-weight: 500;
+    font-family: Colfax, sans-serif !important; */
+    font-family: "Lato", "proxima-nova", "Helvetica Neue", Arial, sans-serif !important;
 }
 
 .wy-nav-top {
-  background-color: var(--color--coolgray4) !important;
+    background-color: var(--color--coolgray4) !important;
 }
 
 .rst-content .toc-backref {
@@ -53,82 +53,82 @@ h1, h2, .rst-content .toctree-wrapper p.caption, h3, h4, h5, h6, legend {
 }
 
 .footnote {
-  padding-left: 0.75rem;
-  background-color: var(--color--warmgraylight) !important;
+    padding-left: 0.75rem;
+    background-color: var(--color--warmgraylight) !important;
 }
 
 .wy-nav-top a, .wy-nav-top a:visited {
- color: var(--color--white) !important;
+    color: var(--color--white) !important;
 }
 
 .wy-menu-vertical header, .wy-menu-vertical p.caption {
-  font-weight: 500 !important;
-  letter-spacing: 1px;
-  margin-top: 1.25rem;
+    font-weight: 500 !important;
+    letter-spacing: 1px;
+    margin-top: 1.25rem;
 }
 
 .wy-side-nav-search {
-  background-color: var(--color--warmgraylight) !important;
+    background-color: var(--color--warmgraylight) !important;
 }
 
 .wy-body-for-nav {
-  background-color: var(--color--coolgray4) !important;
+    background-color: var(--color--coolgray4) !important;
 }
 
 .wy-menu-vertical li span.toctree-expand {
-  color:  var(--color--coolgray2) !important;
+    color: var(--color--coolgray2) !important;
 }
 
 .wy-nav-side {
-  color: var(--color--coolgray1) !important;
-  background-color: var(--color--coolgray4) !important;
+    color: var(--color--coolgray1) !important;
+    background-color: var(--color--coolgray4) !important;
 }
 
 .wy-side-nav-search input[type=text] {
-  border-color: var(--color--warmgraydark) !important;
+    border-color: var(--color--warmgraydark) !important;
 }
 
 a {
-  color: var(--color--kashgarired) !important;
+    color: var(--color--kashgarired) !important;
 }
 
 a:visited {
-  color: #ff1744 !important;
+    color: #ff1744 !important;
 }
 
 .wy-menu-vertical a {
-  color: var(--color--coolgray2) !important;
+    color: var(--color--coolgray2) !important;
 }
 
 .wy-menu-vertical li.current a {
-  border-right: none !important;
-  color: var(--color--coolgray4) !important;
+    border-right: none !important;
+    color: var(--color--coolgray4) !important;
 }
 
 .wy-menu-vertical li.current {
-  background-color: var(--color--warmgraylight) !important;
+    background-color: var(--color--warmgraylight) !important;
 }
 
-.wy-menu-vertical li.toctree-l2.current>a {
-  background-color: var(--color--coolgray1) !important;
+.wy-menu-vertical li.toctree-l2.current > a {
+    background-color: var(--color--coolgray1) !important;
 }
 
-.wy-menu-vertical a:hover, .wy-menu-vertical li.current a:hover, .wy-menu-vertical li.toctree-l2.current>a:hover {
-  color: var(--color--warmgraylight) !important;
-  background-color: var(--color--coolgray3) !important;
+.wy-menu-vertical a:hover, .wy-menu-vertical li.current a:hover, .wy-menu-vertical li.toctree-l2.current > a:hover {
+    color: var(--color--warmgraylight) !important;
+    background-color: var(--color--coolgray3) !important;
 }
 
 .wy-alert-title, .rst-content .admonition-title {
-  background-color: var(--color--kashgarired) !important;
+    background-color: var(--color--kashgarired) !important;
 }
 
 .wy-alert, .rst-content .note, .rst-content .attention, .rst-content .caution, .rst-content .danger, .rst-content .error, .rst-content .hint, .rst-content .important, .rst-content .tip, .rst-content .warning, .rst-content .seealso, .rst-content .admonition-todo, .rst-content .admonition {
-  background-color: var(--color--warmgraylight) !important;
+    background-color: var(--color--warmgraylight) !important;
 }
 
 .rst-content dl:not(.docutils) dt {
-  border-color: var(--color--kashgarired) !important;
-  background-color: var(--color--warmgraylight) !important;
+    border-color: var(--color--kashgarired) !important;
+    background-color: var(--color--warmgraylight) !important;
 }
 
 /* .rst-content pre.literal-block, .rst-content div[class^='highlight'] {
@@ -136,31 +136,32 @@ a:visited {
 } */
 
 .wy-table-odd td, .wy-table-striped tr:nth-child(2n-1) td, .rst-content table.docutils:not(.field-list) tr:nth-child(2n-1) td {
-  background-color: var(--color--warmgraylight) !important;
+    background-color: var(--color--warmgraylight) !important;
 }
 
 @media screen and (min-width: 1100px) {
-  .wy-nav-content-wrap {
-      background-color: var(--color--warmgraylight) !important;
-  }
+    .wy-nav-content-wrap {
+        background-color: var(--color--warmgraylight) !important;
+    }
 }
 
 .wy-side-nav-search img {
-  height: auto !important;
-  width: 100% !important;
-  padding: 0 !important;
-  background-color: inherit !important;
-  border-radius: 0 !important;
-  margin: 0 !important
+    height: auto !important;
+    width: 100% !important;
+    padding: 0 !important;
+    background-color: inherit !important;
+    border-radius: 0 !important;
+    margin: 0 !important
 }
 
-.wy-side-nav-search>a, .wy-side-nav-search .wy-dropdown>a {
-  margin-bottom: 0 !important;
+.wy-side-nav-search > a, .wy-side-nav-search .wy-dropdown > a {
+    margin-bottom: 0 !important;
 }
 
-.wy-menu-vertical li.toctree-l1.current>a {
-  border: none !important;
+.wy-menu-vertical li.toctree-l1.current > a {
+    border: none !important;
 }
 
-.wy-side-nav-search>div.version {
- color: var(--color--coolgray2) !important;
+.wy-side-nav-search > div.version {
+    color: var(--color--coolgray2) !important;
+}

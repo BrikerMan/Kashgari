@@ -32,7 +32,7 @@ class BiLSTM_Model(ABCLabelingModel):
             }
         }
 
-    def build_model_arc(self):
+    def build_model_arc(self) -> None:
         output_dim = self.label_processor.vocab_size
 
         config = self.hyper_parameters
@@ -41,11 +41,9 @@ class BiLSTM_Model(ABCLabelingModel):
         layer_stack = [
             L.Bidirectional(L.LSTM(**config['layer_blstm']), name='layer_blstm'),
             L.Dropout(**config['layer_dropout'], name='layer_dropout'),
-            # L.Dense(output_dim, **config['layer_time_distributed']),
-            L.TimeDistributed(L.Dense(output_dim, **config['layer_time_distributed']), name='layer_time_distributed'),
+            L.Dense(output_dim, **config['layer_time_distributed']),
             L.Activation(**config['layer_activation'])
         ]
-
         tensor = embed_model.output
         for layer in layer_stack:
             tensor = layer(tensor)

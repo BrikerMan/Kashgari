@@ -11,13 +11,14 @@
 
 """
 
-import os
 import logging
+import os
+from typing import Dict, Any
 
 os.environ['TF_KERAS'] = '1'
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
-custom_objects = {}
+custom_objects: Dict[str, Any] = {}
 logger = logging.Logger('kashgari', level='DEBUG')
 stream_handler = logging.StreamHandler()
 stream_handler.setFormatter(logging.Formatter('%(asctime)s | %(levelname)-7s | %(message)s'))

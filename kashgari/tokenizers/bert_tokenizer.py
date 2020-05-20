@@ -9,10 +9,9 @@
 
 # flake8: noqa: E127
 
-import os
 import codecs
 import unicodedata
-from typing import List
+from typing import List, Optional, Dict
 
 from kashgari.tokenizers.base_tokenizer import Tokenizer
 
@@ -30,12 +29,13 @@ class BertTokenizer(Tokenizer):
     """
 
     def __init__(self,
-                 token_dict=None,
-                 token_cls=TOKEN_CLS,
-                 token_sep=TOKEN_SEP,
-                 token_unk=TOKEN_UNK,
-                 pad_index=0,
-                 cased=False):
+                 *,
+                 token_dict: Optional[Dict[str, int]] = None,
+                 token_cls: str = TOKEN_CLS,
+                 token_sep: str = TOKEN_SEP,
+                 token_unk: str = TOKEN_UNK,
+                 pad_index: int = 0,
+                 cased: bool = False) -> None:
         """
         Initialize tokenizer.
         Args:
@@ -46,31 +46,23 @@ class BertTokenizer(Tokenizer):
             pad_index: The index to pad.
             cased: Whether to keep the case.
         """
-        self._token_dict = token_dict
-        if self._token_dict:
-            self._token_dict_inv = {v: k for k, v in token_dict.items()}
+        self._token_dict: Dict[str, int]
+
+        if token_dict:
+            self._token_dict = token_dict
         else:
-            self._token_dict_inv = {}
-        self._token_cls = token_cls
-        self._token_sep = token_sep
-        self._token_unk = token_unk
-        self._pad_index = pad_index
-        self._cased = cased
+            self._token_dict = {}
+
+        self._token_dict_inv: Dict[int, str] = {v: k for k, v in self._token_dict.items()}
+        self._token_cls: str = token_cls
+        self._token_sep: str = token_sep
+        self._token_unk: str = token_unk
+        self._pad_index: int = pad_index
+        self._cased: bool = cased
 
     @classmethod
-    def load_from_model(cls, model_path: str):
-        dict_path = os.path.join(model_path, 'vocab.txt')
-
-        token2idx = {}
-        with codecs.open(dict_path, 'r', 'utf8') as reader:
-            for line in reader:
-                token = line.strip()
-                token2idx[token] = len(token2idx)
-        return BertTokenizer(token_dict=token2idx)
-
-    @classmethod
-    def load_from_vocab_file(cls, vocab_path: str):
-        token2idx = {}
+    def load_from_vocab_file(cls, vocab_path: str) -> 'BertTokenizer':
+        token2idx: Dict[str, int] = {}
         with codecs.open(vocab_path, 'r', 'utf8') as reader:
             for line in reader:
                 token = line.strip()
@@ -89,7 +81,7 @@ class BertTokenizer(Tokenizer):
         tokens = self._tokenize(text)
         return tokens
 
-    def _tokenize(self, text):
+    def _tokenize(self, text: str) -> List[str]:
         if not self._cased:
             text = unicodedata.normalize('NFD', text)
             text = ''.join([ch for ch in text if unicodedata.category(ch) != 'Mn'])
@@ -105,7 +97,7 @@ class BertTokenizer(Tokenizer):
             else:
                 spaced += ch
 
-        if self._token_dict:
+        if len(self._token_dict) > 0:
             tokens = []
             for word in spaced.strip().split():
                 tokens += self._word_piece_tokenize(word)
@@ -113,7 +105,7 @@ class BertTokenizer(Tokenizer):
         else:
             return spaced.strip().split()
 
-    def _word_piece_tokenize(self, word):
+    def _word_piece_tokenize(self, word: str) -> List[str]:
         if word in self._token_dict:
             return [word]
         tokens = []
@@ -134,7 +126,7 @@ class BertTokenizer(Tokenizer):
         return tokens
 
     @staticmethod
-    def _is_punctuation(ch):  # noqa: E127
+    def _is_punctuation(ch: str) -> bool:  # noqa: E127
         code = ord(ch)
         return 33 <= code <= 47 or \
                58 <= code <= 64 or \
@@ -143,7 +135,7 @@ class BertTokenizer(Tokenizer):
                unicodedata.category(ch).startswith('P')
 
     @staticmethod
-    def _is_cjk_character(ch):
+    def _is_cjk_character(ch: str) -> bool:
         code = ord(ch)
         return 0x4E00 <= code <= 0x9FFF or \
                0x3400 <= code <= 0x4DBF or \
@@ -155,9 +147,9 @@ class BertTokenizer(Tokenizer):
                0x2F800 <= code <= 0x2FA1F
 
     @staticmethod
-    def _is_space(ch):
+    def _is_space(ch: str) -> bool:
         return ch == ' ' or ch == '\n' or ch == '\r' or ch == '\t' or unicodedata.category(ch) == 'Zs'
 
     @staticmethod
-    def _is_control(ch):
+    def _is_control(ch: str) -> bool:
         return unicodedata.category(ch) in ('Cc', 'Cf')

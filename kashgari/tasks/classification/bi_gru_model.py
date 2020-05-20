@@ -10,6 +10,7 @@
 from typing import Dict, Any
 
 from tensorflow import keras
+
 from kashgari.layers import L
 from kashgari.tasks.classification.abc_model import ABCClassificationModel
 
@@ -27,7 +28,7 @@ class BiGRU_Model(ABCClassificationModel):
             }
         }
 
-    def build_model_arc(self):
+    def build_model_arc(self) -> None:
         output_dim = self.label_processor.vocab_size
         config = self.hyper_parameters
         embed_model = self.embedding.embed_model
@@ -46,16 +47,32 @@ class BiGRU_Model(ABCClassificationModel):
 
 
 if __name__ == "__main__":
-    from kashgari.corpus import JigsawToxicCommentCorpus
-    corpus = JigsawToxicCommentCorpus('/Users/brikerman/Downloads/'
-                                      'jigsaw-toxic-comment-classification-challenge/train.csv')
-    x, y = corpus.load_data()
-    model = BiGRU_Model(multi_label=True)
-    from kashgari.generators import CorpusGenerator
-    train_gen = CorpusGenerator(x, y)
-    model.build_model(train_gen)
-    model.tf_model.summary()
-    model.fit(x, y, epochs=1)
+    from kashgari.corpus import SMP2018ECDTCorpus
 
-    y = model.predict(x[:5], debug_info=True)
+    train_x, train_y = SMP2018ECDTCorpus.load_data()
+    valid_x, valid_y = SMP2018ECDTCorpus.load_data('valid')
+
+    train_x = train_x * 10
+    train_y = train_y * 10
+    model = BiGRU_Model()
+    from kashgari.generators import CorpusGenerator
+    # train_gen = CorpusGenerator(train_x, train_y)
+    model.fit(train_x, train_y, epochs=1)
+    import time
+
+    s = time.time()
+    model.fit(train_x, train_y, epochs=5)
+    print("Spend 1: ", time.time() - s)
+
+    s = time.time()
+    model.fit(train_x, train_y, epochs=5, use_tfdata=True)
+    print("Spend 2: ", time.time() - s)
+
+    y = model.predict(train_x[:20], debug_info=True)
     print(y)
+    print(train_y[:20])
+
+    test_x, test_y = SMP2018ECDTCorpus.load_data('test')
+    model.evaluate(test_x, test_y)
+
+    model.evaluate(valid_x, valid_y)

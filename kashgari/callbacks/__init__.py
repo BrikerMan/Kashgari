@@ -8,5 +8,7 @@
 # time: 8:08 下午
 
 
+from kashgari.callbacks.eval_callBack import EvalCallBack
+
 if __name__ == "__main__":
     pass
