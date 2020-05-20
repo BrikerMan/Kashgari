@@ -113,7 +113,7 @@ class Seq2Seq:
                                          hidden_size=self.hidden_size,
                                          vocab_size=self.decoder_processor.vocab_size)
 
-    # @tf.function
+    @tf.function
     def train_step(self,  # type: ignore
                    input_seq,
                    target_seq,
