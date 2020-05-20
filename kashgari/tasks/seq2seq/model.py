@@ -114,6 +114,8 @@ class Seq2Seq:
             self.decoder = AttGRUDecoder(self.decoder_embedding,
                                          hidden_size=self.hidden_size,
                                          vocab_size=self.decoder_processor.vocab_size)
+            self.encoder.model().summary()
+            self.decoder.model().summary()
 
     @tf.function
     def train_step(self,  # type: ignore
@@ -153,6 +155,7 @@ class Seq2Seq:
     def fit(self,
             x_train: TextSamplesVar,
             y_train: TextSamplesVar,
+            *,
             batch_size: int = 64,
             epochs: int = 5,
             callbacks: List[tf.keras.callbacks.Callback] = None) -> tf.keras.callbacks.History:
@@ -172,6 +175,7 @@ class Seq2Seq:
         callbacks.append(history_callback)
 
         for c in callbacks:
+            c.set_model(self)
             c.on_train_begin()
 
         for epoch in range(epochs):
@@ -230,4 +234,10 @@ class Seq2Seq:
 
 
 if __name__ == "__main__":
-    pass
+    from kashgari.corpus import ChineseDailyNerCorpus
+
+    x, y = ChineseDailyNerCorpus.load_data('test')
+    x, y = x[:200], y[:200]
+
+    seq2seq = Seq2Seq()
+    seq2seq.fit(x, y)

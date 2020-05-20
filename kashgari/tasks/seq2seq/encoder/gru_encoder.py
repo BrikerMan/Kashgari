@@ -9,6 +9,7 @@
 
 import numpy as np
 import tensorflow as tf
+from kashgari.layers import L
 from kashgari.embeddings.abc_embedding import ABCEmbedding
 
 
@@ -16,6 +17,7 @@ class GRUEncoder(tf.keras.Model):
     def __init__(self, embedding: ABCEmbedding, hidden_size: int = 1024):
         super(GRUEncoder, self).__init__()
         self.embedding = embedding
+        self.hidden_size = hidden_size
         self.gru = tf.keras.layers.GRU(hidden_size,
                                        return_sequences=True,
                                        return_state=True,
@@ -25,6 +27,13 @@ class GRUEncoder(tf.keras.Model):
         x = self.embedding.embed_model(x)
         output, state = self.gru(x, initial_state=hidden)
         return output, state
+
+    def model(self):
+        x1 = L.Input(shape=(None,))
+        x2 = L.Input(shape=(self.hidden_size,))
+        return tf.keras.Model(inputs=[x1, x2],
+                              outputs=self.call(x1, x2),
+                              name='GRUEncoder')
 
 
 if __name__ == "__main__":

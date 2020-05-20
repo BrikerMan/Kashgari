@@ -10,8 +10,8 @@
 # type: ignore
 
 import tensorflow as tf
+from kashgari.layers import L
 from kashgari.embeddings.abc_embedding import ABCEmbedding
-from kashgari.layers import BahdanauAttention
 
 
 class AttGRUDecoder(tf.keras.Model):
@@ -21,6 +21,7 @@ class AttGRUDecoder(tf.keras.Model):
                  hidden_size: int = 1024):
         super(AttGRUDecoder, self).__init__()
         self.embedding = embedding
+        self.hidden_size = hidden_size
         self.gru = tf.keras.layers.GRU(hidden_size,
                                        return_sequences=True,
                                        return_state=True,
@@ -28,7 +29,7 @@ class AttGRUDecoder(tf.keras.Model):
         self.fc = tf.keras.layers.Dense(vocab_size)
 
         # 用于注意力
-        self.attention = BahdanauAttention(hidden_size)
+        self.attention = L.BahdanauAttention(hidden_size)
 
     def call(self, x, hidden, enc_output):
         # enc_output shape == (batch_size, max_length, hidden_size)
@@ -50,6 +51,14 @@ class AttGRUDecoder(tf.keras.Model):
         x = self.fc(output)
 
         return x, state, attention_weights
+
+    def model(self):
+        x1 = L.Input(shape=(None,))
+        x2 = L.Input(shape=(self.hidden_size,))
+        x3 = L.Input(shape=(self.hidden_size,))
+        return tf.keras.Model(inputs=[x1, x2, x3],
+                              outputs=self.call(x1, x2, x3),
+                              name='AttGRUDecoder')
 
 
 if __name__ == "__main__":

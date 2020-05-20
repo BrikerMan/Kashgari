@@ -11,6 +11,7 @@ from tensorflow import keras
 from .behdanau_attention import BahdanauAttention  # type: ignore
 
 L = keras.layers
+L.BahdanauAttention = BahdanauAttention
 
 if __name__ == "__main__":
     pass

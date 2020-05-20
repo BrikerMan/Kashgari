@@ -48,7 +48,6 @@ class BareEmbedding(ABCEmbedding):
 
             embedded_tensor = layer_embedding(input_tensor)
             self.embed_model = keras.Model(input_tensor, embedded_tensor)
-            self.embed_model.summary()
 
 
 if __name__ == "__main__":
