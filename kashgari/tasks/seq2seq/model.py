@@ -155,7 +155,7 @@ class Seq2Seq:
             y_train: TextSamplesVar,
             batch_size: int = 64,
             epochs: int = 5,
-            callbacks: List[tf.keras.callbacks.Callback] = None, ) -> tf.keras.callbacks.History:
+            callbacks: List[tf.keras.callbacks.Callback] = None) -> tf.keras.callbacks.History:
         train_gen = CorpusGenerator(x_train, y_train)
         self.build_model_generator(train_gen)
 
@@ -171,12 +171,12 @@ class Seq2Seq:
         history_callback = tf.keras.callbacks.History()
         callbacks.append(history_callback)
 
-        for callback in callbacks:
-            callback.on_train_begin()
+        for c in callbacks:
+            c.on_train_begin()
 
         for epoch in range(epochs):
-            for callback in callbacks:
-                callback.on_epoch_begin(epoch=epoch)
+            for c in callbacks:
+                c.on_epoch_begin(epoch=epoch)
             enc_hidden = tf.zeros((batch_size, self.hidden_size))
             total_loss = []
 
@@ -189,8 +189,8 @@ class Seq2Seq:
                            f"Batch Loss: {batch_loss.numpy():.4f}"
                     p_bar.set_description_str(info)
             logs = {'loss': np.mean(total_loss)}
-            for callback in callbacks:
-                callback.on_epoch_end(epoch=epoch, logs=logs)
+            for c in callbacks:
+                c.on_epoch_end(epoch=epoch, logs=logs)
 
         return history_callback
 
@@ -230,30 +230,4 @@ class Seq2Seq:
 
 
 if __name__ == "__main__":
-    from kashgari.corpus import ChineseDailyNerCorpus
-
-    x, y = ChineseDailyNerCorpus.load_data('test')
-    x = x[:500]
-    y = y[:500]
-
-
-    class CustomCallback(tf.keras.callbacks.Callback):
-        def __init__(self, model):
-            self.model = model
-            self.sample_count = 10
-
-        def on_epoch_end(self, epoch, logs=None):
-            import random
-            samples = random.sample(x, self.sample_count)
-            translates, _ = self.model.predict(samples)
-
-            for index in range(len(samples)):
-                print(f"English: {' '.join(samples[index])}")
-                print(f"Chinese: {''.join(translates[index])}")
-                print('------------------------------')
-
-
-    seq2seq = Seq2Seq(hidden_size=128, encoder_seq_length=50, decoder_seq_length=50)
-    c = CustomCallback(model=seq2seq)
-    history = seq2seq.fit(x, y, epochs=2, callbacks=[c])
-    print(history.history)
+    pass
