@@ -102,7 +102,7 @@ class ABCClassificationModel(ABCTaskModel, ABC):
         self.build_model_generator(train_gen)
 
     def build_model_generator(self,
-                              train_gen: CorpusGenerator):
+                              train_gen: CorpusGenerator) -> None:
         self.text_processor.build_vocab_generator(train_gen)
         self.label_processor.build_vocab_generator(train_gen)
         self.embedding.setup_text_processor(self.text_processor)
@@ -165,7 +165,7 @@ class ABCClassificationModel(ABCTaskModel, ABC):
             epochs: int = 5,
             callbacks: List['keras.callbacks.Callback'] = None,
             fit_kwargs: Dict = None,
-            **kwargs) -> 'keras.callbacks.History':
+            **kwargs: Dict) -> 'keras.callbacks.History':
         """
         Trains the model for a given number of epochs with given data set list.
 
@@ -211,7 +211,7 @@ class ABCClassificationModel(ABCTaskModel, ABC):
                       epochs: int = 5,
                       callbacks: List['keras.callbacks.Callback'] = None,
                       fit_kwargs: Dict = None,
-                      **kwargs) -> 'keras.callbacks.History':
+                      **kwargs: Dict) -> 'keras.callbacks.History':
         """
         Trains the model for a given number of epochs with given data generator.
 
@@ -290,7 +290,7 @@ class ABCClassificationModel(ABCTaskModel, ABC):
             predict_kwargs = {}
         with kashgari.utils.custom_object_scope():
             if truncating:
-                seq_length = self.embedding.sequence_length
+                seq_length = self.sequence_length
             else:
                 seq_length = None
             tensor = self.text_processor.transform(x_data,

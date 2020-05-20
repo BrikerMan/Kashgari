@@ -74,7 +74,7 @@ class TransformerEmbedding(ABCEmbedding):
                               *,
                               vocab_size: int = None,
                               force: bool = False,
-                              **kwargs) -> None:
+                              **kwargs: Dict) -> None:
         if self.embed_model is None:
             config_path = self.config_path
             config = json.loads(open(config_path, 'r').read())

@@ -83,7 +83,7 @@ class ABCLabelingModel(ABCTaskModel, ABC):
         self.build_model_generator(train_gen)
 
     def build_model_generator(self,
-                              train_gen: CorpusGenerator):
+                              train_gen: CorpusGenerator) -> None:
         self.text_processor.build_vocab_generator(train_gen)
         self.label_processor.build_vocab_generator(train_gen)
         self.embedding.setup_text_processor(self.text_processor)
@@ -183,8 +183,8 @@ class ABCLabelingModel(ABCTaskModel, ABC):
                       valid_sample_gen: CorpusGenerator = None,
                       batch_size: int = 64,
                       epochs: int = 5,
-                      callbacks: List['keras.callbacks.Callback'] = None,
-                      fit_kwargs: Dict = None) -> 'keras.callbacks.History':
+                      callbacks: List['tf.keras.callbacks.Callback'] = None,
+                      fit_kwargs: Dict = None) -> 'tf.keras.callbacks.History':
         """
         Trains the model for a given number of epochs with given data generator.
 
@@ -261,7 +261,7 @@ class ABCLabelingModel(ABCTaskModel, ABC):
             predict_kwargs = {}
         with kashgari.utils.custom_object_scope():
             if truncating:
-                seq_length = self.embedding.sequence_length
+                seq_length = self.sequence_length
             else:
                 seq_length = None
             tensor = self.text_processor.transform(x_data,

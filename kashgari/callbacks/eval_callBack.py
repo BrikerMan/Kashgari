@@ -46,7 +46,7 @@ class EvalCallBack(keras.callbacks.Callback):
 
     def on_epoch_end(self, epoch: int, logs: Any = None) -> None:
         if (epoch + 1) % self.step == 0:
-            report = self.kash_model.evaluate(self.x_data,
+            report = self.kash_model.evaluate(self.x_data,  # type: ignore
                                               self.y_data,
                                               truncating=self.truncating,
                                               batch_size=self.batch_size)

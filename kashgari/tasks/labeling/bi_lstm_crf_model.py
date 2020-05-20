@@ -7,6 +7,8 @@
 # file: bi_lstm_crf_model.py
 # time: 4:09 下午
 
+# type: ignore
+
 from typing import Dict, Any
 
 from bert4keras.layers import ConditionalRandomField

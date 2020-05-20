@@ -154,12 +154,4 @@ class SequenceProcessor(ABCProcessor):
 
 
 if __name__ == "__main__":
-    from kashgari.corpus import ChineseDailyNerCorpus
-    from kashgari.generators import CorpusGenerator
-
-    logging.basicConfig(level='DEBUG')
-    x, y = ChineseDailyNerCorpus.load_data()
-    gen = CorpusGenerator(x, y)
-    p = SequenceProcessor(vocab_dict_type='labeling')
-    p.build_vocab_dict_if_needs(gen)
-    print(p.vocab2idx)
+    pass

@@ -11,7 +11,7 @@ import json
 import logging
 import os
 import pathlib
-from abc import ABC
+from abc import ABC, abstractmethod
 from typing import Dict, Any, Union, List
 
 from tensorflow import keras
@@ -27,17 +27,17 @@ class ABCTaskModel(ABC):
     def info(self) -> Dict:
         import kashgari
         import tensorflow as tf
-        model_json_str = self.tf_model.to_json()
+        model_json_str = self.tf_model.to_json()  # type: ignore
 
         return {
             'config': {
-                'hyper_parameters': self.hyper_parameters,
+                'hyper_parameters': self.hyper_parameters,  # type: ignore
             },
             'tf_model': json.loads(model_json_str),
-            'embedding': self.embedding.info(),
+            'embedding': self.embedding.info(),  # type: ignore
             'class_name': self.__class__.__name__,
             'module': self.__class__.__module__,
-            'tf_version': tf.__version__,
+            'tf_version': tf.__version__,  # type: ignore
             'kashgari_version': kashgari.__version__
         }
 
@@ -87,9 +87,10 @@ class ABCTaskModel(ABC):
         """
         raise NotImplementedError
 
+    @abstractmethod
     def build_model(self,
                     x_train: Any,
-                    y_train: Any):
+                    y_train: Any) -> None:
         raise NotImplementedError
 
     # def build_model_arc(self) -> None:
@@ -171,7 +172,7 @@ class ABCTaskModel(ABC):
             f.write(json.dumps(self.info(), indent=2, ensure_ascii=True))
             f.close()
 
-        self.tf_model.save_weights(os.path.join(model_path, 'model_weights.h5'))
+        self.tf_model.save_weights(os.path.join(model_path, 'model_weights.h5'))  # type: ignore
         logging.info('model saved to {}'.format(os.path.abspath(model_path)))
         return model_path
 

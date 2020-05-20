@@ -37,7 +37,7 @@ class BareEmbedding(ABCEmbedding):
                               *,
                               vocab_size: int = None,
                               force: bool = False,
-                              **kwargs) -> None:
+                              **kwargs: Dict) -> None:
         if self.embed_model is None or force:
             input_tensor = L.Input(shape=(None,),
                                    name=f'input')

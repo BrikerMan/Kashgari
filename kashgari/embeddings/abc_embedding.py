@@ -17,7 +17,7 @@ from tensorflow import keras
 
 import kashgari
 from kashgari.generators import CorpusGenerator
-from kashgari.processors import SequenceProcessor
+from kashgari.processors import ABCProcessor
 
 L = keras.layers
 
@@ -40,7 +40,7 @@ class ABCEmbedding:
     @classmethod
     def load_saved_model_embedding(cls,
                                    config_dict: Dict,
-                                   **kwargs: Any) -> 'AbstractEmbedding':
+                                   **kwargs: Any) -> 'ABCEmbedding':
 
         instance = cls(**config_dict['config'])
 
@@ -62,35 +62,44 @@ class ABCEmbedding:
 
         self.embedding_size: int = embedding_size  # type: ignore
         self.max_position: int = max_position  # type: ignore
-        self._text_processor: Optional[SequenceProcessor] = None
+        self._text_processor: Optional[ABCProcessor] = None
         self._embedding_vocab2idx = self.load_embed_vocab()
 
     @property
     def embedding_vocab2idx(self) -> Dict[str, int]:
         return self._embedding_vocab2idx
 
-    def setup_text_processor(self, processor: SequenceProcessor):
+    def setup_text_processor(self, processor: ABCProcessor) -> None:
         self._text_processor = processor
         self.build_embedding_model(vocab_size=processor.vocab_size)
 
     def get_seq_length_from_corpus(self,
                                    corpus_gen: CorpusGenerator,
                                    *,
+                                   use_label: bool = False,
                                    cover_rate: float = 0.95) -> int:
         """
         Calculate proper sequence length according to the corpus
 
         Args:
             corpus_gen:
+            use_label:
             cover_rate:
 
         Returns:
 
         """
         seq_lens = []
-        for sentence, _ in tqdm.tqdm(corpus_gen, desc="Calculating sequence length"):
-            seq_lens.append(len(sentence))
-        sequence_length = sorted(seq_lens)[int(cover_rate * len(seq_lens))]
+        for sentence, label in tqdm.tqdm(corpus_gen, desc="Calculating sequence length"):
+            if use_label:
+                seq_lens.append(len(label))
+            else:
+                seq_lens.append(len(sentence))
+        if cover_rate == 1.0:
+            target_index = -1
+        else:
+            target_index = int(cover_rate * len(seq_lens))
+        sequence_length = sorted(seq_lens)[target_index]
         logging.debug(f'Calculated sequence length = {sequence_length}')
         return sequence_length
 
@@ -107,7 +116,7 @@ class ABCEmbedding:
                               *,
                               vocab_size: int = None,
                               force: bool = False,
-                              **kwargs) -> None:
+                              **kwargs: Dict) -> None:
         raise NotImplementedError
 
     def embed(self,

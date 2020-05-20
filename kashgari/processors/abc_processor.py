@@ -49,7 +49,7 @@ class ABCProcessor(ABC):
 
     def build_vocab(self,
                     x_data: TextSamplesVar,
-                    y_data: TextSamplesVar):
+                    y_data: TextSamplesVar) -> None:
         corpus_gen = CorpusGenerator(x_data, y_data)
         self.build_vocab_generator(corpus_gen)
 

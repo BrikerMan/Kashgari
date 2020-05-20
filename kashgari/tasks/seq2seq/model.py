@@ -7,7 +7,7 @@
 # file: model.py
 # time: 2:34 下午
 
-from typing import Any
+from typing import Any, Tuple, List
 
 import numpy as np
 import tensorflow as tf
@@ -29,6 +29,7 @@ class Seq2Seq:
                  decoder_embedding: ABCEmbedding = None,
                  encoder_seq_length: int = None,
                  decoder_seq_length: int = None,
+                 hidden_size: int = 1024,
                  **kwargs: Any):
         """
         Init Labeling Model
@@ -41,14 +42,14 @@ class Seq2Seq:
         """
         logger.warning("This is a experimental API, it might changed in next version")
         if encoder_embedding is None:
-            self.encoder_embedding = BareEmbedding(embedding_size=256)  # type: ignore
-        else:
-            self.encoder_embedding = encoder_embedding
+            encoder_embedding = BareEmbedding(embedding_size=256)  # type: ignore
+
+        self.encoder_embedding = encoder_embedding
 
         if decoder_embedding is None:
-            self.decoder_embedding = BareEmbedding(embedding_size=256)  # type: ignore
-        else:
-            self.decoder_embedding = decoder_embedding
+            decoder_embedding = BareEmbedding(embedding_size=256)  # type: ignore
+
+        self.decoder_embedding = decoder_embedding
 
         self.encoder_processor = SequenceProcessor(min_count=1)
         self.decoder_processor = SequenceProcessor(build_vocab_from_labels=True, min_count=1)
@@ -56,7 +57,7 @@ class Seq2Seq:
         self.encoder: GRUEncoder = None
         self.decoder: AttGRUDecoder = None
 
-        self.hidden_size: int = 1024
+        self.hidden_size: int = hidden_size
 
         self.encoder_seq_length = encoder_seq_length
         self.decoder_seq_length = decoder_seq_length
@@ -64,7 +65,7 @@ class Seq2Seq:
         self.optimizer = tf.keras.optimizers.Adam()
         self.loss_object = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True, reduction='none')
 
-    def loss_function(self, real, pred):
+    def loss_function(self, real: tf.Tensor, pred: tf.Tensor) -> tf.Tensor:
         mask = tf.math.logical_not(tf.math.equal(real, 0))
         loss_ = self.loss_object(real, pred)
 
@@ -99,12 +100,22 @@ class Seq2Seq:
             self.encoder_embedding.setup_text_processor(self.encoder_processor)
             self.decoder_embedding.setup_text_processor(self.decoder_processor)
 
-            self.encoder: GRUEncoder = GRUEncoder(self.encoder_embedding)
-            self.decoder: AttGRUDecoder = AttGRUDecoder(self.decoder_embedding,
-                                                        vocab_size=self.decoder_processor.vocab_size)
+            if self.encoder_seq_length is None:
+                self.encoder_embedding.get_seq_length_from_corpus(corpus_gen=train_gen,
+                                                                  cover_rate=1.0)
+
+            if self.decoder_seq_length is None:
+                self.decoder_embedding.get_seq_length_from_corpus(corpus_gen=train_gen,
+                                                                  use_label=True,
+                                                                  cover_rate=1.0)
+
+            self.encoder = GRUEncoder(self.encoder_embedding, hidden_size=self.hidden_size)
+            self.decoder = AttGRUDecoder(self.decoder_embedding,
+                                         hidden_size=self.hidden_size,
+                                         vocab_size=self.decoder_processor.vocab_size)
 
     @tf.function
-    def train_step(self,
+    def train_step(self,  # type: ignore
                    input_seq,
                    target_seq,
                    enc_hidden):
@@ -142,7 +153,7 @@ class Seq2Seq:
             x_train: TextSamplesVar,
             y_train: TextSamplesVar,
             batch_size: int = 64,
-            epochs: int = 30):
+            epochs: int = 30) -> None:
         train_gen = CorpusGenerator(x_train, y_train)
         self.build_model_generator(train_gen)
 
@@ -152,9 +163,6 @@ class Seq2Seq:
                                        encoder_seq_length=self.encoder_seq_length,
                                        decoder_processor=self.decoder_processor,
                                        decoder_seq_length=self.decoder_seq_length)
-
-        train_gen.forever = False
-
         for epoch in range(epochs):
             enc_hidden = tf.zeros((batch_size, self.hidden_size))
             total_loss = []
@@ -173,7 +181,7 @@ class Seq2Seq:
     def predict(self,
                 x_data: TextSamplesVar,
                 max_len: int = 10,
-                debug_info: bool = False):
+                debug_info: bool = False) -> Tuple[List, List]:
         results = []
         attention_weights = []
         for sample in x_data:
@@ -184,7 +192,7 @@ class Seq2Seq:
             dec_hidden = enc_hidden
 
             token_out = []
-            dec_input = tf.expand_dims(self.decoder_processor.vocab2idx[self.decoder_processor.token_bos], 0)
+            dec_input = tf.expand_dims([self.decoder_processor.vocab2idx[self.decoder_processor.token_bos]], 0)
 
             for t in range(1, max_len):
                 predictions, dec_hidden, att_weights = self.decoder(dec_input, dec_hidden, enc_output)
@@ -206,18 +214,4 @@ class Seq2Seq:
 
 
 if __name__ == "__main__":
-    import random
-    from kashgari.corpus import ChineseDailyNerCorpus
-
-    texts, labels = ChineseDailyNerCorpus.load_data('test')
-
-    model = Seq2Seq(encoder_seq_lengths=50, decoder_seq_lengths=50)
-    model.fit(texts, labels, epochs=1)
-
-    x = random.sample(texts, 10)
-    model.predict(x, max_len=20)
-
-    for i in range(10):
-        model.fit(texts, labels, epochs=10)
-        x = random.sample(texts, 10)
-        model.predict(x, max_len=20)
+    pass

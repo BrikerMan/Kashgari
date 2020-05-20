@@ -71,7 +71,7 @@ class BatchDataSet(Iterable):
                  seq_length: int = None,
                  max_position: int = None,
                  segment: bool = False,
-                 batch_size: int = 64):
+                 batch_size: int = 64) -> None:
         self.corpus = corpus
         self.text_processor = text_processor
         self.label_processor = label_processor
@@ -101,12 +101,12 @@ class BatchDataSet(Iterable):
                 yield x_tensor, y_tensor
                 batch_x, batch_y = [], []
 
-    def forever(self):
+    def forever(self) -> Any:
         while True:
             for x, y in self.__iter__():
                 yield x, y
 
-    def take(self, batch_count: int = None):
+    def take(self, batch_count: int = None) -> Any:
         x_shape = self.text_processor.get_tensor_shape(self.batch_size, self.seq_length)
         y_shape = self.label_processor.get_tensor_shape(self.batch_size, self.seq_length)
         dataset = tf.data.Dataset.from_generator(self.__iter__,
@@ -161,7 +161,7 @@ class Seq2SeqDataSet(Iterable):
                 yield x_tensor, y_tensor
                 batch_x, batch_y = [], []
 
-    def take(self, batch_count: int = None):
+    def take(self, batch_count: int = None) -> Any:
         x_shape = [self.batch_size, self.encoder_seq_length]
         y_shape = [self.batch_size, self.decoder_seq_length]
         dataset = tf.data.Dataset.from_generator(self.__iter__,

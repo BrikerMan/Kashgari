@@ -7,6 +7,8 @@
 # file: gru_att_decoder.py
 # time: 9:42 下午
 
+# type: ignore
+
 import tensorflow as tf
 from kashgari.embeddings.abc_embedding import ABCEmbedding
 from kashgari.layers import BahdanauAttention
