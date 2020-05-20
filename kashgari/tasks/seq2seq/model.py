@@ -40,7 +40,7 @@ class Seq2Seq:
             hyper_parameters: hyper_parameters to overwrite
             **kwargs:
         """
-        logger.warning("This is a experimental API, it might changed in next version")
+        logger.warning("Seq2Seq API is experimental. It may be changed in the future without notice.")
         if encoder_embedding is None:
             encoder_embedding = BareEmbedding(embedding_size=256)  # type: ignore
 
@@ -174,7 +174,7 @@ class Seq2Seq:
             for (inp, target) in batch_progress_bar:
                 batch_loss = self.train_step(inp, target, enc_hidden)
                 total_loss.append(batch_loss.numpy())
-                info = f"Epoch {epoch + 1}/{epochs} | Loss : {np.mean(total_loss):.4f} " \
+                info = f"Epoch {epoch + 1}/{epochs} | Epoch Loss: {np.mean(total_loss):.4f} " \
                        f"Batch Loss: {batch_loss.numpy():.4f}"
                 batch_progress_bar.set_description_str(info)
 
