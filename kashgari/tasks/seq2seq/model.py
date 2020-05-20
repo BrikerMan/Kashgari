@@ -203,7 +203,7 @@ class Seq2Seq:
                 max_len: int = 10,
                 debug_info: bool = False) -> Tuple[List, np.ndarray]:
         results = []
-        attention_weights = []
+        attentions = []
         for sample in x_data:
             input_seq = self.encoder_processor.transform([sample], seq_length=self.encoder_seq_length)
             enc_hidden = tf.zeros((1, self.hidden_size))
@@ -212,11 +212,12 @@ class Seq2Seq:
             dec_hidden = enc_hidden
 
             token_out = []
+            sample_attentions = []
             dec_input = tf.expand_dims([self.decoder_processor.vocab2idx[self.decoder_processor.token_bos]], 0)
 
             for t in range(1, max_len):
                 predictions, dec_hidden, att_weights = self.decoder(dec_input, dec_hidden, enc_output)
-                attention_weights.append(tf.reshape(att_weights, (-1,)).numpy())
+                sample_attentions.append(tf.reshape(att_weights, (-1,)).numpy())
                 next_tokens = tf.argmax(predictions[0]).numpy()
                 if next_tokens == self.decoder_processor.vocab2idx[self.decoder_processor.token_eos]:
                     break
@@ -230,7 +231,8 @@ class Seq2Seq:
                 print(f"output idx      : {token_out}")
                 print(f"output sentence : {' '.join(r)}")
             results.append(r)
-        return results, np.array(attention_weights)
+            attentions.append(sample_attentions)
+        return results, np.array(attentions)
 
 
 if __name__ == "__main__":
