@@ -8,7 +8,6 @@
 # time: 2:34 下午
 
 from typing import Any, Tuple, List
-
 import numpy as np
 import tensorflow as tf
 import tqdm
@@ -114,7 +113,7 @@ class Seq2Seq:
                                          hidden_size=self.hidden_size,
                                          vocab_size=self.decoder_processor.vocab_size)
 
-    @tf.function
+    # @tf.function
     def train_step(self,  # type: ignore
                    input_seq,
                    target_seq,
@@ -153,7 +152,7 @@ class Seq2Seq:
             x_train: TextSamplesVar,
             y_train: TextSamplesVar,
             batch_size: int = 64,
-            epochs: int = 30) -> None:
+            epochs: int = 5) -> tf.keras.callbacks.History:
         train_gen = CorpusGenerator(x_train, y_train)
         self.build_model_generator(train_gen)
 
@@ -163,20 +162,23 @@ class Seq2Seq:
                                        encoder_seq_length=self.encoder_seq_length,
                                        decoder_processor=self.decoder_processor,
                                        decoder_seq_length=self.decoder_seq_length)
+
+        history = tf.keras.callbacks.History()
+        history.on_train_begin()
         for epoch in range(epochs):
             enc_hidden = tf.zeros((batch_size, self.hidden_size))
             total_loss = []
 
-            batch_progress_bar = tqdm.tqdm(train_dataset.take(),
-                                           total=len(train_dataset),
-                                           desc=f'Epoch: {epoch} Batch: ')
-
-            for (inp, target) in batch_progress_bar:
-                batch_loss = self.train_step(inp, target, enc_hidden)
-                total_loss.append(batch_loss.numpy())
-                info = f"Epoch {epoch + 1}/{epochs} | Epoch Loss: {np.mean(total_loss):.4f} " \
-                       f"Batch Loss: {batch_loss.numpy():.4f}"
-                batch_progress_bar.set_description_str(info)
+            with tqdm.tqdm(total=len(train_dataset)) as p_bar:
+                for (inputs, targets) in train_dataset.take():
+                    p_bar.update(1)
+                    batch_loss = self.train_step(inputs, targets, enc_hidden)
+                    total_loss.append(batch_loss.numpy())
+                    info = f"Epoch {epoch + 1}/{epochs} | Epoch Loss: {np.mean(total_loss):.4f} " \
+                           f"Batch Loss: {batch_loss.numpy():.4f}"
+                    p_bar.set_description_str(info)
+            history.on_epoch_end(epoch, logs={'loss': np.mean(total_loss)})
+        return history
 
     def predict(self,
                 x_data: TextSamplesVar,
@@ -214,4 +216,12 @@ class Seq2Seq:
 
 
 if __name__ == "__main__":
-    pass
+    from kashgari.corpus import ChineseDailyNerCorpus
+
+    x, y = ChineseDailyNerCorpus.load_data('test')
+    x = x[:500]
+    y = y[:500]
+
+    seq2seq = Seq2Seq(hidden_size=128, encoder_seq_length=50, decoder_seq_length=50)
+    history = seq2seq.fit(x, y, epochs=2)
+    print(history.history)
