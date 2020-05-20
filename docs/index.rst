@@ -10,18 +10,18 @@
   :maxdepth: 2
   :caption: Tutorials
 
-  tutorial/text-classification.md
-  tutorial/text-labeling.md
-  tutorial/text-scoring.md
+  tutorial/text-classification.rst
+  tutorial/text-labeling.rst
+  tutorial/text-scoring.rst
 
 .. toctree::
   :maxdepth: 2
   :caption: Embeddings
 
-  embeddings/index.md
-  embeddings/bare-embedding.md
-  embeddings/word-embedding.md
-  embeddings/bert-embedding.md
+  embeddings/index.rst
+  embeddings/bare-embedding.rst
+  embeddings/word-embedding.rst
+  embeddings/bert-embedding.rst
 
 .. toctree::
   :maxdepth: 3
@@ -37,5 +37,5 @@
   :maxdepth: 2
   :caption: About
 
-  about/contributing.md
-  about/release-notes.md
+  about/contributing.rst
+  about/release-notes.rst

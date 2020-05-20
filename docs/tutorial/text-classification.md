@@ -1,7 +1,7 @@
 # Text Classification Model
 
 Kashgari provides several models for text classification,
-All labeling models inherit from the `BaseClassificationModel`.
+All labeling models inherit from the `ABCClassificationModel`.
 You could easily switch from one model to another just by changing one line of code.
 
 ## Available Models
@@ -14,7 +14,7 @@ You could easily switch from one model to another just by changing one line of c
 | CNN\_LSTM\_Model      |      |
 | CNN\_GRU\_Model       |      |
 | AVCNN\_Model          |      |
-| KMax\_CNN]\_Model     |      |
+| KMax\_CNN\_Model     |      |
 | R\_CNN\_Model         |      |
 | AVRNN\_Model          |      |
 | Dropout\_BiGRU\_Model |      |
@@ -23,7 +23,7 @@ You could easily switch from one model to another just by changing one line of c
 
 ## Train basic classification model
 
-Kashgari provices basic intent-classification corpus for expirement. You could also use your corpus in any language for training.
+Kashgari provides the basic intent-classification corpus for experiments. You could also use your corpus in any language for training.
 
 ```python
 # Load build-in corpus.
@@ -77,13 +77,12 @@ Kashgari provides varies Language model Embeddings for transfer learning. Here i
 ```python
 import kashgari
 from kashgari.tasks.classification import BiGRU_Model
-from kashgari.embeddings import BERTEmbedding
+from kashgari.embeddings import BertEmbedding
 
 import logging
 logging.basicConfig(level='DEBUG')
 
-bert_embed = BERTEmbedding('<PRE_TRAINED_BERT_MODEL_FOLDER>',
-                           task=kashgari.CLASSIFICATION,
+bert_embed = BertEmbedding('<PRE_TRAINED_BERT_MODEL_FOLDER>',
                            sequence_length=100)
 model = BiGRU_Model(bert_embed)
 model.fit(train_x, train_y, valid_x, valid_y)
@@ -98,7 +97,7 @@ You could easily change model's hyper-parameters. For example, we change the lst
 ```python
 from kashgari.tasks.classification import BiLSTM_Model
 
-hyper = BiLSTM_Model.get_default_hyper_parameters()
+hyper = BiLSTM_Model.default_hyper_parameters()
 print(hyper)
 # {'layer_bi_lstm': {'units': 128, 'return_sequences': False}, 'layer_dense': {'activation': 'softmax'}}
 
@@ -128,7 +127,7 @@ model.build_model(train_x, train_y, valid_x, valid_y)
 optimizer = RAdam()
 model.compile_model(optimizer=optimizer)
 
-# Train model 
+# Train model
 model.fit(train_x, train_y, valid_x, valid_y)
 ```
 
@@ -188,42 +187,41 @@ y = [
 Now we need to init a `Processor` and `Embedding` for our model, then prepare model and fit.
 
 ```python
-from kashgari.tasks.classification import BiLSTM_Model
-from kashgari.processors import ClassificationProcessor
-from kashgari.embeddings import BareEmbedding
-
 import logging
+from kashgari.embeddings import BertEmbedding
+from kashgari.tasks.classification import BiLSTM_Model
+
 logging.basicConfig(level='DEBUG')
 
-processor = ClassificationProcessor(multi_label=True)
-embed = BareEmbedding(processor=processor)
+bert_embed = BertEmbedding('<PRE_TRAINED_BERT_MODEL_FOLDER>',
+                           sequence_length=100)
 
-model = BiLSTM_Model(embed)
+model = BiLSTM_Model(bert_embed, multi_label=True)
 model.fit(x, y)
 ```
 
 ## Customize your own model
 
 It is very easy and straightforward to build your own customized model,
-just inherit the `BaseClassificationModel` and implement the `get_default_hyper_parameters()` function and `build_model_arc()` function.
+just inherit the `ABCEmbedding` and implement the `default_hyper_parameters()` function and `build_model_arc()` function.
 
 ```python
 from typing import Dict, Any
 
 from tensorflow import keras
 
-from kashgari.tasks.classification.base_model import BaseClassificationModel
+from kashgari.tasks.classification.abc_model import ABCClassificationModel
 from kashgari.layers import L
 
 import logging
 logging.basicConfig(level='DEBUG')
 
 
-class DoubleBLSTMModel(BaseClassificationModel):
+class DoubleBLSTMModel(ABCClassificationModel):
     """Bidirectional LSTM Sequence Labeling Model"""
 
     @classmethod
-    def get_default_hyper_parameters(cls) -> Dict[str, Dict[str, Any]]:
+    def default_hyper_parameters(cls) -> Dict[str, Dict[str, Any]]:
         """
         Get hyper parameters of model
         Returns:
@@ -242,8 +240,8 @@ class DoubleBLSTMModel(BaseClassificationModel):
                 'rate': 0.4
             },
             'layer_time_distributed': {},
-            'layer_activation': {
-                'activation': 'softmax'
+            'layer_output': {
+
             }
         }
 
@@ -264,10 +262,11 @@ class DoubleBLSTMModel(BaseClassificationModel):
         layer_dropout = L.Dropout(**config['layer_dropout'],
                                   name='layer_dropout')
 
-        layer_time_distributed = L.TimeDistributed(L.Dense(output_dim,
-                                                           **config['layer_time_distributed']),
-                                                   name='layer_time_distributed')
-        layer_activation = L.Activation(**config['layer_activation'])
+        layer_time_distributed = L.Dense(output_dim, **config['layer_output'])
+
+        # You need to use this actiovation layer as final activation
+        # to suppor multi-label classification
+        layer_activation = self._activation_layer()
 
         # Define tensor flow
         tensor = layer_blstm1(embed_model.output)
@@ -281,13 +280,4 @@ class DoubleBLSTMModel(BaseClassificationModel):
 
 model = DoubleBLSTMModel()
 model.fit(train_x, train_y, valid_x, valid_y)
-```
-
-## Speed up with CuDNN cell
-
-You can speed up training and inferencing process using [CuDNN cell](https://stackoverflow.com/questions/46767001/what-is-cudnn-implementation-of-rnn-cells-in-tensorflow). CuDNNLSTM and CuDNNGRU layers are much faster than LSTM and GRU layer, but they must be used on GPU. If you want to train on GPU and inferencing on CPU, you cannot use CuDNN cells.
-
-```python
-# Enable use cudnn cell
-kashgari.config.use_cudnn_cell = True
 ```

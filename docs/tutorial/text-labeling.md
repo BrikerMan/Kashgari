@@ -20,19 +20,11 @@ Kashgari provices basic NER corpus for expirement. You could also use your corpu
 
 ```python
 # Load build-in corpus.
-## For Chinese
 from kashgari.corpus import ChineseDailyNerCorpus
 
 train_x, train_y = ChineseDailyNerCorpus.load_data('train')
 valid_x, valid_y = ChineseDailyNerCorpus.load_data('valid')
 test_x, test_y = ChineseDailyNerCorpus.load_data('test')
-
-## For English
-from kashgari.corpus import CONLL2003ENCorpus
-
-train_x, train_y = CONLL2003ENCorpus.load_data('train')
-valid_x, valid_y = CONLL2003ENCorpus.load_data('valid')
-test_x, test_y = CONLL2003ENCorpus.load_data('test')
 
 # Or use your own corpus
 train_x = [['Hello', 'world'], ['Hello', 'Kashgari'], ['I', 'love', 'Beijing']]
@@ -56,9 +48,9 @@ Then train our first model. All models provided some APIs, so you could use any 
 
 ```python
 import kashgari
-from kashgari.tasks.labeling import BLSTMModel
+from kashgari.tasks.labeling import BiLSTM_Model
 
-model = BLSTMModel()
+model = BiLSTM_Model()
 model.fit(train_x, train_y, valid_x, valid_y)
 
 # Evaluate the model
@@ -85,13 +77,13 @@ Kashgari provides varies Language model Embeddings for transfer learning. Here i
 
 ```python
 import kashgari
-from kashgari.tasks.labeling import BLSTMModel
-from kashgari.embeddings import BERTEmbedding
+from kashgari.tasks.labeling import BiLSTM_Model
+from kashgari.embeddings import BertEmbedding
 
-bert_embed = BERTEmbedding('<PRE_TRAINED_BERT_MODEL_FOLDER>',
+bert_embed = BertEmbedding('<PRE_TRAINED_BERT_MODEL_FOLDER>',
                            task=kashgari.LABELING,
                            sequence_length=100)
-model = BLSTMModel(bert_embed)
+model = BiLSTM_Model(bert_embed)
 model.fit(train_x, train_y, valid_x, valid_y)
 ```
 
@@ -102,15 +94,15 @@ You could replace bert_embedding with any Embedding class in `kashgari.embedding
 You could easily change model's hyper-parameters. For example, we change the lstm unit in `BLSTMModel` from 128 to 32.
 
 ```python
-from kashgari.tasks.labeling import BLSTMModel
+from kashgari.tasks.labeling import BiLSTM_Model
 
-hyper = BLSTMModel.get_default_hyper_parameters()
+hyper = BiLSTM_Model.default_hyper_parameters()
 print(hyper)
 # {'layer_blstm': {'units': 128, 'return_sequences': True}, 'layer_dropout': {'rate': 0.4}, 'layer_time_distributed': {}, 'layer_activation': {'activation': 'softmax'}}
 
 hyper['layer_blstm']['units'] = 32
 
-model = BLSTMModel(hyper_parameters=hyper)
+model = BiLSTM_Model(hyper_parameters=hyper)
 ```
 
 ## Use custom optimizer
@@ -144,8 +136,8 @@ Kashgari is based on keras so that you could use all of the [tf.keras callbacks]
 Kashgari model. For example, here is how to visualize training with tensorboard.
 
 ```python
-from tensorflow.python import keras
-from kashgari.tasks.labeling import BLSTMModel
+from tensorflow import keras
+from kashgari.tasks.labeling import BiLSTM_Model
 from kashgari.callbacks import EvalCallBack
 
 
@@ -170,7 +162,7 @@ model.fit(train_x,
 ## Customize your own model
 
 It is very easy and straightforward to build your own customized model,
-just inherit the `BaseLabelingModel` and implement the `get_default_hyper_parameters()` function
+just inherit the `ABCLabelingModel` and implement the `default_hyper_parameters()` function
 and `build_model_arc()` function.
 
 ```python
@@ -178,17 +170,17 @@ from typing import Dict, Any
 
 from tensorflow import keras
 
-from kashgari.tasks.labeling.base_model import BaseLabelingModel
+from kashgari.tasks.labeling.abc_model import ABCLabelingModel
 from kashgari.layers import L
 
 import logging
 logging.basicConfig(level='DEBUG')
 
-class DoubleBLSTMModel(BaseLabelingModel):
+class DoubleBLSTMModel(ABCLabelingModel):
     """Bidirectional LSTM Sequence Labeling Model"""
 
     @classmethod
-    def get_default_hyper_parameters(cls) -> Dict[str, Dict[str, Any]]:
+    def default_hyper_parameters(cls) -> Dict[str, Dict[str, Any]]:
         """
         Get hyper parameters of model
         Returns:
@@ -248,15 +240,6 @@ model = DoubleBLSTMModel()
 model.fit(train_x, train_y, valid_x, valid_y)
 ```
 
-## Speed up using CuDNN cell
-
-You can speed up training and inferencing process using [CuDNN cell](https://stackoverflow.com/questions/46767001/what-is-cudnn-implementation-of-rnn-cells-in-tensorflow). CuDNNLSTM and CuDNNGRU layers are much faster than LSTM and GRU layer, but they must be used on GPU. If you want to train on GPU and inferencing on CPU, you cannot use CuDNN cells.
-
-```python
-# Enable use cudnn cell
-kashgari.config.use_cudnn_cell = True
-```
-
 ## Performance report
 
 Available model list, matrics based on this training:
@@ -268,8 +251,8 @@ Available model list, matrics based on this training:
 - [colab link](https://drive.google.com/file/d/1-tPlD3jP_5AK8xOz_CE1-p-s9mttUt16/view?usp=sharing)
 
 ```python
-early_stop = keras.callbacks.EarlyStopping(patience=10)
-reduse_lr_callback = keras.callbacks.ReduceLROnPlateau(factor=0.1, patience=5)
+early_stop = tf.keras.callbacks.EarlyStopping(patience=10)
+reduse_lr_callback = tf.keras.callbacks.ReduceLROnPlateau(factor=0.1, patience=5)
 ```
 
 | Name             | Embedding   | F1 Score | Epoch Time | Non Trainable params | Trainable params |

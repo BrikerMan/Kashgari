@@ -48,9 +48,6 @@ if os.environ.get('READTHEDOCS') == 'True':
         'bert4keras',
         'bert4keras.models',
         'sklearn',
-        'seqeval',
-        'seqeval.metrics',
-        'seqeval.metrics.sequence_labeling',
         'bert4keras.layers'
     ]
 else:
@@ -64,13 +61,6 @@ import kashgari
 from kashgari.tasks.classification.abc_model import ABCClassificationModel
 from kashgari.tasks.labeling.abc_model import ABCLabelingModel
 
-# Finish imports
-from recommonmark.parser import CommonMarkParser
-
-source_parsers = {
-    '.md': CommonMarkParser,
-}
-
 # -- General configuration ------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
@@ -81,23 +71,27 @@ source_parsers = {
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
+    'recommonmark',
     'sphinx_markdown_tables',
     'sphinx.ext.imgmath',
     'sphinx.ext.viewcode',
+    'sphinx.ext.intersphinx',
     'sphinx.ext.autodoc',
     'sphinx.ext.napoleon',
     'sphinx_autodoc_typehints'
 ]
 
 # sphinx_autodoc_typehints settings
-
 autodoc_default_options = {
     'member-order': 'groupwise',
     'special-members': '__init__',
-    'undoc-members': True,
+    'undoc-members': False,
     'inherited-members': True,
     'show-inheritance': True,
+    'set_type_checking_flag': True
 }
+
+set_type_checking_flag = True
 
 # 'sphinx.ext.mathjax', ??
 
@@ -111,7 +105,10 @@ templates_path = ['_templates']
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
 #
-source_suffix = ['.md', '.rst']
+source_suffix = {
+    '.rst': 'restructuredtext',
+    '.md': 'markdown',
+}
 # source_suffix = '.rst'
 
 # The master toctree document.
@@ -146,7 +143,6 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = 'default'  # 'sphinx'
 
-# If true, `todo` and `todoList` produce output, else they produce nothing.
 todo_include_todos = False
 
 # -- Options for HTML output ----------------------------------------------
@@ -178,7 +174,7 @@ html_static_path = ['_static']
 # -- Options for HTMLHelp output ------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'SpinningUpdoc'
+htmlhelp_basename = 'KashgariDoc'
 
 # -- Options for LaTeX output ---------------------------------------------
 
@@ -240,8 +236,8 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'SpinningUp.tex', 'Spinning Up Documentation',
-     'Joshua Achiam', 'manual'),
+    (master_doc, 'Kashgari.tex', 'Kashgari Documentation',
+     'Eliyar Eziz', 'manual'),
 ]
 
 # -- Options for manual page output ---------------------------------------
@@ -249,7 +245,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'spinningup', 'Spinning Up Documentation',
+    (master_doc, 'kashgari', 'Kashgari Documentation',
      [author], 1)
 ]
 
@@ -268,35 +264,72 @@ texinfo_documents = [
 def update_markdown_content(folder: str):
     import os
     import glob
-    # files = []
-    #
-    # for file in glob.glob(os.path.join(folder, "*.md")):
-    #     files.append(file)
-    # for file in glob.glob(os.path.join(folder, "*/*.md")):
-    #     files.append(file)
-    # for file in glob.glob(os.path.join(folder, "*/*/*.md")):
-    #     files.append(file)
-    #
-    # for file in files:
-    #     print(f'update markdown file: {file}')
-    #     with open(file, 'r') as original:
-    #         content = original.read()
-    #     with open(file, 'w') as new:
-    #         new_content = content.replace('.md)', '.html)')
-    #         new.write(new_content)
+    from m2r import convert
+    files = []
+
+    for file in glob.glob(os.path.join(folder, "*.md")):
+        files.append(file)
+    for file in glob.glob(os.path.join(folder, "*/*.md")):
+        files.append(file)
+    for file in glob.glob(os.path.join(folder, "*/*/*.md")):
+        files.append(file)
+
+    for file in files:
+        print(f"update markdown file: {file} to {file.replace('.md', '.rst')}")
+        with open(file, 'r') as original:
+            content = original.read()
+        with open(file.replace('.md', '.rst'), 'w') as new:
+            new_content = content.replace('.md)', '.html)')
+            new.write(convert(new_content))
+
+
+def skip_some_classes_members(app, what, name, obj, skip, options):
+    return skip
+
+
+# from sphinx.ext.autodoc import ClassDocumenter, _
+#
+# add_line = ClassDocumenter.add_line
+# line_to_delete = _(u'Bases: %s') % u':class:`object`'
+#
+#
+# def add_line_no_object_base(self, text, *args, **kwargs):
+#     if text.strip() == line_to_delete:
+#         return
+#
+#     add_line(self, text, *args, **kwargs)
+#
+#
+# add_directive_header = ClassDocumenter.add_directive_header
+#
+#
+# def add_directive_header_no_object_base(self, *args, **kwargs):
+#     self.add_line = add_line_no_object_base.__get__(self)
+#
+#     result = add_directive_header(self, *args, **kwargs)
+#
+#     del self.add_line
+#
+#     return result
+
+
+# ClassDocumenter.add_directive_header = add_directive_header_no_object_base
+
+
+intersphinx_mapping = {'python': ('https://docs.python.org/', None),
+                       'sqlalchemy': ('http://docs.sqlalchemy.org/en/latest/', None)}
 
 
 def setup(app):
     import pathlib
 
     from m2r import convert
+    import typing
+    typing.TYPE_CHECKING = True
 
     docs_path = pathlib.Path(__file__).parent
     original_readme = os.path.join(docs_path.parent, 'README.md')
     rst_readme = os.path.join(docs_path, 'README.rst')
-
-    # Update all .md files， for fixing links
-    update_markdown_content(docs_path)
 
     # Change readme to rst file, and include in Sphinx index
     with open(rst_readme, 'w') as f:
@@ -305,5 +338,13 @@ def setup(app):
         f.write(convert(md_content))
         print(f'Saved RST file to {rst_readme}')
 
-    app.add_stylesheet('css/modify.css')
-    app.add_stylesheet('css/extra.css')
+    # Update all .md files， for fixing links
+    update_markdown_content(docs_path)
+
+    # app.add_css_file('css/modify.css')
+    app.add_css_file('css/extra.css')
+    #
+    # app.add_config_value('set_type_checking_flag', True, 'html')
+
+    app.config['set_type_checking_flag'] = True
+    app.connect('autodoc-skip-member', skip_some_classes_members)

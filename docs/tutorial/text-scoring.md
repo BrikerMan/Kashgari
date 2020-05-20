@@ -84,7 +84,7 @@ You could replace bert_embedding with any Embedding class in `kashgari.embedding
 You could easily change model's hyper-parameters. For example, we change the lstm unit in `BiLSTM_Model` from 128 to 32.
 
 ```python
-from kashgari.tasks.scoring import BiLSTM_Model
+from kashgari.tasks import BiLSTM_Model
 
 hyper = BiLSTM_Model.get_default_hyper_parameters()
 print(hyper)
@@ -112,7 +112,7 @@ model.build_model(train_x, train_y, valid_x, valid_y)
 optimizer = RAdam()
 model.compile_model(optimizer=optimizer)
 
-# Train model 
+# Train model
 model.fit(train_x, train_y, valid_x, valid_y)
 ```
 
