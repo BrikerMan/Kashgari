@@ -102,11 +102,13 @@ class Seq2Seq:
             if self.encoder_seq_length is None:
                 self.encoder_seq_length = self.encoder_embedding.get_seq_length_from_corpus(corpus_gen=train_gen,
                                                                                             cover_rate=1.0)
+                logger.info(f"calculated encoder sequence length: {self.encoder_seq_length}")
 
             if self.decoder_seq_length is None:
                 self.decoder_seq_length = self.decoder_embedding.get_seq_length_from_corpus(corpus_gen=train_gen,
                                                                                             use_label=True,
                                                                                             cover_rate=1.0)
+                logger.info(f"calculated decoder sequence length: {self.decoder_seq_length}")
 
             self.encoder = GRUEncoder(self.encoder_embedding, hidden_size=self.hidden_size)
             self.decoder = AttGRUDecoder(self.decoder_embedding,
@@ -152,7 +154,8 @@ class Seq2Seq:
             x_train: TextSamplesVar,
             y_train: TextSamplesVar,
             batch_size: int = 64,
-            epochs: int = 5) -> tf.keras.callbacks.History:
+            epochs: int = 5,
+            callbacks: List[tf.keras.callbacks.Callback] = None, ) -> tf.keras.callbacks.History:
         train_gen = CorpusGenerator(x_train, y_train)
         self.build_model_generator(train_gen)
 
@@ -163,9 +166,17 @@ class Seq2Seq:
                                        decoder_processor=self.decoder_processor,
                                        decoder_seq_length=self.decoder_seq_length)
 
-        history = tf.keras.callbacks.History()
-        history.on_train_begin()
+        if callbacks is None:
+            callbacks = []
+        history_callback = tf.keras.callbacks.History()
+        callbacks.append(history_callback)
+
+        for callback in callbacks:
+            callback.on_train_begin()
+
         for epoch in range(epochs):
+            for callback in callbacks:
+                callback.on_epoch_begin(epoch=epoch)
             enc_hidden = tf.zeros((batch_size, self.hidden_size))
             total_loss = []
 
@@ -177,13 +188,16 @@ class Seq2Seq:
                     info = f"Epoch {epoch + 1}/{epochs} | Epoch Loss: {np.mean(total_loss):.4f} " \
                            f"Batch Loss: {batch_loss.numpy():.4f}"
                     p_bar.set_description_str(info)
-            history.on_epoch_end(epoch, logs={'loss': np.mean(total_loss)})
-        return history
+            logs = {'loss': np.mean(total_loss)}
+            for callback in callbacks:
+                callback.on_epoch_end(epoch=epoch, logs=logs)
+
+        return history_callback
 
     def predict(self,
                 x_data: TextSamplesVar,
                 max_len: int = 10,
-                debug_info: bool = False) -> Tuple[List, List]:
+                debug_info: bool = False) -> Tuple[List, np.ndarray]:
         results = []
         attention_weights = []
         for sample in x_data:
@@ -198,7 +212,7 @@ class Seq2Seq:
 
             for t in range(1, max_len):
                 predictions, dec_hidden, att_weights = self.decoder(dec_input, dec_hidden, enc_output)
-                attention_weights.append(tf.reshape(att_weights, (-1,)))
+                attention_weights.append(tf.reshape(att_weights, (-1,)).numpy())
                 next_tokens = tf.argmax(predictions[0]).numpy()
                 if next_tokens == self.decoder_processor.vocab2idx[self.decoder_processor.token_eos]:
                     break
@@ -212,7 +226,7 @@ class Seq2Seq:
                 print(f"output idx      : {token_out}")
                 print(f"output sentence : {' '.join(r)}")
             results.append(r)
-        return results, attention_weights
+        return results, np.array(attention_weights)
 
 
 if __name__ == "__main__":
@@ -222,6 +236,24 @@ if __name__ == "__main__":
     x = x[:500]
     y = y[:500]
 
+
+    class CustomCallback(tf.keras.callbacks.Callback):
+        def __init__(self, model):
+            self.model = model
+            self.sample_count = 10
+
+        def on_epoch_end(self, epoch, logs=None):
+            import random
+            samples = random.sample(x, self.sample_count)
+            translates, _ = self.model.predict(samples)
+
+            for index in range(len(samples)):
+                print(f"English: {' '.join(samples[index])}")
+                print(f"Chinese: {''.join(translates[index])}")
+                print('------------------------------')
+
+
     seq2seq = Seq2Seq(hidden_size=128, encoder_seq_length=50, decoder_seq_length=50)
-    history = seq2seq.fit(x, y, epochs=2)
+    c = CustomCallback(model=seq2seq)
+    history = seq2seq.fit(x, y, epochs=2, callbacks=[c])
     print(history.history)
