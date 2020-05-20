@@ -5,12 +5,10 @@
 # blog: https://eliyar.biz
 
 # file: __init__.py
-# time: 7:39 下午
+# time: 2:33 下午
 
-from tensorflow import keras
-from .behdanau_attention import BahdanauAttention
-
-L = keras.layers
+from .gru_decoder import GRUDecoder
+from .att_gru_decoder import AttGRUDecoder
 
 if __name__ == "__main__":
     pass
