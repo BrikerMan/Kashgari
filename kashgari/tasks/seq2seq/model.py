@@ -100,13 +100,13 @@ class Seq2Seq:
             self.decoder_embedding.setup_text_processor(self.decoder_processor)
 
             if self.encoder_seq_length is None:
-                self.encoder_embedding.get_seq_length_from_corpus(corpus_gen=train_gen,
-                                                                  cover_rate=1.0)
+                self.encoder_seq_length = self.encoder_embedding.get_seq_length_from_corpus(corpus_gen=train_gen,
+                                                                                            cover_rate=1.0)
 
             if self.decoder_seq_length is None:
-                self.decoder_embedding.get_seq_length_from_corpus(corpus_gen=train_gen,
-                                                                  use_label=True,
-                                                                  cover_rate=1.0)
+                self.decoder_seq_length = self.decoder_embedding.get_seq_length_from_corpus(corpus_gen=train_gen,
+                                                                                            use_label=True,
+                                                                                            cover_rate=1.0)
 
             self.encoder = GRUEncoder(self.encoder_embedding, hidden_size=self.hidden_size)
             self.decoder = AttGRUDecoder(self.decoder_embedding,
