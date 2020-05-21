@@ -53,10 +53,10 @@ class BareEmbedding(Embedding):
             logging.debug('need to build after build_word2idx')
         else:
             input_tensor = L.Input(shape=(self.sequence_length,),
-                                   name=f'input')
+                                   name='input')
             layer_embedding = L.Embedding(self.token_count,
                                           self.embedding_size,
-                                          name=f'layer_embedding')
+                                          name='layer_embedding')
 
             embedded_tensor = layer_embedding(input_tensor)
             self.embed_model = keras.Model(input_tensor, embedded_tensor)

@@ -87,7 +87,7 @@ class TransformerEmbedding(BERTEmbedding):
             if isinstance(seq_len, tuple):
                 seq_len = seq_len[0]
             if isinstance(seq_len, str):
-                logging.warning(f"Model will be built when sequence length is determined")
+                logging.warning("Model will be built when sequence length is determined")
                 return
 
             config_path = self.config_path

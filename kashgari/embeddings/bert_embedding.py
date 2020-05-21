@@ -104,7 +104,7 @@ class BERTEmbedding(Embedding):
             if isinstance(seq_len, tuple):
                 seq_len = seq_len[0]
             if isinstance(seq_len, str):
-                logging.warning(f"Model will be built until sequence length is determined")
+                logging.warning("Model will be built until sequence length is determined")
                 return
             config_path = os.path.join(self.model_folder, 'bert_config.json')
             check_point_path = os.path.join(self.model_folder, 'bert_model.ckpt')
