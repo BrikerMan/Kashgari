@@ -72,8 +72,10 @@ class ABCEmbedding:
     def setup_text_processor(self, processor: ABCProcessor) -> None:
         self._text_processor = processor
         self.build_embedding_model(vocab_size=processor.vocab_size)
-        self._text_processor.vocab2idx = self.load_embed_vocab()
-        self._text_processor.idx2vocab = dict([(v, k) for k, v in self._text_processor.vocab2idx.items()])
+        vocab2idx = self.load_embed_vocab()
+        if vocab2idx:
+            self._text_processor.vocab2idx = vocab2idx
+            self._text_processor.idx2vocab = dict([(v, k) for k, v in vocab2idx.items()])
 
     def get_seq_length_from_corpus(self,
                                    corpus_gen: CorpusGenerator,
