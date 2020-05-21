@@ -72,6 +72,8 @@ class ABCEmbedding:
     def setup_text_processor(self, processor: ABCProcessor) -> None:
         self._text_processor = processor
         self.build_embedding_model(vocab_size=processor.vocab_size)
+        self._text_processor.vocab2idx = self.load_embed_vocab()
+        self._text_processor.idx2vocab = dict([(v, k) for k, v in self._text_processor.vocab2idx.items()])
 
     def get_seq_length_from_corpus(self,
                                    corpus_gen: CorpusGenerator,
@@ -134,7 +136,9 @@ class ABCEmbedding:
         """
         if self._text_processor is None:
             raise ValueError('Need to setup the `embedding.setup_text_processor` before calling the embed function.')
-        tensor_x = self._text_processor.transform(sentences)
+        tensor_x = self._text_processor.transform(sentences, segment=self.segment)
+        print(self.segment)
+        print(tensor_x)
         if debug:
             logging.debug(f'sentence tensor: {tensor_x}')
         embed_results = self.embed_model.predict(tensor_x)

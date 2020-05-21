@@ -35,6 +35,9 @@ class AttGRUDecoder(tf.keras.Model):
         # enc_output shape == (batch_size, max_length, hidden_size)
         context_vector, attention_weights = self.attention(hidden, enc_output)
 
+        if self.embedding.segment:
+            x = x, tf.zeros(x.shape)
+
         # x shape after passing through embedding == (batch_size, 1, embedding_dim)
         x = self.embedding.embed_model(x)
 

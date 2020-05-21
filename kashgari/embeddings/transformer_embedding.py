@@ -7,14 +7,14 @@
 # file: transformer_embedding.py
 # time: 11:41 上午
 
-import json
 import codecs
+import json
 import logging
 from typing import Dict, List, Any, Optional
-from kashgari.embeddings.abc_embedding import ABCEmbedding
-from kashgari.generators import CorpusGenerator
-from kashgari.processors.abc_processor import ABCProcessor
+
 from bert4keras.models import build_transformer_model
+
+from kashgari.embeddings.abc_embedding import ABCEmbedding
 
 
 class TransformerEmbedding(ABCEmbedding):
@@ -52,10 +52,9 @@ class TransformerEmbedding(ABCEmbedding):
         self.config_path = config_path
         self.checkpoint_path = checkpoint_path
         self.model_type = model_type
-        self.segment = True
         self.vocab_list: List[str] = []
 
-        super(TransformerEmbedding, self).__init__(**kwargs)
+        super(TransformerEmbedding, self).__init__(segment=True, **kwargs)
 
     def load_embed_vocab(self) -> Optional[Dict[str, int]]:
         token2idx: Dict[str, int] = {}

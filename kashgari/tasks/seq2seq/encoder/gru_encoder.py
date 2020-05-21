@@ -9,8 +9,9 @@
 
 import numpy as np
 import tensorflow as tf
-from kashgari.layers import L
+
 from kashgari.embeddings.abc_embedding import ABCEmbedding
+from kashgari.layers import L
 
 
 class GRUEncoder(tf.keras.Model):
@@ -24,6 +25,8 @@ class GRUEncoder(tf.keras.Model):
                                        recurrent_initializer='glorot_uniform')
 
     def call(self, x: np.ndarray, hidden: np.ndarray) -> np.ndarray:
+        if self.embedding.segment:
+            x = (x, tf.zeros(x.shape))
         x = self.embedding.embed_model(x)
         output, state = self.gru(x, initial_state=hidden)
         return output, state
