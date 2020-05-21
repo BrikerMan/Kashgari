@@ -200,29 +200,35 @@ class Seq2Seq:
 
     def predict(self,
                 x_data: TextSamplesVar,
-                max_len: int = 10,
                 debug_info: bool = False) -> Tuple[List, np.ndarray]:
         results = []
         attentions = []
+
+        bos_token_id = self.decoder_processor.vocab2idx[self.decoder_processor.token_bos]
+        eos_token_id = self.decoder_processor.vocab2idx[self.decoder_processor.token_eos]
+
         for sample in x_data:
             input_seq = self.encoder_processor.transform([sample], seq_length=self.encoder_seq_length)
             enc_hidden = tf.zeros((1, self.hidden_size))
             enc_output, enc_hidden = self.encoder(input_seq, enc_hidden)
-
             dec_hidden = enc_hidden
 
+            attention_plot = np.zeros((self.decoder_seq_length, self.encoder_seq_length))
             token_out = []
-            sample_attentions = []
-            dec_input = tf.expand_dims([self.decoder_processor.vocab2idx[self.decoder_processor.token_bos]], 0)
 
-            for t in range(1, max_len):
+            dec_input = tf.expand_dims([bos_token_id], 0)
+
+            for t in range(self.decoder_seq_length):
                 predictions, dec_hidden, att_weights = self.decoder(dec_input, dec_hidden, enc_output)
-                sample_attentions.append(tf.reshape(att_weights, (-1,)).numpy())
+                # storing the attention weights to plot later on
+                attention_weights = tf.reshape(att_weights, (-1, ))
+                attention_plot[t] = attention_weights.numpy()
+
                 next_tokens = tf.argmax(predictions[0]).numpy()
-                if next_tokens == self.decoder_processor.vocab2idx[self.decoder_processor.token_eos]:
-                    break
                 token_out.append(next_tokens)
-                dec_input = tf.expand_dims(token_out[-1:], 0)
+                if next_tokens == eos_token_id:
+                    break
+                dec_input = tf.expand_dims([next_tokens], 0)
             r = self.decoder_processor.inverse_transform([token_out])[0]
             if debug_info:
                 print('\n---------------------------')
@@ -231,7 +237,7 @@ class Seq2Seq:
                 print(f"output idx      : {token_out}")
                 print(f"output sentence : {' '.join(r)}")
             results.append(r)
-            attentions.append(sample_attentions)
+            attentions.append(attention_plot)
         return results, np.array(attentions)
 
 
