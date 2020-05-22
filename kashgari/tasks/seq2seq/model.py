@@ -8,17 +8,18 @@
 # time: 2:34 下午
 
 from typing import Any, Tuple, List
+
 import numpy as np
 import tensorflow as tf
 import tqdm
 
-from kashgari.logger import logger
 from kashgari.embeddings import BareEmbedding
 from kashgari.embeddings.abc_embedding import ABCEmbedding
 from kashgari.generators import CorpusGenerator, Seq2SeqDataSet
+from kashgari.logger import logger
 from kashgari.processors import SequenceProcessor
-from kashgari.tasks.seq2seq.encoder import GRUEncoder
 from kashgari.tasks.seq2seq.decoder import AttGRUDecoder
+from kashgari.tasks.seq2seq.encoder import GRUEncoder
 from kashgari.types import TextSamplesVar
 
 
@@ -64,6 +65,7 @@ class Seq2Seq:
         self.optimizer = tf.keras.optimizers.Adam()
         self.loss_object = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True, reduction='none')
 
+    @tf.function
     def loss_function(self, real: tf.Tensor, pred: tf.Tensor) -> tf.Tensor:
         mask = tf.math.logical_not(tf.math.equal(real, 0))
         loss_ = self.loss_object(real, pred)
@@ -114,8 +116,11 @@ class Seq2Seq:
             self.decoder = AttGRUDecoder(self.decoder_embedding,
                                          hidden_size=self.hidden_size,
                                          vocab_size=self.decoder_processor.vocab_size)
-            self.encoder.model().summary()
-            self.decoder.model().summary()
+            try:
+                self.encoder.model().summary()
+                self.decoder.model().summary()
+            except:
+                pass
 
     @tf.function
     def train_step(self,  # type: ignore
@@ -136,18 +141,13 @@ class Seq2Seq:
             for t in range(1, target_seq.shape[1]):
                 # pass enc_output to the decoder
                 predictions, dec_hidden, _ = self.decoder(dec_input, dec_hidden, enc_output)
-
                 loss += self.loss_function(target_seq[:, t], predictions)
-
                 # using teacher forcing
                 dec_input = tf.expand_dims(target_seq[:, t], 1)
 
         batch_loss = (loss / int(target_seq.shape[1]))
-
         variables = self.encoder.trainable_variables + self.decoder.trainable_variables
-
         gradients = tape.gradient(loss, variables)
-
         self.optimizer.apply_gradients(zip(gradients, variables))
 
         return batch_loss
@@ -221,7 +221,7 @@ class Seq2Seq:
             for t in range(self.decoder_seq_length):
                 predictions, dec_hidden, att_weights = self.decoder(dec_input, dec_hidden, enc_output)
                 # storing the attention weights to plot later on
-                attention_weights = tf.reshape(att_weights, (-1, ))
+                attention_weights = tf.reshape(att_weights, (-1,))
                 attention_plot[t] = attention_weights.numpy()
 
                 next_tokens = tf.argmax(predictions[0]).numpy()
@@ -243,9 +243,12 @@ class Seq2Seq:
 
 if __name__ == "__main__":
     from kashgari.corpus import ChineseDailyNerCorpus
+    import logging
+
+    logging.basicConfig(level='INFO', format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
     x, y = ChineseDailyNerCorpus.load_data('test')
-    x, y = x[:200], y[:200]
+    x, y = x[:1000], y[:1000]
 
-    seq2seq = Seq2Seq()
-    seq2seq.fit(x, y)
+    seq2seq = Seq2Seq(hidden_size=256)
+    seq2seq.fit(x, y, epochs=10)
