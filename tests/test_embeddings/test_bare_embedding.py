@@ -9,13 +9,16 @@
 
 import os
 import time
+import random
 import tempfile
 import unittest
 from kashgari.processors.sequence_processor import SequenceProcessor
 from kashgari.corpus import SMP2018ECDTCorpus
 from kashgari.embeddings import BareEmbedding
 from kashgari.tasks.classification import BiGRU_Model
-from kashgari.utils import load_model
+# from kashgari.utils import load_model, load_object
+
+sample_count = 50
 
 
 class TestBareEmbedding(unittest.TestCase):
@@ -26,9 +29,18 @@ class TestBareEmbedding(unittest.TestCase):
         processor = SequenceProcessor()
         processor.build_vocab(x, y)
         embedding.setup_text_processor(processor)
-        res = embedding.embed(x[:10])
-        max_len = max([len(i) for i in x[:10]])
-        assert res.shape == (10, max_len, 100)
+        samples = random.sample(x, sample_count)
+        res = embedding.embed(samples)
+        max_len = max([len(i) for i in samples]) + 2
+        assert res.shape == (len(samples), max_len, 100)
+
+        # Test Save And Load
+        import json
+        from kashgari.utils import serialize
+        json_str = serialize.KashgariEncoder().encode(embedding)
+
+        import pprint
+        pprint.pprint(json.loads(json_str))
 
     def test_with_model(self):
         x, y = SMP2018ECDTCorpus.load_data('test')

@@ -22,7 +22,7 @@ L = keras.layers
 
 
 class WordEmbedding(ABCEmbedding):
-    def info(self) -> Dict:
+    def to_dict(self) -> Dict[str, Any]:
         info_dic = super(WordEmbedding, self).info()
         info_dic['config']['w2v_path'] = self.w2v_path
         info_dic['config']['w2v_kwargs'] = self.w2v_kwargs

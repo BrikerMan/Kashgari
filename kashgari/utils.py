@@ -23,50 +23,24 @@ from kashgari.tasks.classification.abc_model import ABCClassificationModel
 from kashgari.tasks.labeling.abc_model import ABCLabelingModel
 from kashgari.types import MultiLabelClassificationLabelVar
 
-T = TypeVar("T")
-
-
-def get_list_subset(target: List[T], index_list: List[int]) -> List[T]:
-    """
-    Get the subset of the target list
-    Args:
-        target: target list
-        index_list: subset items index
-
-    Returns:
-        subset of the original list
-    """
-    return [target[i] for i in index_list if i < len(target)]
-
-
-def unison_shuffled_copies(a: List[T],
-                           b: List[T]) -> Union[Tuple[List[T], ...], Tuple[np.ndarray, ...]]:
-    """
-    Union shuffle two arrays
-    Args:
-        a:
-        b:
-
-    Returns:
-
-    """
-    data_type = type(a)
-    assert len(a) == len(b)
-    c = list(zip(a, b))
-    random.shuffle(c)
-    a, b = zip(*c)
-    if data_type == np.ndarray:
-        return np.array(a), np.array(b)
-    return list(a), list(b)
-
 
 def custom_object_scope() -> CustomObjectScope:
     return keras.utils.custom_object_scope(custom_objects)
 
 
-def _load_object_from_json(data: Dict, **kwargs: Dict) -> Any:
-    module_name = f"{data['module']}.{data['class_name']}"
+def load_object(data: Dict, **kwargs: Dict) -> Any:
+    """
+    Load Object From Dict
+    Args:
+        data:
+        **kwargs:
+
+    Returns:
+
+    """
+    module_name = f"{data['__module__']}.{data['__class_name__']}"
     obj = pydoc.locate(module_name)(**data['config'], **kwargs)  # type: ignore
+
     return obj
 
 
@@ -115,31 +89,6 @@ def load_model(model_path: str, load_weights: bool = True) -> ModelTypeVar:
 
     return None
 
-
-class MultiLabelBinarizer:
-    def __init__(self, vocab2idx: Dict[str, int]):
-        self.vocab2idx = vocab2idx
-        self.idx2vocab = dict([(v, k) for k, v in vocab2idx.items()])
-
-    @property
-    def classes(self) -> List[str]:
-        return list(self.idx2vocab.values())
-
-    def transform(self, samples: MultiLabelClassificationLabelVar) -> np.ndarray:
-        data = np.zeros((len(samples), len(self.vocab2idx)))
-        for sample_index, sample in enumerate(samples):
-            for label in sample:
-                data[sample_index][self.vocab2idx[label]] = 1
-        return data
-
-    def inverse_transform(self, preds: np.ndarray, threshold: float = 0.5) -> List[List[str]]:
-        data = []
-        for sample in preds:
-            x = []
-            for label_x in np.where(sample >= threshold)[0]:
-                x.append(self.idx2vocab[label_x])
-            data.append(x)
-        return data
 
 
 if __name__ == "__main__":

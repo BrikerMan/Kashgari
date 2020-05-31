@@ -11,18 +11,33 @@ import json
 import logging
 from typing import Dict, List, Any, Optional
 
-import numpy as np
+import os
 import tqdm
-from tensorflow import keras
+import numpy as np
+import tensorflow as tf
 
 import kashgari
 from kashgari.generators import CorpusGenerator
 from kashgari.processors import ABCProcessor
 
-L = keras.layers
+L = tf.keras.layers
 
 
 class ABCEmbedding:
+    def to_dict(self) -> Dict[str, Any]:
+        config: Dict[str, Any] = {
+            'segment': self.segment,
+            'embedding_size': self.embedding_size,
+            'max_position': self.max_position,
+            **self.kwargs
+        }
+        return {
+            '__class_name__': self.__class__.__name__,
+            '__module__': self.__class__.__module__,
+            'config': config,
+            'embed_model': json.loads(self.embed_model.to_json())
+        }
+
     def info(self) -> Dict:
         config: Dict[str, Any] = {
             'segment': self.segment,
@@ -37,17 +52,11 @@ class ABCEmbedding:
             'embed_model': json.loads(self.embed_model.to_json())
         }
 
-    @classmethod
-    def load_saved_model_embedding(cls,
-                                   config_dict: Dict,
-                                   **kwargs: Any) -> 'ABCEmbedding':
-
-        instance = cls(**config_dict['config'])
-
-        embed_model_json_str = json.dumps(config_dict['embed_model'])
-        instance.embed_model = keras.models.model_from_json(embed_model_json_str,
-                                                            custom_objects=kashgari.custom_objects)
-        return instance
+    def load_weights(self, config: Dict, model_path: str) -> None:
+        embed_model_json_str = json.dumps(config['embed_model'])
+        self.embed_model: tf.keras.Model = tf.keras.models.model_from_json(embed_model_json_str,
+                                                                           custom_objects=kashgari.custom_objects)
+        self.embed_model.load_weights(os.path.join(model_path, 'embed_weight.h5'))
 
     def __init__(self,
                  segment: bool = False,
@@ -55,7 +64,7 @@ class ABCEmbedding:
                  max_position: int = None,
                  **kwargs: Any):
 
-        self.embed_model: keras.Model = None
+        self.embed_model: tf.keras.Model = None
 
         self.segment: bool = segment  # type: ignore
         self.kwargs = kwargs
@@ -139,8 +148,6 @@ class ABCEmbedding:
         if self._text_processor is None:
             raise ValueError('Need to setup the `embedding.setup_text_processor` before calling the embed function.')
         tensor_x = self._text_processor.transform(sentences, segment=self.segment)
-        print(self.segment)
-        print(tensor_x)
         if debug:
             logging.debug(f'sentence tensor: {tensor_x}')
         embed_results = self.embed_model.predict(tensor_x)

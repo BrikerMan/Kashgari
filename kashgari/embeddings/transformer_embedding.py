@@ -18,7 +18,7 @@ from kashgari.embeddings.abc_embedding import ABCEmbedding
 
 
 class TransformerEmbedding(ABCEmbedding):
-    def info(self) -> Dict:
+    def to_dict(self) -> Dict[str, Any]:
         info_dic = super(TransformerEmbedding, self).info()
         info_dic['config']['vocab_path'] = self.vocab_path
         info_dic['config']['config_path'] = self.config_path
@@ -95,12 +95,3 @@ class TransformerEmbedding(ABCEmbedding):
 
 if __name__ == "__main__":
     pass
-    # vocab_path = '/Users/brikerman/Desktop/nlp/language_models/albert_base/vocab_chinese.txt'
-    # config_path = '/Users/brikerman/Desktop/nlp/language_models/albert_base/albert_config.json'
-    # checkpoint_path = '/Users/brikerman/Desktop/nlp/language_models/albert_base/model.ckpt-best'
-    #
-    # embed = TransformerEmbedding(vocab_path=vocab_path,
-    #                              config_path=config_path,
-    #                              checkpoint_path=checkpoint_path,
-    #                              model_type='albert')
-    # print(embed.embed(['你', '好', '啊'], debug=True).shape)
