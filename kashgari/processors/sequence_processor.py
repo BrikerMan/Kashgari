@@ -8,7 +8,6 @@
 # time: 12:27 下午
 
 import collections
-import logging
 import operator
 from typing import Dict, List, Any, Optional, Union
 
@@ -17,6 +16,7 @@ import tqdm
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 
 from kashgari.generators import CorpusGenerator
+from kashgari.logger import logger
 from kashgari.processors.abc_processor import ABCProcessor
 from kashgari.types import TextSamplesVar
 
@@ -96,10 +96,10 @@ class SequenceProcessor(ABCProcessor):
             self.vocab2idx = vocab2idx
             self.idx2vocab = dict([(v, k) for k, v in self.vocab2idx.items()])
 
-            logging.info("------ Build vocab dict finished, Top 10 token ------")
+            logger.info("------ Build vocab dict finished, Top 10 token ------")
             for token, index in list(self.vocab2idx.items())[:10]:
-                logging.info(f"Token: {token:8s} -> {index}")
-            logging.info("------ Build vocab dict finished, Top 10 token ------")
+                logger.info(f"Token: {token:8s} -> {index}")
+            logger.info("------ Build vocab dict finished, Top 10 token ------")
 
     def transform(self,
                   samples: TextSamplesVar,
@@ -110,7 +110,7 @@ class SequenceProcessor(ABCProcessor):
         if seq_length is None:
             seq_length = max([len(i) for i in samples]) + 2
             if not self._showed_seq_len_warning:
-                logging.warning(
+                logger.warning(
                     f'Sequence length is None, will use the max length of the samples, which is {seq_length}')
                 self._showed_seq_len_warning = True
 

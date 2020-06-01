@@ -7,7 +7,6 @@
 # file: corpus.py
 # time: 12:38 下午
 
-import logging
 import os
 from typing import List
 from typing import Tuple
@@ -18,6 +17,7 @@ from tensorflow.keras.utils import get_file
 
 from kashgari import macros as K
 from kashgari import utils
+from kashgari.logger import logger
 from kashgari.tokenizers.base_tokenizer import Tokenizer
 from kashgari.tokenizers.bert_tokenizer import BertTokenizer
 
@@ -105,7 +105,7 @@ class ChineseDailyNerCorpus:
         x_data, y_data = DataReader.read_conll_format_file(file_path)
         if shuffle:
             x_data, y_data = utils.unison_shuffled_copies(x_data, y_data)
-        logging.debug(f"loaded {len(x_data)} samples from {file_path}. Sample:\n"
+        logger.debug(f"loaded {len(x_data)} samples from {file_path}. Sample:\n"
                       f"x[0]: {x_data[0]}\n"
                       f"y[0]: {y_data[0]}")
         return x_data, y_data
@@ -182,7 +182,7 @@ class SMP2018ECDTCorpus:
 
         if shuffle:
             x_data, y_data = utils.unison_shuffled_copies(x_data, y_data)
-        logging.debug(f"loaded {len(x_data)} samples from {df_path}. Sample:\n"
+        logger.debug(f"loaded {len(x_data)} samples from {df_path}. Sample:\n"
                       f"x[0]: {x_data[0]}\n"
                       f"y[0]: {y_data[0]}")
         return x_data, y_data

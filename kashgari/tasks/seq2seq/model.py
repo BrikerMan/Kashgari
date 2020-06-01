@@ -7,17 +7,16 @@
 # file: model.py
 # time: 2:34 下午
 
+import json
+import os
+import pathlib
 from typing import Any, Tuple, List, Dict
 
-import os
-import json
-import pathlib
 import numpy as np
 import tensorflow as tf
 import tqdm
 
 import kashgari
-
 from kashgari.embeddings import BareEmbedding
 from kashgari.embeddings.abc_embedding import ABCEmbedding
 from kashgari.generators import CorpusGenerator, Seq2SeqDataSet

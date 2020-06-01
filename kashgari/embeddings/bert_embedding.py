@@ -11,7 +11,6 @@ import os
 from typing import Dict, Any
 
 from kashgari.embeddings.transformer_embedding import TransformerEmbedding
-from kashgari.processors.abc_processor import ABCProcessor
 
 
 class BertEmbedding(TransformerEmbedding):

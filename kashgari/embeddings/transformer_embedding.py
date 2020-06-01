@@ -9,12 +9,12 @@
 
 import codecs
 import json
-from kashgari.logger import logger
 from typing import Dict, List, Any, Optional
 
 from bert4keras.models import build_transformer_model
 
 from kashgari.embeddings.abc_embedding import ABCEmbedding
+from kashgari.logger import logger
 
 
 class TransformerEmbedding(ABCEmbedding):

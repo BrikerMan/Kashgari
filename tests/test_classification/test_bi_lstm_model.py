@@ -17,7 +17,6 @@ from tests.test_macros import TestMacros
 from kashgari.corpus import SMP2018ECDTCorpus
 from kashgari.embeddings import WordEmbedding
 from kashgari.tasks.classification import BiLSTM_Model
-from kashgari.utils import load_model
 
 
 class TestBiLSTM_Model(unittest.TestCase):

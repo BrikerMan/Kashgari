@@ -8,20 +8,10 @@
 # time: 11:23 上午
 
 
-import json
-import os
-import pydoc
-import random
-from typing import List, Union, TypeVar, Tuple, Type, Dict, Any
+from typing import List, Dict
 
 import numpy as np
-from tensorflow import keras
-from tensorflow.keras.utils import CustomObjectScope
 
-from kashgari import custom_objects
-from kashgari.embeddings.abc_embedding import ABCEmbedding
-from kashgari.tasks.classification.abc_model import ABCClassificationModel
-from kashgari.tasks.labeling.abc_model import ABCLabelingModel
 from kashgari.types import MultiLabelClassificationLabelVar
 
 

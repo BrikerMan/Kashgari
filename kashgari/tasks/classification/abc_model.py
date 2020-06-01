@@ -9,10 +9,10 @@
 
 import random
 from abc import ABC
+from typing import List, Dict, Any, Union
 
 from sklearn import metrics as sklearn_metrics
 from tensorflow import keras
-from typing import List, Dict, Any, Union
 
 import kashgari
 from kashgari.embeddings import ABCEmbedding, BareEmbedding

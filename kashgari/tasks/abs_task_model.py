@@ -8,16 +8,16 @@
 # time: 1:43 下午
 
 import json
-import logging
 import os
 import pathlib
 from abc import ABC, abstractmethod
 from typing import Dict, Any, TYPE_CHECKING, Union
 
 import tensorflow as tf
-import kashgari
 
+import kashgari
 from kashgari.embeddings import ABCEmbedding
+from kashgari.logger import logger
 from kashgari.processors.abc_processor import ABCProcessor
 from kashgari.utils import load_data_object
 
@@ -90,11 +90,12 @@ class ABCTaskModel(ABC):
 
         self.embedding.embed_model.save_weights(os.path.join(model_path, 'embed_model_weights.h5'))
         self.tf_model.save_weights(os.path.join(model_path, 'model_weights.h5'))  # type: ignore
-        logging.info('model saved to {}'.format(os.path.abspath(model_path)))
+        logger.info('model saved to {}'.format(os.path.abspath(model_path)))
         return model_path
 
     @classmethod
     def load_model(cls, model_path: str) -> Union["ABCLabelingModel", "ABCClassificationModel"]:
+        from bert4keras.layers import ConditionalRandomField
         model_config_path = os.path.join(model_path, 'model_config.json')
         model_config = json.loads(open(model_config_path, 'r').read())
         model = load_data_object(model_config)
@@ -105,6 +106,9 @@ class ABCTaskModel(ABC):
 
         tf_model_str = json.dumps(model_config['tf_model'])
         model.tf_model = tf.keras.models.model_from_json(tf_model_str)
+
+        if isinstance(model.tf_model.layers[-1], ConditionalRandomField):
+            model.layer_crf = model.tf_model.layers[-1]
 
         model.tf_model.load_weights(os.path.join(model_path, 'model_weights.h5'))
         model.embedding.embed_model.load_weights(os.path.join(model_path, 'embed_model_weights.h5'))

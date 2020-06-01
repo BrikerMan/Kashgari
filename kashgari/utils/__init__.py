@@ -7,15 +7,14 @@
 # file: __init__.py
 # time: 11:22 上午
 
-from .data import get_list_subset
-from .data import unison_shuffled_copies
-from .serialize import load_data_object
-from .multi_label import MultiLabelBinarizer
-
 import tensorflow as tf
 from tensorflow.keras.utils import CustomObjectScope
 
 from kashgari import custom_objects
+from .data import get_list_subset
+from .data import unison_shuffled_copies
+from .multi_label import MultiLabelBinarizer
+from .serialize import load_data_object
 
 
 def custom_object_scope() -> CustomObjectScope:

@@ -10,6 +10,7 @@
 # type: ignore
 
 import tensorflow as tf
+
 from kashgari.embeddings.abc_embedding import ABCEmbedding
 
 

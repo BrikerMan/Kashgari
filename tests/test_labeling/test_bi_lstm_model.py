@@ -11,7 +11,7 @@ import os
 import tempfile
 import time
 import unittest
-
+import kashgari
 from kashgari.embeddings import WordEmbedding
 from kashgari.tasks.classification import BiLSTM_Model
 from kashgari.tasks.labeling import BiLSTM_Model

@@ -9,14 +9,14 @@
 
 import json
 from typing import Dict, List, Any, Optional
-from kashgari.logger import logger
-import os
-import tqdm
+
 import numpy as np
 import tensorflow as tf
+import tqdm
 
 import kashgari
 from kashgari.generators import CorpusGenerator
+from kashgari.logger import logger
 from kashgari.processors import ABCProcessor
 
 L = tf.keras.layers
