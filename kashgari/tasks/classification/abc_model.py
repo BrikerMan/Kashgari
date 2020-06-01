@@ -30,8 +30,8 @@ from kashgari.types import TextSamplesVar, ClassificationLabelVar, MultiLabelCla
 class ABCClassificationModel(ABCTaskModel, ABC):
     __task__ = 'classification'
 
-    def info(self) -> Dict:
-        info = super(ABCClassificationModel, self).info()
+    def to_dict(self) -> Dict:
+        info = super(ABCClassificationModel, self).to_dict()
         info['config']['multi_label'] = self.multi_label
         return info
 

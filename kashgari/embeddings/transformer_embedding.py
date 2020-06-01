@@ -9,7 +9,7 @@
 
 import codecs
 import json
-import logging
+from kashgari.logger import logger
 from typing import Dict, List, Any, Optional
 
 from bert4keras.models import build_transformer_model
@@ -19,7 +19,7 @@ from kashgari.embeddings.abc_embedding import ABCEmbedding
 
 class TransformerEmbedding(ABCEmbedding):
     def to_dict(self) -> Dict[str, Any]:
-        info_dic = super(TransformerEmbedding, self).info()
+        info_dic = super(TransformerEmbedding, self).to_dict()
         info_dic['config']['vocab_path'] = self.vocab_path
         info_dic['config']['config_path'] = self.config_path
         info_dic['config']['checkpoint_path'] = self.checkpoint_path
@@ -53,8 +53,9 @@ class TransformerEmbedding(ABCEmbedding):
         self.checkpoint_path = checkpoint_path
         self.model_type = model_type
         self.vocab_list: List[str] = []
+        kwargs['segment'] = True
 
-        super(TransformerEmbedding, self).__init__(segment=True, **kwargs)
+        super(TransformerEmbedding, self).__init__(**kwargs)
 
     def load_embed_vocab(self) -> Optional[Dict[str, int]]:
         token2idx: Dict[str, int] = {}
@@ -63,10 +64,10 @@ class TransformerEmbedding(ABCEmbedding):
                 token = line.strip()
                 self.vocab_list.append(token)
                 token2idx[token] = len(token2idx)
-        logging.debug("------ Build vocab dict finished, Top 10 token ------")
+        logger.debug("------ Build vocab dict finished, Top 10 token ------")
         for index, token in enumerate(self.vocab_list[:10]):
-            logging.debug(f"Token: {token:8s} -> {index}")
-        logging.debug("------ Build vocab dict finished, Top 10 token ------")
+            logger.debug(f"Token: {token:8s} -> {index}")
+        logger.debug("------ Build vocab dict finished, Top 10 token ------")
         return token2idx
 
     def build_embedding_model(self,
@@ -91,6 +92,8 @@ class TransformerEmbedding(ABCEmbedding):
                 layer.trainable = False
             self.embed_model = bert_model
             self.embedding_size = bert_model.output.shape[-1]
+            print(bert_model.output.shape)
+            print(self.embedding_size)
 
 
 if __name__ == "__main__":

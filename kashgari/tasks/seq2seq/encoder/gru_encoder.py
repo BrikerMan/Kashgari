@@ -31,7 +31,7 @@ class GRUEncoder(tf.keras.Model):
         output, state = self.gru(x, initial_state=hidden)
         return output, state
 
-    def model(self):
+    def model(self) -> tf.keras.Model:
         x1 = L.Input(shape=(None,))
         x2 = L.Input(shape=(self.hidden_size,))
         return tf.keras.Model(inputs=[x1, x2],

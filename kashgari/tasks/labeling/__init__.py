@@ -13,5 +13,7 @@ from .bi_lstm_crf_model import BiLSTM_CRF_Model  # type: ignore
 from .bi_lstm_model import BiLSTM_Model
 from .cnn_lstm_model import CNN_LSTM_Model
 
+from .abc_model import ABCLabelingModel
+
 if __name__ == "__main__":
     pass

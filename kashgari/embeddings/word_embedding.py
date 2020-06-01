@@ -14,16 +14,14 @@ from gensim.models import KeyedVectors
 from tensorflow import keras
 
 from kashgari.embeddings.abc_embedding import ABCEmbedding
-from kashgari.generators import CorpusGenerator
 from kashgari.logger import logger
-from kashgari.processors.abc_processor import ABCProcessor
 
 L = keras.layers
 
 
 class WordEmbedding(ABCEmbedding):
     def to_dict(self) -> Dict[str, Any]:
-        info_dic = super(WordEmbedding, self).info()
+        info_dic = super(WordEmbedding, self).to_dict()
         info_dic['config']['w2v_path'] = self.w2v_path
         info_dic['config']['w2v_kwargs'] = self.w2v_kwargs
         return info_dic

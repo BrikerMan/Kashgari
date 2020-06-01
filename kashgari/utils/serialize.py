@@ -7,24 +7,26 @@
 # file: serialize.py
 # time: 11:23 上午
 
-import json
-
-import tensorflow as tf
-from json import JSONEncoder
-from kashgari.processors import ABCProcessor
-from kashgari.embeddings import ABCEmbedding
+import pydoc
+from typing import Dict, Any
 
 
-class KashgariEncoder(JSONEncoder):
-    def default(self, o):
-        if isinstance(o, ABCProcessor):
-            return o.to_dict()
-        elif isinstance(o, ABCEmbedding):
-            return o.to_dict()
-        elif isinstance(o, tf.keras.Model):
-            return json.loads(o.to_json())
-        else:
-            return super(KashgariEncoder, self).default(o)
+def load_data_object(data: Dict, **kwargs: Dict) -> Any:
+    """
+    Load Object From Dict
+    Args:
+        data:
+        **kwargs:
+
+    Returns:
+
+    """
+    module_name = f"{data['__module__']}.{data['__class_name__']}"
+    obj: Any = pydoc.locate(module_name)(**data['config'], **kwargs)  # type: ignore
+    if hasattr(obj, '_override_load_model'):
+        obj._override_load_model(data)
+
+    return obj
 
 
 if __name__ == "__main__":

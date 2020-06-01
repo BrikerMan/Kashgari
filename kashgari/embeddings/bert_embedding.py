@@ -16,7 +16,7 @@ from kashgari.processors.abc_processor import ABCProcessor
 
 class BertEmbedding(TransformerEmbedding):
     def to_dict(self) -> Dict[str, Any]:
-        info_dic = super(BertEmbedding, self).info()
+        info_dic = super(BertEmbedding, self).to_dict()
         info_dic['config']['model_folder'] = self.model_folder
         return info_dic
 

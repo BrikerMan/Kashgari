@@ -15,7 +15,6 @@ import unittest
 from kashgari.embeddings import WordEmbedding
 from kashgari.tasks.classification import BiLSTM_Model
 from kashgari.tasks.labeling import BiLSTM_Model
-from kashgari.utils import load_model
 from tests.test_macros import TestMacros
 
 
@@ -23,7 +22,7 @@ class TestBiLSTM_Model(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.EPOCH_COUNT = 10
+        cls.EPOCH_COUNT = 1
         cls.TASK_MODEL_CLASS = BiLSTM_Model
 
     def test_basic_use(self):
@@ -38,14 +37,14 @@ class TestBiLSTM_Model(unittest.TestCase):
         original_y = model.predict(train_x[:20])
         model.save(model_path)
         del model
-        # TODO: fix load model
-        # new_model = load_model(model_path)
-        # new_model.tf_model.summary()
-        # new_y = new_model.predict(train_x[:20])
-        # assert new_y == original_y
-        #
-        # report = new_model.evaluate(train_x, train_y)
-        # print(report)
+
+        new_model = self.TASK_MODEL_CLASS.load_model(model_path)
+        new_model.tf_model.summary()
+        new_y = new_model.predict(train_x[:20])
+        assert new_y == original_y
+
+        report = new_model.evaluate(train_x, train_y)
+        print(report)
 
     def test_with_word_embedding(self):
         w2v_embedding = WordEmbedding(TestMacros.w2v_path)

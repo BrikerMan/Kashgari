@@ -8,9 +8,8 @@
 # time: 2:43 下午
 
 import json
-import logging
 from typing import Dict, List, Any, Optional
-
+from kashgari.logger import logger
 import os
 import tqdm
 import numpy as np
@@ -38,26 +37,6 @@ class ABCEmbedding:
             'embed_model': json.loads(self.embed_model.to_json())
         }
 
-    def info(self) -> Dict:
-        config: Dict[str, Any] = {
-            'segment': self.segment,
-            'embedding_size': self.embedding_size,
-            'max_position': self.max_position,
-            **self.kwargs
-        }
-        return {
-            'class_name': self.__class__.__name__,
-            'module': self.__class__.__module__,
-            'config': config,
-            'embed_model': json.loads(self.embed_model.to_json())
-        }
-
-    def load_weights(self, config: Dict, model_path: str) -> None:
-        embed_model_json_str = json.dumps(config['embed_model'])
-        self.embed_model: tf.keras.Model = tf.keras.models.model_from_json(embed_model_json_str,
-                                                                           custom_objects=kashgari.custom_objects)
-        self.embed_model.load_weights(os.path.join(model_path, 'embed_weight.h5'))
-
     def __init__(self,
                  segment: bool = False,
                  embedding_size: int = 100,
@@ -73,6 +52,11 @@ class ABCEmbedding:
         self.max_position: int = max_position  # type: ignore
         self._text_processor: Optional[ABCProcessor] = None
         self._embedding_vocab2idx = self.load_embed_vocab()
+
+    def _override_load_model(self, config: Dict) -> None:
+        embed_model_json_str = json.dumps(config['embed_model'])
+        self.embed_model = tf.keras.models.model_from_json(embed_model_json_str,
+                                                           custom_objects=kashgari.custom_objects)
 
     @property
     def embedding_vocab2idx(self) -> Dict[str, int]:
@@ -113,7 +97,7 @@ class ABCEmbedding:
         else:
             target_index = int(cover_rate * len(seq_lens))
         sequence_length = sorted(seq_lens)[target_index]
-        logging.debug(f'Calculated sequence length = {sequence_length}')
+        logger.debug(f'Calculated sequence length = {sequence_length}')
         return sequence_length
 
     def load_embed_vocab(self) -> Optional[Dict[str, int]]:
@@ -147,9 +131,12 @@ class ABCEmbedding:
         """
         if self._text_processor is None:
             raise ValueError('Need to setup the `embedding.setup_text_processor` before calling the embed function.')
-        tensor_x = self._text_processor.transform(sentences, segment=self.segment)
+
+        tensor_x = self._text_processor.transform(sentences,
+                                                  segment=self.segment,
+                                                  seq_length=self.max_position)
         if debug:
-            logging.debug(f'sentence tensor: {tensor_x}')
+            logger.debug(f'sentence tensor: {tensor_x}')
         embed_results = self.embed_model.predict(tensor_x)
         return embed_results
 

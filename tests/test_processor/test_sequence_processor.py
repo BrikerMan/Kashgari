@@ -11,8 +11,7 @@ import random
 import unittest
 from tests.test_macros import TestMacros
 
-from kashgari.utils import loads_object
-from kashgari.generators import CorpusGenerator
+from kashgari.utils import load_data_object
 from kashgari.processors import SequenceProcessor
 
 
@@ -25,7 +24,7 @@ class TestSequenceProcessor(unittest.TestCase):
         text_idx = text_processor.transform(x_samples)
 
         text_info_dict = text_processor.to_dict()
-        text_processor2: SequenceProcessor = loads_object(text_info_dict)
+        text_processor2: SequenceProcessor = load_data_object(text_info_dict)
 
         text_idx2 = text_processor2.transform(x_samples)
         sample_lengths = [len(i) for i in x_samples]
@@ -45,7 +44,7 @@ class TestSequenceProcessor(unittest.TestCase):
 
         text_info_dict = text_processor.to_dict()
 
-        text_processor2: SequenceProcessor = loads_object(text_info_dict)
+        text_processor2: SequenceProcessor = load_data_object(text_info_dict)
 
         text_idx2 = text_processor2.transform(samples)
         lengths = [len(i) for i in samples]

@@ -59,6 +59,6 @@ if __name__ == "__main__":
     x, y = ChineseDailyNerCorpus.load_data('test')
     model = BiGRU_Model()
     model.fit(x, y, epochs=1)
-    print(model.info())
+    print(model.to_dict())
     print(model.predict(x[:3]))
     model.save('./model')

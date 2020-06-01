@@ -27,7 +27,7 @@ class SequenceProcessor(ABCProcessor):
     """
 
     def to_dict(self) -> Dict[str, Any]:
-        data = super(SequenceProcessor, self).info()
+        data = super(SequenceProcessor, self).to_dict()
         data['config'].update({
             'build_in_vocab': self.build_in_vocab,
             'min_count': self.min_count,
@@ -144,7 +144,7 @@ class SequenceProcessor(ABCProcessor):
             for idx in seq:
                 labels_.append(self.idx2vocab[idx])
             if lengths is not None:
-                labels_ = labels_[1:lengths[index]+1]
+                labels_ = labels_[1:lengths[index] + 1]
             else:
                 labels_ = labels_[1:-1]
             result.append(labels_)

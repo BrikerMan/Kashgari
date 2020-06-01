@@ -22,7 +22,7 @@ from kashgari.types import TextSamplesVar
 class ClassificationProcessor(ABCProcessor):
 
     def to_dict(self) -> Dict[str, Any]:
-        data = super(ClassificationProcessor, self).info()
+        data = super(ClassificationProcessor, self).to_dict()
         data['config']['multi_label'] = self.multi_label
         return data
 
@@ -81,12 +81,12 @@ class ClassificationProcessor(ABCProcessor):
         sample_tensor = [self.vocab2idx[i] for i in samples]
         return np.array(sample_tensor)
 
-    def inverse_transform(self,
+    def inverse_transform(self,  # type: ignore[override]
                           labels: Union[List[int], np.ndarray],
                           *,
                           lengths: List[int] = None,
                           threshold: float = 0.5,
-                          **kwargs: Any) -> List[str]:
+                          **kwargs: Any) -> Union[List[List[str]], List[str]]:
         if self.multi_label:
             return self.multi_label_binarizer.inverse_transform(labels,
                                                                 threshold=threshold)

@@ -7,64 +7,54 @@
 # file: abs_task_model.py
 # time: 1:43 下午
 
+from __future__ import annotations
+
 import json
 import logging
 import os
 import pathlib
 from abc import ABC, abstractmethod
-from typing import Dict, Any, Union, List
+from typing import Dict, Any, TYPE_CHECKING, Union
 
-from tensorflow import keras
+import tensorflow as tf
+import kashgari
 
-from kashgari.embeddings import BareEmbedding
-from kashgari.embeddings.abc_embedding import ABCEmbedding
-from kashgari.generators import CorpusGenerator
+from kashgari.embeddings import ABCEmbedding
 from kashgari.processors.abc_processor import ABCProcessor
+from kashgari.utils import load_data_object
+
+if TYPE_CHECKING:
+    from kashgari.tasks.labeling import ABCLabelingModel
+    from kashgari.tasks.classification import ABCClassificationModel
 
 
 class ABCTaskModel(ABC):
 
-    def info(self) -> Dict:
-        import kashgari
-        import tensorflow as tf
-        model_json_str = self.tf_model.to_json()  # type: ignore
+    def __init__(self) -> None:
+        self.embedding: ABCEmbedding
+        self.hyper_parameters: Dict[str, Any]
+        self.sequence_length: int
+        self.text_processor: ABCProcessor
+        self.label_processor: ABCProcessor
+
+        self.tf_model: tf.keras.Model
+
+    def to_dict(self) -> Dict[str, Any]:
+        model_json_str = self.tf_model.to_json()
 
         return {
+            'tf_version': tf.__version__,  # type: ignore
+            'kashgari_version': kashgari.__version__,
+            '__class_name__': self.__class__.__name__,
+            '__module__': self.__class__.__module__,
             'config': {
                 'hyper_parameters': self.hyper_parameters,  # type: ignore
             },
-            'tf_model': json.loads(model_json_str),
-            'embedding': self.embedding.info(),  # type: ignore
-            'class_name': self.__class__.__name__,
-            'module': self.__class__.__module__,
-            'tf_version': tf.__version__,  # type: ignore
-            'kashgari_version': kashgari.__version__
+            'embedding': self.embedding.to_dict(),  # type: ignore
+            'text_processor': self.text_processor.to_dict(),
+            'label_processor': self.label_processor.to_dict(),
+            'tf_model': json.loads(model_json_str)
         }
-
-    # def __init__(self,
-    #              embedding: ABCEmbedding = None,
-    #              *,
-    #              sequence_length: int = None,
-    #              hyper_parameters: Dict[str, Dict[str, Any]] = None,
-    #              **kwargs: Any) -> None:
-    #     self.tf_model: keras.Model = None
-    #     self.embedding: ABCEmbedding
-    #     if embedding is None:
-    #         self.embedding = BareEmbedding()  # type: ignore
-    #     else:
-    #         self.embedding = embedding
-    #
-    #     if sequence_length and sequence_length != self.embedding.sequence_length:
-    #         if self.embedding.sequence_length is None:
-    #             self.embedding.set_sequence_length(sequence_length)
-    #         else:
-    #             raise ValueError("Already setup embedding's sequence_length, if need to change sequence length, call "
-    #                              "`model.embedding.set_sequence_length(sequence_length)`")
-    #
-    #     self.hyper_parameters = self.default_hyper_parameters().copy()
-    #     if hyper_parameters:
-    #         self.hyper_parameters.update(hyper_parameters)
-    #     self.default_labeling_processor: ABCProcessor = None
 
     @classmethod
     def default_hyper_parameters(cls) -> Dict[str, Dict[str, Any]]:
@@ -87,78 +77,6 @@ class ABCTaskModel(ABC):
         """
         raise NotImplementedError
 
-    @abstractmethod
-    def build_model(self,
-                    x_train: Any,
-                    y_train: Any) -> None:
-        raise NotImplementedError
-
-    # def build_model_arc(self) -> None:
-    #     """
-    #     Build model architect, **all models must implement this function.**
-    #     Returns:
-    #
-    #     """
-    #     raise NotADirectoryError
-
-    # def build_model_generator(self,
-    #                           train_gen: CorpusGenerator) -> None:
-    #     """
-    #     Build model with a generator, This function will do:
-    #
-    #     1. setup processor's vocab if the vocab is empty.
-    #     2. calculate the sequence length if `sequence_length` is None.
-    #     3. build up model architect.
-    #     4. compile the ``tf_model`` with default loss, optimizer and metrics.
-    #
-    #     Args:
-    #         train_gen: train data generator
-    #
-    #     """
-    #     if self.embedding.label_processor is None:
-    #         if self.default_labeling_processor is None:
-    #             raise ValueError('Need to set default_labeling_processor')
-    #         self.embedding.label_processor = self.default_labeling_processor
-    #     self.embedding.build_with_generator(train_gen)
-    #     self.embedding.calculate_sequence_length_if_needs(train_gen)
-    #     if self.tf_model is None:
-    #         self.build_model_arc()
-    #         self.compile_model()
-    #         if self.tf_model is not None:
-    #             self.tf_model.summary()
-
-    # def compile_model(self,
-    #                   loss: Any = None,
-    #                   optimizer: Any = None,
-    #                   metrics: Any = None,
-    #                   **kwargs: Any) -> None:
-    #     """
-    #     Configures the model for training.
-    #     call :meth:`tf.keras.Model.predict` to compile model with custom loss, optimizer and metrics
-    #
-    #     Examples:
-    #
-    #         >>> model = BiLSTM_Model()
-    #         # Build model with corpus
-    #         >>> model.build_model(train_x, train_y)
-    #         # Compile model with custom loss, optimizer and metrics
-    #         >>> model.compile(loss='categorical_crossentropy', optimizer='rsm', metrics = ['accuracy'])
-    #
-    #     Args:
-    #         loss: name of objective function, objective function or ``tf.keras.losses.Loss`` instance.
-    #         optimizer: name of optimizer or optimizer instance.
-    #         metrics: List of metrics to be evaluated by the model during training and testing.
-    #         **kwargs: additional params passed to :meth:`tf.keras.Model.predict``.
-    #     """
-    #     if kwargs.get('loss') is None:
-    #         kwargs['loss'] = 'categorical_crossentropy'
-    #     if kwargs.get('optimizer') is None:
-    #         kwargs['optimizer'] = 'adam'
-    #     if kwargs.get('metrics') is None:
-    #         kwargs['metrics'] = ['accuracy']
-    #
-    #     self.tf_model.compile(**kwargs)
-
     def save(self, model_path: str) -> str:
         """
         Save model
@@ -168,35 +86,40 @@ class ABCTaskModel(ABC):
         pathlib.Path(model_path).mkdir(exist_ok=True, parents=True)
         model_path = os.path.abspath(model_path)
 
-        with open(os.path.join(model_path, 'model_info.json'), 'w') as f:
-            f.write(json.dumps(self.info(), indent=2, ensure_ascii=True))
+        with open(os.path.join(model_path, 'model_config.json'), 'w') as f:
+            f.write(json.dumps(self.to_dict(), indent=2, ensure_ascii=False))
             f.close()
 
+        self.embedding.embed_model.save_weights(os.path.join(model_path, 'embed_model_weights.h5'))
         self.tf_model.save_weights(os.path.join(model_path, 'model_weights.h5'))  # type: ignore
         logging.info('model saved to {}'.format(os.path.abspath(model_path)))
         return model_path
 
-    # def predict(self,
-    #             x_data: Any,
-    #             *,
-    #             batch_size: int = 32,
-    #             truncating: bool = False,
-    #             debug_info: bool = False,
-    #             predict_kwargs: Dict = None,
-    #             **kwargs: Any) -> List[Union[List[str], str]]:
-    #     raise NotImplementedError
-    #
-    # def evaluate(self,
-    #              x_data: Any,
-    #              y_data: Any,
-    #              *,
-    #              batch_size: int = 32,
-    #              digits: int = 4,
-    #              truncating: bool = False,
-    #              debug_info: bool = False,
-    #              **kwargs: Dict) -> Dict:
-    #     raise NotImplementedError
+    @classmethod
+    def load_model(cls, model_path: str) -> Union[ABCLabelingModel, ABCClassificationModel]:
+        model_config_path = os.path.join(model_path, 'model_config.json')
+        model_config = json.loads(open(model_config_path, 'r').read())
+        model = load_data_object(model_config)
+
+        model.embedding = load_data_object(model_config['embedding'])
+        model.text_processor = load_data_object(model_config['text_processor'])
+        model.label_processor = load_data_object(model_config['label_processor'])
+
+        tf_model_str = json.dumps(model_config['tf_model'])
+        model.tf_model = tf.keras.models.model_from_json(tf_model_str)
+
+        model.tf_model.load_weights(os.path.join(model_path, 'model_weights.h5'))
+        model.embedding.embed_model.load_weights(os.path.join(model_path, 'embed_model_weights.h5'))
+        return model
+
+    @abstractmethod
+    def build_model(self,
+                    x_train: Any,
+                    y_train: Any) -> None:
+        raise NotImplementedError
 
 
 if __name__ == "__main__":
-    pass
+    path = '/var/folders/x3/_dg9_drj42l_cc70tsqkpqrw0000gn/T/1590915853.4571211'
+    m = ABCTaskModel.load_model(path)
+    m.tf_model.summary()

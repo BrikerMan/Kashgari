@@ -26,12 +26,6 @@ from kashgari.types import TextSamplesVar
 
 class ABCLabelingModel(ABCTaskModel, ABC):
 
-    def info(self) -> Dict:
-        info = super(ABCLabelingModel, self).info()
-        info['text_processor'] = self.text_processor.info()
-        info['label_processor'] = self.label_processor.info()
-        return info
-
     def __init__(self,
                  embedding: ABCEmbedding = None,
                  sequence_length: int = None,

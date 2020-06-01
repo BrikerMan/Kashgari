@@ -11,7 +11,7 @@
 import unittest
 from tests.test_macros import TestMacros
 
-from kashgari.utils import loads_object
+from kashgari.utils import load_data_object
 from kashgari.generators import CorpusGenerator
 from kashgari.processors import ClassificationProcessor
 
@@ -25,7 +25,7 @@ class TestClassificationProcessor(unittest.TestCase):
 
         info_dict = processor.to_dict()
 
-        p2: ClassificationProcessor = loads_object(info_dict)
+        p2: ClassificationProcessor = load_data_object(info_dict)
         assert (transformed_idx == p2.transform(y_set[20:40])).all()
         assert y_set[20:40] == p2.inverse_transform(transformed_idx)
 
@@ -43,7 +43,7 @@ class TestClassificationProcessor(unittest.TestCase):
 
         info_dict = processor.to_dict()
 
-        p2: ClassificationProcessor = loads_object(info_dict)
+        p2: ClassificationProcessor = load_data_object(info_dict)
         assert (transformed_idx == p2.transform(y_set[20:40])).all()
 
         x1s = y_set[20:40]

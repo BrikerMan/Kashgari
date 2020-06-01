@@ -27,20 +27,7 @@ class ABCProcessor(ABC):
                 'vocab2idx': self.vocab2idx,
             },
             '__class_name__': self.__class__.__name__,
-            '_module_': self.__class__.__module__,
-        }
-
-    def info(self) -> Dict:
-        return {
-            'config': {
-                'token_pad': self.token_pad,
-                'token_unk': self.token_unk,
-                'token_bos': self.token_bos,
-                'token_eos': self.token_eos,
-                'vocab2idx': self.vocab2idx,
-            },
-            'class_name': self.__class__.__name__,
-            'module': self.__class__.__module__
+            '__module__': self.__class__.__module__,
         }
 
     def __init__(self, **kwargs: Any) -> None:
