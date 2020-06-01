@@ -19,7 +19,7 @@ class TestBiGRU_Model(base.TestBiLSTM_Model):
     def setUpClass(cls):
         cls.EPOCH_COUNT = 1
         cls.TASK_MODEL_CLASS = BiGRU_Model
-        
+
     def test_basic_use(self):
         super(TestBiGRU_Model, self).test_basic_use()
 

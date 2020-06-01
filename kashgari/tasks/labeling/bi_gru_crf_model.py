@@ -79,7 +79,6 @@ if __name__ == "__main__":
     x, y = ChineseDailyNerCorpus.load_data('test')
     model = BiGRU_CRF_Model()
     model.fit(x, y, epochs=4)
-    print(model.info())
+    print(model.to_dict())
     print(model.predict_entities(x[:3]))
     model.save('./model')
-

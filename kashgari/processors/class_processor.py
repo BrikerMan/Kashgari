@@ -21,8 +21,8 @@ from kashgari.types import TextSamplesVar
 
 class ClassificationProcessor(ABCProcessor):
 
-    def info(self) -> Dict:
-        data = super(ClassificationProcessor, self).info()
+    def to_dict(self) -> Dict[str, Any]:
+        data = super(ClassificationProcessor, self).to_dict()
         data['config']['multi_label'] = self.multi_label
         return data
 
@@ -72,7 +72,6 @@ class ClassificationProcessor(ABCProcessor):
                   samples: TextSamplesVar,
                   *,
                   seq_length: int = None,
-                  max_position: int = None,
                   segment: bool = False,
                   **kwargs: Any) -> np.ndarray:
         if self.multi_label:
@@ -82,12 +81,17 @@ class ClassificationProcessor(ABCProcessor):
         sample_tensor = [self.vocab2idx[i] for i in samples]
         return np.array(sample_tensor)
 
-    def inverse_transform(self,
+    def inverse_transform(self,  # type: ignore[override]
                           labels: Union[List[int], np.ndarray],
                           *,
                           lengths: List[int] = None,
-                          **kwargs: Any) -> List[str]:
-        return [self.idx2vocab[i] for i in labels]
+                          threshold: float = 0.5,
+                          **kwargs: Any) -> Union[List[List[str]], List[str]]:
+        if self.multi_label:
+            return self.multi_label_binarizer.inverse_transform(labels,
+                                                                threshold=threshold)
+        else:
+            return [self.idx2vocab[i] for i in labels]
 
 
 if __name__ == "__main__":

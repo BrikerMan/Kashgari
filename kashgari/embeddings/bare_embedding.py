@@ -25,11 +25,6 @@ class BareEmbedding(ABCEmbedding):
         super(BareEmbedding, self).__init__(embedding_size=embedding_size,
                                             **kwargs)
 
-    def info(self) -> Dict:
-        info_dic = super(BareEmbedding, self).info()
-        info_dic['config']['embedding_size'] = self.embedding_size
-        return info_dic
-
     def load_embed_vocab(self) -> Optional[Dict[str, int]]:
         return None
 

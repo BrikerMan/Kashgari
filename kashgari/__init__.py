@@ -11,7 +11,6 @@
 
 """
 
-import logging
 import os
 from typing import Dict, Any
 
@@ -19,10 +18,6 @@ os.environ['TF_KERAS'] = '1'
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 custom_objects: Dict[str, Any] = {}
-logger = logging.Logger('kashgari', level='DEBUG')
-stream_handler = logging.StreamHandler()
-stream_handler.setFormatter(logging.Formatter('%(asctime)s | %(levelname)-7s | %(message)s'))
-logger.addHandler(stream_handler)
 
 from kashgari.__version__ import __version__
 from kashgari.macros import config

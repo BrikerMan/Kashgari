@@ -5,9 +5,12 @@ env:
   global:
     - COVERALLS_PARALLEL=true
   matrix:
-    - TEST_FILE="tests/test_labeling/"
+    - TEST_FILE="tests/test_seq2seq/"
+    - TEST_FILE="tests/test_labeling/test_bi_gru_model.py tests/test_labeling/test_bi_lstm_model.py tests/test_labeling/test_cnn_lstm_model.py"
+    - TEST_FILE="tests/test_labeling/test_bi_gru_crf_model.py tests/test_labeling/test_bi_lstm_crf_model.py"
     - TEST_FILE="tests/test_classification/"
     - TEST_FILE="tests/test_embeddings/"
+    - TEST_FILE="tests/test_processor/"
     - TEST_FILE="tests/test_corpus.py tests/test_utils.py"
 
 python:
@@ -25,6 +28,7 @@ stages:
 install:
   - pip install -r requirements.dev.txt
   - pip install -r requirements.txt
+  - pip install tensorflow==2.0.0
   - python -c "import kashgari;print(f'kashgari version {kashgari.__version__}')"
   - git fetch --unshallow --quiet
   - export PYTHONPATH=`pwd`

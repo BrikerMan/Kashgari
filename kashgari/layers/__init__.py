@@ -8,6 +8,7 @@
 # time: 7:39 下午
 
 from tensorflow import keras
+
 from .behdanau_attention import BahdanauAttention  # type: ignore
 
 L = keras.layers

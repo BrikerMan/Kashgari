@@ -8,16 +8,15 @@
 # time: 12:27 下午
 
 import collections
-import logging
 import operator
-from typing import Dict, List, Any, Optional
+from typing import Dict, List, Any, Optional, Union
 
 import numpy as np
 import tqdm
 from tensorflow.keras.preprocessing.sequence import pad_sequences
-from tensorflow.keras.utils import to_categorical
 
 from kashgari.generators import CorpusGenerator
+from kashgari.logger import logger
 from kashgari.processors.abc_processor import ABCProcessor
 from kashgari.types import TextSamplesVar
 
@@ -27,8 +26,8 @@ class SequenceProcessor(ABCProcessor):
     Generic processors for the sequence samples.
     """
 
-    def info(self) -> Dict:
-        data = super(SequenceProcessor, self).info()
+    def to_dict(self) -> Dict[str, Any]:
+        data = super(SequenceProcessor, self).to_dict()
         data['config'].update({
             'build_in_vocab': self.build_in_vocab,
             'min_count': self.min_count,
@@ -97,23 +96,21 @@ class SequenceProcessor(ABCProcessor):
             self.vocab2idx = vocab2idx
             self.idx2vocab = dict([(v, k) for k, v in self.vocab2idx.items()])
 
-            logging.info("------ Build vocab dict finished, Top 10 token ------")
+            logger.info("------ Build vocab dict finished, Top 10 token ------")
             for token, index in list(self.vocab2idx.items())[:10]:
-                logging.info(f"Token: {token:8s} -> {index}")
-            logging.info("------ Build vocab dict finished, Top 10 token ------")
+                logger.info(f"Token: {token:8s} -> {index}")
+            logger.info("------ Build vocab dict finished, Top 10 token ------")
 
     def transform(self,
                   samples: TextSamplesVar,
+                  *,
                   seq_length: int = None,
-                  max_position: int = None,
                   segment: bool = False,
                   **kwargs: Any) -> np.ndarray:
         if seq_length is None:
-            seq_length = max([len(i) for i in samples])
-            if max_position and seq_length > max_position:
-                seq_length = max_position
+            seq_length = max([len(i) for i in samples]) + 2
             if not self._showed_seq_len_warning:
-                logging.warning(
+                logger.warning(
                     f'Sequence length is None, will use the max length of the samples, which is {seq_length}')
                 self._showed_seq_len_warning = True
 
@@ -136,9 +133,10 @@ class SequenceProcessor(ABCProcessor):
             return token_ids
 
     def inverse_transform(self,  # type: ignore[override]
-                          labels: List[List[int]],
+                          labels: Union[List[List[int]], np.ndarray],
                           *,
                           lengths: List[int] = None,
+                          threshold: float = 0.5,
                           **kwargs: Any) -> List[List[str]]:
         result = []
         for index, seq in enumerate(labels):
@@ -146,9 +144,9 @@ class SequenceProcessor(ABCProcessor):
             for idx in seq:
                 labels_.append(self.idx2vocab[idx])
             if lengths is not None:
-                labels_ = labels_[1:lengths[index]]
+                labels_ = labels_[1:lengths[index] + 1]
             else:
-                labels_ = labels_[:-1]
+                labels_ = labels_[1:-1]
             result.append(labels_)
         return result
 

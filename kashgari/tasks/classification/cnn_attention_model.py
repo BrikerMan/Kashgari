@@ -10,8 +10,9 @@
 from abc import ABC
 from typing import Dict, Any
 
-from tensorflow import keras
 import tensorflow.keras.layers as L
+from tensorflow import keras
+
 from kashgari.tasks.classification.abc_model import ABCClassificationModel
 
 

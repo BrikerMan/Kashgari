@@ -10,8 +10,9 @@
 # type: ignore
 
 import tensorflow as tf
-from kashgari.layers import L
+
 from kashgari.embeddings.abc_embedding import ABCEmbedding
+from kashgari.layers import L
 
 
 class AttGRUDecoder(tf.keras.Model):

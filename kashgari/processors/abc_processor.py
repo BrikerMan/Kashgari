@@ -17,7 +17,7 @@ from kashgari.types import TextSamplesVar
 
 
 class ABCProcessor(ABC):
-    def info(self) -> Dict:
+    def to_dict(self) -> Dict[str, Any]:
         return {
             'config': {
                 'token_pad': self.token_pad,
@@ -26,8 +26,8 @@ class ABCProcessor(ABC):
                 'token_eos': self.token_eos,
                 'vocab2idx': self.vocab2idx,
             },
-            'class_name': self.__class__.__name__,
-            'module': self.__class__.__module__
+            '__class_name__': self.__class__.__name__,
+            '__module__': self.__class__.__module__,
         }
 
     def __init__(self, **kwargs: Any) -> None:
@@ -64,7 +64,6 @@ class ABCProcessor(ABC):
                   samples: TextSamplesVar,
                   *,
                   seq_length: int = None,
-                  max_position: int = None,
                   segment: bool = False,
                   **kwargs: Any) -> np.ndarray:
         raise NotImplementedError
@@ -73,6 +72,7 @@ class ABCProcessor(ABC):
                           labels: List[int],
                           *,
                           lengths: List[int] = None,
+                          threshold: float = 0.5,
                           **kwargs: Any) -> List[str]:
         raise NotImplementedError
 

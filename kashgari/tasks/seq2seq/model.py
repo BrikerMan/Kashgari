@@ -7,12 +7,16 @@
 # file: model.py
 # time: 2:34 下午
 
-from typing import Any, Tuple, List
+import json
+import os
+import pathlib
+from typing import Any, Tuple, List, Dict
 
 import numpy as np
 import tensorflow as tf
 import tqdm
 
+import kashgari
 from kashgari.embeddings import BareEmbedding
 from kashgari.embeddings.abc_embedding import ABCEmbedding
 from kashgari.generators import CorpusGenerator, Seq2SeqDataSet
@@ -24,6 +28,23 @@ from kashgari.types import TextSamplesVar
 
 
 class Seq2Seq:
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            'tf_version': tf.__version__,  # type: ignore
+            'kashgari_version': kashgari.__version__,
+            '__class_name__': self.__class__.__name__,
+            '__module__': self.__class__.__module__,
+            'config': {
+                'encoder_seq_length': self.encoder_seq_length,  # type: ignore
+                'decoder_seq_length': self.decoder_seq_length,  # type: ignore
+                'hidden_size': self.hidden_size
+            },
+            'encoder_embedding': self.encoder_embedding.to_dict(),  # type: ignore
+            'decoder_embedding': self.decoder_embedding.to_dict(),
+            'encoder_processor': self.encoder_processor.to_dict(),
+            'decoder_processor': self.decoder_processor.to_dict(),
+        }
+
     def __init__(self,
                  encoder_embedding: ABCEmbedding = None,
                  decoder_embedding: ABCEmbedding = None,
@@ -65,7 +86,7 @@ class Seq2Seq:
         self.optimizer = tf.keras.optimizers.Adam()
         self.loss_object = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True, reduction='none')
 
-    @tf.function
+    # @tf.function
     def loss_function(self, real: tf.Tensor, pred: tf.Tensor) -> tf.Tensor:
         mask = tf.math.logical_not(tf.math.equal(real, 0))
         loss_ = self.loss_object(real, pred)
@@ -80,6 +101,17 @@ class Seq2Seq:
                     y_train: TextSamplesVar) -> None:
         train_gen = CorpusGenerator(x_train, y_train)
         self.build_model_generator(train_gen)
+
+    def _build_encoder_decoder(self) -> None:
+        self.encoder = GRUEncoder(self.encoder_embedding, hidden_size=self.hidden_size)
+        self.decoder = AttGRUDecoder(self.decoder_embedding,
+                                     hidden_size=self.hidden_size,
+                                     vocab_size=self.decoder_processor.vocab_size)
+        try:
+            self.encoder.model().summary()
+            self.decoder.model().summary()
+        except:
+            pass
 
     def build_model_generator(self,
                               train_gen: CorpusGenerator) -> None:
@@ -112,17 +144,9 @@ class Seq2Seq:
                                                                                             cover_rate=1.0)
                 logger.info(f"calculated decoder sequence length: {self.decoder_seq_length}")
 
-            self.encoder = GRUEncoder(self.encoder_embedding, hidden_size=self.hidden_size)
-            self.decoder = AttGRUDecoder(self.decoder_embedding,
-                                         hidden_size=self.hidden_size,
-                                         vocab_size=self.decoder_processor.vocab_size)
-            try:
-                self.encoder.model().summary()
-                self.decoder.model().summary()
-            except:
-                pass
+            self._build_encoder_decoder()
 
-    @tf.function
+    # @tf.function
     def train_step(self,  # type: ignore
                    input_seq,
                    target_seq,
@@ -198,6 +222,48 @@ class Seq2Seq:
 
         return history_callback
 
+    def save(self, model_path: str) -> str:
+        """
+        Save model
+        Args:
+            model_path:
+        """
+        pathlib.Path(model_path).mkdir(exist_ok=True, parents=True)
+        model_path = os.path.abspath(model_path)
+
+        with open(os.path.join(model_path, 'model_config.json'), 'w') as f:
+            f.write(json.dumps(self.to_dict(), indent=2, ensure_ascii=False))
+            f.close()
+
+        self.encoder_embedding.embed_model.save_weights(os.path.join(model_path, 'encoder_embed_weights.h5'))
+        self.decoder_embedding.embed_model.save_weights(os.path.join(model_path, 'decoder_embed_weights.h5'))
+        self.encoder.save_weights(os.path.join(model_path, 'encoder_weights.h5'))
+        self.decoder.save_weights(os.path.join(model_path, 'decoder_weights.h5'))
+        logger.info('model saved to {}'.format(os.path.abspath(model_path)))
+        return model_path
+
+    @classmethod
+    def load_model(cls, model_path: str) -> 'Seq2Seq':
+        from kashgari.utils import load_data_object
+        model_config_path = os.path.join(model_path, 'model_config.json')
+        model_config = json.loads(open(model_config_path, 'r').read())
+        model = load_data_object(model_config)
+
+        # Load processors and embeddings
+        model.encoder_processor = load_data_object(model_config['encoder_processor'])
+        model.decoder_processor = load_data_object(model_config['decoder_processor'])
+        model.encoder_embedding = load_data_object(model_config['encoder_embedding'])
+        model.decoder_embedding = load_data_object(model_config['decoder_embedding'])
+
+        model._build_encoder_decoder()
+        # Load Model Weights
+        model.encoder_embedding.embed_model.load_weights(os.path.join(model_path, 'encoder_embed_weights.h5'))
+        model.decoder_embedding.embed_model.load_weights(os.path.join(model_path, 'decoder_embed_weights.h5'))
+        model.encoder.load_weights(os.path.join(model_path, 'encoder_weights.h5'))
+        model.decoder.load_weights(os.path.join(model_path, 'decoder_weights.h5'))
+
+        return model
+
     def predict(self,
                 x_data: TextSamplesVar,
                 debug_info: bool = False) -> Tuple[List, np.ndarray]:
@@ -248,7 +314,14 @@ if __name__ == "__main__":
     logging.basicConfig(level='INFO', format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
     x, y = ChineseDailyNerCorpus.load_data('test')
-    x, y = x[:1000], y[:1000]
+    x, y = x[:100], y[:100]
 
     seq2seq = Seq2Seq(hidden_size=256)
-    seq2seq.fit(x, y, epochs=10)
+    seq2seq.build_model(x, y)
+    seq2seq.save('./seq2seq_model')
+
+    s = Seq2Seq.load_model('./seq2seq_model')
+    res, att = seq2seq.predict(x[:10])
+    res2, att2 = s.predict(x[:10])
+    print(res == res2)
+    print((att == att2).all())

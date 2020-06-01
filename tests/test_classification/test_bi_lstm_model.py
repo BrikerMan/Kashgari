@@ -17,7 +17,6 @@ from tests.test_macros import TestMacros
 from kashgari.corpus import SMP2018ECDTCorpus
 from kashgari.embeddings import WordEmbedding
 from kashgari.tasks.classification import BiLSTM_Model
-from kashgari.utils import load_model
 
 
 class TestBiLSTM_Model(unittest.TestCase):
@@ -50,19 +49,18 @@ class TestBiLSTM_Model(unittest.TestCase):
         # Make sure use sigmoid as activation function
         assert model.tf_model.layers[-1].activation.__name__ == 'softmax'
 
-        # TODO: fix load model
-        # del model
-        # new_model = load_model(model_path)
-        # new_model.tf_model.summary()
-        # new_y = new_model.predict(train_x[:20])
-        # assert new_y == original_y
-        #
-        # report = new_model.evaluate(valid_x, valid_y)
-        # for key in ['precision', 'recall', 'f1-score', 'support', 'detail']:
-        #     assert key in report
-        #
-        # # Make sure use sigmoid as activation function
-        # assert new_model.tf_model.layers[-1].activation.__name__ == 'softmax'
+        del model
+        new_model = self.TASK_MODEL_CLASS.load_model(model_path)
+        new_model.tf_model.summary()
+        new_y = new_model.predict(train_x[:20])
+        assert new_y == original_y
+
+        report = new_model.evaluate(valid_x, valid_y)
+        for key in ['precision', 'recall', 'f1-score', 'support', 'detail']:
+            assert key in report
+
+        # Make sure use sigmoid as activation function
+        assert new_model.tf_model.layers[-1].activation.__name__ == 'softmax'
 
     def test_multi_label(self):
         corpus = TestMacros.jigsaw_mini_corpus
@@ -77,19 +75,19 @@ class TestBiLSTM_Model(unittest.TestCase):
         # Make sure use sigmoid as activation function
         assert model.tf_model.layers[-1].activation.__name__ == 'sigmoid'
         del model
-        # TODO: fix load model
-        # new_model = load_model(model_path)
-        # new_model.tf_model.summary()
-        # new_y = new_model.predict(x[:20])
-        #
-        # assert new_y == original_y
-        #
-        # report = new_model.evaluate(x, y)
-        # for key in ['precision', 'recall', 'f1-score', 'support', 'detail']:
-        #     assert key in report
-        #
-        # # Make sure use sigmoid as activation function
-        # assert new_model.tf_model.layers[-1].activation.__name__ == 'sigmoid'
+
+        new_model = self.TASK_MODEL_CLASS.load_model(model_path)
+        new_model.tf_model.summary()
+        new_y = new_model.predict(x[:20])
+
+        assert new_y == original_y
+
+        report = new_model.evaluate(x, y)
+        for key in ['precision', 'recall', 'f1-score', 'support', 'detail']:
+            assert key in report
+
+        # Make sure use sigmoid as activation function
+        assert new_model.tf_model.layers[-1].activation.__name__ == 'sigmoid'
 
     def test_with_word_embedding(self):
         model = self.TASK_MODEL_CLASS(embedding=self.w2v_embedding)

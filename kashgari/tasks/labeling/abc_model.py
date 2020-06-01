@@ -7,7 +7,6 @@
 # file: abc_model.py
 # time: 4:30 下午
 
-import logging
 import random
 from abc import ABC
 from typing import List, Dict, Any, Union, Optional
@@ -17,6 +16,7 @@ import tensorflow as tf
 import kashgari
 from kashgari.embeddings import ABCEmbedding, BareEmbedding
 from kashgari.generators import CorpusGenerator, BatchDataSet
+from kashgari.logger import logger
 from kashgari.metrics.sequence_labeling import get_entities
 from kashgari.metrics.sequence_labeling import sequence_labeling_report
 from kashgari.processors import SequenceProcessor
@@ -25,12 +25,6 @@ from kashgari.types import TextSamplesVar
 
 
 class ABCLabelingModel(ABCTaskModel, ABC):
-
-    def info(self) -> Dict:
-        info = super(ABCLabelingModel, self).info()
-        info['text_processor'] = self.text_processor.info()
-        info['label_processor'] = self.label_processor.info()
-        return info
 
     def __init__(self,
                  embedding: ABCEmbedding = None,
@@ -275,9 +269,9 @@ class ABCLabelingModel(ABCTaskModel, ABC):
             res: List[List[str]] = self.label_processor.inverse_transform(pred,  # type: ignore
                                                                           lengths=lengths)
             if debug_info:
-                logging.info('input: {}'.format(tensor))
-                logging.info('output: {}'.format(pred))
-                logging.info('output argmax: {}'.format(pred.argmax(-1)))
+                logger.info('input: {}'.format(tensor))
+                logger.info('output: {}'.format(pred))
+                logger.info('output argmax: {}'.format(pred.argmax(-1)))
         return res
 
     def predict_entities(self,
@@ -414,10 +408,10 @@ class ABCLabelingModel(ABCTaskModel, ABC):
 
         if debug_info:
             for index in random.sample(list(range(len(x_data))), 5):
-                logging.debug('------ sample {} ------'.format(index))
-                logging.debug('x      : {}'.format(x_data[index]))
-                logging.debug('y_true : {}'.format(y_true[index]))
-                logging.debug('y_pred : {}'.format(y_pred[index]))
+                logger.debug('------ sample {} ------'.format(index))
+                logger.debug('x      : {}'.format(x_data[index]))
+                logger.debug('y_true : {}'.format(y_true[index]))
+                logger.debug('y_pred : {}'.format(y_pred[index]))
         report = sequence_labeling_report(y_true, y_pred, digits=digits)
         return report
 

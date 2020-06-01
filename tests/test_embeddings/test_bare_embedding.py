@@ -9,37 +9,54 @@
 
 import os
 import time
+import random
 import tempfile
 import unittest
 from kashgari.processors.sequence_processor import SequenceProcessor
 from kashgari.corpus import SMP2018ECDTCorpus
 from kashgari.embeddings import BareEmbedding
 from kashgari.tasks.classification import BiGRU_Model
-from kashgari.utils import load_model
+from kashgari.utils import load_data_object
+
+sample_count = 50
 
 
 class TestBareEmbedding(unittest.TestCase):
 
-    def test_base_cases(self):
-        x, y = SMP2018ECDTCorpus.load_data()
+    def build_embedding(self):
         embedding = BareEmbedding()
+        return embedding
+
+    def test_base_cases(self):
+        embedding = self.build_embedding()
+        x, y = SMP2018ECDTCorpus.load_data()
         processor = SequenceProcessor()
         processor.build_vocab(x, y)
         embedding.setup_text_processor(processor)
-        res = embedding.embed(x[:10])
-        max_len = max([len(i) for i in x[:10]])
-        assert res.shape == (10, max_len, 100)
+
+        samples = random.sample(x, sample_count)
+        res = embedding.embed(samples)
+        max_len = max([len(i) for i in samples]) + 2
+
+        if embedding.max_position is not None:
+            max_len = embedding.max_position
+
+        assert res.shape == (len(samples), max_len, embedding.embedding_size)
+
+        # Test Save And Load
+        embed_dict = embedding.to_dict()
+        embedding2 = load_data_object(embed_dict)
+        embedding2.setup_text_processor(processor)
+        assert embedding2.embed(samples).shape == (len(samples), max_len, embedding.embedding_size)
 
     def test_with_model(self):
         x, y = SMP2018ECDTCorpus.load_data('test')
-        model = BiGRU_Model()
+        embedding = self.build_embedding()
+        model = BiGRU_Model(embedding=embedding)
         model.fit(x, y, epochs=1)
 
         model_path = os.path.join(tempfile.gettempdir(), str(time.time()))
         model.save(model_path)
-
-        new_model = load_model(model_path)
-        new_model.predict(x[:10])
 
 
 if __name__ == "__main__":
