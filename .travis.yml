@@ -18,6 +18,8 @@ cache: pip
 stages:
   - Lint
   - Test
+  - Test2_1
+  - Test2_2
 
 after_script:
   - coveralls
@@ -47,7 +49,7 @@ jobs:
       script: pytest --doctest-modules --junitxml=test-reports/junit.xml
         --cov=kashgari --cov-report=xml:coverage.xml --cov-report=html:htmlcov --cov-config .coveragerc
         $TEST_FILE
-    - stage: Test
+    - stage: Test2_1
       name: Test @ TensorFlow 2.1.0
       python: "3.6"
       before_install:
@@ -61,7 +63,7 @@ jobs:
       script: pytest --doctest-modules --junitxml=test-reports/junit.xml
         --cov=kashgari --cov-report=xml:coverage.xml --cov-report=html:htmlcov --cov-config .coveragerc
         $TEST_FILE
-    - stage: Test
+    - stage: Test2_2
       name: Test @ TensorFlow 2.2.0
       python: "3.6"
       before_install:
