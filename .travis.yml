@@ -4,6 +4,10 @@ dist: xenial
 env:
   global:
     - COVERALLS_PARALLEL=true
+  jobs:
+    - TF_VERSION="2.0.0"
+    - TF_VERSION="2.1.0"
+    - TF_VERSION="2.2.0"
   matrix:
     - TEST_FILE="tests/test_seq2seq/"
     - TEST_FILE="tests/test_labeling/test_bi_gru_model.py tests/test_labeling/test_bi_lstm_model.py tests/test_labeling/test_cnn_lstm_model.py"
@@ -28,7 +32,7 @@ stages:
 install:
   - pip install -r requirements.dev.txt
   - pip install -r requirements.txt
-  - pip install tensorflow==2.0.0
+  - pip install tensorflow==$TF_VERSION
   - python -c "import kashgari;print(f'kashgari version {kashgari.__version__}')"
   - git fetch --unshallow --quiet
   - export PYTHONPATH=`pwd`
