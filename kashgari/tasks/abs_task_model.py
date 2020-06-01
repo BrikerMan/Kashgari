@@ -94,7 +94,7 @@ class ABCTaskModel(ABC):
         return model_path
 
     @classmethod
-    def load_model(cls, model_path: str) -> Union[ABCLabelingModel, ABCClassificationModel]:
+    def load_model(cls, model_path: str) -> Union["ABCLabelingModel", "ABCClassificationModel"]:
         model_config_path = os.path.join(model_path, 'model_config.json')
         model_config = json.loads(open(model_config_path, 'r').read())
         model = load_data_object(model_config)
