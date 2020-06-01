@@ -82,4 +82,3 @@ if __name__ == "__main__":
     print(model.to_dict())
     print(model.predict_entities(x[:3]))
     model.save('./model')
-

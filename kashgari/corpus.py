@@ -106,8 +106,8 @@ class ChineseDailyNerCorpus:
         if shuffle:
             x_data, y_data = utils.unison_shuffled_copies(x_data, y_data)
         logger.debug(f"loaded {len(x_data)} samples from {file_path}. Sample:\n"
-                      f"x[0]: {x_data[0]}\n"
-                      f"y[0]: {y_data[0]}")
+                     f"x[0]: {x_data[0]}\n"
+                     f"y[0]: {y_data[0]}")
         return x_data, y_data
 
 
@@ -183,8 +183,8 @@ class SMP2018ECDTCorpus:
         if shuffle:
             x_data, y_data = utils.unison_shuffled_copies(x_data, y_data)
         logger.debug(f"loaded {len(x_data)} samples from {df_path}. Sample:\n"
-                      f"x[0]: {x_data[0]}\n"
-                      f"y[0]: {y_data[0]}")
+                     f"x[0]: {x_data[0]}\n"
+                     f"y[0]: {y_data[0]}")
         return x_data, y_data
 
 
