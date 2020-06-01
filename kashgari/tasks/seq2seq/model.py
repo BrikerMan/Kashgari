@@ -7,7 +7,6 @@
 # file: model.py
 # time: 2:34 下午
 
-from __future__ import annotations
 from typing import Any, Tuple, List, Dict
 
 import os
@@ -245,7 +244,7 @@ class Seq2Seq:
         return model_path
 
     @classmethod
-    def load_model(cls, model_path: str) -> Seq2Seq:
+    def load_model(cls, model_path: str) -> 'Seq2Seq':
         from kashgari.utils import load_data_object
         model_config_path = os.path.join(model_path, 'model_config.json')
         model_config = json.loads(open(model_config_path, 'r').read())

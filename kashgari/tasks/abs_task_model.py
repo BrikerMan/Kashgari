@@ -7,8 +7,6 @@
 # file: abs_task_model.py
 # time: 1:43 下午
 
-from __future__ import annotations
-
 import json
 import logging
 import os
