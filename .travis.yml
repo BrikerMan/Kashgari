@@ -5,21 +5,53 @@ env:
   global:
     - COVERALLS_PARALLEL=true
   matrix:
-    - TEST_FILE="tests/test_seq2seq/"
-    - TEST_FILE="tests/test_labeling/test_bi_gru_model.py tests/test_labeling/test_bi_lstm_model.py tests/test_labeling/test_cnn_lstm_model.py"
-    - TEST_FILE="tests/test_labeling/test_bi_gru_crf_model.py tests/test_labeling/test_bi_lstm_crf_model.py"
-    - TEST_FILE="tests/test_classification/"
-    - TEST_FILE="tests/test_embeddings/"
-    - TEST_FILE="tests/test_processor/"
-    - TEST_FILE="tests/test_corpus.py tests/test_utils.py"
+    - TF_VERSION="2.0.0" TEST_FILE="tests/test_seq2seq/"
+    - TF_VERSION="2.0.0" TEST_FILE="tests/test_labeling/test_bi_gru_model.py tests/test_labeling/test_bi_lstm_model.py tests/test_labeling/test_cnn_lstm_model.py"
+    - TF_VERSION="2.0.0" TEST_FILE="tests/test_labeling/test_bi_gru_crf_model.py tests/test_labeling/test_bi_lstm_crf_model.py"
+    - TF_VERSION="2.0.0" TEST_FILE="tests/test_classification/"
+    - TF_VERSION="2.0.0" TEST_FILE="tests/test_embeddings/"
+    - TF_VERSION="2.0.0" TEST_FILE="tests/test_processor/"
+    - TF_VERSION="2.0.0" TEST_FILE="tests/test_corpus.py tests/test_utils.py"
+
+    - TF_VERSION="2.1.0" TEST_FILE="tests/test_seq2seq/"
+    - TF_VERSION="2.1.0" TEST_FILE="tests/test_labeling/test_bi_gru_model.py tests/test_labeling/test_bi_lstm_model.py tests/test_labeling/test_cnn_lstm_model.py"
+    - TF_VERSION="2.1.0" TEST_FILE="tests/test_labeling/test_bi_gru_crf_model.py tests/test_labeling/test_bi_lstm_crf_model.py"
+    - TF_VERSION="2.1.0" TEST_FILE="tests/test_classification/"
+    - TF_VERSION="2.1.0" TEST_FILE="tests/test_embeddings/"
+    - TF_VERSION="2.1.0" TEST_FILE="tests/test_processor/"
+    - TF_VERSION="2.1.0" TEST_FILE="tests/test_corpus.py tests/test_utils.py"
+
+    - TF_VERSION="2.2.0" TEST_FILE="tests/test_seq2seq/"
+    - TF_VERSION="2.2.0" TEST_FILE="tests/test_labeling/test_bi_gru_model.py tests/test_labeling/test_bi_lstm_model.py tests/test_labeling/test_cnn_lstm_model.py"
+    - TF_VERSION="2.2.0" TEST_FILE="tests/test_labeling/test_bi_gru_crf_model.py tests/test_labeling/test_bi_lstm_crf_model.py"
+    - TF_VERSION="2.2.0" TEST_FILE="tests/test_classification/"
+    - TF_VERSION="2.2.0" TEST_FILE="tests/test_embeddings/"
+    - TF_VERSION="2.2.0" TEST_FILE="tests/test_processor/"
+    - TF_VERSION="2.2.0" TEST_FILE="tests/test_corpus.py tests/test_utils.py"
+
+python:
+  - "3.6"
 
 cache: pip
+
+before_install:
+  - export BOTO_CONFIG=/dev/null
 
 stages:
   - Lint
   - Test
-  - Test2_1
-  - Test2_2
+
+install:
+  - pip install -r requirements.dev.txt
+  - pip install -r requirements.txt
+  - pip install tensorflow==$TF_VERSION
+  - python -c "import kashgari;print(f'kashgari version {kashgari.__version__}')"
+  - git fetch --unshallow --quiet
+  - export PYTHONPATH=`pwd`
+
+script: pytest --doctest-modules --junitxml=test-reports/junit.xml
+  --cov=kashgari --cov-report=xml:coverage.xml --cov-report=html:htmlcov --cov-config .coveragerc
+  $TEST_FILE
 
 after_script:
   - coveralls
@@ -35,46 +67,3 @@ jobs:
         - pip install -r requirements.dev.txt
       script:
         - sh ./scripts/lint.sh
-    - stage: Test
-      name: Test @ TensorFlow 2.0.0
-      python: "3.6"
-      before_install:
-        - export BOTO_CONFIG=/dev/null
-      install:
-        - pip install -r requirements.dev.txt
-        - pip install -r requirements.txt
-        - pip install tensorflow==2.0.0
-        - python -c "import kashgari;print(f'kashgari version {kashgari.__version__}')"
-        - export PYTHONPATH=`pwd`
-      script: pytest --doctest-modules --junitxml=test-reports/junit.xml
-        --cov=kashgari --cov-report=xml:coverage.xml --cov-report=html:htmlcov --cov-config .coveragerc
-        $TEST_FILE
-    - stage: Test2_1
-      name: Test @ TensorFlow 2.1.0
-      python: "3.6"
-      before_install:
-        - export BOTO_CONFIG=/dev/null
-      install:
-        - pip install -r requirements.dev.txt
-        - pip install -r requirements.txt
-        - pip install tensorflow==2.1.0
-        - python -c "import kashgari;print(f'kashgari version {kashgari.__version__}')"
-        - export PYTHONPATH=`pwd`
-      script: pytest --doctest-modules --junitxml=test-reports/junit.xml
-        --cov=kashgari --cov-report=xml:coverage.xml --cov-report=html:htmlcov --cov-config .coveragerc
-        $TEST_FILE
-    - stage: Test2_2
-      name: Test @ TensorFlow 2.2.0
-      python: "3.6"
-      before_install:
-        - export BOTO_CONFIG=/dev/null
-      install:
-        - pip install -r requirements.dev.txt
-        - pip install -r requirements.txt
-        - pip install tensorflow==2.2.0
-        - python -c "import kashgari;print(f'kashgari version {kashgari.__version__}')"
-        - export PYTHONPATH=`pwd`
-      script: pytest --doctest-modules --junitxml=test-reports/junit.xml
-        --cov=kashgari --cov-report=xml:coverage.xml --cov-report=html:htmlcov --cov-config .coveragerc
-        $TEST_FILE
-
