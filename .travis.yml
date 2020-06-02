@@ -50,7 +50,7 @@ install:
   - export PYTHONPATH=`pwd`
 
 script: pytest --doctest-modules --junitxml=test-reports/junit.xml
-  --cov=kashgari --cov-report=xml:coverage.xml --cov-report=html:htmlcov --cov-config .coveragerc
+  --cov=kashgari --cov-report=xml:coverage.xml --cov-report term --cov-report=html:htmlcov --cov-config .coveragerc
   $TEST_FILE
 
 after_script:
