@@ -38,16 +38,16 @@ class Mock(MagicMock):
 if os.environ.get('READTHEDOCS') == 'True':
     MOCK_MODULES = [
         'keras.layers',
-        'tensorflow',
-        'tensorflow.keras',
-        'tensorflow.keras.utils',
-        'tensorflow.keras.preprocessing.sequence',
-        'tensorflow.keras.callbacks',
-        'tensorflow.keras.backend',
-        'tensorflow.keras.layers',
-        'tensorflow.python',
-        'tensorflow.python.util',
-        'tensorflow.python.util.tf_export',
+        # 'tensorflow',
+        # 'tensorflow.keras',
+        # 'tensorflow.keras.utils',
+        # 'tensorflow.keras.preprocessing.sequence',
+        # 'tensorflow.keras.callbacks',
+        # 'tensorflow.keras.backend',
+        # 'tensorflow.keras.layers',
+        # 'tensorflow.python',
+        # 'tensorflow.python.util',
+        # 'tensorflow.python.util.tf_export',
         'bert4keras',
         'bert4keras.models',
         'sklearn',
@@ -361,4 +361,5 @@ def setup(app):
     # app.add_config_value('set_type_checking_flag', True, 'html')
 
     app.config['set_type_checking_flag'] = True
+    app.config['autodoc_mock_imports'] = MOCK_MODULES
     app.connect('autodoc-skip-member', skip_some_classes_members)

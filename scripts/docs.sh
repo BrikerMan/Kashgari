@@ -14,4 +14,4 @@ if [ -d 'site' ] ; then
     rm -r site
 fi
 
-sphinx-build _site_src _site
+sphinx-build _site_src _site -n -a -T
