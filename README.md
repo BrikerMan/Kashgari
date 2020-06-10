@@ -64,18 +64,12 @@ Kashgari is a simple and powerful NLP Transfer learning framework, build a state
     - [x] Bare Embedding [@BrikerMan]
     - [x] Word Embedding (Load trained W2V) [@BrikerMan]
     - [x] BERT Embedding (Based on bert4keras, support BERT, RoBERTa, ALBERT...) (#316) [@BrikerMan]
-    - [ ] GPT-2 Embedding
+    - [x] GPT-2 Embedding
     - [ ] FeaturesEmbedding (Support Numeric feature as input)
     - [ ] Stacked Embedding (Stack Text embedding and features Embedding)
-- [ ] Classification Task
-    - [x] Basic models (CCN/LSTM/GRU) [@BrikerMan]
-    - [ ] Transformer models (Transformer/Transformer XL/Attention)
-- [ ] Labeling Task
-    - [x] Basic models (CCN/LSTM/GRU)
-    - [ ] Transformer models (Transformer/Transformer XL/Attention)
-- [ ] Seq2Seq Task
-    - [ ] Traditional models (CCN/LSTM/GRU)
-    - [ ] Transformer models (Transformer/Transformer XL/Attention)
+- [x] Classification Task
+- [x] Labeling Task
+- [x] Seq2Seq Task
 - [ ] Built-in Callbacks
     - [x] Evaluate Callback
     - [ ] Save Best Callback

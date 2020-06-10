@@ -60,7 +60,7 @@ model.evaluate(test_x, test_y)
 model.save('saved_classification_model')
 
 # Load saved model
-loaded_model = kashgari.utils.load_model('saved_classification_model')
+loaded_model = BiLSTM_Model.load_model('saved_classification_model')
 loaded_model.predict(test_x[:10])
 
 # To continue training, compile the newly loaded model first

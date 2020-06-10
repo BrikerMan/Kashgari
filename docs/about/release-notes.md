@@ -17,6 +17,19 @@ pip show kashgari
 
 ## Current Release
 
+### [2.0.0.alpha] - 2020.06.10
+
+This is a fully re-implemented version with TF2.
+
+- ✨ Embeddings
+- ✨ Text Classification Task
+- ✨ Text Labeling Task
+- ✨ Seq2Seq Task
+- ✨ Examples
+    - ✨ Neural machine translation with Seq2Seq
+    - ✨ Benchmarks
+
+
 ### [1.1.1] - 2020.03.13
 
 - ✨ Add BERTEmbeddingV2.
@@ -150,6 +163,7 @@ Here is how the existing versions changes
 - fix classification model evaluate result output
 - change test settings
 
+[2.0.0.alpha]: https://github.com/BrikerMan/Kashgari/compare/v1.1.1...v2.0.0.alpha
 [1.1.1]: https://github.com/BrikerMan/Kashgari/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/BrikerMan/Kashgari/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/BrikerMan/Kashgari/compare/v0.5.4...v1.0.0

@@ -121,3 +121,5 @@ _site_src
 examples/benchmarks/tf_dir
 examples/tf_dir/
 tf_dir/
+
+venv-doc

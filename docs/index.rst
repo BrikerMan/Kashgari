@@ -18,10 +18,10 @@
   :maxdepth: 2
   :caption: Embeddings
 
-  embeddings/index.rst
-  embeddings/bare-embedding.rst
-  embeddings/word-embedding.rst
-  embeddings/bert-embedding.rst
+  embeddings/index.md
+  embeddings/bare-embedding.md
+  embeddings/word-embedding.md
+  embeddings/bert-embedding.md
 
 .. toctree::
   :maxdepth: 3
@@ -34,8 +34,14 @@
   apis/generators.rst
 
 .. toctree::
+  :maxdepth: 3
+  :caption: Examples
+
+  examples/translate_with_seq2seq.ipynb
+
+.. toctree::
   :maxdepth: 2
   :caption: About
 
-  about/contributing.rst
-  about/release-notes.rst
+  about/contributing.md
+  about/release-notes.md

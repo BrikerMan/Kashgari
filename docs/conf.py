@@ -44,7 +44,10 @@ if os.environ.get('READTHEDOCS') == 'True':
         'tensorflow.keras.preprocessing.sequence',
         'tensorflow.keras.callbacks',
         'tensorflow.keras.backend',
+        'tensorflow.keras.layers',
         'tensorflow.python',
+        'tensorflow.python.util',
+        'tensorflow.python.util.tf_export',
         'bert4keras',
         'bert4keras.models',
         'sklearn',
@@ -275,12 +278,12 @@ def update_markdown_content(folder: str):
         files.append(file)
 
     for file in files:
-        print(f"update markdown file: {file} to {file.replace('.md', '.rst')}")
+        print(f"update markdown file: {file}")
         with open(file, 'r') as original:
             content = original.read()
-        with open(file.replace('.md', '.rst'), 'w') as new:
+        with open(file, 'w') as new:
             new_content = content.replace('.md)', '.html)')
-            new.write(convert(new_content))
+            new.write(new_content)
 
 
 def skip_some_classes_members(app, what, name, obj, skip, options):
@@ -325,11 +328,22 @@ def setup(app):
 
     from m2r import convert
     import typing
+    import shutil
+
     typing.TYPE_CHECKING = True
 
     docs_path = pathlib.Path(__file__).parent
     original_readme = os.path.join(docs_path.parent, 'README.md')
     rst_readme = os.path.join(docs_path, 'README.rst')
+
+    # Copy Examples to docs folder for rendering
+    original_examples_folder = os.path.join(docs_path.parent, 'examples')
+    target_examples_folder = os.path.join(docs_path, 'examples')
+    shutil.rmtree(target_examples_folder, ignore_errors=True)
+
+    shutil.copytree(original_examples_folder,
+                    target_examples_folder,
+                    symlinks=True)
 
     # Change readme to rst file, and include in Sphinx index
     with open(rst_readme, 'w') as f:

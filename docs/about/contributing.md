@@ -1,4 +1,4 @@
-# Contributing &amp; Support
+# Contributing & Support
 
 We are happy to accept contributions that make `Kashgari` better and more awesome! You could contribute in various ways:
 

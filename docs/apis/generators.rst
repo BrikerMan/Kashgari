@@ -10,7 +10,7 @@ CorpusGenerator
 .. autoclass:: kashgari.generators.CorpusGenerator
     :members:
 
-BatchDataGenerator
-==================
-.. autoclass:: kashgari.generators.BatchDataGenerator
+BatchDataSet
+============
+.. autoclass:: kashgari.generators.BatchDataSet
     :members:
