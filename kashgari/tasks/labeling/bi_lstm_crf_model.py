@@ -62,9 +62,9 @@ class BiLSTM_CRF_Model(ABCLabelingModel):
 
     def compile_model(self, **kwargs: Any) -> None:
         if kwargs.get('loss') is None:
-            kwargs['loss'] = self.layer_crf.dense_loss
+            kwargs['loss'] = self.layer_crf.sparse_loss
         if kwargs.get('metrics') is None:
-            kwargs['metrics'] = [self.layer_crf.dense_accuracy]
+            kwargs['metrics'] = [self.layer_crf.sparse_accuracy]
         super(BiLSTM_CRF_Model, self).compile_model(**kwargs)
 
 

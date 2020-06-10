@@ -57,20 +57,12 @@ class BiGRU_CRF_Model(ABCLabelingModel):
         self.layer_crf = layer_stack[-1]
         self.tf_model = keras.Model(embed_model.inputs, tensor)
 
-    def compile_model(self,
-                      loss: Any = None,
-                      optimizer: Any = None,
-                      metrics: Any = None,
-                      **kwargs: Any) -> None:
-        if loss is None:
-            loss = self.layer_crf.sparse_loss
-        if metrics is None:
-            metrics = [self.layer_crf.sparse_accuracy]
-        super(BiGRU_CRF_Model, self).compile_model(
-            loss=loss,
-            optimizer=optimizer,
-            metrics=metrics,
-            **kwargs)
+    def compile_model(self, **kwargs: Any) -> None:
+        if kwargs.get('loss') is None:
+            kwargs['loss'] = self.layer_crf.sparse_loss
+        if kwargs.get('metrics') is None:
+            kwargs['metrics'] = [self.layer_crf.sparse_accuracy]
+        super(BiGRU_CRF_Model, self).compile_model(**kwargs)
 
 
 if __name__ == "__main__":
