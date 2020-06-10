@@ -66,7 +66,10 @@ class ClassificationProcessor(ABCProcessor):
         self.multi_label_binarizer = MultiLabelBinarizer(self.vocab2idx)
 
     def get_tensor_shape(self, batch_size: int, seq_length: int) -> Tuple:
-        return (batch_size,)
+        if self.multi_label:
+            return batch_size, len(self.vocab2idx)
+        else:
+            return (batch_size,)
 
     def transform(self,
                   samples: TextSamplesVar,

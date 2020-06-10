@@ -235,6 +235,9 @@ class ABCClassificationModel(ABCTaskModel, ABC):
             and validation metrics values (if applicable).
         """
         self.build_model_generator(train_sample_gen)
+
+        self.tf_model.summary(print_fn=logger.debug)
+
         train_set = BatchDataSet(train_sample_gen,
                                  text_processor=self.text_processor,
                                  label_processor=self.label_processor,
@@ -311,10 +314,10 @@ class ABCClassificationModel(ABCTaskModel, ABC):
                 res = self.label_processor.inverse_transform(pred,
                                                              lengths=lengths)
 
-            if debug_info:
-                print('input: {}'.format(tensor))
-                print('output: {}'.format(pred))
-                print('output argmax: {}'.format(pred.argmax(-1)))
+            logger.debug('input: {}'.format(tensor))
+            logger.debug('output: {}'.format(pred))
+            logger.debug('output argmax: {}'.format(pred.argmax(-1)))
+
         return res
 
     def evaluate(self,  # type: ignore[override]
@@ -333,12 +336,11 @@ class ABCClassificationModel(ABCTaskModel, ABC):
                               multi_label_threshold=multi_label_threshold,
                               debug_info=debug_info)
 
-        if debug_info:
-            for index in random.sample(list(range(len(x_data))), 5):
-                logger.debug('------ sample {} ------'.format(index))
-                logger.debug('x      : {}'.format(x_data[index]))
-                logger.debug('y      : {}'.format(y_data[index]))
-                logger.debug('y_pred : {}'.format(y_pred[index]))
+        for index in random.sample(list(range(len(x_data))), 5):
+            logger.debug('------ sample {} ------'.format(index))
+            logger.debug('x      : {}'.format(x_data[index]))
+            logger.debug('y      : {}'.format(y_data[index]))
+            logger.debug('y_pred : {}'.format(y_pred[index]))
 
         if self.multi_label:
             report = multi_label_classification_report(y_data,  # type: ignore

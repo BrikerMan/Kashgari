@@ -65,6 +65,7 @@ class ABCEmbedding:
     def setup_text_processor(self, processor: ABCProcessor) -> None:
         self._text_processor = processor
         self.build_embedding_model(vocab_size=processor.vocab_size)
+        self._text_processor.segment = self.segment
         vocab2idx = self.load_embed_vocab()
         if vocab2idx:
             self._text_processor.vocab2idx = vocab2idx

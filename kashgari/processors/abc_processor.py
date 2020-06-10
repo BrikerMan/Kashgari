@@ -25,6 +25,7 @@ class ABCProcessor(ABC):
                 'token_bos': self.token_bos,
                 'token_eos': self.token_eos,
                 'vocab2idx': self.vocab2idx,
+                'segment': self.segment
             },
             '__class_name__': self.__class__.__name__,
             '__module__': self.__class__.__module__,
@@ -33,6 +34,8 @@ class ABCProcessor(ABC):
     def __init__(self, **kwargs: Any) -> None:
         self.vocab2idx = kwargs.get('vocab2idx', {})
         self.idx2vocab = dict([(v, k) for k, v in self.vocab2idx.items()])
+
+        self.segment = False
 
         self.token_pad: str = kwargs.get('token_pad', '[PAD]')  # type: ignore
         self.token_unk: str = kwargs.get('token_unk', '[UNK]')  # type: ignore
@@ -58,7 +61,10 @@ class ABCProcessor(ABC):
         raise NotImplementedError
 
     def get_tensor_shape(self, batch_size: int, seq_length: int) -> Tuple:
-        return (batch_size, seq_length)
+        if self.segment:
+            return 2, batch_size, seq_length
+        else:
+            return batch_size, seq_length
 
     def transform(self,
                   samples: TextSamplesVar,

@@ -107,16 +107,21 @@ class BatchDataSet(Iterable):
                 yield x, y
 
     def take(self, batch_count: int = None) -> Any:
-        x_shape = self.text_processor.get_tensor_shape(self.batch_size, self.seq_length)
-        y_shape = self.label_processor.get_tensor_shape(self.batch_size, self.seq_length)
-        dataset = tf.data.Dataset.from_generator(self.__iter__,
-                                                 output_types=(tf.int64, tf.int64),
-                                                 output_shapes=(x_shape, y_shape))
-        dataset = dataset.repeat()
-        dataset = dataset.prefetch(50)
-        if batch_count is None:
-            batch_count = len(self)
-        return dataset.take(batch_count)
+        i = 0
+        while batch_count is None or i < batch_count:
+            for x, y in self.__iter__():
+                i += 1
+                yield x, y
+        # x_shape = self.text_processor.get_tensor_shape(self.batch_size, self.seq_length)
+        # y_shape = self.label_processor.get_tensor_shape(self.batch_size, self.seq_length)
+        # dataset = tf.data.Dataset.from_generator(self.__iter__,
+        #                                          output_types=(tf.int64, tf.int64),
+        #                                          output_shapes=(x_shape, y_shape))
+        # dataset = dataset.repeat()
+        # dataset = dataset.prefetch(50)
+        # if batch_count is None:
+        #     batch_count = len(self)
+        # return dataset.take(batch_count)
 
 
 class Seq2SeqDataSet(Iterable):
