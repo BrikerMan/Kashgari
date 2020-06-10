@@ -7,7 +7,9 @@
 # file: test_cnn_attention_model.py
 # time: 3:31 下午
 
+import pytest
 import unittest
+import tensorflow as tf
 
 import tests.test_classification.test_bi_lstm_model as base
 from kashgari.embeddings import WordEmbedding
@@ -15,6 +17,8 @@ from kashgari.tasks.classification.cnn_attention_model import CNN_Attention_Mode
 from tests.test_macros import TestMacros
 
 
+@pytest.mark.xfail(tuple(tf.__version__.split('.')) < tuple('2.1.0'.split('.')),
+                   reason='Attention Layer cannot be load and saved in TF 2.0.0')
 class TestCnnAttention_Model(base.TestBiLSTM_Model):
     @classmethod
     def setUpClass(cls):

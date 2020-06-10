@@ -9,9 +9,10 @@
 
 from abc import ABC
 from typing import Dict, Any
-
+import tensorflow as tf
 import tensorflow.keras.layers as L
 from tensorflow import keras
+from kashgari.logger import logger
 
 from kashgari.tasks.classification.abc_model import ABCClassificationModel
 
@@ -44,6 +45,11 @@ class CNN_Attention_Model(ABCClassificationModel, ABC):
         }
 
     def build_model_arc(self) -> None:
+        if tuple(tf.__version__.split('.')) < tuple('2.1.0'.split('.')):
+            logger.warning("Attention layer not serializable because it takes init args "
+                           "but doesn't implement get_config. "
+                           "Please try Attention layer with tf versions >= 2.1.0. "
+                           "Issue: https://github.com/tensorflow/tensorflow/issues/32662")
         output_dim = self.label_processor.vocab_size
         config = self.hyper_parameters
 
