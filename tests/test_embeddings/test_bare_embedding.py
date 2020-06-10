@@ -12,6 +12,7 @@ import time
 import random
 import tempfile
 import unittest
+from kashgari.logger import logger
 from kashgari.processors.sequence_processor import SequenceProcessor
 from kashgari.corpus import SMP2018ECDTCorpus
 from kashgari.embeddings import BareEmbedding
@@ -52,7 +53,11 @@ class TestBareEmbedding(unittest.TestCase):
     def test_with_model(self):
         x, y = SMP2018ECDTCorpus.load_data('test')
         embedding = self.build_embedding()
+
         model = BiGRU_Model(embedding=embedding)
+        model.build_model(x, y)
+        embedding.embed_model.summary(print_fn=logger.debug)
+
         model.fit(x, y, epochs=1)
 
         model_path = os.path.join(tempfile.gettempdir(), str(time.time()))

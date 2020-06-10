@@ -54,7 +54,6 @@ class TransformerEmbedding(ABCEmbedding):
         self.model_type = model_type
         self.vocab_list: List[str] = []
         kwargs['segment'] = True
-
         super(TransformerEmbedding, self).__init__(**kwargs)
 
     def load_embed_vocab(self) -> Optional[Dict[str, int]]:

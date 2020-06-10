@@ -128,7 +128,7 @@ class SequenceProcessor(ABCProcessor):
 
         if segment:
             segment_ids = np.zeros(token_ids.shape, dtype=np.int32)
-            return np.array([token_ids, segment_ids])
+            return token_ids, segment_ids
         else:
             return token_ids
 
