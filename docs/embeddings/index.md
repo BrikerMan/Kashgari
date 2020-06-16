@@ -16,22 +16,20 @@ You could check out the Embedding API here: [link](../api/embeddings.md)
 
 ## Feature Extract From Pre-trained Embedding
 
-Feature Extraction is one of the major way to use pre-trained language embedding. Kashgari provides simple API for this task. All you need to is init a embedding object then call `embed` function. Here is the example. All embedding shares same embed API.
+Feature Extraction is one of the major way to use pre-trained language embedding.
+Kashgari provides simple API for this task.
+All you need to is init a embedding object and setup it's pre-processor, then call `embed` function.
+Here is the example. All embedding shares same embed API.
 
 ```python
-import kashgari
-from kashgari.embeddings import BERTEmbedding
+from kashgari.embeddings import BertEmbedding
+from kashgari.processors import SequenceProcessor
 
-# need to spesify task for the downstream task,
-# if use embedding for feature extraction, just set `task=kashgari.CLASSIFICATION`
-bert = BERTEmbedding('<BERT_MODEL_FOLDER>',
-                     task=kashgari.CLASSIFICATION,
-                     sequence_length=100)
-# call for bulk embed
+bert = BertEmbedding('<BERT_MODEL_FOLDER>')
+processor = SequenceProcessor()
+bert.setup_text_processor(processor)
+# call for embed
 embed_tensor = bert.embed([['语', '言', '模', '型']])
-
-# call for single embed
-embed_tensor = bert.embed_one(['语', '言', '模', '型'])
 
 print(embed_tensor)
 # array([[-0.5001117 ,  0.9344998 , -0.55165815, ...,  0.49122602,
@@ -55,4 +53,4 @@ See details at classification and labeling tutorial.
 
 ## Customized model
 
-You can access the tf.keras model of embedding and add your own layers or any kind customizion. Just need to access the `embed_model` property of the embedding object.
+You can access the tf.keras model of embedding and add your own layers or any kind customization. Just need to access the `embed_model` property of the embedding object.

@@ -10,21 +10,12 @@ BERTEmbedding support BERT variants like **ERNIE**, but need to load the **tenso
     When using pre-trained embedding, remember to use same tokenize tool with the embedding model, this will allow to access the full power of the embedding
 
 ```python
-kashgari.embeddings.BertEmbedding(model_folder: str,
-                                  layer_nums: int = 4,
-                                  trainable: bool = False,
-                                  task: str = None,
-                                  sequence_length: Union[str, int] = 'auto',
-                                  processor: Optional[BaseProcessor] = None)
+kashgari.embeddings.BertEmbedding(model_folder: str)
 ```
 
 **Arguments**
 
 - **model_folder**: path of checkpoint folder.
-- **layer_nums**: number of layers whose outputs will be concatenated into a single tensor, default `4`, output the last 4 hidden layers as the thesis suggested.
-- **trainable**: whether if the model is trainable, default `False` and set it to `True` for fine-tune this embedding layer during your training.
-- **task**: `kashgari.CLASSIFICATION` `kashgari.LABELING`. Downstream task type, If you only need to feature extraction, just set it as `kashgari.CLASSIFICATION`.
-- **sequence_length**: `'auto'`, `'variable'` or integer. When using `'auto'`, use the 95% of corpus length as sequence length. When using `'variable'`, model input shape will set to None, which can handle various length of input, it will use the length of max sequence in every batch for sequence length. If using an integer, let's say `50`, the input output sequence length will set to 50.
 
 ## Example Usage - Text Classification
 

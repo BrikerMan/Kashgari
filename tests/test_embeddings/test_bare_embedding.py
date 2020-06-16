@@ -13,7 +13,7 @@ import random
 import tempfile
 import unittest
 from kashgari.logger import logger
-from kashgari.processors.sequence_processor import SequenceProcessor
+from kashgari.processors import SequenceProcessor
 from kashgari.corpus import SMP2018ECDTCorpus
 from kashgari.embeddings import BareEmbedding
 from kashgari.tasks.classification import BiGRU_Model
@@ -56,7 +56,9 @@ class TestBareEmbedding(unittest.TestCase):
 
         model = BiGRU_Model(embedding=embedding)
         model.build_model(x, y)
-        embedding.embed_model.summary(print_fn=logger.debug)
+        model_summary = []
+        embedding.embed_model.summary(print_fn=lambda x: model_summary.append(x))
+        logger.debug('\n'.join(model_summary))
 
         model.fit(x, y, epochs=1)
 

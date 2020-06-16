@@ -236,7 +236,9 @@ class ABCClassificationModel(ABCTaskModel, ABC):
         """
         self.build_model_generator(train_sample_gen)
 
-        self.tf_model.summary(print_fn=logger.debug)
+        model_summary = []
+        self.tf_model.summary(print_fn=lambda x: model_summary.append(x))
+        logger.debug('\n'.join(model_summary))
 
         train_set = BatchDataSet(train_sample_gen,
                                  text_processor=self.text_processor,

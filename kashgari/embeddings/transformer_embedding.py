@@ -43,7 +43,6 @@ class TransformerEmbedding(ABCEmbedding):
             model_type: transfer model type, {bert, albert, nezha, gpt2_ml, t5}
             layer_nums: number of layers whose outputs will be concatenated into a single tensor, default 1,
                 output the last 1 hidden layers.
-            sequence_length:
             text_processor:
             label_processor:
             **kwargs:
@@ -76,7 +75,8 @@ class TransformerEmbedding(ABCEmbedding):
                               **kwargs: Dict) -> None:
         if self.embed_model is None:
             config_path = self.config_path
-            config = json.loads(open(config_path, 'r').read())
+            with open(config_path, 'r') as f:
+                config = json.loads(f.read())
             if 'max_position' in config:
                 self.max_position = config['max_position']
             else:
@@ -91,8 +91,6 @@ class TransformerEmbedding(ABCEmbedding):
                 layer.trainable = False
             self.embed_model = bert_model
             self.embedding_size = bert_model.output.shape[-1]
-            print(bert_model.output.shape)
-            print(self.embedding_size)
 
 
 if __name__ == "__main__":
