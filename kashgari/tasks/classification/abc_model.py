@@ -181,11 +181,11 @@ class ABCClassificationModel(ABCTaskModel, ABC):
                 An epoch is an iteration over the entire `x` and `y` data provided.
             callbacks: List of `tf.keras.callbacks.Callback` instances.
                 List of callbacks to apply during training.
-                See :py:class:`tf.keras.callbacks`.
+                See :class:`tf.keras.callbacks`.
             fit_kwargs: fit_kwargs: additional arguments passed to :meth:`tf.keras.Model.fit`
 
         Returns:
-            A :py:class:`tf.keras.callback.History`  object. Its `History.history` attribute is
+            A :class:`tf.keras.callback.History`  object. Its `History.history` attribute is
             a record of training loss values and metrics values
             at successive epochs, as well as validation loss values
             and validation metrics values (if applicable).

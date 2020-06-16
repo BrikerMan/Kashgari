@@ -11,7 +11,7 @@ import logging
 
 logger = logging.Logger('kashgari', level='DEBUG')
 stream_handler = logging.StreamHandler()
-stream_handler.setFormatter(logging.Formatter('%(asctime)s | %(levelname)-7s | %(message)s'))
+stream_handler.setFormatter(logging.Formatter('%(asctime)s [%(levelname)s] %(name)s - %(message)s'))
 logger.addHandler(stream_handler)
 
 if __name__ == "__main__":

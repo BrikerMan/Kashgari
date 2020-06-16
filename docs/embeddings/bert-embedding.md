@@ -1,5 +1,7 @@
 # BERT Embedding
 
+## TODO: update to the latest API
+
 BERTEmbedding is based on [keras-bert](https://github.com/CyberZHG/keras-bert). The embeddings itself are wrapped into our simple embedding interface so that they can be used like any other embedding.
 
 BERTEmbedding support BERT variants like **ERNIE**, but need to load the **tensorflow checkpoint**. If you intrested to use ERNIE, just download [tensorflow_ernie](https://github.com/ArthurRizar/tensorflow_ernie) and load like BERT Embedding.
@@ -8,7 +10,7 @@ BERTEmbedding support BERT variants like **ERNIE**, but need to load the **tenso
     When using pre-trained embedding, remember to use same tokenize tool with the embedding model, this will allow to access the full power of the embedding
 
 ```python
-kashgari.embeddings.BERTEmbedding(model_folder: str,
+kashgari.embeddings.BertEmbedding(model_folder: str,
                                   layer_nums: int = 4,
                                   trainable: bool = False,
                                   task: str = None,
@@ -43,9 +45,7 @@ labels = [
 import kashgari
 from kashgari.embeddings import BERTEmbedding
 
-bert_embedding = BERTEmbedding(bert_model_path,
-                               task=kashgari.CLASSIFICATION,
-                               sequence_length=128)
+bert_embedding = BERTEmbedding(bert_model_path)
 
 tokenizer = bert_embedding.tokenizer
 sentences_tokenized = []

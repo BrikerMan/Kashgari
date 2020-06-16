@@ -28,7 +28,7 @@
 <h4 align="center">
     <a href="#overview">Overview</a> |
     <a href="#performance">Performance</a> |
-    <a href="#quick-start">Quick start</a> |
+    <a href="#installation">Installation</a> |
     <a href="https://kashgari.readthedocs.io/">Documentation</a> |
     <a href="https://kashgari.readthedocs.io/about/contributing/">Contributing</a>
 </h4>
@@ -36,7 +36,7 @@
 <!-- markdownlint-enable -->
 <!-- prettier-ignore-end -->
 
-🎉🎉🎉 We are proud to announce that we entirely rewrote Kashgari with tf.keras, now Kashgari comes with easier to understand API and is faster! 🎉🎉🎉
+🎉🎉🎉 We released the 2.0.0-alpha0 version with Seq2Seq Support. 🎉🎉🎉
 
 ## Overview
 
@@ -54,43 +54,48 @@ Kashgari is a simple and powerful NLP Transfer learning framework, build a state
 - **NLP beginners** Learn how to build an NLP project with production level code quality.
 - **NLP developers** Build a production level classification/labeling model within minutes.
 
+## Performance
+
+Welcome to add performance report.
+
+| Task (with code link)      | Language | Dataset                   | Score   |
+| -------------------------- | -------- | ------------------------- | ------- |
+| Named Entity Recognition   | Chinese  | People's Daily Ner Corpus | // TODO |
+| Text Classification        | -        | -                         | // TODO |
+| Neural machine translation | -        | -                         | // TODO |
+
+## Installation
+
+The project is based on Python 3.6+, because it is 2019 and type hinting is cool.
+
+| Backend          | pypi version                           | desc                     |
+| ---------------- | -------------------------------------- | ------------------------ |
+| TensorFlow 2.x   | `pip install 'kashgari>=2.0.0a0'`      | TF2 tf.keras version     |
+| TensorFlow 1.14+ | `pip install 'kashgari>=1.0.0,<2.0.0'` | TF1.14+ tf.keras version |
+| Keras            | `pip install 'kashgari<1.0.0'`         | keras version            |
+
+## Tutorials
+
+Here is a set of quick tutorials to get you started with the library:
+
+- [Tutorial 1: Text Classification](./docs/tutorial/text-classification.md)
+- [Tutorial 2: Text Labeling](./docs/tutorial/text-labeling.md)
+- [Tutorial 3: Seq2Seq](./docs/tutorial/seq2seq.md)
+- [Tutorial 4: Language Embedding](./docs/embeddings/index.md)
+
+There are also articles and posts that illustrate how to use Kashgari:
+
+- [15 分钟搭建中文文本分类模型](https://eliyar.biz/nlp_chinese_text_classification_in_15mins/)
+- [基于 BERT 的中文命名实体识别（NER)](https://eliyar.biz/nlp_chinese_bert_ner/)
+- [BERT/ERNIE 文本分类和部署](https://eliyar.biz/nlp_train_and_deploy_bert_text_classification/)
+- [五分钟搭建一个基于BERT的NER模型](https://www.jianshu.com/p/1d6689851622)
+- [Multi-Class Text Classification with Kashgari in 15 minutes](https://medium.com/@BrikerMan/multi-class-text-classification-with-kashgari-in-15mins-c3e744ce971d)
+
+Examples:
+
+- [Neural machine translation with Seq2Seq](./examples/translate_with_seq2seq.ipynb)
+
 ## Contributors ✨
 
-Thanks goes to these wonderful people. And there are many ways to get involved. Start with the [contributor guidelines](./docs/about/contributing.md) and then check these open issues for specific tasks.
-
-<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
-<!-- prettier-ignore-start -->
-<!-- markdownlint-disable -->
-<table>
-  <tr>
-    <td align="center"><a href="https://developers.google.com/community/experts/directory/profile/profile-eliyar_eziz"><img src="https://avatars1.githubusercontent.com/u/9368907?v=4" width="100px;" alt=""/><br /><sub><b>Eliyar Eziz</b></sub></a><br /><a href="https://github.com/BrikerMan/Kashgari/commits?author=BrikerMan" title="Documentation">📖</a> <a href="https://github.com/BrikerMan/Kashgari/commits?author=BrikerMan" title="Tests">⚠️</a> <a href="https://github.com/BrikerMan/Kashgari/commits?author=BrikerMan" title="Code">💻</a></td>
-    <td align="center"><a href="http://www.chuanxilu.com"><img src="https://avatars3.githubusercontent.com/u/856746?v=4" width="100px;" alt=""/><br /><sub><b>Alex Wang</b></sub></a><br /><a href="https://github.com/BrikerMan/Kashgari/commits?author=alexwwang" title="Code">💻</a></td>
-    <td align="center"><a href="https://github.com/lsgrep"><img src="https://avatars3.githubusercontent.com/u/3893940?v=4" width="100px;" alt=""/><br /><sub><b>Yusup</b></sub></a><br /><a href="https://github.com/BrikerMan/Kashgari/commits?author=lsgrep" title="Code">💻</a></td>
-    <td align="center"><a href="https://github.com/adlinex"><img src="https://avatars1.githubusercontent.com/u/5442229?v=4" width="100px;" alt=""/><br /><sub><b>Adline</b></sub></a><br /><a href="https://github.com/BrikerMan/Kashgari/commits?author=Adline125" title="Code">💻</a></td>
-  </tr>
-</table>
-
-<!-- markdownlint-enable -->
-<!-- prettier-ignore-end -->
-<!-- ALL-CONTRIBUTORS-LIST:END -->
-
-## Road Map
-
-- [x] Based on TensorFlow 2.0+ [@BrikerMan]
-- [x] Fully support generator based training (#336 ,#273) [@BrikerMan]
-- [ ] Clean code and full document
-- [ ] Multi GPU/TPU Support [@BrikerMan]
-- [x] Embeddings
-    - [x] Bare Embedding [@BrikerMan]
-    - [x] Word Embedding (Load trained W2V) [@BrikerMan]
-    - [x] BERT Embedding (Based on bert4keras, support BERT, RoBERTa, ALBERT...) (#316) [@BrikerMan]
-    - [x] GPT-2 Embedding
-    - [ ] FeaturesEmbedding (Support Numeric feature as input)
-    - [ ] Stacked Embedding (Stack Text embedding and features Embedding)
-- [x] Classification Task
-- [x] Labeling Task
-- [x] Seq2Seq Task
-- [ ] Built-in Callbacks
-    - [x] Evaluate Callback
-    - [ ] Save Best Callback
-- [ ] Support TensorFlow Hub (Optional)
+Thanks goes to these wonderful people. And there are many ways to get involved.
+Start with the [contributor guidelines](./docs/about/contributing.md) and then check these open issues for specific tasks.
