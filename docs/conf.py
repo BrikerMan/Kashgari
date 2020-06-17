@@ -316,5 +316,4 @@ def setup(app):
     app.add_css_file('css/extra.css')
 
     app.config['set_type_checking_flag'] = True
-    app.config['autodoc_mock_imports'] = MOCK_MODULES
     app.connect('autodoc-skip-member', skip_some_classes_members)
