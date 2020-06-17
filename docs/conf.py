@@ -58,7 +58,7 @@ extensions = [
     'sphinx.ext.intersphinx',
     'sphinx.ext.autodoc',
     'sphinx.ext.napoleon',
-    'sphinx_autodoc_typehints'
+    # 'sphinx_autodoc_typehints'
 ]
 
 # sphinx_autodoc_typehints settings
@@ -71,6 +71,7 @@ autodoc_default_options = {
     'set_type_checking_flag': True
 }
 
+autodoc_typehints = 'description'
 # 'sphinx.ext.mathjax', ??
 
 # imgmath settings
@@ -297,7 +298,7 @@ def skip_some_classes_members(app, what, name, obj, skip, options):
 intersphinx_mapping = {
     'python': ('https://docs.python.org/', None),
     'sqlalchemy': ('http://docs.sqlalchemy.org/en/latest/', None),
-    'tensorflow': ('https://www.tensorflow.org/versions/r2.2/api_docs/', None)
+    # 'tensorflow': ('https://www.tensorflow.org/versions/r2.2/api_docs/', None)
     }
 
 

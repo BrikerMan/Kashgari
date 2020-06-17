@@ -14,6 +14,11 @@ from kashgari.embeddings.transformer_embedding import TransformerEmbedding
 
 
 class BertEmbedding(TransformerEmbedding):
+    """
+    BertEmbedding is a simple wrapped class of TransformerEmbedding.
+    If you need load other kind of transformer based language model, please use the TransformerEmbedding.
+    """
+
     def to_dict(self) -> Dict[str, Any]:
         info_dic = super(BertEmbedding, self).to_dict()
         info_dic['config']['model_folder'] = self.model_folder
@@ -21,17 +26,12 @@ class BertEmbedding(TransformerEmbedding):
 
     def __init__(self,
                  model_folder: str,
-                 **kwargs: Any) -> None:
+                 **kwargs: Any):
         """
 
         Args:
             model_folder: path of checkpoint folder.
-            sequence_length: If using an integer, let's say 50, the input output sequence length will set to 50.
-                If not set will use the 95% of corpus length as sequence length.
-            text_processor:
-            label_processor:
-
-            **kwargs:
+            kwargs: additional params
         """
         self.model_folder = model_folder
         vocab_path = os.path.join(self.model_folder, 'vocab.txt')

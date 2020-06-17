@@ -30,7 +30,14 @@ class WordEmbedding(ABCEmbedding):
                  w2v_path: str,
                  *,
                  w2v_kwargs: Dict[str, Any] = None,
-                 **kwargs: Any) -> None:
+                 **kwargs: Any):
+        """
+        Args:
+            w2v_path: Word2Vec file path.
+            w2v_kwargs: params pass to the ``load_word2vec_format()`` function
+              of `gensim.models.KeyedVectors <https://radimrehurek.com/gensim/models/keyedvectors.html#module-gensim.models.keyedvectors>`_
+            kwargs: additional params
+        """
         if w2v_kwargs is None:
             w2v_kwargs = {}
 

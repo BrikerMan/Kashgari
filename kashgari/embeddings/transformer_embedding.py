@@ -18,6 +18,10 @@ from kashgari.logger import logger
 
 
 class TransformerEmbedding(ABCEmbedding):
+    """
+    TransformerEmbedding is based on bert4keras.
+    The embeddings itself are wrapped into our simple embedding interface so that they can be used like any other embedding.
+    """
     def to_dict(self) -> Dict[str, Any]:
         info_dic = super(TransformerEmbedding, self).to_dict()
         info_dic['config']['vocab_path'] = self.vocab_path
@@ -31,21 +35,15 @@ class TransformerEmbedding(ABCEmbedding):
                  config_path: str,
                  checkpoint_path: str,
                  model_type: str = 'bert',
-                 **kwargs: Any) -> None:
+                 **kwargs: Any):
         """
-        Transformer embedding, based on https://github.com/bojone/bert4keras
-        support
 
         Args:
             vocab_path: vocab file path, example `vocab.txt`
             config_path: model config path, example `config.json`
             checkpoint_path: model weight path, example `model.ckpt-100000`
             model_type: transfer model type, {bert, albert, nezha, gpt2_ml, t5}
-            layer_nums: number of layers whose outputs will be concatenated into a single tensor, default 1,
-                output the last 1 hidden layers.
-            text_processor:
-            label_processor:
-            **kwargs:
+            kwargs: additional params
         """
         self.vocab_path = vocab_path
         self.config_path = config_path

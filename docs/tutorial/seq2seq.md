@@ -47,9 +47,11 @@ print(preds)
 You can define both encoder's and decoder's embedding. This is how to use [Bert Embedding](./../embeddings/bert-embedding.md) as encoder's embedding layer.
 
 ```python
+from kashgari.tasks.seq2seq import Seq2Seq
 from kashgari.embeddings import BertEmbedding
-bert = BertEmbedding('<Path-to-bert-embedding>')
 
+bert = BertEmbedding('<PATH_TO_BERT_EMBEDDING>')
 model = Seq2Seq(encoder_embedding=bert, hidden_size=512)
+
 model.fit(x_tokenized, y_tokenized)
 ```

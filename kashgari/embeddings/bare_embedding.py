@@ -17,10 +17,20 @@ L = keras.layers
 
 
 class BareEmbedding(ABCEmbedding):
+    """
+    BareEmbedding is a random init `tf.keras.layers.Embedding` layer for text sequence embedding,
+    which is the defualt embedding class for kashgari models.
+    """
 
     def __init__(self,
                  embedding_size: int = 100,
-                 **kwargs: Any) -> None:
+                 **kwargs: Any):
+        """
+
+        Args:
+            embedding_size: Dimension of the dense embedding.
+            kwargs: additional params
+        """
         self.embedding_size: int = embedding_size
         super(BareEmbedding, self).__init__(embedding_size=embedding_size,
                                             **kwargs)

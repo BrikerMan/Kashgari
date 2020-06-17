@@ -18,10 +18,11 @@
   :maxdepth: 2
   :caption: Embeddings
 
-  embeddings/index.md
-  embeddings/bare-embedding.md
-  embeddings/word-embedding.md
-  embeddings/bert-embedding.md
+  embeddings/index.rst
+  embeddings/bare-embedding.rst
+  embeddings/word-embedding.rst
+  embeddings/bert-embedding.rst
+  embeddings/transformer-embedding.rst
 
 .. toctree::
   :maxdepth: 3

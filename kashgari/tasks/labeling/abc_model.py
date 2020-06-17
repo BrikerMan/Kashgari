@@ -113,7 +113,7 @@ class ABCLabelingModel(ABCTaskModel, ABC):
             loss: name of objective function, objective function or ``tf.keras.losses.Loss`` instance.
             optimizer: name of optimizer or optimizer instance.
             metrics (object): List of metrics to be evaluated by the model during training and testing.
-            **kwargs: additional params passed to :meth:`tf.keras.Model.predict``.
+            kwargs: additional params passed to :meth:`tf.keras.Model.predict``.
         """
         if loss is None:
             loss = 'sparse_categorical_crossentropy'
@@ -356,7 +356,6 @@ class ABCLabelingModel(ABCTaskModel, ABC):
             digits:
             truncating:
             debug_info:
-            **kwargs:
 
         Returns:
             A report dict
