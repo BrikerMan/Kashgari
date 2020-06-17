@@ -9,19 +9,19 @@ Kashgari provides several embeddings for language representation. Embedding laye
 
    * - class name
      - description
-   * - `BareEmbedding <bare-embedding.md>`_
+   * - `BareEmbedding <./bare-embedding>`_
      - random init ``tf.keras.layers.Embedding`` layer for text sequence embedding
-   * - `WordEmbedding <word-embedding.md>`_
+   * - `WordEmbedding <./word-embedding>`_
      - pre-trained Word2Vec embedding
-   * - `BERTEmbedding <bert-embedding.md>`_
+   * - `BERTEmbedding <./bert-embedding>`_
      - pre-trained BERT embedding
-   * - `TransformerEmbedding <transformer-embedding.md>`_
+   * - `TransformerEmbedding <./transformer-embedding>`_
      - pre-trained TransferEmbedding embedding (BERT, ALBERT, RoBERTa, NEZHA)
 
 
 All embedding classes inherit from the ``Embedding`` class and implement the ``embed()`` to embed your input sequence and ``embed_model`` property which you need to build you own Model. By providing the ``embed()`` function and ``embed_model`` property, Kashgari hides the the complexity of different language embedding from users, all you need to care is which language embedding you need.
 
-You could check out the Embedding API here: `link <../api/embeddings.md>`_
+You could check out the Embedding API here: `link <../api/embeddings>`_
 
 Quick start
 -----------
