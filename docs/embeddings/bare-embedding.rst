@@ -1,4 +1,6 @@
 
+.. _bare-embedding:
+
 Bare Embedding
 ==============
 

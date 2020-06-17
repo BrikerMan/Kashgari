@@ -10,9 +10,9 @@
   :maxdepth: 2
   :caption: Tutorials
 
-  tutorial/text-classification.rst
-  tutorial/text-labeling.rst
-  tutorial/text-scoring.rst
+  tutorial/text-classification
+  tutorial/text-labeling
+  tutorial/seq2seq
 
 .. toctree::
   :maxdepth: 2

@@ -44,7 +44,7 @@ print(preds)
 
 ## Train with custom embedding
 
-You can define both encoder's and decoder's embedding. This is how to use [Bert Embedding](./../embeddings/bert-embedding.md) as encoder's embedding layer.
+You can define both encoder's and decoder's embedding. This is how to use [Bert Embedding](./../embeddings/bert-embedding) as encoder's embedding layer.
 
 ```python
 from kashgari.tasks.seq2seq import Seq2Seq

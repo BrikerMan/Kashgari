@@ -1,4 +1,6 @@
 
+.. word-embedding:
+
 Word Embedding
 ==============
 

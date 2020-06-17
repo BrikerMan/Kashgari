@@ -28,6 +28,10 @@ from kashgari.types import TextSamplesVar, ClassificationLabelVar, MultiLabelCla
 
 
 class ABCClassificationModel(ABCTaskModel, ABC):
+    """
+    Abstract Classification Model
+    """
+
     __task__ = 'classification'
 
     def to_dict(self) -> Dict:
@@ -42,16 +46,16 @@ class ABCClassificationModel(ABCTaskModel, ABC):
                  hyper_parameters: Dict[str, Dict[str, Any]] = None,
                  multi_label: bool = False,
                  text_processor: ABCProcessor = None,
-                 label_processor: ABCProcessor = None,
-                 **kwargs: Dict):
+                 label_processor: ABCProcessor = None):
         """
-        Abstract Classification Model
 
         Args:
             embedding: embedding object
             sequence_length: target sequence length
             hyper_parameters: hyper_parameters to overwrite
-            **kwargs:
+            multi_label: is multi-label classification
+            text_processor: text processor
+            label_processor: label processor
         """
         super(ABCClassificationModel, self).__init__()
         if embedding is None:
@@ -88,7 +92,7 @@ class ABCClassificationModel(ABCTaskModel, ABC):
         Build Model with x_data and y_data
 
         This function will setup a :class:`CorpusGenerator`,
-         then call :meth:`ABCClassificationModel.build_model_gen` for preparing processor and model
+         then call py:meth:`ABCClassificationModel.build_model_gen` for preparing processor and model
 
         Args:
             x_train:

@@ -26,19 +26,20 @@ from kashgari.types import TextSamplesVar
 
 class ABCLabelingModel(ABCTaskModel, ABC):
 
+    """
+    Abstract Labeling Model
+    """
+
     def __init__(self,
                  embedding: ABCEmbedding = None,
                  sequence_length: int = None,
-                 hyper_parameters: Dict[str, Dict[str, Any]] = None,
-                 **kwargs: Any):
+                 hyper_parameters: Dict[str, Dict[str, Any]] = None):
         """
-        Init Labeling Model
 
         Args:
             embedding: embedding object
             sequence_length: target sequence length
             hyper_parameters: hyper_parameters to overwrite
-            **kwargs:
         """
         super(ABCLabelingModel, self).__init__()
         if embedding is None:
