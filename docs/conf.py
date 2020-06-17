@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from unittest.mock import MagicMock
 import os
 import sys
 
@@ -10,36 +9,10 @@ dirname = os.path.dirname
 sys.path.insert(0, dirname(dirname(__file__)))
 
 import kashgari
+
+
 # Mock mpi4py to get around having to install it on RTD server (which fails)
 # Also to mock PyTorch, because it is too large for the RTD server to download
-
-
-class Mock(MagicMock):
-    @classmethod
-    def __getattr__(cls, name):
-        return MagicMock()
-
-
-MOCK_MODULES = [
-    # 'keras.layers',
-    # 'tensorflow',
-    # 'tensorflow.keras',
-    # 'tensorflow.keras.utils',
-    # 'tensorflow.keras.preprocessing.sequence',
-    # 'tensorflow.keras.callbacks',
-    # 'tensorflow.keras.backend',
-    # 'tensorflow.keras.layers',
-    # 'tensorflow.python',
-    # 'tensorflow.python.util',
-    # 'tensorflow.python.util.tf_export',
-    # 'bert4keras',
-    # 'bert4keras.models',
-    # 'sklearn',
-    # 'bert4keras.layers'
-]
-
-sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
-
 
 # -- General configuration ------------------------------------------------
 
@@ -57,8 +30,7 @@ extensions = [
     'sphinx.ext.viewcode',
     'sphinx.ext.intersphinx',
     'sphinx.ext.autodoc',
-    'sphinx.ext.napoleon',
-    # 'sphinx_autodoc_typehints'
+    'sphinx.ext.napoleon'
 ]
 
 # sphinx_autodoc_typehints settings
@@ -243,7 +215,6 @@ texinfo_documents = [
 def update_markdown_content(folder: str):
     import os
     import glob
-    from m2r import convert
     files = []
 
     for file in glob.glob(os.path.join(folder, "*.md")):
@@ -298,8 +269,12 @@ def skip_some_classes_members(app, what, name, obj, skip, options):
 intersphinx_mapping = {
     'python': ('https://docs.python.org/', None),
     'sqlalchemy': ('http://docs.sqlalchemy.org/en/latest/', None),
-    # 'tensorflow': ('https://www.tensorflow.org/versions/r2.2/api_docs/', None)
-    }
+    "numpy": ("https://docs.scipy.org/doc/numpy/", None),
+    "tensorflow": (
+        "https://www.tensorflow.org/api_docs/python",
+        "https://github.com/mr-ubik/tensorflow-intersphinx/raw/master/tf2_py_objects.inv",
+    ),
+}
 
 
 def setup(app):
