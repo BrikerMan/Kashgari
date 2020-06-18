@@ -223,10 +223,6 @@ class ABCLabelingModel(ABCTaskModel, ABC):
             fit_kwargs['validation_data'] = valid_set.take()
             fit_kwargs['validation_steps'] = len(valid_set)
 
-        for x, y in train_set.take(100):
-            logger.debug(f"Sample Inputs, x: {x.shape} {x.dtype} "
-                         f"y: {y.shape} {y.dtype}")
-
         return self.tf_model.fit(train_set.take(),
                                  steps_per_epoch=len(train_set),
                                  epochs=epochs,
