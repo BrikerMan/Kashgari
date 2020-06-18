@@ -4,15 +4,10 @@
 import os
 import sys
 
-# Make sure spinup is accessible without going through setup.py
 dirname = os.path.dirname
 sys.path.insert(0, dirname(dirname(__file__)))
 
 import kashgari
-
-
-# Mock mpi4py to get around having to install it on RTD server (which fails)
-# Also to mock PyTorch, because it is too large for the RTD server to download
 
 # -- General configuration ------------------------------------------------
 
@@ -112,81 +107,10 @@ html_theme = "sphinx_rtd_theme"
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
 
-# html_logo = 'images/logo.png'
-# html_theme_options = {
-#     'logo_only': True
-# }
-# html_favicon = 'openai-favicon2_32x32.ico'
-# html_favicon = 'openai_icon.ico'
-
 # -- Options for HTMLHelp output ------------------------------------------
 
 # Output file base name for HTML help builder.
 htmlhelp_basename = 'KashgariDoc'
-
-# -- Options for LaTeX output ---------------------------------------------
-
-
-imgmath_latex_preamble = r'''
-\usepackage{algorithm}
-\usepackage{algorithmic}
-\usepackage{amsmath}
-\usepackage{cancel}
-
-\usepackage[verbose=true,letterpaper]{geometry}
-\geometry{
-    textheight=12in,
-    textwidth=6.5in,
-    top=1in,
-    headheight=12pt,
-    headsep=25pt,
-    footskip=30pt
-    }
-
-\newcommand{\E}{{\mathrm E}}
-
-\newcommand{\underE}[2]{\underset{\begin{subarray}{c}#1 \end{subarray}}{\E}\left[ #2 \right]}
-
-\newcommand{\Epi}[1]{\underset{\begin{subarray}{c}\tau \sim \pi \end{subarray}}{\E}\left[ #1 \right]}
-'''
-
-latex_elements = {
-    # The paper size ('letterpaper' or 'a4paper').
-    #
-    # 'papersize': 'letterpaper',
-
-    # The font size ('10pt', '11pt' or '12pt').
-    #
-    # 'pointsize': '10pt',
-
-    # Additional stuff for the LaTeX preamble.
-    #
-    'preamble': r'''
-\usepackage{algorithm}
-\usepackage{algorithmic}
-\usepackage{amsmath}
-\usepackage{cancel}
-
-
-\newcommand{\E}{{\mathrm E}}
-
-\newcommand{\underE}[2]{\underset{\begin{subarray}{c}#1 \end{subarray}}{\E}\left[ #2 \right]}
-
-\newcommand{\Epi}[1]{\underset{\begin{subarray}{c}\tau \sim \pi \end{subarray}}{\E}\left[ #1 \right]}
-''',
-
-    # Latex figure (float) alignment
-    #
-    # 'figure_align': 'htbp',
-}
-
-# Grouping the document tree into LaTeX files. List of tuples
-# (source start file, target name, title,
-#  author, documentclass [howto, manual, or own class]).
-latex_documents = [
-    (master_doc, 'Kashgari.tex', 'Kashgari Documentation',
-     'Eliyar Eziz', 'manual'),
-]
 
 # -- Options for manual page output ---------------------------------------
 
@@ -195,17 +119,6 @@ latex_documents = [
 man_pages = [
     (master_doc, 'kashgari', 'Kashgari Documentation',
      [author], 1)
-]
-
-# -- Options for Texinfo output -------------------------------------------
-
-# Grouping the document tree into Texinfo files. List of tuples
-# (source start file, target name, title, author,
-#  dir menu entry, description, category)
-texinfo_documents = [
-    (master_doc, 'Kashgari', 'Kashgari Documentation',
-     author, 'Kashgari', 'One line description of project.',
-     'Miscellaneous'),
 ]
 
 
@@ -232,35 +145,6 @@ def update_markdown_content(folder: str):
 
 def skip_some_classes_members(app, what, name, obj, skip, options):
     return skip
-
-
-# from sphinx.ext.autodoc import ClassDocumenter, _
-#
-# add_line = ClassDocumenter.add_line
-# line_to_delete = _(u'Bases: %s') % u':class:`object`'
-#
-#
-# def add_line_no_object_base(self, text, *args, **kwargs):
-#     if text.strip() == line_to_delete:
-#         return
-#
-#     add_line(self, text, *args, **kwargs)
-#
-#
-# add_directive_header = ClassDocumenter.add_directive_header
-#
-#
-# def add_directive_header_no_object_base(self, *args, **kwargs):
-#     self.add_line = add_line_no_object_base.__get__(self)
-#
-#     result = add_directive_header(self, *args, **kwargs)
-#
-#     del self.add_line
-#
-#     return result
-
-
-# ClassDocumenter.add_directive_header = add_directive_header_no_object_base
 
 
 intersphinx_mapping = {
