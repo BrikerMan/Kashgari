@@ -8,6 +8,8 @@ version: 2
 # Build documentation in the docs/ directory with Sphinx
 sphinx:
   configuration: docs/conf.py
+  builder: dirhtml
+  fail_on_warning: false
 
 # Build documentation with MkDocs
 #mkdocs:
@@ -19,11 +21,6 @@ formats:
 
 # Optionally set the version of Python and requirements required to build your docs
 python:
-  version: 3.7
+  version: 3.6
   install:
     - requirements: ./docs/requirements.txt
-
-sphinx:
-  builder: dirhtml
-  configuration: conf.py
-  fail_on_warning: false

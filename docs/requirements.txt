@@ -1,5 +1,5 @@
 # documents
-sphinx>=3.1.1
+sphinx>=3.0.0
 sphinx-autobuild>=0.7.1
 sphinx-rtd-theme
 sphinx-markdown-tables
