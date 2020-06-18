@@ -103,15 +103,19 @@ class BatchDataSet(Iterable):
 
     def forever(self) -> Any:
         while True:
-            for x, y in self.__iter__():
-                yield x, y
+            for batch_x, batch_y in self.__iter__():
+                yield batch_x, batch_y
 
     def take(self, batch_count: int = None) -> Any:
+        if batch_count is None:
+            batch_count = len(self)
         i = 0
-        while batch_count is None or i < batch_count:
-            for x, y in self.__iter__():
+        for batch_x, batch_y in self.forever():
+            while i < batch_count:
                 i += 1
-                yield x, y
+                yield batch_x, batch_y
+            break
+
         # x_shape = self.text_processor.get_tensor_shape(self.batch_size, self.seq_length)
         # y_shape = self.label_processor.get_tensor_shape(self.batch_size, self.seq_length)
         # dataset = tf.data.Dataset.from_generator(self.__iter__,
