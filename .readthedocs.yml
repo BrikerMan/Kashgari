@@ -22,3 +22,8 @@ python:
   version: 3.7
   install:
     - requirements: ./docs/requirements.txt
+
+sphinx:
+  builder: dirhtml
+  configuration: conf.py
+  fail_on_warning: false
