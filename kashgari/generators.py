@@ -101,20 +101,20 @@ class BatchDataSet(Iterable):
                 yield x_tensor, y_tensor
                 batch_x, batch_y = [], []
 
-    def forever(self) -> Any:
+    def take(self, batch_count: int = None) -> Any:
+        """
+        take batches from the dataset
+
+        Args:
+            batch_count: number of batch count, iterate forever when batch_count is None.
+        """
+        i = 0
         while True:
             for batch_x, batch_y in self.__iter__():
-                yield batch_x, batch_y
-
-    def take(self, batch_count: int = None) -> Any:
-        if batch_count is None:
-            batch_count = len(self)
-        i = 0
-        for batch_x, batch_y in self.forever():
-            while i < batch_count:
-                i += 1
-                yield batch_x, batch_y
-            break
+                while batch_count is None or i < batch_count:
+                    i += 1
+                    yield batch_x, batch_y
+                break
 
         # x_shape = self.text_processor.get_tensor_shape(self.batch_size, self.seq_length)
         # y_shape = self.label_processor.get_tensor_shape(self.batch_size, self.seq_length)
