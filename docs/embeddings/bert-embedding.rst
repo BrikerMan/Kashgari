@@ -6,7 +6,7 @@ Bert Embedding
 
 
 
-BertEmbedding is a simple wrapped class of `Transformer Embedding </embeddings/transformer-embedding.html>`_. If you need load other kind of transformer based language model, please use the `Transformer Embedding </embeddings/transformer-embedding.html>`_.
+BertEmbedding is a simple wrapped class of `Transformer Embedding <../transformer-embedding>`_. If you need load other kind of transformer based language model, please use the `Transformer Embedding <../transformer-embedding>`_.
 
 .. note::
     When using pre-trained embedding, remember to use same tokenize tool with the embedding model, this will allow to access the full power of the embedding

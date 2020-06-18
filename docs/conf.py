@@ -139,7 +139,7 @@ def update_markdown_content(folder: str):
         with open(file, 'r') as original:
             content = original.read()
         with open(file, 'w') as new:
-            new_content = content.replace('.md)', '.html)')
+            new_content = content.replace('.md)', ')')
             new.write(new_content)
 
 
@@ -183,10 +183,11 @@ def setup(app):
     # Change readme to rst file, and include in Sphinx index
     with open(rst_readme, 'w') as f:
         md_content = open(original_readme, 'r').read()
-        md_content = md_content.replace('(./docs/', '(./')
+        md_content = md_content.replace('(./docs/', '(../')
         md_content = md_content.replace('(./examples/',
                                         '(https://github.com/BrikerMan/Kashgari/blob/v2-trunk/examples/')
-        md_content = md_content.replace('.md)', '.html)')
+        md_content = md_content.replace('index.md)', ')')
+        md_content = md_content.replace('.md)', ')')
         f.write(convert(md_content))
         print(f'Saved RST file to {rst_readme}')
 
