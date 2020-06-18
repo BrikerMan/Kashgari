@@ -21,8 +21,7 @@ class TestTransferEmbedding(TestBareEmbedding):
                              "http://s3.bmio.net/kashgari/bert_sample_model.tar.bz2",
                              cache_dir=DATA_PATH,
                              untar=True)
-        embedding = BertEmbedding(model_folder=bert_path,
-                                  sequence_length=12)
+        embedding = BertEmbedding(model_folder=bert_path)
         return embedding
 
 
