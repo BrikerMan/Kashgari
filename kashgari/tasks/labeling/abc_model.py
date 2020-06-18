@@ -209,6 +209,7 @@ class ABCLabelingModel(ABCTaskModel, ABC):
                                  label_processor=self.label_processor,
                                  segment=self.embedding.segment,
                                  seq_length=self.sequence_length,
+                                 max_position=self.embedding.max_position,
                                  batch_size=batch_size)
 
         if fit_kwargs is None:
@@ -219,6 +220,7 @@ class ABCLabelingModel(ABCTaskModel, ABC):
                                      label_processor=self.label_processor,
                                      segment=self.embedding.segment,
                                      seq_length=self.sequence_length,
+                                     max_position=self.embedding.max_position,
                                      batch_size=batch_size)
             fit_kwargs['validation_data'] = valid_set.take()
             fit_kwargs['validation_steps'] = len(valid_set)

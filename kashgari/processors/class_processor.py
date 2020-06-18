@@ -75,6 +75,7 @@ class ClassificationProcessor(ABCProcessor):
                   samples: TextSamplesVar,
                   *,
                   seq_length: int = None,
+                  max_position: int = None,
                   segment: bool = False,
                   **kwargs: Any) -> np.ndarray:
         if self.multi_label:

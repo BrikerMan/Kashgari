@@ -105,14 +105,21 @@ class SequenceProcessor(ABCProcessor):
                   samples: TextSamplesVar,
                   *,
                   seq_length: int = None,
+                  max_position: int = None,
                   segment: bool = False,
                   **kwargs: Any) -> np.ndarray:
+        seq_length_from = ""
         if seq_length is None:
+            seq_length_from = "max length of the samples"
             seq_length = max([len(i) for i in samples]) + 2
-            if not self._showed_seq_len_warning:
-                logger.warning(
-                    f'Sequence length is None, will use the max length of the samples, which is {seq_length}')
-                self._showed_seq_len_warning = True
+        if max_position is not None and max_position < seq_length:
+            seq_length_from = "max embedding seq length"
+            seq_length = max_position
+
+        if seq_length_from and not self._showed_seq_len_warning:
+            logger.warning(
+                f'Sequence length is None, will use the {seq_length_from}, which is {seq_length}')
+            self._showed_seq_len_warning = True
 
         numerized_samples = []
         for seq in samples:
