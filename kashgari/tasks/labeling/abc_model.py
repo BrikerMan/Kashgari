@@ -53,7 +53,7 @@ class ABCLabelingModel(ABCTaskModel, ABC):
         self.hyper_parameters = hyper_parameters
         self.sequence_length = sequence_length
         self.text_processor = SequenceProcessor()
-        self.label_processor = SequenceProcessor(vocab_dict_type='labeling',
+        self.label_processor = SequenceProcessor(build_in_vocab='labeling',
                                                  min_count=1,
                                                  build_vocab_from_labels=True)
 
@@ -79,9 +79,9 @@ class ABCLabelingModel(ABCTaskModel, ABC):
 
     def build_model_generator(self,
                               train_gen: CorpusGenerator) -> None:
+        self.embedding.setup_text_processor(self.text_processor)
         self.text_processor.build_vocab_generator(train_gen)
         self.label_processor.build_vocab_generator(train_gen)
-        self.embedding.setup_text_processor(self.text_processor)
 
         if self.sequence_length is None:
             self.sequence_length = self.embedding.get_seq_length_from_corpus(corpus_gen=train_gen)

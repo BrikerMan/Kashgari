@@ -123,7 +123,10 @@ class SequenceProcessor(ABCProcessor):
 
         numerized_samples = []
         for seq in samples:
-            seq = [self.token_bos] + seq + [self.token_eos]
+            if self.token_bos in self.vocab2idx:
+                seq = [self.token_bos] + seq + [self.token_eos]
+            else:
+                seq = [self.token_pad] + seq + [self.token_pad]
             if self.allow_unk:
                 unk_index = self.vocab2idx[self.token_unk]
                 numerized_samples.append([self.vocab2idx.get(token, unk_index) for token in seq])
