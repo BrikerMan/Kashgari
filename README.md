@@ -54,6 +54,20 @@ Kashgari is a simple and powerful NLP Transfer learning framework, build a state
 - **NLP beginners** Learn how to build an NLP project with production level code quality.
 - **NLP developers** Build a production level classification/labeling model within minutes.
 
+## Supporting the project
+
+**You can support the project by checking out our sponsor page. It takes only one click:**
+
+<!-- markdownlint-disable -->
+<a href="https://tracking.gitads.io/?repo=Kashgari">
+  <img alt="Sponsor banner" src="https://images.gitads.io/Kashgari" />
+</a>
+<br>
+<i>
+  This advert was placed by <a href="https://tracking.gitads.io/?repo=Kashgari">GitAds</a>
+</i>
+<!-- markdownlint-enable -->
+
 ## Performance
 
 Welcome to add performance report.
