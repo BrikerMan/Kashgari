@@ -87,7 +87,7 @@ class WordEmbedding(ABCEmbedding):
         if self.embed_model is None:
             input_tensor = L.Input(shape=(None,),
                                    name=f'input')
-            layer_embedding = L.Embedding(len(self.embedding_vocab2idx),
+            layer_embedding = L.Embedding(len(self.vocab2idx),
                                           self.embedding_size,
                                           weights=[self.w2v_matrix],
                                           trainable=False,

@@ -107,9 +107,10 @@ class ABCClassificationModel(ABCTaskModel, ABC):
 
     def build_model_generator(self,
                               train_gen: CorpusGenerator) -> None:
-        self.embedding.setup_text_processor(self.text_processor)
-        self.text_processor.build_vocab_generator(train_gen)
+        if not self.text_processor.vocab2idx:
+            self.text_processor.build_vocab_generator(train_gen)
         self.label_processor.build_vocab_generator(train_gen)
+        self.embedding.setup_text_processor(self.text_processor)
 
         if self.sequence_length is None:
             self.sequence_length = self.embedding.get_seq_length_from_corpus(corpus_gen=train_gen)

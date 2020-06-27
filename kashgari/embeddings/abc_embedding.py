@@ -50,26 +50,21 @@ class ABCEmbedding:
 
         self.embedding_size: int = embedding_size  # type: ignore
         self.max_position: int = max_position  # type: ignore
+        self.vocab2idx = self.load_embed_vocab()
         self._text_processor: Optional[ABCProcessor] = None
-        self._embedding_vocab2idx = self.load_embed_vocab()
 
     def _override_load_model(self, config: Dict) -> None:
         embed_model_json_str = json.dumps(config['embed_model'])
         self.embed_model = tf.keras.models.model_from_json(embed_model_json_str,
                                                            custom_objects=kashgari.custom_objects)
 
-    @property
-    def embedding_vocab2idx(self) -> Dict[str, int]:
-        return self._embedding_vocab2idx
-
     def setup_text_processor(self, processor: ABCProcessor) -> None:
         self._text_processor = processor
         self.build_embedding_model(vocab_size=processor.vocab_size)
         self._text_processor.segment = self.segment
-        vocab2idx = self.load_embed_vocab()
-        if vocab2idx:
-            self._text_processor.vocab2idx = vocab2idx
-            self._text_processor.idx2vocab = dict([(v, k) for k, v in vocab2idx.items()])
+        if self.vocab2idx:
+            self._text_processor.vocab2idx = self.vocab2idx
+            self._text_processor.idx2vocab = dict([(v, k) for k, v in self.vocab2idx.items()])
 
     def get_seq_length_from_corpus(self,
                                    corpus_gen: CorpusGenerator,

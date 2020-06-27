@@ -11,6 +11,7 @@ import os
 import time
 import unittest
 import tempfile
+import numpy as np
 
 from tests.test_macros import TestMacros
 
@@ -99,6 +100,17 @@ class TestBiLSTM_Model(unittest.TestCase):
                   x_validate=valid_x,
                   y_validate=valid_y,
                   epochs=self.EPOCH_COUNT)
+
+        model_path = os.path.join(tempfile.gettempdir(), str(time.time()))
+        _ = model.predict(valid_x[:20])
+        model.save(model_path)
+
+        del model
+
+        new_model = self.TASK_MODEL_CLASS.load_model(model_path)
+        new_model.tf_model.summary()
+        _ = new_model.predict(valid_x[:20])
+
 
 
 if __name__ == '__main__':
