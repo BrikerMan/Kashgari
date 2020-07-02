@@ -109,12 +109,15 @@ class BatchDataSet(Iterable):
             batch_count: number of batch count, iterate forever when batch_count is None.
         """
         i = 0
-        while True:
+        should_continue = True
+        while should_continue:
             for batch_x, batch_y in self.__iter__():
-                while batch_count is None or i < batch_count:
+                if batch_count is None or i < batch_count:
                     i += 1
                     yield batch_x, batch_y
-                break
+                if batch_count and i >= batch_count:
+                    should_continue = False
+                    break
 
         # x_shape = self.text_processor.get_tensor_shape(self.batch_size, self.seq_length)
         # y_shape = self.label_processor.get_tensor_shape(self.batch_size, self.seq_length)

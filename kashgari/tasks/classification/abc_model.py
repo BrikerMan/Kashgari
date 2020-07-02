@@ -103,17 +103,17 @@ class ABCClassificationModel(ABCTaskModel, ABC):
         """
 
         train_gen = CorpusGenerator(x_train, y_train)
-        self.build_model_generator(train_gen)
+        self.build_model_generator([train_gen])
 
     def build_model_generator(self,
-                              train_gen: CorpusGenerator) -> None:
+                              generators: List[CorpusGenerator]) -> None:
         if not self.text_processor.vocab2idx:
-            self.text_processor.build_vocab_generator(train_gen)
-        self.label_processor.build_vocab_generator(train_gen)
+            self.text_processor.build_vocab_generator(generators)
+        self.label_processor.build_vocab_generator(generators)
         self.embedding.setup_text_processor(self.text_processor)
 
         if self.sequence_length is None:
-            self.sequence_length = self.embedding.get_seq_length_from_corpus(corpus_gen=train_gen)
+            self.sequence_length = self.embedding.get_seq_length_from_corpus(generators)
 
         if self.tf_model is None:
             self.build_model_arc()
@@ -239,7 +239,7 @@ class ABCClassificationModel(ABCTaskModel, ABC):
             at successive epochs, as well as validation loss values
             and validation metrics values (if applicable).
         """
-        self.build_model_generator(train_sample_gen)
+        self.build_model_generator([g for g in [train_sample_gen, valid_sample_gen] if g])
 
         model_summary = []
         self.tf_model.summary(print_fn=lambda x: model_summary.append(x))

@@ -68,20 +68,21 @@ class SequenceProcessor(ABCProcessor):
         self._showed_seq_len_warning = False
 
     def build_vocab_generator(self,
-                              generator: Optional[CorpusGenerator]) -> None:
+                              generators: List[CorpusGenerator]) -> None:
         if not self.vocab2idx:
             vocab2idx = self._initial_vocab_dic
 
             token2count: Dict[str, int] = {}
 
-            for sentence, label in tqdm.tqdm(generator, desc="Preparing text vocab dict"):
-                if self.build_vocab_from_labels:
-                    target = label
-                else:
-                    target = sentence
-                for token in target:
-                    count = token2count.get(token, 0)
-                    token2count[token] = count + 1
+            for gen in generators:
+                for sentence, label in tqdm.tqdm(gen, desc="Preparing text vocab dict"):
+                    if self.build_vocab_from_labels:
+                        target = label
+                    else:
+                        target = sentence
+                    for token in target:
+                        count = token2count.get(token, 0)
+                        token2count[token] = count + 1
 
             sorted_token2count = sorted(token2count.items(),
                                         key=operator.itemgetter(1),
@@ -94,10 +95,9 @@ class SequenceProcessor(ABCProcessor):
             self.vocab2idx = vocab2idx
             self.idx2vocab = dict([(v, k) for k, v in self.vocab2idx.items()])
 
-            logger.info("------ Build vocab dict finished, Top 10 token ------")
+            logger.info(f"--- Build vocab dict finished, Total: {len(self.vocab2idx)} Top-10 ---")
             for token, index in list(self.vocab2idx.items())[:10]:
                 logger.info(f"Token: {token:8s} -> {index}")
-            logger.info("------ Build vocab dict finished, Top 10 token ------")
 
     def transform(self,
                   samples: TextSamplesVar,

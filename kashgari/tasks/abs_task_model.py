@@ -116,8 +116,8 @@ class ABCTaskModel(ABC):
 
     @abstractmethod
     def build_model(self,
-                    x_train: Any,
-                    y_train: Any) -> None:
+                    x_data: Any,
+                    y_data: Any) -> None:
         raise NotImplementedError
 
 

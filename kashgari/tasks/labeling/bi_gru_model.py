@@ -56,9 +56,13 @@ class BiGRU_Model(ABCLabelingModel):
 if __name__ == "__main__":
     from kashgari.corpus import ChineseDailyNerCorpus
 
-    x, y = ChineseDailyNerCorpus.load_data('test')
+    from kashgari.corpus import ChineseDailyNerCorpus
+
+    train_x, train_y = ChineseDailyNerCorpus.load_data('train')
+    valid_x, valid_y = ChineseDailyNerCorpus.load_data('valid')
+    test_x, test_y = ChineseDailyNerCorpus.load_data('test')
+
     model = BiGRU_Model()
-    model.fit(x, y, epochs=1)
-    print(model.to_dict())
-    print(model.predict(x[:3]))
-    model.save('./model')
+    model.fit(train_x, train_y, valid_x, valid_y, epochs=10)
+    model.tf_model.summary()
+    model.evaluate(test_x, test_y)

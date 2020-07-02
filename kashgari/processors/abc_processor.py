@@ -54,10 +54,10 @@ class ABCProcessor(ABC):
                     x_data: TextSamplesVar,
                     y_data: TextSamplesVar) -> None:
         corpus_gen = CorpusGenerator(x_data, y_data)
-        self.build_vocab_generator(corpus_gen)
+        self.build_vocab_generator([corpus_gen])
 
     def build_vocab_generator(self,
-                              generator: Optional[CorpusGenerator]) -> None:
+                              generators: List[CorpusGenerator]) -> None:
         raise NotImplementedError
 
     def get_tensor_shape(self, batch_size: int, seq_length: int) -> Tuple:

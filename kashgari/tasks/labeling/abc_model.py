@@ -8,6 +8,7 @@
 # time: 4:30 下午
 
 import random
+import numpy as np
 from abc import ABC
 from typing import List, Dict, Any, Union, Optional
 
@@ -58,8 +59,8 @@ class ABCLabelingModel(ABCTaskModel, ABC):
                                                  build_vocab_from_labels=True)
 
     def build_model(self,
-                    x_train: TextSamplesVar,
-                    y_train: TextSamplesVar) -> None:
+                    x_data: TextSamplesVar,
+                    y_data: TextSamplesVar) -> None:
         """
         Build Model with x_data and y_data
 
@@ -67,25 +68,25 @@ class ABCLabelingModel(ABCTaskModel, ABC):
          then call :meth:`ABCClassificationModel.build_model_gen` for preparing processor and model
 
         Args:
-            x_train:
-            y_train:
+            x_data:
+            y_data:
 
         Returns:
 
         """
 
-        train_gen = CorpusGenerator(x_train, y_train)
-        self.build_model_generator(train_gen)
+        train_gen = CorpusGenerator(x_data, y_data)
+        self.build_model_generator([train_gen])
 
     def build_model_generator(self,
-                              train_gen: CorpusGenerator) -> None:
+                              generators: List[CorpusGenerator]) -> None:
         if not self.text_processor.vocab2idx:
-            self.text_processor.build_vocab_generator(train_gen)
-        self.label_processor.build_vocab_generator(train_gen)
+            self.text_processor.build_vocab_generator(generators)
+        self.label_processor.build_vocab_generator(generators)
         self.embedding.setup_text_processor(self.text_processor)
 
         if self.sequence_length is None:
-            self.sequence_length = self.embedding.get_seq_length_from_corpus(corpus_gen=train_gen)
+            self.sequence_length = self.embedding.get_seq_length_from_corpus(generators)
 
         if self.tf_model is None:
             self.build_model_arc()
@@ -203,7 +204,7 @@ class ABCLabelingModel(ABCTaskModel, ABC):
             at successive epochs, as well as validation loss values
             and validation metrics values (if applicable).
         """
-        self.build_model_generator(train_sample_gen)
+        self.build_model_generator([g for g in [train_sample_gen, valid_sample_gen] if g])
 
         train_set = BatchDataSet(train_sample_gen,
                                  text_processor=self.text_processor,
@@ -226,6 +227,9 @@ class ABCLabelingModel(ABCTaskModel, ABC):
             fit_kwargs['validation_data'] = valid_set.take()
             fit_kwargs['validation_steps'] = len(valid_set)
 
+        for x, y in train_set.take(1):
+            logger.debug('fit input shape: {}'.format(np.array(x).shape))
+            logger.debug('fit input shape: {}'.format(np.array(y).shape))
         return self.tf_model.fit(train_set.take(),
                                  steps_per_epoch=len(train_set),
                                  epochs=epochs,
@@ -272,10 +276,9 @@ class ABCLabelingModel(ABCTaskModel, ABC):
 
             res: List[List[str]] = self.label_processor.inverse_transform(pred,  # type: ignore
                                                                           lengths=lengths)
-            if debug_info:
-                logger.info('input: {}'.format(tensor))
-                logger.info('output: {}'.format(pred))
-                logger.info('output argmax: {}'.format(pred.argmax(-1)))
+            logger.debug('input: {}'.format(np.array(tensor).shape))
+            logger.debug('output: {}'.format(np.array(pred).shape))
+            logger.debug('output argmax: {}'.format(pred.argmax(-1)))
         return res
 
     def predict_entities(self,

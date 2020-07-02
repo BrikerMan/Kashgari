@@ -8,7 +8,7 @@
 # time: 2:43 下午
 
 import json
-from typing import Dict, List, Any, Optional
+from typing import Dict, List, Any, Optional, Union
 
 import numpy as np
 import tensorflow as tf
@@ -67,7 +67,7 @@ class ABCEmbedding:
             self._text_processor.idx2vocab = dict([(v, k) for k, v in self.vocab2idx.items()])
 
     def get_seq_length_from_corpus(self,
-                                   corpus_gen: CorpusGenerator,
+                                   generators: List[CorpusGenerator],
                                    *,
                                    use_label: bool = False,
                                    cover_rate: float = 0.95) -> int:
@@ -75,7 +75,7 @@ class ABCEmbedding:
         Calculate proper sequence length according to the corpus
 
         Args:
-            corpus_gen:
+            generator:
             use_label:
             cover_rate:
 
@@ -83,11 +83,12 @@ class ABCEmbedding:
 
         """
         seq_lens = []
-        for sentence, label in tqdm.tqdm(corpus_gen, desc="Calculating sequence length"):
-            if use_label:
-                seq_lens.append(len(label))
-            else:
-                seq_lens.append(len(sentence))
+        for gen in generators:
+            for sentence, label in tqdm.tqdm(gen, desc="Calculating sequence length"):
+                if use_label:
+                    seq_lens.append(len(label))
+                else:
+                    seq_lens.append(len(sentence))
         if cover_rate == 1.0:
             target_index = -1
         else:
