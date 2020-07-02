@@ -30,8 +30,7 @@ class SequenceProcessor(ABCProcessor):
         data = super(SequenceProcessor, self).to_dict()
         data['config'].update({
             'build_in_vocab': self.build_in_vocab,
-            'min_count': self.min_count,
-            'allow_unk': self.allow_unk
+            'min_count': self.min_count
         })
         return data
 
@@ -50,7 +49,6 @@ class SequenceProcessor(ABCProcessor):
 
         self.build_in_vocab = build_in_vocab
         self.min_count = min_count
-        self.allow_unk = True
         self.build_vocab_from_labels = build_vocab_from_labels
 
         if build_in_vocab == 'text':
@@ -127,7 +125,7 @@ class SequenceProcessor(ABCProcessor):
                 seq = [self.token_bos] + seq + [self.token_eos]
             else:
                 seq = [self.token_pad] + seq + [self.token_pad]
-            if self.allow_unk:
+            if self.token_unk in self.vocab2idx:
                 unk_index = self.vocab2idx[self.token_unk]
                 numerized_samples.append([self.vocab2idx.get(token, unk_index) for token in seq])
             else:
