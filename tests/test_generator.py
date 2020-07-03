@@ -29,8 +29,8 @@ class TestGenerator(unittest.TestCase):
 
         corpus_gen = CorpusGenerator(x, y)
 
-        text_processor.build_vocab_generator(corpus_gen)
-        label_processor.build_vocab_generator(corpus_gen)
+        text_processor.build_vocab_generator([corpus_gen])
+        label_processor.build_vocab_generator([corpus_gen])
 
         batch_dataset1 = BatchDataSet(corpus_gen,
                                       text_processor=text_processor,

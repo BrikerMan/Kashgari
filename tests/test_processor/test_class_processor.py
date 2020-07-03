@@ -38,7 +38,7 @@ class TestClassificationProcessor(unittest.TestCase):
         corpus_gen = CorpusGenerator(x_set, y_set)
 
         processor = ClassificationProcessor(multi_label=True)
-        processor.build_vocab_generator(corpus_gen)
+        processor.build_vocab_generator([corpus_gen])
         transformed_idx = processor.transform(y_set[20:40])
 
         info_dict = processor.to_dict()
