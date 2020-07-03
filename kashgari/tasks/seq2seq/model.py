@@ -128,18 +128,18 @@ class Seq2Seq:
 
         """
         if self.encoder is None:
-            self.encoder_processor.build_vocab_generator(train_gen)
-            self.decoder_processor.build_vocab_generator(train_gen)
+            self.encoder_processor.build_vocab_generator([train_gen])
+            self.decoder_processor.build_vocab_generator([train_gen])
             self.encoder_embedding.setup_text_processor(self.encoder_processor)
             self.decoder_embedding.setup_text_processor(self.decoder_processor)
 
             if self.encoder_seq_length is None:
-                self.encoder_seq_length = self.encoder_embedding.get_seq_length_from_corpus(corpus_gen=train_gen,
+                self.encoder_seq_length = self.encoder_embedding.get_seq_length_from_corpus([train_gen],
                                                                                             cover_rate=1.0)
                 logger.info(f"calculated encoder sequence length: {self.encoder_seq_length}")
 
             if self.decoder_seq_length is None:
-                self.decoder_seq_length = self.decoder_embedding.get_seq_length_from_corpus(corpus_gen=train_gen,
+                self.decoder_seq_length = self.decoder_embedding.get_seq_length_from_corpus([train_gen],
                                                                                             use_label=True,
                                                                                             cover_rate=1.0)
                 logger.info(f"calculated decoder sequence length: {self.decoder_seq_length}")

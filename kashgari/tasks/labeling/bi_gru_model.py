@@ -56,8 +56,6 @@ class BiGRU_Model(ABCLabelingModel):
 if __name__ == "__main__":
     from kashgari.corpus import ChineseDailyNerCorpus
 
-    from kashgari.corpus import ChineseDailyNerCorpus
-
     train_x, train_y = ChineseDailyNerCorpus.load_data('train')
     valid_x, valid_y = ChineseDailyNerCorpus.load_data('valid')
     test_x, test_y = ChineseDailyNerCorpus.load_data('test')
