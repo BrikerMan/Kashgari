@@ -305,7 +305,7 @@ class ABCClassificationModel(ABCTaskModel, ABC):
                 seq_length = None
             tensor = self.text_processor.transform(x_data,
                                                    segment=self.embedding.segment,
-                                                   seq_lengtg=seq_length,
+                                                   seq_length=seq_length,
                                                    max_position=self.embedding.max_position)
             pred = self.tf_model.predict(tensor, batch_size=batch_size, **predict_kwargs)
 

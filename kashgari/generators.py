@@ -169,7 +169,7 @@ class Seq2SeqDataSet(Iterable):
                                                             segment=self.encoder_segment)
                 y_tensor = self.decoder_processor.transform(batch_y,
                                                             seq_length=self.decoder_seq_length,
-                                                            one_hot=self.decoder_segment)
+                                                            segment=self.encoder_segment)
                 yield x_tensor, y_tensor
                 batch_x, batch_y = [], []
 
