@@ -76,8 +76,7 @@ class ClassificationProcessor(ABCProcessor):
                   *,
                   seq_length: int = None,
                   max_position: int = None,
-                  segment: bool = False,
-                  **kwargs: Any) -> np.ndarray:
+                  segment: bool = False) -> np.ndarray:
         if self.multi_label:
             sample_tensor = self.multi_label_binarizer.transform(samples)
             return sample_tensor

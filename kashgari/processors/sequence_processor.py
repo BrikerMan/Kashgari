@@ -95,17 +95,16 @@ class SequenceProcessor(ABCProcessor):
             self.vocab2idx = vocab2idx
             self.idx2vocab = dict([(v, k) for k, v in self.vocab2idx.items()])
 
-            logger.info(f"--- Build vocab dict finished, Total: {len(self.vocab2idx)} Top-10 ---")
+            logger.debug(f"--- Build vocab dict finished, Total: {len(self.vocab2idx)} Top-10 ---")
             for token, index in list(self.vocab2idx.items())[:10]:
-                logger.info(f"Token: {token:8s} -> {index}")
+                logger.debug(f"Token: {token:8s} -> {index}")
 
     def transform(self,
                   samples: TextSamplesVar,
                   *,
                   seq_length: int = None,
                   max_position: int = None,
-                  segment: bool = False,
-                  **kwargs: Any) -> np.ndarray:
+                  segment: bool = False) -> np.ndarray:
         seq_length_from = ""
         if seq_length is None:
             seq_length_from = "max length of the samples"
