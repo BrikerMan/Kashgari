@@ -71,8 +71,7 @@ class ABCProcessor(ABC):
                   *,
                   seq_length: int = None,
                   max_position: int = None,
-                  segment: bool = False,
-                  **kwargs: Any) -> np.ndarray:
+                  segment: bool = False) -> np.ndarray:
         raise NotImplementedError
 
     def inverse_transform(self,

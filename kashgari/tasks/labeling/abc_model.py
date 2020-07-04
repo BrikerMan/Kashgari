@@ -26,7 +26,6 @@ from kashgari.types import TextSamplesVar
 
 
 class ABCLabelingModel(ABCTaskModel, ABC):
-
     """
     Abstract Labeling Model
     """
@@ -53,10 +52,10 @@ class ABCLabelingModel(ABCTaskModel, ABC):
         self.embedding = embedding
         self.hyper_parameters = hyper_parameters
         self.sequence_length = sequence_length
-        self.text_processor = SequenceProcessor()
-        self.label_processor = SequenceProcessor(build_in_vocab='labeling',
-                                                 min_count=1,
-                                                 build_vocab_from_labels=True)
+        self.text_processor: SequenceProcessor = SequenceProcessor()
+        self.label_processor: SequenceProcessor = SequenceProcessor(build_in_vocab='labeling',
+                                                                    min_count=1,
+                                                                    build_vocab_from_labels=True)
 
     def build_model(self,
                     x_data: TextSamplesVar,
@@ -241,7 +240,6 @@ class ABCLabelingModel(ABCTaskModel, ABC):
                 *,
                 batch_size: int = 32,
                 truncating: bool = False,
-                debug_info: bool = False,
                 predict_kwargs: Dict = None,
                 **kwargs: Any) -> List[List[str]]:
         """
@@ -253,7 +251,6 @@ class ABCLabelingModel(ABCTaskModel, ABC):
             x_data: The input data, as a Numpy array (or list of Numpy arrays if the model has multiple inputs).
             batch_size: Integer. If unspecified, it will default to 32.
             truncating: remove values from sequences larger than `model.embedding.sequence_length`
-            debug_info: Bool, Should print out the logging info.
             predict_kwargs: arguments passed to :meth:`tf.keras.Model.predict`
 
         Returns:
@@ -268,17 +265,17 @@ class ABCLabelingModel(ABCTaskModel, ABC):
                 seq_length = None
             tensor = self.text_processor.transform(x_data,
                                                    segment=self.embedding.segment,
-                                                   seq_lengtg=seq_length,
+                                                   seq_length=seq_length,
                                                    max_position=self.embedding.max_position)
+            logger.debug('predict seq_length: {}, input: {}'.format(seq_length, np.array(tensor).shape))
             pred = self.tf_model.predict(tensor, batch_size=batch_size, **predict_kwargs)
             pred = pred.argmax(-1)
             lengths = [len(sen) for sen in x_data]
 
             res: List[List[str]] = self.label_processor.inverse_transform(pred,  # type: ignore
                                                                           lengths=lengths)
-            logger.debug('input: {}'.format(np.array(tensor).shape))
-            logger.debug('output: {}'.format(np.array(pred).shape))
-            logger.debug('output argmax: {}'.format(pred.argmax(-1)))
+            logger.debug('predict output: {}'.format(np.array(pred).shape))
+            logger.debug('predict output argmax: {}'.format(pred.argmax(-1)))
         return res
 
     def predict_entities(self,
