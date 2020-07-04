@@ -72,10 +72,10 @@ Kashgari is a simple and powerful NLP Transfer learning framework, build a state
 
 Welcome to add performance report.
 
-| Task (with code link)      | Language | Dataset                   | Score   |
+| Task                       | Language | Dataset                   | Score   |
 | -------------------------- | -------- | ------------------------- | ------- |
 | Named Entity Recognition   | Chinese  | People's Daily Ner Corpus | // TODO |
-| Text Classification        | -        | -                         | // TODO |
+| [Text Classification]      | Chinese  | [SMP2018ECDTCorpus]       | 94.57   |
 | Neural machine translation | -        | -                         | // TODO |
 
 ## Installation
@@ -113,3 +113,6 @@ Examples:
 
 Thanks goes to these wonderful people. And there are many ways to get involved.
 Start with the [contributor guidelines](./docs/about/contributing.md) and then check these open issues for specific tasks.
+
+[SMP2018ECDTCorpus]: https://worksheets.codalab.org/worksheets/0x27203f932f8341b79841d50ce0fd684f/
+[Text Classification]: /tutorial/text-classification/#short-sentence-classification-performance

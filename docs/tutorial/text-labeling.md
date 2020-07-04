@@ -10,9 +10,7 @@ You could easily switch from one model to another just by changing one line of c
 | ------------------ | ---- |
 | CNN\_LSTM\_Model   |      |
 | BiLSTM\_Model      |      |
-| BiLSTM\_CRF\_Model |      |
 | BiGRU\_Model       |      |
-| BiGRU\_CRF\_Model  |      |
 
 ## Train basic NER model
 
@@ -239,37 +237,3 @@ class DoubleBLSTMModel(ABCLabelingModel):
 model = DoubleBLSTMModel()
 model.fit(train_x, train_y, valid_x, valid_y)
 ```
-
-## Performance report
-
-Available model list, matrics based on this training:
-
-- corpus: ChineseDailyNerCorpus
-- epochs: 50 epochs with callbacks
-- batch_size: 64
-- T4 GPU / 2 CPU / 30 GB on [openbayes](https://openbayes.com)
-- [colab link](https://drive.google.com/file/d/1-tPlD3jP_5AK8xOz_CE1-p-s9mttUt16/view?usp=sharing)
-
-```python
-early_stop = tf.keras.callbacks.EarlyStopping(patience=10)
-reduse_lr_callback = tf.keras.callbacks.ReduceLROnPlateau(factor=0.1, patience=5)
-```
-
-| Name             | Embedding   | F1 Score | Epoch Time | Non Trainable params | Trainable params |
-| ---------------- | ----------- | :------: | ---------- | :------------------- | :--------------- |
-| BiLSTM_Model     | Random Init | 0.74147  | 9.5s       | 0                    | 558176           |
-| BiLSTM_CRF_Model | Random Init | 0.81378  | 123.0s     | 0                    | 573168           |
-| BiGRU_Model      | Random Init | 0.74375  | 9.7s       | 0                    | 499296           |
-| BiGRU_CRF_Model  | Random Init | 0.82516  | 120.7s     | 0                    | 514288           |
-|                  |             |          |            |                      |                  |
-| BiLSTM_Model     | BERT        | 0.92727  | 183.0s     | 101360640            | 3280904          |
-| BiLSTM_CRF_Model | BERT        | 0.94013  | 265.0s     | 101360640            | 3295896          |
-| BiGRU_Model      | BERT        | 0.92700  | 180.4s     | 101360640            | 2461192          |
-| BiGRU_CRF_Model  | BERT        | 0.94319  | 263.4s     | 101360640            | 2476184          |
-|                  |             |          |            |                      |                  |
-| BiLSTM_Model     | ERNIE       | 0.93109  | 167.6s     | 98958336             | 3280904          |
-| BiLSTM_CRF_Model | ERNIE       | 0.94460  | 250.6s     | 98958336             | 3295896          |
-| BiGRU_Model      | ERNIE       | 0.93512  | 165.7s     | 98958336             | 2461192          |
-| BiGRU_CRF_Model  | ERNIE       | 0.94218  | 250.4s     | 98958336             | 2476184          |
-
-![](../_static/images/ner_f1_scores.png)
