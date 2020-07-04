@@ -235,13 +235,12 @@ class ABCLabelingModel(ABCTaskModel, ABC):
                                  callbacks=callbacks,
                                  **fit_kwargs)
 
-    def predict(self,  # type: ignore[override]
+    def predict(self,
                 x_data: TextSamplesVar,
                 *,
                 batch_size: int = 32,
                 truncating: bool = False,
-                predict_kwargs: Dict = None,
-                **kwargs: Any) -> List[List[str]]:
+                predict_kwargs: Dict = None) -> List[List[str]]:
         """
         Generates output predictions for the input samples.
 
@@ -305,7 +304,6 @@ class ABCLabelingModel(ABCTaskModel, ABC):
         res = self.predict(x_data,
                            batch_size=batch_size,
                            truncating=truncating,
-                           debug_info=debug_info,
                            predict_kwargs=predict_kwargs)
         new_res = [get_entities(seq) for seq in res]
         final_res = []
@@ -344,8 +342,7 @@ class ABCLabelingModel(ABCTaskModel, ABC):
                  batch_size: int = 32,
                  digits: int = 4,
                  truncating: bool = False,
-                 debug_info: bool = False,
-                 **kwargs: Dict) -> Dict:
+                 debug_info: bool = False) -> Dict:
         """
         Build a text report showing the main labeling metrics.
 
@@ -398,8 +395,7 @@ class ABCLabelingModel(ABCTaskModel, ABC):
         """
         y_pred = self.predict(x_data,
                               batch_size=batch_size,
-                              truncating=truncating,
-                              debug_info=debug_info)
+                              truncating=truncating)
         y_true = [seq[:len(y_pred[index])] for index, seq in enumerate(y_data)]
 
         new_y_pred = []

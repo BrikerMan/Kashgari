@@ -9,6 +9,7 @@
 
 import random
 from abc import ABC
+import numpy as np
 from typing import List, Dict, Any, Union
 
 from sklearn import metrics as sklearn_metrics
@@ -169,8 +170,7 @@ class ABCClassificationModel(ABCTaskModel, ABC):
             batch_size: int = 64,
             epochs: int = 5,
             callbacks: List['keras.callbacks.Callback'] = None,
-            fit_kwargs: Dict = None,
-            **kwargs: Dict) -> 'keras.callbacks.History':
+            fit_kwargs: Dict = None) -> 'keras.callbacks.History':
         """
         Trains the model for a given number of epochs with given data set list.
 
@@ -205,8 +205,7 @@ class ABCClassificationModel(ABCTaskModel, ABC):
                                   batch_size=batch_size,
                                   epochs=epochs,
                                   callbacks=callbacks,
-                                  fit_kwargs=fit_kwargs,
-                                  **kwargs)
+                                  fit_kwargs=fit_kwargs)
 
     def fit_generator(self,
                       train_sample_gen: CorpusGenerator,
@@ -215,8 +214,7 @@ class ABCClassificationModel(ABCTaskModel, ABC):
                       batch_size: int = 64,
                       epochs: int = 5,
                       callbacks: List['keras.callbacks.Callback'] = None,
-                      fit_kwargs: Dict = None,
-                      **kwargs: Dict) -> 'keras.callbacks.History':
+                      fit_kwargs: Dict = None) -> 'keras.callbacks.History':
         """
         Trains the model for a given number of epochs with given data generator.
 
@@ -271,15 +269,13 @@ class ABCClassificationModel(ABCTaskModel, ABC):
                                  callbacks=callbacks,
                                  **fit_kwargs)
 
-    def predict(self,  # type: ignore[override]
+    def predict(self,
                 x_data: TextSamplesVar,
                 *,
                 batch_size: int = 32,
                 truncating: bool = False,
                 multi_label_threshold: float = 0.5,
-                debug_info: bool = False,
-                predict_kwargs: Dict = None,
-                **kwargs: Any) -> Union[ClassificationLabelVar, MultiLabelClassificationLabelVar]:
+                predict_kwargs: Dict = None) -> Union[ClassificationLabelVar, MultiLabelClassificationLabelVar]:
         """
         Generates output predictions for the input samples.
 
@@ -290,7 +286,6 @@ class ABCClassificationModel(ABCTaskModel, ABC):
             batch_size: Integer. If unspecified, it will default to 32.
             truncating: remove values from sequences larger than `model.embedding.sequence_length`
             multi_label_threshold:
-            debug_info: Bool, Should print out the logger info.
             predict_kwargs: arguments passed to ``predict()`` function of ``tf.keras.Model``
 
         Returns:
@@ -307,23 +302,21 @@ class ABCClassificationModel(ABCTaskModel, ABC):
                                                    segment=self.embedding.segment,
                                                    seq_length=seq_length,
                                                    max_position=self.embedding.max_position)
+            logger.debug(f'predict input shape {np.array(tensor).shape} x: {tensor}')
             pred = self.tf_model.predict(tensor, batch_size=batch_size, **predict_kwargs)
 
             if self.multi_label:
-                if debug_info:
-                    print('raw output: {}'.format(pred))
                 multi_label_binarizer = self.label_processor.multi_label_binarizer  # type: ignore
                 res = multi_label_binarizer.inverse_transform(pred,
                                                               threshold=multi_label_threshold)
             else:
-                pred = pred.argmax(-1)
+                pred_argmax = pred.argmax(-1)
                 lengths = [len(sen) for sen in x_data]
-                res = self.label_processor.inverse_transform(pred,
+                res = self.label_processor.inverse_transform(pred_argmax,
                                                              lengths=lengths)
 
-            logger.debug('input: {}'.format(tensor))
-            logger.debug('output: {}'.format(pred))
-            logger.debug('output argmax: {}'.format(pred.argmax(-1)))
+            logger.debug(f'predict output shape {pred.shape} y: {tensor}')
+            logger.debug(f'predict output argmax: {pred_argmax}')
 
         return res
 
@@ -334,14 +327,11 @@ class ABCClassificationModel(ABCTaskModel, ABC):
                  batch_size: int = 32,
                  digits: int = 4,
                  multi_label_threshold: float = 0.5,
-                 truncating: bool = False,
-                 debug_info: bool = False,
-                 **kwargs: Dict) -> Dict:
+                 truncating: bool = False,) -> Dict:
         y_pred = self.predict(x_data,
                               batch_size=batch_size,
                               truncating=truncating,
-                              multi_label_threshold=multi_label_threshold,
-                              debug_info=debug_info)
+                              multi_label_threshold=multi_label_threshold)
 
         for index in random.sample(list(range(len(x_data))), 5):
             logger.debug('------ sample {} ------'.format(index))
