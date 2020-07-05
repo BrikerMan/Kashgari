@@ -304,7 +304,7 @@ class ABCClassificationModel(ABCTaskModel, ABC):
                                                    max_position=self.embedding.max_position)
             logger.debug(f'predict input shape {np.array(tensor).shape} x: {tensor}')
             pred = self.tf_model.predict(tensor, batch_size=batch_size, **predict_kwargs)
-
+            logger.debug(f'predict output shape {pred.shape}')
             if self.multi_label:
                 multi_label_binarizer = self.label_processor.multi_label_binarizer  # type: ignore
                 res = multi_label_binarizer.inverse_transform(pred,
@@ -314,9 +314,7 @@ class ABCClassificationModel(ABCTaskModel, ABC):
                 lengths = [len(sen) for sen in x_data]
                 res = self.label_processor.inverse_transform(pred_argmax,
                                                              lengths=lengths)
-
-            logger.debug(f'predict output shape {pred.shape} y: {tensor}')
-            logger.debug(f'predict output argmax: {pred_argmax}')
+                logger.debug(f'predict output argmax: {pred_argmax}')
 
         return res
 
