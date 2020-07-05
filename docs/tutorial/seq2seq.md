@@ -1,4 +1,4 @@
-# Seq2Seq
+# Seq2Seq Model
 
 ## Train a translate model
 
