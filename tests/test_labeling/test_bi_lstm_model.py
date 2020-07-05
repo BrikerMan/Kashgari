@@ -80,8 +80,8 @@ class TestBiLSTM_Model(unittest.TestCase):
 
         model.evaluate(valid_x, valid_y)
         model.evaluate(valid_x, valid_y, truncating=True)
-        model.predict(valid_x, debug_info=True)
-        model.predict(valid_x, truncating=True, debug_info=True)
+        model.predict(valid_x)
+        model.predict(valid_x, truncating=True)
 
 
 if __name__ == '__main__':
