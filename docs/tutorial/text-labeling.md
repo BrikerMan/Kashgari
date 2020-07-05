@@ -74,14 +74,11 @@ That's all your need to do. Easy right.
 Kashgari provides varies Language model Embeddings for transfer learning. Here is the example for BERT Embedding.
 
 ```python
-import kashgari
 from kashgari.tasks.labeling import BiLSTM_Model
 from kashgari.embeddings import BertEmbedding
 
-bert_embed = BertEmbedding('<PRE_TRAINED_BERT_MODEL_FOLDER>',
-                           task=kashgari.LABELING,
-                           sequence_length=100)
-model = BiLSTM_Model(bert_embed)
+bert_embed = BertEmbedding('<PRE_TRAINED_BERT_MODEL_FOLDER>')
+model = BiLSTM_Model(bert_embed, sequence_length=100)
 model.fit(train_x, train_y, valid_x, valid_y)
 ```
 
@@ -237,3 +234,30 @@ class DoubleBLSTMModel(ABCLabelingModel):
 model = DoubleBLSTMModel()
 model.fit(train_x, train_y, valid_x, valid_y)
 ```
+
+## Chinese NER Performance
+
+We have run the classification tests on [ChineseDailyNerCorpus](https://kashgari.readthedocs.io/apis/corpus/#chinesedailynercorpus). Here is the full code: [colab link](https://drive.google.com/file/d/1yKo5h1Eszou5_W18-BQvgqGuzK6uyEnd/view?usp=sharing)
+
+- SEQUENCE_LENGTH = 100
+- EPOCHS = 30
+- EARL_STOPPING_PATIENCE = 10
+- REDUCE_RL_PATIENCE = 5
+- BATCH_SIZE = 64
+
+|    | Embedding       | Model          |   Best F1-Score |   Best F1 @ epochs |
+|---:|:----------------|:---------------|----------------:|-------------------:|
+|  0 | RoBERTa-wwm-ext | CNN_LSTM_Model |           93.58 |                 10 |
+|  1 | RoBERTa-wwm-ext | BiLSTM_Model   |           93.28 |                 13 |
+|  2 | RoBERTa-wwm-ext | BiGRU_Model    |       **93.66** |                 12 |
+|    |                 |                |                 |                    |
+|  3 | Bert-Chinese    | CNN_LSTM_Model |       **93.44** |                 22 |
+|  4 | Bert-Chinese    | BiLSTM_Model   |           93.3  |                 17 |
+|  5 | Bert-Chinese    | BiGRU_Model    |           93.15 |                 18 |
+|    |                 |                |                 |                    |
+|  6 | Bare            | CNN_LSTM_Model |       **74.68** |                 18 |
+|  7 | Bare            | BiLSTM_Model   |           74.48 |                 17 |
+|  8 | Bare            | BiGRU_Model    |           74.38 |                 15 |
+
+
+![](../_static/images/ner_f1_scores.png)

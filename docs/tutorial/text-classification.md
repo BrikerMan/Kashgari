@@ -76,9 +76,8 @@ from kashgari.embeddings import BertEmbedding
 import logging
 logging.basicConfig(level='DEBUG')
 
-bert_embed = BertEmbedding('<PRE_TRAINED_BERT_MODEL_FOLDER>',
-                           sequence_length=100)
-model = BiGRU_Model(bert_embed)
+bert_embed = BertEmbedding('<PRE_TRAINED_BERT_MODEL_FOLDER>')
+model = BiGRU_Model(bert_embed, sequence_length=100)
 model.fit(train_x, train_y, valid_x, valid_y)
 ```
 
@@ -187,10 +186,9 @@ from kashgari.tasks.classification import BiLSTM_Model
 
 logging.basicConfig(level='DEBUG')
 
-bert_embed = BertEmbedding('<PRE_TRAINED_BERT_MODEL_FOLDER>',
-                           sequence_length=100)
+bert_embed = BertEmbedding('<PRE_TRAINED_BERT_MODEL_FOLDER>')
 
-model = BiLSTM_Model(bert_embed, multi_label=True)
+model = BiLSTM_Model(bert_embed, sequence_length=100, multi_label=True)
 model.fit(x, y)
 ```
 
