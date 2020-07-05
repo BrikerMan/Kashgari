@@ -40,8 +40,7 @@ class TestGenerator(unittest.TestCase):
                                       max_position=100,
                                       batch_size=12)
 
-        assert len(list(batch_dataset1.take())) == len(batch_dataset1)
-        duplicate_len = len(batch_dataset1) * 2
+        duplicate_len = len(batch_dataset1)
         assert len(list(batch_dataset1.take(duplicate_len))) == duplicate_len
         assert len(list(batch_dataset1.take(1))) == 1
 

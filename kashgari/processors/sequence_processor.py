@@ -95,9 +95,9 @@ class SequenceProcessor(ABCProcessor):
             self.vocab2idx = vocab2idx
             self.idx2vocab = dict([(v, k) for k, v in self.vocab2idx.items()])
 
-            logger.debug(f"--- Build vocab dict finished, Total: {len(self.vocab2idx)} Top-10 ---")
-            for token, index in list(self.vocab2idx.items())[:10]:
-                logger.debug(f"Token: {token:8s} -> {index}")
+            top_k_vocab = [k for (k, v) in list(self.vocab2idx.items())[:10]]
+            logger.debug(f"--- Build vocab dict finished, Total: {len(self.vocab2idx)} ---")
+            logger.debug(f"Top-10: {top_k_vocab}")
 
     def transform(self,
                   samples: TextSamplesVar,
