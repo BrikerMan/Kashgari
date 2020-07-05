@@ -60,10 +60,15 @@ class TransformerEmbedding(ABCEmbedding):
                 token = line.strip()
                 self.vocab_list.append(token)
                 token2idx[token] = len(token2idx)
-        logger.debug("------ Build vocab dict finished, Top 10 token ------")
-        for index, token in enumerate(self.vocab_list[:10]):
-            logger.debug(f"Token: {token:8s} -> {index}")
-        logger.debug("------ Build vocab dict finished, Top 10 token ------")
+        top_words = [k for k, v in list(token2idx.items())[:50]]
+        logger.debug('------------------------------------------------')
+        logger.debug("Loaded transformer model's vocab")
+        logger.debug(f'config_path       : {self.config_path}')
+        logger.debug(f'vocab_path      : {self.vocab_path}')
+        logger.debug(f'checkpoint_path : {self.checkpoint_path}')
+        logger.debug(f'Top 50 words    : {top_words}')
+        logger.debug('------------------------------------------------')
+
         return token2idx
 
     def build_embedding_model(self,

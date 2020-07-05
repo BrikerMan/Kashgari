@@ -265,8 +265,7 @@ class Seq2Seq:
         return model
 
     def predict(self,
-                x_data: TextSamplesVar,
-                debug_info: bool = False) -> Tuple[List, np.ndarray]:
+                x_data: TextSamplesVar) -> Tuple[List, np.ndarray]:
         results = []
         attentions = []
 
@@ -296,12 +295,6 @@ class Seq2Seq:
                     break
                 dec_input = tf.expand_dims([next_tokens], 0)
             r = self.decoder_processor.inverse_transform([token_out])[0]
-            if debug_info:
-                print('\n---------------------------')
-                print(f"input sentence  : {' '.join(sample)}")
-                print(f"input idx       : {input_seq[0]}")
-                print(f"output idx      : {token_out}")
-                print(f"output sentence : {' '.join(r)}")
             results.append(r)
             attentions.append(attention_plot)
         return results, np.array(attentions)

@@ -302,7 +302,7 @@ class ABCClassificationModel(ABCTaskModel, ABC):
                                                    segment=self.embedding.segment,
                                                    seq_length=seq_length,
                                                    max_position=self.embedding.max_position)
-            logger.debug(f'predict input shape {np.array(tensor).shape} x: {tensor}')
+            logger.debug(f'predict input shape {np.array(tensor).shape} x: \n{tensor}')
             pred = self.tf_model.predict(tensor, batch_size=batch_size, **predict_kwargs)
             logger.debug(f'predict output shape {pred.shape}')
             if self.multi_label:
@@ -330,12 +330,6 @@ class ABCClassificationModel(ABCTaskModel, ABC):
                               batch_size=batch_size,
                               truncating=truncating,
                               multi_label_threshold=multi_label_threshold)
-
-        for index in random.sample(list(range(len(x_data))), 5):
-            logger.debug('------ sample {} ------'.format(index))
-            logger.debug('x      : {}'.format(x_data[index]))
-            logger.debug('y      : {}'.format(y_data[index]))
-            logger.debug('y_pred : {}'.format(y_pred[index]))
 
         if self.multi_label:
             report = multi_label_classification_report(y_data,  # type: ignore

@@ -75,7 +75,7 @@ class ABCEmbedding:
         Calculate proper sequence length according to the corpus
 
         Args:
-            generator:
+            generators:
             use_label:
             cover_rate:
 

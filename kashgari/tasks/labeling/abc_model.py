@@ -282,7 +282,6 @@ class ABCLabelingModel(ABCTaskModel, ABC):
                          batch_size: int = 32,
                          join_chunk: str = ' ',
                          truncating: bool = False,
-                         debug_info: bool = False,
                          predict_kwargs: Dict = None) -> List[Dict]:
         """Gets entities from sequence.
 
@@ -291,7 +290,6 @@ class ABCLabelingModel(ABCTaskModel, ABC):
             batch_size: Integer. If unspecified, it will default to 32.
             truncating: remove values from sequences larger than `model.embedding.sequence_length`
             join_chunk: str or False,
-            debug_info: Bool, Should print out the logging info.
             predict_kwargs: arguments passed to :meth:`tf.keras.Model.predict`
 
         Returns:
@@ -341,8 +339,7 @@ class ABCLabelingModel(ABCTaskModel, ABC):
                  y_data: TextSamplesVar,
                  batch_size: int = 32,
                  digits: int = 4,
-                 truncating: bool = False,
-                 debug_info: bool = False) -> Dict:
+                 truncating: bool = False) -> Dict:
         """
         Build a text report showing the main labeling metrics.
 
@@ -352,7 +349,6 @@ class ABCLabelingModel(ABCTaskModel, ABC):
             batch_size:
             digits:
             truncating:
-            debug_info:
 
         Returns:
             A report dict
@@ -405,12 +401,6 @@ class ABCLabelingModel(ABCTaskModel, ABC):
         for x in y_true:
             new_y_true.append([str(i) for i in x])
 
-        if debug_info:
-            for index in random.sample(list(range(len(x_data))), 5):
-                logger.debug('------ sample {} ------'.format(index))
-                logger.debug('x      : {}'.format(x_data[index]))
-                logger.debug('y_true : {}'.format(y_true[index]))
-                logger.debug('y_pred : {}'.format(y_pred[index]))
         report = sequence_labeling_report(y_true, y_pred, digits=digits)
         return report
 

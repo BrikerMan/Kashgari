@@ -71,7 +71,7 @@ class WordEmbedding(ABCEmbedding):
         w2v_top_words = w2v.index2entity[:50]
 
         logger.debug('------------------------------------------------')
-        logger.debug('Loaded gensim word2vec model')
+        logger.debug("Loaded gensim word2vec model's vocab")
         logger.debug('model        : {}'.format(self.w2v_path))
         logger.debug('word count   : {}'.format(len(self.w2v_matrix)))
         logger.debug('Top 50 words : {}'.format(w2v_top_words))
