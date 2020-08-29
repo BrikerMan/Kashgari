@@ -17,3 +17,5 @@ m2r
 
 # develop
 jupyterlab
+tabulate
+pandas
