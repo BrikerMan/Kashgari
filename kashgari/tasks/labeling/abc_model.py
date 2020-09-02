@@ -7,12 +7,12 @@
 # file: abc_model.py
 # time: 4:30 下午
 
-import random
-import numpy as np
 from abc import ABC
 from typing import List, Dict, Any, Union, Optional
 
+import numpy as np
 import tensorflow as tf
+from tf2crf import CRF
 
 import kashgari
 from kashgari.embeddings import ABCEmbedding, BareEmbedding
@@ -57,7 +57,7 @@ class ABCLabelingModel(ABCTaskModel, ABC):
                                                                     min_count=1,
                                                                     build_vocab_from_labels=True)
 
-        self.crf_layer = None
+        self.crf_layer: Optional[CRF] = None
 
     def build_model(self,
                     x_data: TextSamplesVar,

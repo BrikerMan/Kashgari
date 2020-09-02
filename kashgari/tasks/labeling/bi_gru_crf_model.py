@@ -9,32 +9,14 @@
 
 from typing import Dict, Any
 
-import tensorflow as tf
 from tensorflow import keras
+from tf2crf import CRF
 
 from kashgari.layers import L
-from kashgari.embeddings import ABCEmbedding
 from kashgari.tasks.labeling.abc_model import ABCLabelingModel
 
 
 class BiGRU_CRF_Model(ABCLabelingModel):
-
-    def __init__(self,
-                 embedding: ABCEmbedding = None,
-                 sequence_length: int = None,
-                 hyper_parameters: Dict[str, Dict[str, Any]] = None):
-        super(BiGRU_CRF_Model, self).__init__(embedding=embedding,
-                                              sequence_length=sequence_length,
-                                              hyper_parameters=hyper_parameters)
-        try:
-            from tf2crf import CRF
-        except ModuleNotFoundError:
-            raise ModuleNotFoundError('CRF layer requires additional dependence, '
-                                      'please install by `$ pip install "kashgari[crf]"`')
-
-        from distutils.version import LooseVersion
-        if LooseVersion(tf.__version__) < LooseVersion("2.1.0"):
-            raise ImportError("CRF layer is only compatible with TF 2.1.0+")
 
     @classmethod
     def default_hyper_parameters(cls) -> Dict[str, Dict[str, Any]]:
@@ -53,7 +35,6 @@ class BiGRU_CRF_Model(ABCLabelingModel):
         }
 
     def build_model_arc(self) -> None:
-        from tf2crf import CRF
         output_dim = self.label_processor.vocab_size
 
         config = self.hyper_parameters
@@ -92,7 +73,6 @@ class BiGRU_CRF_Model(ABCLabelingModel):
 
 if __name__ == "__main__":
     from kashgari.corpus import ChineseDailyNerCorpus
-    from kashgari.tasks.labeling import BiGRU_Model
     from kashgari.callbacks import EvalCallBack
 
     train_x, train_y = ChineseDailyNerCorpus.load_data('train')
