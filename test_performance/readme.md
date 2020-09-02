@@ -32,8 +32,10 @@ valid_x, valid_y = ChineseDailyNerCorpus.load_data('valid')
 test_x, test_y = ChineseDailyNerCorpus.load_data('test')
 ```
 
-|    | model_name     |   epoch |   f1-score |   precision |   recall | time   |
-|---:|:---------------|--------:|-----------:|------------:|---------:|:-------|
-|  0 | BiGRU_Model    |      10 |   0.917219 |    0.915018 | 0.919474 | 16:30  |
-|  1 | BiLSTM_Model   |      10 |   0.918491 |    0.908189 | 0.929361 | 16:37  |
-|  2 | CNN_LSTM_Model |      10 |   0.925621 |    0.91963  | 0.932223 | 16:31  |
+|    | model_name       |   epoch |   f1-score |   precision |   recall | time   |
+|---:|:-----------------|--------:|-----------:|------------:|---------:|:-------|
+|  0 | BiGRU_Model      |      10 |   0.921583 |    0.913184 | 0.930532 | 19:10  |
+|  1 | BiGRU_CRF_Model  |      10 |   0.935163 |    0.931246 | 0.939118 | 24:30  |
+|  2 | BiLSTM_Model     |      10 |   0.915363 |    0.906566 | 0.924418 | 19:12  |
+|  3 | BiLSTM_CRF_Model |      10 |   0.940539 |    0.944549 | 0.936646 | 24:31  |
+|  4 | CNN_LSTM_Model   |      10 |   0.919783 |    0.909695 | 0.930272 | 19:07  |

@@ -10,32 +10,20 @@
 import logging
 import os
 import time
+from datetime import datetime
 from typing import Type
 
 import pandas as pd
-import wandb
-from tensorflow.keras.callbacks import Callback
+import tensorflow as tf
 
+from kashgari.callbacks import EvalCallBack
 from kashgari.corpus import SMP2018ECDTCorpus
 from kashgari.embeddings import BertEmbedding
 from kashgari.tasks.classification import ABCClassificationModel
 from kashgari.tasks.classification import ALL_MODELS
 from test_performance.tools import get_bert_path
 
-os.environ["WANDB_RUN_GROUP"] = "classification_run_" + wandb.util.generate_id()
-
-
-class WandbCallback(Callback):
-    def __init__(self, kash_model, test_x, test_y):
-        self.kash_model: ABCClassificationModel = kash_model
-        self.test_x = test_x
-        self.test_y = test_y
-
-    def on_epoch_end(self, epoch, logs=None):
-        report = self.kash_model.evaluate(self.test_x, self.test_y)
-        wandb.log({'epoch': epoch, 'precision': report['precision']}, step=epoch)
-        wandb.log({'epoch': epoch, 'recall': report['recall']}, step=epoch)
-        wandb.log({'epoch': epoch, 'f1-score': report['f1-score']}, step=epoch)
+log_root = "tf_dir/classification/" + datetime.now().strftime("%m%d-%H:%M")
 
 
 class ClassificationPerformance:
@@ -48,15 +36,13 @@ class ClassificationPerformance:
         valid_x, valid_y = SMP2018ECDTCorpus.load_data('valid')
         test_x, test_y = SMP2018ECDTCorpus.load_data('test')
 
-        wandb.init(project="kashgari",
-                   name=model_class.__name__,
-                   reinit=True,
-                   tags=["bert", "classification"])
-
         bert_embed = BertEmbedding(bert_path)
         model = model_class(bert_embed)
 
-        callbacks = [WandbCallback(model, test_x, test_y)]
+        log_path = os.path.join(log_root, model_class.__name__)
+        file_writer = tf.summary.create_file_writer(log_path + "/metrics")
+        file_writer.set_as_default()
+        callbacks = [EvalCallBack(model, test_x, test_y, step=1)]
 
         model.fit(train_x, train_y, valid_x, valid_y, epochs=epochs, callbacks=callbacks)
 

@@ -269,7 +269,7 @@ class ABCLabelingModel(ABCTaskModel, ABC):
                                                    seq_length=seq_length,
                                                    max_position=self.embedding.max_position)
             logger.debug('predict seq_length: {}, input: {}'.format(seq_length, np.array(tensor).shape))
-            pred = self.tf_model.predict(tensor, batch_size=batch_size, **predict_kwargs)
+            pred = self.tf_model.predict(tensor, batch_size=batch_size, verbose=1, **predict_kwargs)
             if self.crf_layer is None:
                 pred = pred.argmax(-1)
             lengths = [len(sen) for sen in x_data]

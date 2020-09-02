@@ -7,8 +7,6 @@
 # File    : test_bi_lstm_crf_model.py
 # Project : Kashgari
 
-import unittest
-
 import tests.test_labeling.test_bi_lstm_model as base
 from kashgari.tasks.labeling import BiLSTM_CRF_Model
 
@@ -19,6 +17,3 @@ class TestBiLSTMGRU_Model(base.TestBiLSTM_Model):
     def setUpClass(cls):
         cls.EPOCH_COUNT = 1
         cls.TASK_MODEL_CLASS = BiLSTM_CRF_Model
-
-    def test_basic_use(self):
-        super(BiLSTM_CRF_Model, self).test_basic_use()
