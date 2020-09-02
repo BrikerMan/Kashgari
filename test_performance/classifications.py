@@ -8,10 +8,13 @@
 # Project : Kashgari
 
 import logging
+import os
 import time
 from typing import Type
 
 import pandas as pd
+import wandb
+from tensorflow.keras.callbacks import Callback
 
 from kashgari.corpus import SMP2018ECDTCorpus
 from kashgari.embeddings import BertEmbedding
@@ -19,9 +22,23 @@ from kashgari.tasks.classification import ABCClassificationModel
 from kashgari.tasks.classification import ALL_MODELS
 from test_performance.tools import get_bert_path
 
+os.environ["WANDB_RUN_GROUP"] = "classification_run_" + wandb.util.generate_id()
+
+
+class WandbCallback(Callback):
+    def __init__(self, kash_model, test_x, test_y):
+        self.kash_model: ABCClassificationModel = kash_model
+        self.test_x = test_x
+        self.test_y = test_y
+
+    def on_epoch_end(self, epoch, logs=None):
+        report = self.kash_model.evaluate(self.test_x, self.test_y)
+        wandb.log({'epoch': epoch, 'precision': report['precision']}, step=epoch)
+        wandb.log({'epoch': epoch, 'recall': report['recall']}, step=epoch)
+        wandb.log({'epoch': epoch, 'f1-score': report['f1-score']}, step=epoch)
+
 
 class ClassificationPerformance:
-
     MODELS = ALL_MODELS
 
     def run_with_model_class(self, model_class: Type[ABCClassificationModel], epochs: int):
@@ -31,9 +48,17 @@ class ClassificationPerformance:
         valid_x, valid_y = SMP2018ECDTCorpus.load_data('valid')
         test_x, test_y = SMP2018ECDTCorpus.load_data('test')
 
+        wandb.init(project="kashgari",
+                   name=model_class.__name__,
+                   reinit=True,
+                   tags=["bert", "classification"])
+
         bert_embed = BertEmbedding(bert_path)
         model = model_class(bert_embed)
-        model.fit(train_x, train_y, valid_x, valid_y, epochs=epochs)
+
+        callbacks = [WandbCallback(model, test_x, test_y)]
+
+        model.fit(train_x, train_y, valid_x, valid_y, epochs=epochs, callbacks=callbacks)
 
         report = model.evaluate(test_x, test_y)
         del model
@@ -44,7 +69,7 @@ class ClassificationPerformance:
         logging.basicConfig(level='DEBUG')
         reports = []
         for model_class in self.MODELS:
-            logging.info("="*80)
+            logging.info("=" * 80)
             logging.info("")
             logging.info("")
             logging.info(f" Start Training {model_class.__name__}")
@@ -60,7 +85,7 @@ class ClassificationPerformance:
                 'f1-score': report['f1-score'],
                 'precision': report['precision'],
                 'recall': report['recall'],
-                'time': f"{int(time_cost//60):02}:{int(time_cost%60):02}"
+                'time': f"{int(time_cost // 60):02}:{int(time_cost % 60):02}"
             })
 
         df = pd.DataFrame(reports)

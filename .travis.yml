@@ -5,13 +5,6 @@ env:
   global:
     - COVERALLS_PARALLEL=true
   matrix:
-    - TF_VERSION="2.0.0" TEST_FILE="tests/test_seq2seq/"
-    - TF_VERSION="2.0.0" TEST_FILE="tests/test_labeling/test_bi_gru_model.py tests/test_labeling/test_bi_lstm_model.py tests/test_labeling/test_cnn_lstm_model.py"
-    - TF_VERSION="2.0.0" TEST_FILE="tests/test_classification/"
-    - TF_VERSION="2.0.0" TEST_FILE="tests/test_embeddings/"
-    - TF_VERSION="2.0.0" TEST_FILE="tests/test_processor/"
-    - TF_VERSION="2.0.0" TEST_FILE="tests/test_corpus.py tests/test_utils.py"
-
     - TF_VERSION="2.1.0" TEST_FILE="tests/test_seq2seq/"
     - TF_VERSION="2.1.0" TEST_FILE="tests/test_labeling/test_bi_gru_model.py tests/test_labeling/test_bi_lstm_model.py tests/test_labeling/test_cnn_lstm_model.py"
     - TF_VERSION="2.1.0" TEST_FILE="tests/test_classification/"
@@ -26,6 +19,13 @@ env:
     - TF_VERSION="2.2.0" TEST_FILE="tests/test_processor/"
     - TF_VERSION="2.2.0" TEST_FILE="tests/test_corpus.py tests/test_utils.py"
 
+    - TF_VERSION="2.3.0" TEST_FILE="tests/test_seq2seq/"
+    - TF_VERSION="2.3.0" TEST_FILE="tests/test_labeling/test_bi_gru_model.py tests/test_labeling/test_bi_lstm_model.py tests/test_labeling/test_cnn_lstm_model.py"
+    - TF_VERSION="2.3.0" TEST_FILE="tests/test_classification/"
+    - TF_VERSION="2.3.0" TEST_FILE="tests/test_embeddings/"
+    - TF_VERSION="2.3.0" TEST_FILE="tests/test_processor/"
+    - TF_VERSION="2.3.0" TEST_FILE="tests/test_corpus.py tests/test_utils.py"
+
 python:
   - "3.6"
 
@@ -39,15 +39,15 @@ stages:
   - Test
 
 install:
+  - pip install tensorflow==$TF_VERSION
   - pip install -r requirements.dev.txt
   - pip install -r requirements.txt
-  - pip install tensorflow==$TF_VERSION
   - python -c "import kashgari;print(f'kashgari version {kashgari.__version__}')"
   - git fetch --unshallow --quiet
   - export PYTHONPATH=`pwd`
 
 script: pytest --doctest-modules --junitxml=test-reports/junit.xml
-  --cov=kashgari --cov-report=xml:coverage.xml --cov-report term --cov-report=html:htmlcov --cov-config .coveragerc
+  --cov=kashgari --cov-report=xml:coverage.xml --cov-report term --cov-report=html:htmlcov --cov-config .config.ini
   $TEST_FILE
 
 after_script:
@@ -59,7 +59,7 @@ notifications:
 jobs:
   include:
     - stage: Lint
-      python: "3.6"
+      python: "3.7"
       install:
         - pip install -r requirements.dev.txt
       script:
