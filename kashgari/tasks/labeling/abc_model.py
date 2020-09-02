@@ -57,6 +57,8 @@ class ABCLabelingModel(ABCTaskModel, ABC):
                                                                     min_count=1,
                                                                     build_vocab_from_labels=True)
 
+        self.crf_layer = None
+
     def build_model(self,
                     x_data: TextSamplesVar,
                     y_data: TextSamplesVar) -> None:
@@ -268,13 +270,14 @@ class ABCLabelingModel(ABCTaskModel, ABC):
                                                    max_position=self.embedding.max_position)
             logger.debug('predict seq_length: {}, input: {}'.format(seq_length, np.array(tensor).shape))
             pred = self.tf_model.predict(tensor, batch_size=batch_size, **predict_kwargs)
-            pred = pred.argmax(-1)
+            if self.crf_layer is None:
+                pred = pred.argmax(-1)
             lengths = [len(sen) for sen in x_data]
 
             res: List[List[str]] = self.label_processor.inverse_transform(pred,  # type: ignore
                                                                           lengths=lengths)
             logger.debug('predict output: {}'.format(np.array(pred).shape))
-            logger.debug('predict output argmax: {}'.format(pred.argmax(-1)))
+            logger.debug('predict output argmax: {}'.format(pred))
         return res
 
     def predict_entities(self,
