@@ -40,16 +40,15 @@ stages:
 
 install:
   - pip install tensorflow==$TF_VERSION
-  - !TARGET="2.1.0"; if [ "$NCCL_VERSION" == "$TARGET" ]; then pip install "tensorflow_addons<=0.10.0";else echo "No need to install.";  fi
   - pip install -r requirements.dev.txt
   - pip install -r requirements.txt
-  - python -c "import kashgari;print(f'kashgari version {kashgari.__version__}')"
   - git fetch --unshallow --quiet
   - export PYTHONPATH=`pwd`
 
-script: pytest --doctest-modules --junitxml=test-reports/junit.xml
-  --cov=kashgari --cov-report=xml:coverage.xml --cov-report term --cov-report=html:htmlcov --cov-config .config.ini
-  $TEST_FILE
+script:
+  - !TARGET="2.1.0"; if [ "$NCCL_VERSION" == "$TARGET" ]; then pip install "tensorflow_addons<=0.10.0";else echo "No need to install.";  fi
+  - python -c "import kashgari;print(f'kashgari version {kashgari.__version__}')"
+  - pytest --doctest-modules --junitxml=test-reports/junit.xml --cov=kashgari --cov-report=xml:coverage.xml --cov-report term --cov-report=html:htmlcov --cov-config .config.ini $TEST_FILE
 
 after_script:
   - coveralls
