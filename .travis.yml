@@ -40,7 +40,6 @@ stages:
 
 install:
   - pip install tensorflow==$TF_VERSION
-  # Install lower version on tensorflow_addons on TF 1.2
   - !TARGET="2.1.0"; if [ "$NCCL_VERSION" == "$TARGET" ]; then pip install "tensorflow_addons<=0.10.0";else echo "No need to install.";  fi
   - pip install -r requirements.dev.txt
   - pip install -r requirements.txt
