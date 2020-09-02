@@ -31,4 +31,6 @@ from kashgari import utils
 
 from kashgari.utils.dependency_check import dependency_check
 
+custom_objects = layers.resigter_custom_layers(custom_objects)
+
 dependency_check()

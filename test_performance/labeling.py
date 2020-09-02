@@ -19,7 +19,7 @@ from kashgari.embeddings import BertEmbedding
 from kashgari.tasks.labeling import ABCLabelingModel
 from kashgari.tasks.labeling import ALL_MODELS
 from test_performance.classifications import ClassificationPerformance
-from test_performance.tools import get_bert_path
+from examples.tools import get_bert_path
 
 log_root = "tf_dir/labeling/" + datetime.now().strftime("%m%d-%H:%M")
 

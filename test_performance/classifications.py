@@ -21,7 +21,7 @@ from kashgari.corpus import SMP2018ECDTCorpus
 from kashgari.embeddings import BertEmbedding
 from kashgari.tasks.classification import ABCClassificationModel
 from kashgari.tasks.classification import ALL_MODELS
-from test_performance.tools import get_bert_path
+from examples.tools import get_bert_path
 
 log_root = "tf_dir/classification/" + datetime.now().strftime("%m%d-%H:%M")
 
