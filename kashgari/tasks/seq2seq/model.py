@@ -259,6 +259,20 @@ class Seq2Seq:
         # Load Model Weights
         model.encoder_embedding.embed_model.load_weights(os.path.join(model_path, 'encoder_embed_weights.h5'))
         model.decoder_embedding.embed_model.load_weights(os.path.join(model_path, 'decoder_embed_weights.h5'))
+
+        # ------ Fix Start -------
+        # load model issue on TF 2.3
+        # Unable to load weights saved in HDF5 format into a subclassed Model which has not created its variables yet.
+        # Call the Model first, then load the weights.
+        input_seq = model.encoder_processor.transform([['hello']],
+                                                      seq_length=model.encoder_seq_length)
+        dec_input = tf.expand_dims([3], 0)
+        enc_hidden = tf.zeros((1, model.hidden_size))
+        dec_hidden = enc_hidden
+        enc_output, enc_hidden = model.encoder(input_seq, enc_hidden)
+        _ = model.decoder(dec_input, dec_hidden, enc_output)
+        # ------ Fix End -------
+
         model.encoder.load_weights(os.path.join(model_path, 'encoder_weights.h5'))
         model.decoder.load_weights(os.path.join(model_path, 'decoder_weights.h5'))
 
