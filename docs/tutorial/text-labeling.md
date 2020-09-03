@@ -245,19 +245,25 @@ We have run the classification tests on [ChineseDailyNerCorpus](https://kashgari
 - REDUCE_RL_PATIENCE = 5
 - BATCH_SIZE = 64
 
-|    | Embedding       | Model          |   Best F1-Score |   Best F1 @ epochs |
-|---:|:----------------|:---------------|----------------:|-------------------:|
-|  0 | RoBERTa-wwm-ext | CNN_LSTM_Model |           93.58 |                 10 |
-|  1 | RoBERTa-wwm-ext | BiLSTM_Model   |           93.28 |                 13 |
-|  2 | RoBERTa-wwm-ext | BiGRU_Model    |       **93.66** |                 12 |
-|    |                 |                |                 |                    |
-|  3 | Bert-Chinese    | CNN_LSTM_Model |       **93.44** |                 22 |
-|  4 | Bert-Chinese    | BiLSTM_Model   |           93.3  |                 17 |
-|  5 | Bert-Chinese    | BiGRU_Model    |           93.15 |                 18 |
-|    |                 |                |                 |                    |
-|  6 | Bare            | CNN_LSTM_Model |       **74.68** |                 18 |
-|  7 | Bare            | BiLSTM_Model   |           74.48 |                 17 |
-|  8 | Bare            | BiGRU_Model    |           74.38 |                 15 |
+|    | Embedding       | Model            |   Best F1-Score |   Best F1 @ epochs |
+|---:|:----------------|:-----------------|----------------:|-------------------:|
+|  0 | RoBERTa-wwm-ext | BiGRU_Model      |           93.22 |                 11 |
+|  1 | RoBERTa-wwm-ext | BiGRU_CRF_Model  |           95.13 |                 29 |
+|  2 | RoBERTa-wwm-ext | BiLSTM_Model     |           93.37 |                 19 |
+|  3 | RoBERTa-wwm-ext | BiLSTM_CRF_Model |       **95.43** |                 26 |
+|  4 | RoBERTa-wwm-ext | CNN_LSTM_Model   |           94.05 |                 23 |
+|    |                 |                  |                 |                    |
+|  5 | Bert-Chinese    | BiGRU_Model      |           93.01 |                 16 |
+|  6 | Bert-Chinese    | BiGRU_CRF_Model  |           95.01 |                 24 |
+|  7 | Bert-Chinese    | BiLSTM_Model     |           93.85 |                 17 |
+|  8 | Bert-Chinese    | BiLSTM_CRF_Model |       **95.57** |                 26 |
+|  9 | Bert-Chinese    | CNN_LSTM_Model   |           93.17 |                 16 |
+|    |                 |                  |                 |                    |
+| 10 | Bare            | BiGRU_Model      |           74.85 |                 16 |
+| 11 | Bare            | BiGRU_CRF_Model  |           81.24 |                 21 |
+| 12 | Bare            | BiLSTM_Model     |           74.7  |                 19 |
+| 13 | Bare            | BiLSTM_CRF_Model |       **82.37** |                 25 |
+| 14 | Bare            | CNN_LSTM_Model   |           75.07 |                 14 |
 
 
 ![](../_static/images/ner_f1_scores.png)

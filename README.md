@@ -74,7 +74,7 @@ Welcome to add performance report.
 
 | Task                       | Language | Dataset                     | Score   |
 | -------------------------- | -------- | --------------------------- | ------- |
-| [Named Entity Recognition] | Chinese  | [People's Daily Ner Corpus] | 93.66	 |
+| [Named Entity Recognition] | Chinese  | [People's Daily Ner Corpus] | 95.57   |
 | [Text Classification]      | Chinese  | [SMP2018ECDTCorpus]         | 94.57   |
 | Neural machine translation |          |                             | // TODO |
 
