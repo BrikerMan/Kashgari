@@ -1,8 +1,9 @@
 # documents
-sphinx>=3.0.0
-sphinx-autobuild>=0.7.1
+sphinx
+sphinx-autobuild
 sphinx-rtd-theme
 sphinx-markdown-tables
+sphinx-autodoc-typehints
 recommonmark
 m2r
 
