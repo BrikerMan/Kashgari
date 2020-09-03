@@ -10,9 +10,8 @@
 from typing import Dict, Any
 
 from tensorflow import keras
-from tf2crf import CRF
 
-from kashgari.layers import L
+from kashgari.layers import L, ConditionalRandomField
 from kashgari.tasks.labeling.abc_model import ABCLabelingModel
 
 
@@ -40,7 +39,7 @@ class BiGRU_CRF_Model(ABCLabelingModel):
         config = self.hyper_parameters
         embed_model = self.embedding.embed_model
 
-        crf = CRF()
+        crf = ConditionalRandomField()
 
         layer_stack = [
             L.Bidirectional(L.GRU(**config['layer_bgru']), name='layer_bgru'),

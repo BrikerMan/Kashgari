@@ -44,31 +44,6 @@ class TestGenerator(unittest.TestCase):
         assert len(list(batch_dataset1.take(duplicate_len))) == duplicate_len
         assert len(list(batch_dataset1.take(1))) == 1
 
-        for x, y in batch_dataset1.take(1):
-            assert x.shape == y.shape == (12, 100)
-
-        batch_dataset2 = BatchDataSet(corpus_gen,
-                                      text_processor=text_processor,
-                                      label_processor=label_processor,
-                                      segment=False,
-                                      seq_length=60,
-                                      max_position=100,
-                                      batch_size=12)
-
-        for x, y in batch_dataset2.take(1):
-            assert x.shape == y.shape == (12, 60)
-
-        batch_dataset3 = BatchDataSet(corpus_gen,
-                                      text_processor=text_processor,
-                                      label_processor=label_processor,
-                                      segment=False,
-                                      seq_length=300,
-                                      max_position=100,
-                                      batch_size=12)
-
-        for x, y in batch_dataset3.take(1):
-            assert x.shape == y.shape == (12, 100)
-
 
 if __name__ == '__main__':
     unittest.main()

@@ -12,11 +12,11 @@ from typing import List, Dict, Any, Union, Optional
 
 import numpy as np
 import tensorflow as tf
-from tf2crf import CRF
 
 import kashgari
 from kashgari.embeddings import ABCEmbedding, BareEmbedding
 from kashgari.generators import CorpusGenerator, BatchDataSet
+from kashgari.layers import ConditionalRandomField
 from kashgari.logger import logger
 from kashgari.metrics.sequence_labeling import get_entities
 from kashgari.metrics.sequence_labeling import sequence_labeling_report
@@ -57,7 +57,7 @@ class ABCLabelingModel(ABCTaskModel, ABC):
                                                                     min_count=1,
                                                                     build_vocab_from_labels=True)
 
-        self.crf_layer: Optional[CRF] = None
+        self.crf_layer: Optional[ConditionalRandomField] = None
 
     def build_model(self,
                     x_data: TextSamplesVar,
@@ -264,14 +264,16 @@ class ABCLabelingModel(ABCTaskModel, ABC):
                 seq_length = self.sequence_length
             else:
                 seq_length = None
+
+            print(self.crf_layer)
             tensor = self.text_processor.transform(x_data,
                                                    segment=self.embedding.segment,
                                                    seq_length=seq_length,
                                                    max_position=self.embedding.max_position)
             logger.debug('predict seq_length: {}, input: {}'.format(seq_length, np.array(tensor).shape))
             pred = self.tf_model.predict(tensor, batch_size=batch_size, verbose=1, **predict_kwargs)
-            if self.crf_layer is None:
-                pred = pred.argmax(-1)
+            pred = pred.argmax(-1)
+                # pred = pred.argmax(-1)
             lengths = [len(sen) for sen in x_data]
 
             res: List[List[str]] = self.label_processor.inverse_transform(pred,  # type: ignore
