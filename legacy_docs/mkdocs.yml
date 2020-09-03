@@ -1,0 +1,97 @@
+site_name: Kashgari
+theme:
+  name: material
+  feature:
+    tabs: true
+  palette:
+    primary: red
+    accent: red
+  language: "en"
+repo_url: https://github.com/BrikerMan/Kashgari
+
+copyright: "Copyright &copy; 2018 - 2018 BrikerMan"
+
+google_analytics:
+  - "UA-78705624-3"
+  - "auto"
+
+#markdown_extensions:
+#  - markdown.extensions.admonition
+#  - markdown.extensions.def_list
+#  - markdown.extensions.footnotes
+#  - markdown.extensions.meta
+#  - markdown.extensions.toc:
+#      permalink: "#"
+#  # pymdown-extensions
+#  - pymdownx.arithmatex
+#  - pymdownx.betterem:
+#      smart_enable: none
+#  - pymdownx.caret
+#  - pymdownx.critic
+#  - pymdownx.details
+#  - pymdownx.emoji:
+#      emoji_generator: !!python/name:pymdownx.emoji.to_svg
+#  - pymdownx.inlinehilite
+#  - pymdownx.keys
+#  - pymdownx.magiclink
+#  - pymdownx.mark
+#  - pymdownx.smartsymbols
+#  - pymdownx.superfences
+#  - pymdownx.highlight:
+#      # css_class: codehilite # https://github.com/facelessuser/pymdown-extensions/blob/master/mkdocs.yml
+#      extend_pygments_lang:
+#        - name: python
+#          lang: python
+#          options:
+#            startinline: true
+#  - pymdownx.tasklist:
+#      custom_checkbox: true
+#  - pymdownx.tilde
+
+#extra_css:
+#  - static/css/extra.css
+#
+extra_javascript:
+  - static/js/baidu-static.js
+
+#extra:
+#  social:
+#    - type: github-alt
+#      link: https://github.com/BrikerMan
+
+#nav:
+#  - Introduction: index.md
+#  - 中文文档: https://kashgari-zh.bmio.net
+#  - Tutorials:
+#      - tutorial/text-classification.md
+#      - tutorial/text-labeling.md
+#      - tutorial/text-scoring.md
+#
+#  - Embeddings:
+#      - embeddings/index.md
+#      - embeddings/bare-embedding.md
+#      - embeddings/word-embedding.md
+#      - embeddings/bert-embedding.md
+#      - embeddings/gpt2-embedding.md
+#      - embeddings/numeric-features-embedding.md
+#      - embeddings/stacked-embedding.md
+#
+#  - Advanced:
+#      - advance-use/multi-output-model.md
+#      - advance-use/handle-numeric-features.md
+#      - advance-use/tensorflow-serving.md
+#
+#  - API:
+#      - api/corpus.md
+#      - api/embeddings.md
+#      - api/tasks.classification.md
+#      - api/tasks.labeling.md
+#      - api/utils.md
+#      - api/callbacks.md
+#
+#  - FAQ:
+#      - FAQ.md
+#
+#  - About:
+#      - about/contributing.md
+#      - about/release-notes.md
