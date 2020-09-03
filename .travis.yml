@@ -11,7 +11,7 @@ env:
     - TF_VERSION="2.1.0" TEST_FILE="tests/test_classification/"
     - TF_VERSION="2.1.0" TEST_FILE="tests/test_embeddings/"
     - TF_VERSION="2.1.0" TEST_FILE="tests/test_processor/"
-    - TF_VERSION="2.1.0" TEST_FILE="tests/test_corpus.py tests/test_utils.py"
+    - TF_VERSION="2.1.0" TEST_FILE="tests/test_corpus.py tests/test_utils.py tests/test_tokenizers.py"
 
     - TF_VERSION="2.2.0" TEST_FILE="tests/test_seq2seq/"
     - TF_VERSION="2.2.0" TEST_FILE="tests/test_labeling/test_bi_gru_model.py tests/test_labeling/test_bi_lstm_model.py tests/test_labeling/test_cnn_lstm_model.py"
@@ -19,7 +19,7 @@ env:
     - TF_VERSION="2.2.0" TEST_FILE="tests/test_classification/"
     - TF_VERSION="2.2.0" TEST_FILE="tests/test_embeddings/"
     - TF_VERSION="2.2.0" TEST_FILE="tests/test_processor/"
-    - TF_VERSION="2.2.0" TEST_FILE="tests/test_corpus.py tests/test_utils.py"
+    - TF_VERSION="2.2.0" TEST_FILE="tests/test_corpus.py tests/test_utils.py tests/test_tokenizers.py"
 
     - TF_VERSION="2.3.0" TEST_FILE="tests/test_seq2seq/"
     - TF_VERSION="2.3.0" TEST_FILE="tests/test_labeling/test_bi_gru_model.py tests/test_labeling/test_bi_lstm_model.py tests/test_labeling/test_cnn_lstm_model.py"
@@ -27,7 +27,7 @@ env:
     - TF_VERSION="2.3.0" TEST_FILE="tests/test_classification/"
     - TF_VERSION="2.3.0" TEST_FILE="tests/test_embeddings/"
     - TF_VERSION="2.3.0" TEST_FILE="tests/test_processor/"
-    - TF_VERSION="2.3.0" TEST_FILE="tests/test_corpus.py tests/test_utils.py"
+    - TF_VERSION="2.3.0" TEST_FILE="tests/test_corpus.py tests/test_utils.py tests/test_tokenizers.py"
 
 python:
   - "3.6"
