@@ -9,6 +9,7 @@
 
 import random
 from abc import ABC
+import numpy as np
 from typing import List, Dict, Any, Union
 
 from sklearn import metrics as sklearn_metrics
@@ -28,6 +29,10 @@ from kashgari.types import TextSamplesVar, ClassificationLabelVar, MultiLabelCla
 
 
 class ABCClassificationModel(ABCTaskModel, ABC):
+    """
+    Abstract Classification Model
+    """
+
     __task__ = 'classification'
 
     def to_dict(self) -> Dict:
@@ -42,16 +47,16 @@ class ABCClassificationModel(ABCTaskModel, ABC):
                  hyper_parameters: Dict[str, Dict[str, Any]] = None,
                  multi_label: bool = False,
                  text_processor: ABCProcessor = None,
-                 label_processor: ABCProcessor = None,
-                 **kwargs: Dict):
+                 label_processor: ABCProcessor = None):
         """
-        Abstract Classification Model
 
         Args:
             embedding: embedding object
             sequence_length: target sequence length
             hyper_parameters: hyper_parameters to overwrite
-            **kwargs:
+            multi_label: is multi-label classification
+            text_processor: text processor
+            label_processor: label processor
         """
         super(ABCClassificationModel, self).__init__()
         if embedding is None:
@@ -88,7 +93,7 @@ class ABCClassificationModel(ABCTaskModel, ABC):
         Build Model with x_data and y_data
 
         This function will setup a :class:`CorpusGenerator`,
-         then call :meth:`ABCClassificationModel.build_model_gen` for preparing processor and model
+         then call py:meth:`ABCClassificationModel.build_model_gen` for preparing processor and model
 
         Args:
             x_train:
@@ -99,16 +104,17 @@ class ABCClassificationModel(ABCTaskModel, ABC):
         """
 
         train_gen = CorpusGenerator(x_train, y_train)
-        self.build_model_generator(train_gen)
+        self.build_model_generator([train_gen])
 
     def build_model_generator(self,
-                              train_gen: CorpusGenerator) -> None:
-        self.text_processor.build_vocab_generator(train_gen)
-        self.label_processor.build_vocab_generator(train_gen)
+                              generators: List[CorpusGenerator]) -> None:
+        if not self.text_processor.vocab2idx:
+            self.text_processor.build_vocab_generator(generators)
+        self.label_processor.build_vocab_generator(generators)
         self.embedding.setup_text_processor(self.text_processor)
 
         if self.sequence_length is None:
-            self.sequence_length = self.embedding.get_seq_length_from_corpus(corpus_gen=train_gen)
+            self.sequence_length = self.embedding.get_seq_length_from_corpus(generators)
 
         if self.tf_model is None:
             self.build_model_arc()
@@ -164,8 +170,7 @@ class ABCClassificationModel(ABCTaskModel, ABC):
             batch_size: int = 64,
             epochs: int = 5,
             callbacks: List['keras.callbacks.Callback'] = None,
-            fit_kwargs: Dict = None,
-            **kwargs: Dict) -> 'keras.callbacks.History':
+            fit_kwargs: Dict = None) -> 'keras.callbacks.History':
         """
         Trains the model for a given number of epochs with given data set list.
 
@@ -181,11 +186,11 @@ class ABCClassificationModel(ABCTaskModel, ABC):
                 An epoch is an iteration over the entire `x` and `y` data provided.
             callbacks: List of `tf.keras.callbacks.Callback` instances.
                 List of callbacks to apply during training.
-                See :py:class:`tf.keras.callbacks`.
+                See :class:`tf.keras.callbacks`.
             fit_kwargs: fit_kwargs: additional arguments passed to :meth:`tf.keras.Model.fit`
 
         Returns:
-            A :py:class:`tf.keras.callback.History`  object. Its `History.history` attribute is
+            A :class:`tf.keras.callback.History`  object. Its `History.history` attribute is
             a record of training loss values and metrics values
             at successive epochs, as well as validation loss values
             and validation metrics values (if applicable).
@@ -200,8 +205,7 @@ class ABCClassificationModel(ABCTaskModel, ABC):
                                   batch_size=batch_size,
                                   epochs=epochs,
                                   callbacks=callbacks,
-                                  fit_kwargs=fit_kwargs,
-                                  **kwargs)
+                                  fit_kwargs=fit_kwargs)
 
     def fit_generator(self,
                       train_sample_gen: CorpusGenerator,
@@ -210,8 +214,7 @@ class ABCClassificationModel(ABCTaskModel, ABC):
                       batch_size: int = 64,
                       epochs: int = 5,
                       callbacks: List['keras.callbacks.Callback'] = None,
-                      fit_kwargs: Dict = None,
-                      **kwargs: Dict) -> 'keras.callbacks.History':
+                      fit_kwargs: Dict = None) -> 'keras.callbacks.History':
         """
         Trains the model for a given number of epochs with given data generator.
 
@@ -234,9 +237,11 @@ class ABCClassificationModel(ABCTaskModel, ABC):
             at successive epochs, as well as validation loss values
             and validation metrics values (if applicable).
         """
-        self.build_model_generator(train_sample_gen)
+        self.build_model_generator([g for g in [train_sample_gen, valid_sample_gen] if g])
 
-        self.tf_model.summary(print_fn=logger.debug)
+        model_summary = []
+        self.tf_model.summary(print_fn=lambda x: model_summary.append(x))
+        logger.debug('\n'.join(model_summary))
 
         train_set = BatchDataSet(train_sample_gen,
                                  text_processor=self.text_processor,
@@ -264,15 +269,13 @@ class ABCClassificationModel(ABCTaskModel, ABC):
                                  callbacks=callbacks,
                                  **fit_kwargs)
 
-    def predict(self,  # type: ignore[override]
+    def predict(self,
                 x_data: TextSamplesVar,
                 *,
                 batch_size: int = 32,
                 truncating: bool = False,
                 multi_label_threshold: float = 0.5,
-                debug_info: bool = False,
-                predict_kwargs: Dict = None,
-                **kwargs: Any) -> Union[ClassificationLabelVar, MultiLabelClassificationLabelVar]:
+                predict_kwargs: Dict = None) -> Union[ClassificationLabelVar, MultiLabelClassificationLabelVar]:
         """
         Generates output predictions for the input samples.
 
@@ -283,7 +286,6 @@ class ABCClassificationModel(ABCTaskModel, ABC):
             batch_size: Integer. If unspecified, it will default to 32.
             truncating: remove values from sequences larger than `model.embedding.sequence_length`
             multi_label_threshold:
-            debug_info: Bool, Should print out the logger info.
             predict_kwargs: arguments passed to ``predict()`` function of ``tf.keras.Model``
 
         Returns:
@@ -298,25 +300,21 @@ class ABCClassificationModel(ABCTaskModel, ABC):
                 seq_length = None
             tensor = self.text_processor.transform(x_data,
                                                    segment=self.embedding.segment,
-                                                   seq_lengtg=seq_length,
+                                                   seq_length=seq_length,
                                                    max_position=self.embedding.max_position)
+            logger.debug(f'predict input shape {np.array(tensor).shape} x: \n{tensor}')
             pred = self.tf_model.predict(tensor, batch_size=batch_size, **predict_kwargs)
-
+            logger.debug(f'predict output shape {pred.shape}')
             if self.multi_label:
-                if debug_info:
-                    print('raw output: {}'.format(pred))
                 multi_label_binarizer = self.label_processor.multi_label_binarizer  # type: ignore
                 res = multi_label_binarizer.inverse_transform(pred,
                                                               threshold=multi_label_threshold)
             else:
-                pred = pred.argmax(-1)
+                pred_argmax = pred.argmax(-1)
                 lengths = [len(sen) for sen in x_data]
-                res = self.label_processor.inverse_transform(pred,
+                res = self.label_processor.inverse_transform(pred_argmax,
                                                              lengths=lengths)
-
-            logger.debug('input: {}'.format(tensor))
-            logger.debug('output: {}'.format(pred))
-            logger.debug('output argmax: {}'.format(pred.argmax(-1)))
+                logger.debug(f'predict output argmax: {pred_argmax}')
 
         return res
 
@@ -327,20 +325,11 @@ class ABCClassificationModel(ABCTaskModel, ABC):
                  batch_size: int = 32,
                  digits: int = 4,
                  multi_label_threshold: float = 0.5,
-                 truncating: bool = False,
-                 debug_info: bool = False,
-                 **kwargs: Dict) -> Dict:
+                 truncating: bool = False,) -> Dict:
         y_pred = self.predict(x_data,
                               batch_size=batch_size,
                               truncating=truncating,
-                              multi_label_threshold=multi_label_threshold,
-                              debug_info=debug_info)
-
-        for index in random.sample(list(range(len(x_data))), 5):
-            logger.debug('------ sample {} ------'.format(index))
-            logger.debug('x      : {}'.format(x_data[index]))
-            logger.debug('y      : {}'.format(y_data[index]))
-            logger.debug('y_pred : {}'.format(y_pred[index]))
+                              multi_label_threshold=multi_label_threshold)
 
         if self.multi_label:
             report = multi_label_classification_report(y_data,  # type: ignore

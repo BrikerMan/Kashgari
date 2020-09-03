@@ -10,9 +10,7 @@ You could easily switch from one model to another just by changing one line of c
 | ------------------ | ---- |
 | CNN\_LSTM\_Model   |      |
 | BiLSTM\_Model      |      |
-| BiLSTM\_CRF\_Model |      |
 | BiGRU\_Model       |      |
-| BiGRU\_CRF\_Model  |      |
 
 ## Train basic NER model
 
@@ -76,14 +74,11 @@ That's all your need to do. Easy right.
 Kashgari provides varies Language model Embeddings for transfer learning. Here is the example for BERT Embedding.
 
 ```python
-import kashgari
 from kashgari.tasks.labeling import BiLSTM_Model
 from kashgari.embeddings import BertEmbedding
 
-bert_embed = BertEmbedding('<PRE_TRAINED_BERT_MODEL_FOLDER>',
-                           task=kashgari.LABELING,
-                           sequence_length=100)
-model = BiLSTM_Model(bert_embed)
+bert_embed = BertEmbedding('<PRE_TRAINED_BERT_MODEL_FOLDER>')
+model = BiLSTM_Model(bert_embed, sequence_length=100)
 model.fit(train_x, train_y, valid_x, valid_y)
 ```
 
@@ -240,36 +235,35 @@ model = DoubleBLSTMModel()
 model.fit(train_x, train_y, valid_x, valid_y)
 ```
 
-## Performance report
+## Chinese NER Performance
 
-Available model list, matrics based on this training:
+We have run the classification tests on [ChineseDailyNerCorpus](https://kashgari.readthedocs.io/apis/corpus/#chinesedailynercorpus). Here is the full code: [colab link](https://drive.google.com/file/d/1yKo5h1Eszou5_W18-BQvgqGuzK6uyEnd/view?usp=sharing)
 
-- corpus: ChineseDailyNerCorpus
-- epochs: 50 epochs with callbacks
-- batch_size: 64
-- T4 GPU / 2 CPU / 30 GB on [openbayes](https://openbayes.com)
-- [colab link](https://drive.google.com/file/d/1-tPlD3jP_5AK8xOz_CE1-p-s9mttUt16/view?usp=sharing)
+- SEQUENCE_LENGTH = 100
+- EPOCHS = 30
+- EARL_STOPPING_PATIENCE = 10
+- REDUCE_RL_PATIENCE = 5
+- BATCH_SIZE = 64
 
-```python
-early_stop = tf.keras.callbacks.EarlyStopping(patience=10)
-reduse_lr_callback = tf.keras.callbacks.ReduceLROnPlateau(factor=0.1, patience=5)
-```
+|    | Embedding       | Model            |   Best F1-Score |   Best F1 @ epochs |
+|---:|:----------------|:-----------------|----------------:|-------------------:|
+|  0 | RoBERTa-wwm-ext | BiGRU_Model      |           93.22 |                 11 |
+|  1 | RoBERTa-wwm-ext | BiGRU_CRF_Model  |           95.13 |                 29 |
+|  2 | RoBERTa-wwm-ext | BiLSTM_Model     |           93.37 |                 19 |
+|  3 | RoBERTa-wwm-ext | BiLSTM_CRF_Model |       **95.43** |                 26 |
+|  4 | RoBERTa-wwm-ext | CNN_LSTM_Model   |           94.05 |                 23 |
+|    |                 |                  |                 |                    |
+|  5 | Bert-Chinese    | BiGRU_Model      |           93.01 |                 16 |
+|  6 | Bert-Chinese    | BiGRU_CRF_Model  |           95.01 |                 24 |
+|  7 | Bert-Chinese    | BiLSTM_Model     |           93.85 |                 17 |
+|  8 | Bert-Chinese    | BiLSTM_CRF_Model |       **95.57** |                 26 |
+|  9 | Bert-Chinese    | CNN_LSTM_Model   |           93.17 |                 16 |
+|    |                 |                  |                 |                    |
+| 10 | Bare            | BiGRU_Model      |           74.85 |                 16 |
+| 11 | Bare            | BiGRU_CRF_Model  |           81.24 |                 21 |
+| 12 | Bare            | BiLSTM_Model     |           74.7  |                 19 |
+| 13 | Bare            | BiLSTM_CRF_Model |       **82.37** |                 25 |
+| 14 | Bare            | CNN_LSTM_Model   |           75.07 |                 14 |
 
-| Name             | Embedding   | F1 Score | Epoch Time | Non Trainable params | Trainable params |
-| ---------------- | ----------- | :------: | ---------- | :------------------- | :--------------- |
-| BiLSTM_Model     | Random Init | 0.74147  | 9.5s       | 0                    | 558176           |
-| BiLSTM_CRF_Model | Random Init | 0.81378  | 123.0s     | 0                    | 573168           |
-| BiGRU_Model      | Random Init | 0.74375  | 9.7s       | 0                    | 499296           |
-| BiGRU_CRF_Model  | Random Init | 0.82516  | 120.7s     | 0                    | 514288           |
-|                  |             |          |            |                      |                  |
-| BiLSTM_Model     | BERT        | 0.92727  | 183.0s     | 101360640            | 3280904          |
-| BiLSTM_CRF_Model | BERT        | 0.94013  | 265.0s     | 101360640            | 3295896          |
-| BiGRU_Model      | BERT        | 0.92700  | 180.4s     | 101360640            | 2461192          |
-| BiGRU_CRF_Model  | BERT        | 0.94319  | 263.4s     | 101360640            | 2476184          |
-|                  |             |          |            |                      |                  |
-| BiLSTM_Model     | ERNIE       | 0.93109  | 167.6s     | 98958336             | 3280904          |
-| BiLSTM_CRF_Model | ERNIE       | 0.94460  | 250.6s     | 98958336             | 3295896          |
-| BiGRU_Model      | ERNIE       | 0.93512  | 165.7s     | 98958336             | 2461192          |
-| BiGRU_CRF_Model  | ERNIE       | 0.94218  | 250.4s     | 98958336             | 2476184          |
 
 ![](../_static/images/ner_f1_scores.png)

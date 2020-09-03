@@ -20,6 +20,7 @@ from kashgari.embeddings import ABCEmbedding
 from kashgari.logger import logger
 from kashgari.processors.abc_processor import ABCProcessor
 from kashgari.utils import load_data_object
+from kashgari.layers import ConditionalRandomField
 
 if TYPE_CHECKING:
     from kashgari.tasks.labeling import ABCLabelingModel
@@ -95,7 +96,6 @@ class ABCTaskModel(ABC):
 
     @classmethod
     def load_model(cls, model_path: str) -> Union["ABCLabelingModel", "ABCClassificationModel"]:
-        from bert4keras.layers import ConditionalRandomField
         model_config_path = os.path.join(model_path, 'model_config.json')
         model_config = json.loads(open(model_config_path, 'r').read())
         model = load_data_object(model_config)
@@ -105,7 +105,10 @@ class ABCTaskModel(ABC):
         model.label_processor = load_data_object(model_config['label_processor'])
 
         tf_model_str = json.dumps(model_config['tf_model'])
-        model.tf_model = tf.keras.models.model_from_json(tf_model_str)
+
+        print(tf_model_str)
+        model.tf_model = tf.keras.models.model_from_json(tf_model_str,
+                                                         custom_objects=kashgari.custom_objects)
 
         if isinstance(model.tf_model.layers[-1], ConditionalRandomField):
             model.layer_crf = model.tf_model.layers[-1]
@@ -116,8 +119,8 @@ class ABCTaskModel(ABC):
 
     @abstractmethod
     def build_model(self,
-                    x_train: Any,
-                    y_train: Any) -> None:
+                    x_data: Any,
+                    y_data: Any) -> None:
         raise NotImplementedError
 
 

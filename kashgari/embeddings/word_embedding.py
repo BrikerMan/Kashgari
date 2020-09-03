@@ -30,7 +30,14 @@ class WordEmbedding(ABCEmbedding):
                  w2v_path: str,
                  *,
                  w2v_kwargs: Dict[str, Any] = None,
-                 **kwargs: Any) -> None:
+                 **kwargs: Any):
+        """
+        Args:
+            w2v_path: Word2Vec file path.
+            w2v_kwargs: params pass to the ``load_word2vec_format()`` function
+              of `gensim.models.KeyedVectors <https://radimrehurek.com/gensim/models/keyedvectors.html#module-gensim.models.keyedvectors>`_
+            kwargs: additional params
+        """
         if w2v_kwargs is None:
             w2v_kwargs = {}
 
@@ -64,7 +71,7 @@ class WordEmbedding(ABCEmbedding):
         w2v_top_words = w2v.index2entity[:50]
 
         logger.debug('------------------------------------------------')
-        logger.debug('Loaded gensim word2vec model')
+        logger.debug("Loaded gensim word2vec model's vocab")
         logger.debug('model        : {}'.format(self.w2v_path))
         logger.debug('word count   : {}'.format(len(self.w2v_matrix)))
         logger.debug('Top 50 words : {}'.format(w2v_top_words))
@@ -80,7 +87,7 @@ class WordEmbedding(ABCEmbedding):
         if self.embed_model is None:
             input_tensor = L.Input(shape=(None,),
                                    name=f'input')
-            layer_embedding = L.Embedding(len(self.embedding_vocab2idx),
+            layer_embedding = L.Embedding(len(self.vocab2idx),
                                           self.embedding_size,
                                           weights=[self.w2v_matrix],
                                           trainable=False,

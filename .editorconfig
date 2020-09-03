@@ -8,6 +8,7 @@ root = true
 end_of_line = lf
 insert_final_newline = true
 trim_trailing_whitespace = true
+max_line_length = 200
 
 # Matches multiple files with brace expansion notation
 # Set default charset

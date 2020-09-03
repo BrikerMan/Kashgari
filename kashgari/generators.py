@@ -101,17 +101,24 @@ class BatchDataSet(Iterable):
                 yield x_tensor, y_tensor
                 batch_x, batch_y = [], []
 
-    def forever(self) -> Any:
-        while True:
-            for x, y in self.__iter__():
-                yield x, y
-
     def take(self, batch_count: int = None) -> Any:
+        """
+        take batches from the dataset
+
+        Args:
+            batch_count: number of batch count, iterate forever when batch_count is None.
+        """
         i = 0
-        while batch_count is None or i < batch_count:
-            for x, y in self.__iter__():
-                i += 1
-                yield x, y
+        should_continue = True
+        while should_continue:
+            for batch_x, batch_y in self.__iter__():
+                if batch_count is None or i < batch_count:
+                    i += 1
+                    yield batch_x, batch_y
+                if batch_count and i >= batch_count:
+                    should_continue = False
+                    break
+
         # x_shape = self.text_processor.get_tensor_shape(self.batch_size, self.seq_length)
         # y_shape = self.label_processor.get_tensor_shape(self.batch_size, self.seq_length)
         # dataset = tf.data.Dataset.from_generator(self.__iter__,
@@ -162,7 +169,7 @@ class Seq2SeqDataSet(Iterable):
                                                             segment=self.encoder_segment)
                 y_tensor = self.decoder_processor.transform(batch_y,
                                                             seq_length=self.decoder_seq_length,
-                                                            one_hot=self.decoder_segment)
+                                                            segment=self.encoder_segment)
                 yield x_tensor, y_tensor
                 batch_x, batch_y = [], []
 

@@ -13,13 +13,7 @@ You could easily switch from one model to another just by changing one line of c
 | CNN\_Model            |      |
 | CNN\_LSTM\_Model      |      |
 | CNN\_GRU\_Model       |      |
-| AVCNN\_Model          |      |
-| KMax\_CNN\_Model     |      |
-| R\_CNN\_Model         |      |
-| AVRNN\_Model          |      |
-| Dropout\_BiGRU\_Model |      |
-| Dropout\_AVRNN\_Model |      |
-| DPCNN\_Model          |      |
+| CNN\_Attention\_Model |      |
 
 ## Train basic classification model
 
@@ -82,9 +76,8 @@ from kashgari.embeddings import BertEmbedding
 import logging
 logging.basicConfig(level='DEBUG')
 
-bert_embed = BertEmbedding('<PRE_TRAINED_BERT_MODEL_FOLDER>',
-                           sequence_length=100)
-model = BiGRU_Model(bert_embed)
+bert_embed = BertEmbedding('<PRE_TRAINED_BERT_MODEL_FOLDER>')
+model = BiGRU_Model(bert_embed, sequence_length=100)
 model.fit(train_x, train_y, valid_x, valid_y)
 ```
 
@@ -193,10 +186,9 @@ from kashgari.tasks.classification import BiLSTM_Model
 
 logging.basicConfig(level='DEBUG')
 
-bert_embed = BertEmbedding('<PRE_TRAINED_BERT_MODEL_FOLDER>',
-                           sequence_length=100)
+bert_embed = BertEmbedding('<PRE_TRAINED_BERT_MODEL_FOLDER>')
 
-model = BiLSTM_Model(bert_embed, multi_label=True)
+model = BiLSTM_Model(bert_embed, sequence_length=100, multi_label=True)
 model.fit(x, y)
 ```
 
@@ -281,3 +273,38 @@ class DoubleBLSTMModel(ABCClassificationModel):
 model = DoubleBLSTMModel()
 model.fit(train_x, train_y, valid_x, valid_y)
 ```
+
+## Short Sentence Classification Performance
+
+We have run the classification tests on [SMP2018ECDTCorpus](https://worksheets.codalab.org/worksheets/0x27203f932f8341b79841d50ce0fd684f/). Here is the full code: [colab link](https://drive.google.com/file/d/1ONJQ_Zuhg0_Km6CN1C1C2qvTyQsYMElB/view?usp=sharing)
+
+- SEQUENCE_LENGTH = 60
+- EPOCHS = 30
+- EARL_STOPPING_PATIENCE = 10
+- REDUCE_RL_PATIENCE = 5
+- BATCH_SIZE = 64
+
+|      | Embedding       | Model               | Best F1-Score | Best F1 @ epochs |
+| ---: | :-------------- | :------------------ | ------------: | ---------------: |
+|    0 | RoBERTa-wwm-ext | BiLSTM_Model        |         92.89 |               15 |
+|    1 | RoBERTa-wwm-ext | BiGRU_Model         |     **94.57** |               10 |
+|    2 | RoBERTa-wwm-ext | CNN_Model           |         92.95 |               12 |
+|    3 | RoBERTa-wwm-ext | CNN_Attention_Model |         92.07 |                3 |
+|    4 | RoBERTa-wwm-ext | CNN_GRU_Model       |         89.56 |               22 |
+|    5 | RoBERTa-wwm-ext | CNN_LSTM_Model      |          90.9 |               26 |
+|      |                 |                     |               |                  |
+|    6 | Bert-Chinese    | BiLSTM_Model        |     **93.74** |                4 |
+|    7 | Bert-Chinese    | BiGRU_Model         |         93.12 |               13 |
+|    8 | Bert-Chinese    | CNN_Model           |         92.95 |               13 |
+|    9 | Bert-Chinese    | CNN_Attention_Model |         92.04 |                8 |
+|   10 | Bert-Chinese    | CNN_GRU_Model       |         92.88 |                8 |
+|   11 | Bert-Chinese    | CNN_LSTM_Model      |         91.15 |               24 |
+|      |                 |                     |               |                  |
+|   12 | Bare            | BiLSTM_Model        |         81.96 |               11 |
+|   13 | Bare            | BiGRU_Model         |         82.86 |                9 |
+|   14 | Bare            | CNN_Model           |     **86.61** |               11 |
+|   15 | Bare            | CNN_Attention_Model |         78.84 |               12 |
+|   16 | Bare            | CNN_GRU_Model       |         66.14 |               26 |
+|   17 | Bare            | CNN_LSTM_Model      |         48.13 |               29 |
+
+![](../_static/images/smp2018ecdtcorpus_f1_score.png)

@@ -30,8 +30,7 @@ class SequenceProcessor(ABCProcessor):
         data = super(SequenceProcessor, self).to_dict()
         data['config'].update({
             'build_in_vocab': self.build_in_vocab,
-            'min_count': self.min_count,
-            'allow_unk': self.allow_unk
+            'min_count': self.min_count
         })
         return data
 
@@ -50,7 +49,6 @@ class SequenceProcessor(ABCProcessor):
 
         self.build_in_vocab = build_in_vocab
         self.min_count = min_count
-        self.allow_unk = True
         self.build_vocab_from_labels = build_vocab_from_labels
 
         if build_in_vocab == 'text':
@@ -70,20 +68,21 @@ class SequenceProcessor(ABCProcessor):
         self._showed_seq_len_warning = False
 
     def build_vocab_generator(self,
-                              generator: Optional[CorpusGenerator]) -> None:
+                              generators: List[CorpusGenerator]) -> None:
         if not self.vocab2idx:
             vocab2idx = self._initial_vocab_dic
 
             token2count: Dict[str, int] = {}
 
-            for sentence, label in tqdm.tqdm(generator, desc="Preparing text vocab dict"):
-                if self.build_vocab_from_labels:
-                    target = label
-                else:
-                    target = sentence
-                for token in target:
-                    count = token2count.get(token, 0)
-                    token2count[token] = count + 1
+            for gen in generators:
+                for sentence, label in tqdm.tqdm(gen, desc="Preparing text vocab dict"):
+                    if self.build_vocab_from_labels:
+                        target = label
+                    else:
+                        target = sentence
+                    for token in target:
+                        count = token2count.get(token, 0)
+                        token2count[token] = count + 1
 
             sorted_token2count = sorted(token2count.items(),
                                         key=operator.itemgetter(1),
@@ -96,28 +95,36 @@ class SequenceProcessor(ABCProcessor):
             self.vocab2idx = vocab2idx
             self.idx2vocab = dict([(v, k) for k, v in self.vocab2idx.items()])
 
-            logger.info("------ Build vocab dict finished, Top 10 token ------")
-            for token, index in list(self.vocab2idx.items())[:10]:
-                logger.info(f"Token: {token:8s} -> {index}")
-            logger.info("------ Build vocab dict finished, Top 10 token ------")
+            top_k_vocab = [k for (k, v) in list(self.vocab2idx.items())[:10]]
+            logger.debug(f"--- Build vocab dict finished, Total: {len(self.vocab2idx)} ---")
+            logger.debug(f"Top-10: {top_k_vocab}")
 
     def transform(self,
                   samples: TextSamplesVar,
                   *,
                   seq_length: int = None,
-                  segment: bool = False,
-                  **kwargs: Any) -> np.ndarray:
+                  max_position: int = None,
+                  segment: bool = False) -> np.ndarray:
+        seq_length_from = ""
         if seq_length is None:
+            seq_length_from = "max length of the samples"
             seq_length = max([len(i) for i in samples]) + 2
-            if not self._showed_seq_len_warning:
-                logger.warning(
-                    f'Sequence length is None, will use the max length of the samples, which is {seq_length}')
-                self._showed_seq_len_warning = True
+        if max_position is not None and max_position < seq_length:
+            seq_length_from = "max embedding seq length"
+            seq_length = max_position
+
+        if seq_length_from and not self._showed_seq_len_warning:
+            logger.warning(
+                f'Sequence length is None, will use the {seq_length_from}, which is {seq_length}')
+            self._showed_seq_len_warning = True
 
         numerized_samples = []
         for seq in samples:
-            seq = [self.token_bos] + seq + [self.token_eos]
-            if self.allow_unk:
+            if self.token_bos in self.vocab2idx:
+                seq = [self.token_bos] + seq + [self.token_eos]
+            else:
+                seq = [self.token_pad] + seq + [self.token_pad]
+            if self.token_unk in self.vocab2idx:
                 unk_index = self.vocab2idx[self.token_unk]
                 numerized_samples.append([self.vocab2idx.get(token, unk_index) for token in seq])
             else:

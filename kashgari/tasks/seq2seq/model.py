@@ -128,18 +128,18 @@ class Seq2Seq:
 
         """
         if self.encoder is None:
-            self.encoder_processor.build_vocab_generator(train_gen)
-            self.decoder_processor.build_vocab_generator(train_gen)
+            self.encoder_processor.build_vocab_generator([train_gen])
+            self.decoder_processor.build_vocab_generator([train_gen])
             self.encoder_embedding.setup_text_processor(self.encoder_processor)
             self.decoder_embedding.setup_text_processor(self.decoder_processor)
 
             if self.encoder_seq_length is None:
-                self.encoder_seq_length = self.encoder_embedding.get_seq_length_from_corpus(corpus_gen=train_gen,
+                self.encoder_seq_length = self.encoder_embedding.get_seq_length_from_corpus([train_gen],
                                                                                             cover_rate=1.0)
                 logger.info(f"calculated encoder sequence length: {self.encoder_seq_length}")
 
             if self.decoder_seq_length is None:
-                self.decoder_seq_length = self.decoder_embedding.get_seq_length_from_corpus(corpus_gen=train_gen,
+                self.decoder_seq_length = self.decoder_embedding.get_seq_length_from_corpus([train_gen],
                                                                                             use_label=True,
                                                                                             cover_rate=1.0)
                 logger.info(f"calculated decoder sequence length: {self.decoder_seq_length}")
@@ -259,14 +259,27 @@ class Seq2Seq:
         # Load Model Weights
         model.encoder_embedding.embed_model.load_weights(os.path.join(model_path, 'encoder_embed_weights.h5'))
         model.decoder_embedding.embed_model.load_weights(os.path.join(model_path, 'decoder_embed_weights.h5'))
+
+        # ------ Fix Start -------
+        # load model issue on TF 2.3
+        # Unable to load weights saved in HDF5 format into a subclassed Model which has not created its variables yet.
+        # Call the Model first, then load the weights.
+        input_seq = model.encoder_processor.transform([['hello']],
+                                                      seq_length=model.encoder_seq_length)
+        dec_input = tf.expand_dims([3], 0)
+        enc_hidden = tf.zeros((1, model.hidden_size))
+        dec_hidden = enc_hidden
+        enc_output, enc_hidden = model.encoder(input_seq, enc_hidden)
+        _ = model.decoder(dec_input, dec_hidden, enc_output)
+        # ------ Fix End -------
+
         model.encoder.load_weights(os.path.join(model_path, 'encoder_weights.h5'))
         model.decoder.load_weights(os.path.join(model_path, 'decoder_weights.h5'))
 
         return model
 
     def predict(self,
-                x_data: TextSamplesVar,
-                debug_info: bool = False) -> Tuple[List, np.ndarray]:
+                x_data: TextSamplesVar) -> Tuple[List, np.ndarray]:
         results = []
         attentions = []
 
@@ -296,12 +309,6 @@ class Seq2Seq:
                     break
                 dec_input = tf.expand_dims([next_tokens], 0)
             r = self.decoder_processor.inverse_transform([token_out])[0]
-            if debug_info:
-                print('\n---------------------------')
-                print(f"input sentence  : {' '.join(sample)}")
-                print(f"input idx       : {input_seq[0]}")
-                print(f"output idx      : {token_out}")
-                print(f"output sentence : {' '.join(r)}")
             results.append(r)
             attentions.append(attention_plot)
         return results, np.array(attentions)

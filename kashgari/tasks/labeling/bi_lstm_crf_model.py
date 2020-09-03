@@ -1,38 +1,32 @@
-# encoding: utf-8
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+# Author  : BrikerMan
+# Site    : https://eliyar.biz
 
-# author: BrikerMan
-# contact: eliyar917@gmail.com
-# blog: https://eliyar.biz
-
-# file: bi_lstm_crf_model.py
-# time: 4:09 下午
-
-# type: ignore
+# Time    : 2020/9/1 11:51 下午
+# File    : bi_lstm_crf_model.py
+# Project : Kashgari
 
 from typing import Dict, Any
 
-from bert4keras.layers import ConditionalRandomField
 from tensorflow import keras
-
-import kashgari
-from kashgari.layers import L
+from kashgari.layers import L, ConditionalRandomField
 from kashgari.tasks.labeling.abc_model import ABCLabelingModel
-
-kashgari.custom_objects['ConditionalRandomField'] = ConditionalRandomField
 
 
 class BiLSTM_CRF_Model(ABCLabelingModel):
+
     @classmethod
     def default_hyper_parameters(cls) -> Dict[str, Dict[str, Any]]:
         return {
-            'layer_lstm': {
+            'layer_blstm': {
                 'units': 128,
                 'return_sequences': True
             },
             'layer_dropout': {
                 'rate': 0.4
             },
-            'layer_dense': {},
+            'layer_time_distributed': {},
             'layer_activation': {
                 'activation': 'softmax'
             }
@@ -44,12 +38,12 @@ class BiLSTM_CRF_Model(ABCLabelingModel):
         config = self.hyper_parameters
         embed_model = self.embedding.embed_model
 
-        crf = ConditionalRandomField(name='layer_crf')
+        crf = ConditionalRandomField()
 
         layer_stack = [
-            L.Bidirectional(L.LSTM(**config['layer_lstm'], name='layer_lstm')),
+            L.Bidirectional(L.LSTM(**config['layer_blstm']), name='layer_blstm'),
             L.Dropout(**config['layer_dropout'], name='layer_dropout'),
-            L.Dense(output_dim, **config['layer_dense']),
+            L.Dense(output_dim, **config['layer_time_distributed']),
             crf
         ]
 
@@ -57,16 +51,19 @@ class BiLSTM_CRF_Model(ABCLabelingModel):
         for layer in layer_stack:
             tensor = layer(tensor)
 
-        self.layer_crf = crf
         self.tf_model = keras.Model(embed_model.inputs, tensor)
+        self.crf_layer = crf
 
-    def compile_model(self, **kwargs: Any) -> None:  # type: ignore[override]
-        if kwargs.get('loss') is None:
-            kwargs['loss'] = self.layer_crf.sparse_loss
-        if kwargs.get('metrics') is None:
-            kwargs['metrics'] = [self.layer_crf.sparse_accuracy]
-        super(BiLSTM_CRF_Model, self).compile_model(**kwargs)
-
-
-if __name__ == "__main__":
-    pass
+    def compile_model(self,
+                      loss: Any = None,
+                      optimizer: Any = None,
+                      metrics: Any = None,
+                      **kwargs: Any) -> None:
+        if loss is None:
+            loss = self.crf_layer.loss
+        if metrics is None:
+            metrics = [self.crf_layer.accuracy]
+        super(BiLSTM_CRF_Model, self).compile_model(loss=loss,
+                                                    optimizer=optimizer,
+                                                    metrics=metrics,
+                                                    **kwargs)

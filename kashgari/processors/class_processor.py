@@ -35,23 +35,23 @@ class ClassificationProcessor(ABCProcessor):
         self.multi_label_binarizer = MultiLabelBinarizer(self.vocab2idx)
 
     def build_vocab_generator(self,
-                              generator: Optional[CorpusGenerator]) -> None:
+                              generators: List[CorpusGenerator]) -> None:
         from kashgari.utils import MultiLabelBinarizer
         if self.vocab2idx:
             return
 
         vocab2idx: Dict[str, int] = {}
         token2count: Dict[str, int] = {}
-
-        if self.multi_label:
-            for _, label in tqdm.tqdm(generator, desc="Preparing classification label vocab dict"):
-                for token in label:
-                    count = token2count.get(token, 0)
-                    token2count[token] = count + 1
-        else:
-            for _, label in tqdm.tqdm(generator, desc="Preparing classification label vocab dict"):
-                count = token2count.get(label, 0)
-                token2count[label] = count + 1
+        for generator in generators:
+            if self.multi_label:
+                for _, label in tqdm.tqdm(generator, desc="Preparing classification label vocab dict"):
+                    for token in label:
+                        count = token2count.get(token, 0)
+                        token2count[token] = count + 1
+            else:
+                for _, label in tqdm.tqdm(generator, desc="Preparing classification label vocab dict"):
+                    count = token2count.get(label, 0)
+                    token2count[label] = count + 1
 
         sorted_token2count = sorted(token2count.items(),
                                     key=operator.itemgetter(1),
@@ -75,8 +75,8 @@ class ClassificationProcessor(ABCProcessor):
                   samples: TextSamplesVar,
                   *,
                   seq_length: int = None,
-                  segment: bool = False,
-                  **kwargs: Any) -> np.ndarray:
+                  max_position: int = None,
+                  segment: bool = False) -> np.ndarray:
         if self.multi_label:
             sample_tensor = self.multi_label_binarizer.transform(samples)
             return sample_tensor

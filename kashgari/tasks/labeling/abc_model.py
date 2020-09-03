@@ -7,15 +7,16 @@
 # file: abc_model.py
 # time: 4:30 下午
 
-import random
 from abc import ABC
 from typing import List, Dict, Any, Union, Optional
 
+import numpy as np
 import tensorflow as tf
 
 import kashgari
 from kashgari.embeddings import ABCEmbedding, BareEmbedding
 from kashgari.generators import CorpusGenerator, BatchDataSet
+from kashgari.layers import ConditionalRandomField
 from kashgari.logger import logger
 from kashgari.metrics.sequence_labeling import get_entities
 from kashgari.metrics.sequence_labeling import sequence_labeling_report
@@ -25,20 +26,20 @@ from kashgari.types import TextSamplesVar
 
 
 class ABCLabelingModel(ABCTaskModel, ABC):
+    """
+    Abstract Labeling Model
+    """
 
     def __init__(self,
                  embedding: ABCEmbedding = None,
                  sequence_length: int = None,
-                 hyper_parameters: Dict[str, Dict[str, Any]] = None,
-                 **kwargs: Any):
+                 hyper_parameters: Dict[str, Dict[str, Any]] = None):
         """
-        Init Labeling Model
 
         Args:
             embedding: embedding object
             sequence_length: target sequence length
             hyper_parameters: hyper_parameters to overwrite
-            **kwargs:
         """
         super(ABCLabelingModel, self).__init__()
         if embedding is None:
@@ -51,14 +52,16 @@ class ABCLabelingModel(ABCTaskModel, ABC):
         self.embedding = embedding
         self.hyper_parameters = hyper_parameters
         self.sequence_length = sequence_length
-        self.text_processor = SequenceProcessor()
-        self.label_processor = SequenceProcessor(vocab_dict_type='labeling',
-                                                 min_count=1,
-                                                 build_vocab_from_labels=True)
+        self.text_processor: SequenceProcessor = SequenceProcessor()
+        self.label_processor: SequenceProcessor = SequenceProcessor(build_in_vocab='labeling',
+                                                                    min_count=1,
+                                                                    build_vocab_from_labels=True)
+
+        self.crf_layer: Optional[ConditionalRandomField] = None
 
     def build_model(self,
-                    x_train: TextSamplesVar,
-                    y_train: TextSamplesVar) -> None:
+                    x_data: TextSamplesVar,
+                    y_data: TextSamplesVar) -> None:
         """
         Build Model with x_data and y_data
 
@@ -66,24 +69,25 @@ class ABCLabelingModel(ABCTaskModel, ABC):
          then call :meth:`ABCClassificationModel.build_model_gen` for preparing processor and model
 
         Args:
-            x_train:
-            y_train:
+            x_data:
+            y_data:
 
         Returns:
 
         """
 
-        train_gen = CorpusGenerator(x_train, y_train)
-        self.build_model_generator(train_gen)
+        train_gen = CorpusGenerator(x_data, y_data)
+        self.build_model_generator([train_gen])
 
     def build_model_generator(self,
-                              train_gen: CorpusGenerator) -> None:
-        self.text_processor.build_vocab_generator(train_gen)
-        self.label_processor.build_vocab_generator(train_gen)
+                              generators: List[CorpusGenerator]) -> None:
+        if not self.text_processor.vocab2idx:
+            self.text_processor.build_vocab_generator(generators)
+        self.label_processor.build_vocab_generator(generators)
         self.embedding.setup_text_processor(self.text_processor)
 
         if self.sequence_length is None:
-            self.sequence_length = self.embedding.get_seq_length_from_corpus(corpus_gen=train_gen)
+            self.sequence_length = self.embedding.get_seq_length_from_corpus(generators)
 
         if self.tf_model is None:
             self.build_model_arc()
@@ -113,7 +117,7 @@ class ABCLabelingModel(ABCTaskModel, ABC):
             loss: name of objective function, objective function or ``tf.keras.losses.Loss`` instance.
             optimizer: name of optimizer or optimizer instance.
             metrics (object): List of metrics to be evaluated by the model during training and testing.
-            **kwargs: additional params passed to :meth:`tf.keras.Model.predict``.
+            kwargs: additional params passed to :meth:`tf.keras.Model.predict``.
         """
         if loss is None:
             loss = 'sparse_categorical_crossentropy'
@@ -201,13 +205,14 @@ class ABCLabelingModel(ABCTaskModel, ABC):
             at successive epochs, as well as validation loss values
             and validation metrics values (if applicable).
         """
-        self.build_model_generator(train_sample_gen)
+        self.build_model_generator([g for g in [train_sample_gen, valid_sample_gen] if g])
 
         train_set = BatchDataSet(train_sample_gen,
                                  text_processor=self.text_processor,
                                  label_processor=self.label_processor,
                                  segment=self.embedding.segment,
                                  seq_length=self.sequence_length,
+                                 max_position=self.embedding.max_position,
                                  batch_size=batch_size)
 
         if fit_kwargs is None:
@@ -218,28 +223,26 @@ class ABCLabelingModel(ABCTaskModel, ABC):
                                      label_processor=self.label_processor,
                                      segment=self.embedding.segment,
                                      seq_length=self.sequence_length,
+                                     max_position=self.embedding.max_position,
                                      batch_size=batch_size)
             fit_kwargs['validation_data'] = valid_set.take()
             fit_kwargs['validation_steps'] = len(valid_set)
 
-        for x, y in train_set.take(100):
-            logger.debug(f"Sample Inputs, x: {x.shape} {x.dtype} "
-                         f"y: {y.shape} {y.dtype}")
-
+        for x, y in train_set.take(1):
+            logger.debug('fit input shape: {}'.format(np.array(x).shape))
+            logger.debug('fit input shape: {}'.format(np.array(y).shape))
         return self.tf_model.fit(train_set.take(),
                                  steps_per_epoch=len(train_set),
                                  epochs=epochs,
                                  callbacks=callbacks,
                                  **fit_kwargs)
 
-    def predict(self,  # type: ignore[override]
+    def predict(self,
                 x_data: TextSamplesVar,
                 *,
                 batch_size: int = 32,
                 truncating: bool = False,
-                debug_info: bool = False,
-                predict_kwargs: Dict = None,
-                **kwargs: Any) -> List[List[str]]:
+                predict_kwargs: Dict = None) -> List[List[str]]:
         """
         Generates output predictions for the input samples.
 
@@ -249,7 +252,6 @@ class ABCLabelingModel(ABCTaskModel, ABC):
             x_data: The input data, as a Numpy array (or list of Numpy arrays if the model has multiple inputs).
             batch_size: Integer. If unspecified, it will default to 32.
             truncating: remove values from sequences larger than `model.embedding.sequence_length`
-            debug_info: Bool, Should print out the logging info.
             predict_kwargs: arguments passed to :meth:`tf.keras.Model.predict`
 
         Returns:
@@ -262,20 +264,22 @@ class ABCLabelingModel(ABCTaskModel, ABC):
                 seq_length = self.sequence_length
             else:
                 seq_length = None
+
+            print(self.crf_layer)
             tensor = self.text_processor.transform(x_data,
                                                    segment=self.embedding.segment,
-                                                   seq_lengtg=seq_length,
+                                                   seq_length=seq_length,
                                                    max_position=self.embedding.max_position)
-            pred = self.tf_model.predict(tensor, batch_size=batch_size, **predict_kwargs)
+            logger.debug('predict seq_length: {}, input: {}'.format(seq_length, np.array(tensor).shape))
+            pred = self.tf_model.predict(tensor, batch_size=batch_size, verbose=1, **predict_kwargs)
             pred = pred.argmax(-1)
+
             lengths = [len(sen) for sen in x_data]
 
             res: List[List[str]] = self.label_processor.inverse_transform(pred,  # type: ignore
                                                                           lengths=lengths)
-            if debug_info:
-                logger.info('input: {}'.format(tensor))
-                logger.info('output: {}'.format(pred))
-                logger.info('output argmax: {}'.format(pred.argmax(-1)))
+            logger.debug('predict output: {}'.format(np.array(pred).shape))
+            logger.debug('predict output argmax: {}'.format(pred))
         return res
 
     def predict_entities(self,
@@ -283,7 +287,6 @@ class ABCLabelingModel(ABCTaskModel, ABC):
                          batch_size: int = 32,
                          join_chunk: str = ' ',
                          truncating: bool = False,
-                         debug_info: bool = False,
                          predict_kwargs: Dict = None) -> List[Dict]:
         """Gets entities from sequence.
 
@@ -292,7 +295,6 @@ class ABCLabelingModel(ABCTaskModel, ABC):
             batch_size: Integer. If unspecified, it will default to 32.
             truncating: remove values from sequences larger than `model.embedding.sequence_length`
             join_chunk: str or False,
-            debug_info: Bool, Should print out the logging info.
             predict_kwargs: arguments passed to :meth:`tf.keras.Model.predict`
 
         Returns:
@@ -305,7 +307,6 @@ class ABCLabelingModel(ABCTaskModel, ABC):
         res = self.predict(x_data,
                            batch_size=batch_size,
                            truncating=truncating,
-                           debug_info=debug_info,
                            predict_kwargs=predict_kwargs)
         new_res = [get_entities(seq) for seq in res]
         final_res = []
@@ -343,9 +344,7 @@ class ABCLabelingModel(ABCTaskModel, ABC):
                  y_data: TextSamplesVar,
                  batch_size: int = 32,
                  digits: int = 4,
-                 truncating: bool = False,
-                 debug_info: bool = False,
-                 **kwargs: Dict) -> Dict:
+                 truncating: bool = False) -> Dict:
         """
         Build a text report showing the main labeling metrics.
 
@@ -355,8 +354,6 @@ class ABCLabelingModel(ABCTaskModel, ABC):
             batch_size:
             digits:
             truncating:
-            debug_info:
-            **kwargs:
 
         Returns:
             A report dict
@@ -399,8 +396,7 @@ class ABCLabelingModel(ABCTaskModel, ABC):
         """
         y_pred = self.predict(x_data,
                               batch_size=batch_size,
-                              truncating=truncating,
-                              debug_info=debug_info)
+                              truncating=truncating)
         y_true = [seq[:len(y_pred[index])] for index, seq in enumerate(y_data)]
 
         new_y_pred = []
@@ -410,12 +406,6 @@ class ABCLabelingModel(ABCTaskModel, ABC):
         for x in y_true:
             new_y_true.append([str(i) for i in x])
 
-        if debug_info:
-            for index in random.sample(list(range(len(x_data))), 5):
-                logger.debug('------ sample {} ------'.format(index))
-                logger.debug('x      : {}'.format(x_data[index]))
-                logger.debug('y_true : {}'.format(y_true[index]))
-                logger.debug('y_pred : {}'.format(y_pred[index]))
         report = sequence_labeling_report(y_true, y_pred, digits=digits)
         return report
 

@@ -18,6 +18,10 @@ from kashgari.logger import logger
 
 
 class TransformerEmbedding(ABCEmbedding):
+    """
+    TransformerEmbedding is based on bert4keras.
+    The embeddings itself are wrapped into our simple embedding interface so that they can be used like any other embedding.
+    """
     def to_dict(self) -> Dict[str, Any]:
         info_dic = super(TransformerEmbedding, self).to_dict()
         info_dic['config']['vocab_path'] = self.vocab_path
@@ -31,22 +35,15 @@ class TransformerEmbedding(ABCEmbedding):
                  config_path: str,
                  checkpoint_path: str,
                  model_type: str = 'bert',
-                 **kwargs: Any) -> None:
+                 **kwargs: Any):
         """
-        Transformer embedding, based on https://github.com/bojone/bert4keras
-        support
 
         Args:
             vocab_path: vocab file path, example `vocab.txt`
             config_path: model config path, example `config.json`
             checkpoint_path: model weight path, example `model.ckpt-100000`
             model_type: transfer model type, {bert, albert, nezha, gpt2_ml, t5}
-            layer_nums: number of layers whose outputs will be concatenated into a single tensor, default 1,
-                output the last 1 hidden layers.
-            sequence_length:
-            text_processor:
-            label_processor:
-            **kwargs:
+            kwargs: additional params
         """
         self.vocab_path = vocab_path
         self.config_path = config_path
@@ -63,10 +60,15 @@ class TransformerEmbedding(ABCEmbedding):
                 token = line.strip()
                 self.vocab_list.append(token)
                 token2idx[token] = len(token2idx)
-        logger.debug("------ Build vocab dict finished, Top 10 token ------")
-        for index, token in enumerate(self.vocab_list[:10]):
-            logger.debug(f"Token: {token:8s} -> {index}")
-        logger.debug("------ Build vocab dict finished, Top 10 token ------")
+        top_words = [k for k, v in list(token2idx.items())[:50]]
+        logger.debug('------------------------------------------------')
+        logger.debug("Loaded transformer model's vocab")
+        logger.debug(f'config_path       : {self.config_path}')
+        logger.debug(f'vocab_path      : {self.vocab_path}')
+        logger.debug(f'checkpoint_path : {self.checkpoint_path}')
+        logger.debug(f'Top 50 words    : {top_words}')
+        logger.debug('------------------------------------------------')
+
         return token2idx
 
     def build_embedding_model(self,
@@ -76,7 +78,8 @@ class TransformerEmbedding(ABCEmbedding):
                               **kwargs: Dict) -> None:
         if self.embed_model is None:
             config_path = self.config_path
-            config = json.loads(open(config_path, 'r').read())
+            with open(config_path, 'r') as f:
+                config = json.loads(f.read())
             if 'max_position' in config:
                 self.max_position = config['max_position']
             else:
@@ -91,8 +94,6 @@ class TransformerEmbedding(ABCEmbedding):
                 layer.trainable = False
             self.embed_model = bert_model
             self.embedding_size = bert_model.output.shape[-1]
-            print(bert_model.output.shape)
-            print(self.embedding_size)
 
 
 if __name__ == "__main__":

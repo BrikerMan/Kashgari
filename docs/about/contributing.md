@@ -46,3 +46,11 @@ Currently, Kashgari can handle text-classification and sequence-labeling tasks. 
 ## Documentation Improvements
 
 A ton of time has been spent not only creating and supporting this tool, but also spent making this documentation. If you feel it is still lacking, show your appreciation for the tool by helping to improve/translate the documentation.
+
+You can build the docs by running this commands in project root folder. Source files are in the `docs` folder.
+
+```bash
+pip install -r docs/requirements.txt
+python setup.py install
+sh ./scripts/docs-live.sh
+```
