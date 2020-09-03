@@ -7,9 +7,11 @@
 # File    : conditional_random_field.py
 # Project : Kashgari
 
+# mypy: ignore-errors
+
 import tensorflow as tf
-import tensorflow_addons as tfa
 import tensorflow.keras.backend as K
+import tensorflow_addons as tfa
 
 
 class ConditionalRandomField(tf.keras.layers.Layer):
@@ -70,7 +72,7 @@ class ConditionalRandomField(tf.keras.layers.Layer):
             self.sequence_lengths = K.sum(K.cast(mask, 'int32'), axis=-1)
             self.mask = mask
         else:
-            self.sequence_lengths = K.sum(K.ones_like(inputs[:,:,0], dtype='int32'), axis=-1)
+            self.sequence_lengths = K.sum(K.ones_like(inputs[:, :, 0], dtype='int32'), axis=-1)
         viterbi_sequence, _ = tfa.text.crf_decode(
             inputs, self.transitions, self.sequence_lengths
         )
@@ -89,7 +91,7 @@ class ConditionalRandomField(tf.keras.layers.Layer):
         return tf.reduce_mean(-log_likelihood)
 
     def compute_output_shape(self, input_shape):
-        return input_shape[:2] + (self.out_dim, )
+        return input_shape[:2] + (self.out_dim,)
 
     # use crf decode to estimate accuracy
     def accuracy(self, y_true, y_pred):
@@ -108,7 +110,6 @@ class ConditionalRandomField(tf.keras.layers.Layer):
         else:
             mask = K.cast(mask, y_pred.dtype)
             return K.sum(is_equal * mask) / K.sum(mask)
-
 
     # Use argmax to estimate accuracy
     def fast_accuracy(self, y_true, y_pred):

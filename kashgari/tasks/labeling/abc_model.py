@@ -273,7 +273,7 @@ class ABCLabelingModel(ABCTaskModel, ABC):
             logger.debug('predict seq_length: {}, input: {}'.format(seq_length, np.array(tensor).shape))
             pred = self.tf_model.predict(tensor, batch_size=batch_size, verbose=1, **predict_kwargs)
             pred = pred.argmax(-1)
-                # pred = pred.argmax(-1)
+
             lengths = [len(sen) for sen in x_data]
 
             res: List[List[str]] = self.label_processor.inverse_transform(pred,  # type: ignore
