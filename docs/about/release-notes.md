@@ -17,7 +17,7 @@ pip show kashgari
 
 ## Current Release
 
-### [2.0.0.alpha] - 2020.06.10
+### [2.0.0.alpha2] - 2020.09.04
 
 This is a fully re-implemented version with TF2.
 

@@ -36,7 +36,7 @@
 <!-- markdownlint-enable -->
 <!-- prettier-ignore-end -->
 
-🎉🎉🎉 We released the 2.0.0-alpha0 version with Seq2Seq Support. 🎉🎉🎉
+🎉🎉🎉 We released the 2.0.0-alpha2 version with Seq2Seq Support. 🎉🎉🎉
 
 ## Overview
 
@@ -84,7 +84,7 @@ The project is based on Python 3.6+, because it is 2019 and type hinting is cool
 
 | Backend          | pypi version                           | desc                         |
 | ---------------- | -------------------------------------- | ---------------------------- |
-| TensorFlow 2.x   | `pip install 'kashgari>=2.0.0a0'`      | TF2 tf.keras - alpha version |
+| TensorFlow 2.1+  | `pip install 'kashgari>=2.0.0a0'`      | TF2 tf.keras - alpha version |
 | TensorFlow 1.14+ | `pip install 'kashgari>=1.0.0,<2.0.0'` | TF1.14+ tf.keras version     |
 | Keras            | `pip install 'kashgari<1.0.0'`         | keras version                |
 
