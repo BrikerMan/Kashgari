@@ -20,7 +20,7 @@ from kashgari.embeddings import ABCEmbedding
 from kashgari.logger import logger
 from kashgari.processors.abc_processor import ABCProcessor
 from kashgari.utils import load_data_object
-from kashgari.layers import ConditionalRandomField
+from kashgari.layers import KConditionalRandomField
 
 if TYPE_CHECKING:
     from kashgari.tasks.labeling import ABCLabelingModel
@@ -110,7 +110,7 @@ class ABCTaskModel(ABC):
         model.tf_model = tf.keras.models.model_from_json(tf_model_str,
                                                          custom_objects=kashgari.custom_objects)
 
-        if isinstance(model.tf_model.layers[-1], ConditionalRandomField):
+        if isinstance(model.tf_model.layers[-1], KConditionalRandomField):
             model.layer_crf = model.tf_model.layers[-1]
 
         model.tf_model.load_weights(os.path.join(model_path, 'model_weights.h5'))

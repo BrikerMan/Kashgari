@@ -16,7 +16,7 @@ import tensorflow as tf
 import kashgari
 from kashgari.embeddings import ABCEmbedding, BareEmbedding
 from kashgari.generators import CorpusGenerator, BatchDataSet
-from kashgari.layers import ConditionalRandomField
+from kashgari.layers import KConditionalRandomField
 from kashgari.logger import logger
 from kashgari.metrics.sequence_labeling import get_entities
 from kashgari.metrics.sequence_labeling import sequence_labeling_report
@@ -57,7 +57,7 @@ class ABCLabelingModel(ABCTaskModel, ABC):
                                                                     min_count=1,
                                                                     build_vocab_from_labels=True)
 
-        self.crf_layer: Optional[ConditionalRandomField] = None
+        self.crf_layer: Optional[KConditionalRandomField] = None
 
     def build_model(self,
                     x_data: TextSamplesVar,
