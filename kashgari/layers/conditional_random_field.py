@@ -9,6 +9,8 @@
 
 # mypy: ignore-errors
 
+from distutils.version import LooseVersion
+
 import tensorflow as tf
 import tensorflow.keras.backend as K
 import tensorflow_addons as tfa
@@ -40,6 +42,9 @@ class KConditionalRandomField(tf.keras.layers.Layer):
     def __init__(self,
                  sparse_target=True,
                  **kwargs):
+        if LooseVersion(tf.__version__) < '2.2.0':
+            raise ImportError("The KConditionalRandomField requires TensorFlow 2.2.x version or higher.")
+
         super().__init__()
         self.transitions = kwargs.pop('transitions', None)
         self.output_dim = kwargs.pop('output_dim', None)
