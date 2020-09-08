@@ -8,6 +8,22 @@ if [ -d '_site' ] ; then
     rm -r _site
 fi
 
+if [ -d 'kashgari.egg-info' ] ; then
+    rm -r kashgari.egg-info
+fi
+
+if [ -d '.coverage.imac.46767.552596' ] ; then
+    rm -r .coverage.imac.46767.552596
+fi
+
+if [ -d '.pytest_cache' ] ; then
+    rm -r .pytest_cache
+fi
+
+if [ -d 'tf_dir' ] ; then
+    rm -r tf_dir
+fi
+
 if [ -d '_site_src' ] ; then
     rm -r _site_src
 fi

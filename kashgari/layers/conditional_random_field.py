@@ -45,13 +45,10 @@ class KConditionalRandomField(tf.keras.layers.Layer):
         if LooseVersion(tf.__version__) < '2.2.0':
             raise ImportError("The KConditionalRandomField requires TensorFlow 2.2.x version or higher.")
 
+        super().__init__()
         self.transitions = kwargs.pop('transitions', None)
         self.output_dim = kwargs.pop('output_dim', None)
         self.sparse_target = sparse_target
-        print('++++++++++++++++ ConditionalRandomField S ++++++++++++++++')
-        print(kwargs)
-        print('++++++++++++++++ ConditionalRandomField E ++++++++++++++++')
-        super().__init__()
         self.sequence_lengths = None
         self.mask = None
 
