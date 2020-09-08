@@ -40,13 +40,10 @@ class KConditionalRandomField(tf.keras.layers.Layer):
     def __init__(self,
                  sparse_target=True,
                  **kwargs):
+        super().__init__()
         self.transitions = kwargs.pop('transitions', None)
         self.output_dim = kwargs.pop('output_dim', None)
         self.sparse_target = sparse_target
-        print('++++++++++++++++ ConditionalRandomField S ++++++++++++++++')
-        print(kwargs)
-        print('++++++++++++++++ ConditionalRandomField E ++++++++++++++++')
-        super().__init__()
         self.sequence_lengths = None
         self.mask = None
 
