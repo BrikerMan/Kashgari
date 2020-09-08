@@ -10,7 +10,7 @@
 from typing import Dict, Any
 
 from tensorflow import keras
-from kashgari.layers import L, ConditionalRandomField
+from kashgari.layers import L, KConditionalRandomField
 from kashgari.tasks.labeling.abc_model import ABCLabelingModel
 
 
@@ -38,7 +38,7 @@ class BiLSTM_CRF_Model(ABCLabelingModel):
         config = self.hyper_parameters
         embed_model = self.embedding.embed_model
 
-        crf = ConditionalRandomField()
+        crf = KConditionalRandomField()
 
         layer_stack = [
             L.Bidirectional(L.LSTM(**config['layer_blstm']), name='layer_blstm'),

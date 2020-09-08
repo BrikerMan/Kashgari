@@ -14,8 +14,9 @@ import tensorflow.keras.backend as K
 import tensorflow_addons as tfa
 
 
-class ConditionalRandomField(tf.keras.layers.Layer):
+class KConditionalRandomField(tf.keras.layers.Layer):
     """
+    K is to mark Kashgari version of CRF
     Conditional Random Field layer (tf.keras)
     `CRF` can be used as the last layer in a network (as a classifier). Input shape (features)
     must be equal to the number of classes the CRF can predict (a linear layer is recommended).
@@ -45,7 +46,7 @@ class ConditionalRandomField(tf.keras.layers.Layer):
         print('++++++++++++++++ ConditionalRandomField S ++++++++++++++++')
         print(kwargs)
         print('++++++++++++++++ ConditionalRandomField E ++++++++++++++++')
-        super(ConditionalRandomField, self).__init__(**kwargs)
+        super().__init__()
         self.sequence_lengths = None
         self.mask = None
 
@@ -54,8 +55,8 @@ class ConditionalRandomField(tf.keras.layers.Layer):
             "output_dim": self.output_dim,
             "transitions": K.eval(self.transitions),
         }
-        base_config = super(ConditionalRandomField, self).get_config()
-        return dict(list(base_config.items()) + list(config.items()))
+        base_config = super().get_config()
+        return dict(**base_config, **config)
 
     def build(self, input_shape):
         self.output_dim = input_shape[-1]
