@@ -54,20 +54,6 @@ Kashgari is a simple and powerful NLP Transfer learning framework, build a state
 - **NLP beginners** Learn how to build an NLP project with production level code quality.
 - **NLP developers** Build a production level classification/labeling model within minutes.
 
-## Supporting the project
-
-**You can support the project by checking out our sponsor page. It takes only one click:**
-
-<!-- markdownlint-disable -->
-<a href="https://tracking.gitads.io/?repo=Kashgari">
-  <img alt="Sponsor banner" src="https://images.gitads.io/Kashgari" />
-</a>
-<br>
-<i>
-  This advert was placed by <a href="https://tracking.gitads.io/?repo=Kashgari">GitAds</a>
-</i>
-<!-- markdownlint-enable -->
-
 ## Performance
 
 Welcome to add performance report.
@@ -76,17 +62,16 @@ Welcome to add performance report.
 | -------------------------- | -------- | --------------------------- | ------- |
 | [Named Entity Recognition] | Chinese  | [People's Daily Ner Corpus] | 95.57   |
 | [Text Classification]      | Chinese  | [SMP2018ECDTCorpus]         | 94.57   |
-| Neural machine translation |          |                             | // TODO |
 
 ## Installation
 
 The project is based on Python 3.6+, because it is 2019 and type hinting is cool.
 
-| Backend          | pypi version                           | desc                         |
-| ---------------- | -------------------------------------- | ---------------------------- |
-| TensorFlow 2.1+  | `pip install 'kashgari>=2.0.0a0'`      | TF2 tf.keras - alpha version |
-| TensorFlow 1.14+ | `pip install 'kashgari>=1.0.0,<2.0.0'` | TF1.14+ tf.keras version     |
-| Keras            | `pip install 'kashgari<1.0.0'`         | keras version                |
+| Backend          | pypi version                           | desc                  |
+| ---------------- | -------------------------------------- | --------------------- |
+| TensorFlow 2.1+  | `pip install 'kashgari>=2.0.0'`        | TF2.10+ with tf.keras |
+| TensorFlow 1.14+ | `pip install 'kashgari>=1.0.0,<2.0.0'` | TF1.14+ with tf.keras |
+| Keras            | `pip install 'kashgari<1.0.0'`         | keras version         |
 
 ## Tutorials
 
