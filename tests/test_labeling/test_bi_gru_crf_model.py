@@ -17,7 +17,7 @@ from kashgari.tasks.labeling import BiGRU_CRF_Model
 
 @pytest.mark.skipif(LooseVersion(tf.__version__) < '2.2.0',
                     reason="The KConditionalRandomField requires TensorFlow 2.2.x version or higher.")
-class TestBiGRU_Model(base.TestBiLSTM_Model):
+class TestBiGRU_CRF_Model(base.TestBiLSTM_Model):
 
     @classmethod
     def setUpClass(cls):
