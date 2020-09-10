@@ -7,13 +7,18 @@
 # File    : test_bi_lstm_crf_model.py
 # Project : Kashgari
 
+from distutils.version import LooseVersion
+
 import pytest
-import kashgari
+import tensorflow as tf
+
 import tests.test_labeling.test_bi_lstm_model as base
 from kashgari.tasks.labeling import BiLSTM_CRF_Model
 
 
-class TestBiLSTMGRU_Model(base.TestBiLSTM_Model):
+@pytest.mark.skipif(LooseVersion(tf.__version__) < '2.2.0',
+                    reason="The KConditionalRandomField requires TensorFlow 2.2.x version or higher.")
+class TestBiLSTM_CRF_Model(base.TestBiLSTM_Model):
 
     @classmethod
     def setUpClass(cls):
