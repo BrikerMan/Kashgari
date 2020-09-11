@@ -36,7 +36,20 @@
 <!-- markdownlint-enable -->
 <!-- prettier-ignore-end -->
 
-🎉🎉🎉 We released the 2.0.0-alpha2 version with Seq2Seq Support. 🎉🎉🎉
+🎉🎉🎉 We released the 2.0.0 version with TF2 Support. 🎉🎉🎉
+
+If you use this project for your research, please cite:
+
+```
+@misc{Kashgari
+  author = {Eliyar Eziz},
+  title = {Kashgari},
+  year = {2019},
+  publisher = {GitHub},
+  journal = {GitHub repository},
+  howpublished = {\url{https://github.com/BrikerMan/Kashgari}}
+}
+```
 
 ## Overview
 
