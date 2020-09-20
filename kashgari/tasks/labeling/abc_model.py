@@ -265,7 +265,6 @@ class ABCLabelingModel(ABCTaskModel, ABC):
             else:
                 seq_length = None
 
-            print(self.crf_layer)
             tensor = self.text_processor.transform(x_data,
                                                    segment=self.embedding.segment,
                                                    seq_length=seq_length,

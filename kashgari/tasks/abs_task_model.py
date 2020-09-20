@@ -106,7 +106,6 @@ class ABCTaskModel(ABC):
 
         tf_model_str = json.dumps(model_config['tf_model'])
 
-        print(tf_model_str)
         model.tf_model = tf.keras.models.model_from_json(tf_model_str,
                                                          custom_objects=kashgari.custom_objects)
 
