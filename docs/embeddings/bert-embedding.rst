@@ -37,7 +37,7 @@ Let's run a text classification model with BERT.
 
    bert_embedding = BertEmbedding('<PATH_TO_BERT_EMBEDDING>')
 
-   tokenizer = BertTokenizer(os.path.join('<PATH_TO_BERT_EMBEDDING>', 'vocab_chinese.txt'))
+   tokenizer = BertTokenizer.load_from_vocab_file(os.path.join('<PATH_TO_BERT_EMBEDDING>', 'vocab_chinese.txt'))
    sentences_tokenized = [tokenizer.tokenize(s) for s in sentences]
 
    """
