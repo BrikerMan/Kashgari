@@ -30,13 +30,12 @@ if TYPE_CHECKING:
 class ABCTaskModel(ABC):
 
     def __init__(self) -> None:
-        self.embedding: ABCEmbedding
+        self.tf_model: tf.keras.Model = None
+        self.embedding: ABCEmbedding = None
         self.hyper_parameters: Dict[str, Any]
         self.sequence_length: int
         self.text_processor: ABCProcessor
         self.label_processor: ABCProcessor
-
-        self.tf_model: tf.keras.Model
 
     def to_dict(self) -> Dict[str, Any]:
         model_json_str = self.tf_model.to_json()
@@ -76,11 +75,12 @@ class ABCTaskModel(ABC):
         """
         raise NotImplementedError
 
-    def save(self, model_path: str) -> str:
+    def save(self, model_path: str, h5_weight: bool = False) -> str:
         """
         Save model
         Args:
-            model_path:
+            model_path: target model path
+            h5_weight: whether using original h5 format or new saved_model format
         """
         pathlib.Path(model_path).mkdir(exist_ok=True, parents=True)
         model_path = os.path.abspath(model_path)
@@ -88,9 +88,12 @@ class ABCTaskModel(ABC):
         with open(os.path.join(model_path, 'model_config.json'), 'w') as f:
             f.write(json.dumps(self.to_dict(), indent=2, ensure_ascii=False))
             f.close()
-
-        self.embedding.embed_model.save_weights(os.path.join(model_path, 'embed_model_weights.h5'))
-        self.tf_model.save_weights(os.path.join(model_path, 'model_weights.h5'))  # type: ignore
+        if h5_weight:
+            self.embedding.embed_model.save_weights(os.path.join(model_path, 'embed_model_weights.h5'))
+            self.tf_model.save_weights(os.path.join(model_path, 'model_weights.h5'))  # type: ignore
+        else:
+            self.embedding.embed_model.save(os.path.join(model_path, 'embed_model'))
+            self.tf_model.save(os.path.join(model_path, 'full_model'))
         logger.info('model saved to {}'.format(os.path.abspath(model_path)))
         return model_path
 
@@ -112,8 +115,13 @@ class ABCTaskModel(ABC):
         if isinstance(model.tf_model.layers[-1], KConditionalRandomField):
             model.layer_crf = model.tf_model.layers[-1]
 
-        model.tf_model.load_weights(os.path.join(model_path, 'model_weights.h5'))
-        model.embedding.embed_model.load_weights(os.path.join(model_path, 'embed_model_weights.h5'))
+        h5_model_path = os.path.join(model_path, 'model_weights.h5')
+        if os.path.exists(h5_model_path):
+            model.tf_model.load_weights(h5_model_path)
+            model.embedding.embed_model.load_weights(os.path.join(model_path, 'embed_model_weights.h5'))
+        else:
+            model.tf_model = tf.keras.models.load_model(os.path.join(model_path, 'embed_model'))
+            model.tf_model = tf.keras.models.load_model(os.path.join(model_path, 'full_model'))
         return model
 
     @abstractmethod
