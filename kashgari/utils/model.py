@@ -11,7 +11,7 @@ import json
 import os
 import pathlib
 import time
-from typing import Union
+from typing import Union, Any
 
 from kashgari.tasks.abs_task_model import ABCTaskModel
 
@@ -19,8 +19,8 @@ from kashgari.tasks.abs_task_model import ABCTaskModel
 def convert_to_saved_model(model: ABCTaskModel,
                            model_path: str,
                            version: Union[str, int] = None,
-                           signatures=None,
-                           options=None):
+                           signatures: Any = None,
+                           options: Any = None) -> None:
     """
     Export model for tensorflow serving
     Args:

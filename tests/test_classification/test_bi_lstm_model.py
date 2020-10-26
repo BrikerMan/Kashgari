@@ -8,16 +8,14 @@
 # time: 1:57 下午
 
 import os
+import tempfile
 import time
 import unittest
-import tempfile
-import numpy as np
-
-from tests.test_macros import TestMacros
 
 from kashgari.corpus import SMP2018ECDTCorpus
 from kashgari.embeddings import WordEmbedding
 from kashgari.tasks.classification import BiLSTM_Model
+from tests.test_macros import TestMacros
 
 
 class TestBiLSTM_Model(unittest.TestCase):
@@ -62,6 +60,15 @@ class TestBiLSTM_Model(unittest.TestCase):
 
         # Make sure use sigmoid as activation function
         assert new_model.tf_model.layers[-1].activation.__name__ == 'softmax'
+
+        # TF Serving Test
+        from kashgari.utils import convert_to_saved_model
+        convert_to_saved_model(new_model,
+                               os.path.join(model_path, 'serving'),
+                               version=1)
+
+        from kashgari.processors import load_processors_from_model
+        _ = load_processors_from_model(os.path.join(model_path, 'serving', '1'))
 
     def test_multi_label(self):
         corpus = TestMacros.jigsaw_mini_corpus
@@ -110,7 +117,6 @@ class TestBiLSTM_Model(unittest.TestCase):
         new_model = self.TASK_MODEL_CLASS.load_model(model_path)
         new_model.tf_model.summary()
         _ = new_model.predict(valid_x[:20])
-
 
 
 if __name__ == '__main__':
