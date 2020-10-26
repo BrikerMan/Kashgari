@@ -27,7 +27,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        group: [ 1, 2 ]
+        group: [ 1, 2, 3, 4, 5, 6 ]
         tensorflow_version: [ 2.2.0, 2.3.0 ]
     steps:
       - uses: actions/checkout@v2
@@ -51,7 +51,7 @@ jobs:
          --cov-report term
          --cov-config .coveragerc
          --cov
-         --splits 2
+         --splits 6
          --group ${{ matrix.group }}
          tests/'
 
