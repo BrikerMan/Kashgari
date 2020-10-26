@@ -4,23 +4,24 @@ on:
     branches:
       - v2-main
       - v2-dev
+      - v2/github-actions
   pull_request:
     types: [opened, synchronize, reopened]
 jobs:
-#  lint:
-#    name: Lint
-#    runs-on: ubuntu-latest
-#    steps:
-#      - uses: actions/checkout@v2
-#      - name: Set up Python 3.8
-#        uses: actions/setup-python@v1
-#        with:
-#          python-version: 3.8
-#      - name: Install deps
-#        run: |
-#          pip install -r requirements.dev.txt
-#      - name: Run lint script
-#        run: sh ./scripts/lint.sh
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.8
+      - name: Install deps
+        run: |
+          pip install -r requirements.dev.txt
+      - name: Run lint script
+        run: sh ./scripts/lint.sh
   test:
     name: "Test with TF ${{ matrix.tensorflow_version }} - ${{ matrix.group }}"
     runs-on: ubuntu-latest
@@ -54,16 +55,19 @@ jobs:
          --group ${{ matrix.group }}
          tests/test_processor'
 
+      - name: Display structure of all files
+        run: ls -R
+
       - name: Upload unit test
         uses: actions/upload-artifact@v2
         with:
-          name: junitxml-${{ matrix.group }}
+          name: junitxml-${{ matrix.tensorflow_version }}-${{ matrix.group }}
           path: test-reports
 
       - name: Upload coverage
         uses: actions/upload-artifact@v2
         with:
-          name: coverage-${{ matrix.group }}
+          name: coverage-${{ matrix.tensorflow_version }}-${{ matrix.group }}
           path: cov-reports
 
   sonarcloud:
@@ -75,6 +79,14 @@ jobs:
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
       - uses: actions/download-artifact@v2
+        with:
+          path: artifacts
+      - name: Display structure of downloaded files
+        run: ls -R
+      - name: Copy Artifacts to target file
+        run: |
+          mkdir -p test-reports && cp artifacts/junit*/* test-reports
+          mkdir -p cov-reports && cp artifacts/cov*/* cov-reports
       - name: Display structure of downloaded files
         run: ls -R
       - name: SonarCloud Scan
@@ -82,3 +94,12 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+#      - name: Publish Unit Test Results
+#        uses: EnricoMi/publish-unit-test-result-action@v1.3
+#        if: always()
+#        with:
+#          github_token: ${{ secrets.GITHUB_TOKEN }}
+#          check_name: Unit Test Results
+#          files: test-results/*.xml
+#          report_individual_runs: true
+#          deduplicate_classes_by_file_name: false
