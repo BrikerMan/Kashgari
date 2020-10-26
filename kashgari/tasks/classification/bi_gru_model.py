@@ -44,7 +44,3 @@ class BiGRU_Model(ABCClassificationModel):
             tensor = layer(tensor)
 
         self.tf_model = keras.Model(embed_model.inputs, tensor)
-
-
-if __name__ == "__main__":
-    pass

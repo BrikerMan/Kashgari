@@ -47,6 +47,7 @@ class ABCTaskModel(ABC):
             '__module__': self.__class__.__module__,
             'config': {
                 'hyper_parameters': self.hyper_parameters,  # type: ignore
+                'sequence_length': self.sequence_length  # type: ignore
             },
             'embedding': self.embedding.to_dict(),  # type: ignore
             'text_processor': self.text_processor.to_dict(),
@@ -88,12 +89,9 @@ class ABCTaskModel(ABC):
         with open(os.path.join(model_path, 'model_config.json'), 'w') as f:
             f.write(json.dumps(self.to_dict(), indent=2, ensure_ascii=False))
             f.close()
-        if h5_weight:
-            self.embedding.embed_model.save_weights(os.path.join(model_path, 'embed_model_weights.h5'))
-            self.tf_model.save_weights(os.path.join(model_path, 'model_weights.h5'))  # type: ignore
-        else:
-            self.embedding.embed_model.save(os.path.join(model_path, 'embed_model'))
-            self.tf_model.save(os.path.join(model_path, 'full_model'))
+
+        self.embedding.embed_model.save_weights(os.path.join(model_path, 'embed_model_weights.h5'))
+        self.tf_model.save_weights(os.path.join(model_path, 'model_weights.h5'))  # type: ignore
         logger.info('model saved to {}'.format(os.path.abspath(model_path)))
         return model_path
 
@@ -115,13 +113,8 @@ class ABCTaskModel(ABC):
         if isinstance(model.tf_model.layers[-1], KConditionalRandomField):
             model.layer_crf = model.tf_model.layers[-1]
 
-        h5_model_path = os.path.join(model_path, 'model_weights.h5')
-        if os.path.exists(h5_model_path):
-            model.tf_model.load_weights(h5_model_path)
-            model.embedding.embed_model.load_weights(os.path.join(model_path, 'embed_model_weights.h5'))
-        else:
-            model.tf_model = tf.keras.models.load_model(os.path.join(model_path, 'embed_model'))
-            model.tf_model = tf.keras.models.load_model(os.path.join(model_path, 'full_model'))
+        model.tf_model.load_weights(os.path.join(model_path, 'model_weights.h5'))
+        model.embedding.embed_model.load_weights(os.path.join(model_path, 'embed_model_weights.h5'))
         return model
 
     @abstractmethod
@@ -129,9 +122,3 @@ class ABCTaskModel(ABC):
                     x_data: Any,
                     y_data: Any) -> None:
         raise NotImplementedError
-
-
-if __name__ == "__main__":
-    path = '/var/folders/x3/_dg9_drj42l_cc70tsqkpqrw0000gn/T/1590915853.4571211'
-    m = ABCTaskModel.load_model(path)
-    m.tf_model.summary()

@@ -17,6 +17,7 @@ from .data import get_list_subset
 from .data import unison_shuffled_copies
 from .multi_label import MultiLabelBinarizer
 from .serialize import load_data_object
+from .model import convert_to_saved_model
 
 if TYPE_CHECKING:
     from kashgari.tasks.labeling import ABCLabelingModel
