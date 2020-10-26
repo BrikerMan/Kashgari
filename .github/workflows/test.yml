@@ -53,7 +53,7 @@ jobs:
          --cov
          --splits 2
          --group ${{ matrix.group }}
-         tests/test_processor'
+         tests/'
 
       - name: Display structure of all files
         run: ls -R
