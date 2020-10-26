@@ -7,13 +7,27 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
 jobs:
+#  lint:
+#    name: Lint
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v2
+#      - name: Set up Python 3.8
+#        uses: actions/setup-python@v1
+#        with:
+#          python-version: 3.8
+#      - name: Install deps
+#        run: |
+#          pip install -r requirements.dev.txt
+#      - name: Run lint script
+#        run: sh ./scripts/lint.sh
   test:
-    name: Pytest
+    name: "Test with TF ${{ matrix.tensorflow_version }} - ${{ matrix.group }}"
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        group: [ 1, 2, 3, 4, 5 ]
-        tensorflow_version: [ 2.1.0, 2.2.0, 2.3.0 ]
+        group: [ 1, 2 ]
+        tensorflow_version: [ 2.2.0, 2.3.0 ]
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python 3.8
@@ -28,12 +42,29 @@ jobs:
           pip install -r requirements.txt
 
       - name: Run pytest
-        run: pytest --doctest-modules --junitxml=test-reports/junit.xml --cov=kashgari --cov-report=xml:coverage.xml --cov-report term --cov-report=html:htmlcov --cov-config .coveragerc --cov --splits 5 --group ${{ matrix.group }} tests/test_processor
-      - name: Upload coverage
-        uses: actions/upload-artifact@v1
+        run: 'pytest
+         --doctest-modules
+         --junitxml=test-reports/junit-${{ matrix.tensorflow_version }}-${{ matrix.group }}.xml
+         --cov=kashgari
+         --cov-report=xml:cov-reports/coverage-${{ matrix.tensorflow_version }}-${{ matrix.group }}.xml
+         --cov-report term
+         --cov-config .coveragerc
+         --cov
+         --splits 2
+         --group ${{ matrix.group }}
+         tests/test_processor'
+
+      - name: Upload unit test
+        uses: actions/upload-artifact@v2
         with:
-          name: coverage${{ matrix.group }}
-          path: .coverage
+          name: junitxml-${{ matrix.group }}
+          path: test-reports
+
+      - name: Upload coverage
+        uses: actions/upload-artifact@v2
+        with:
+          name: coverage-${{ matrix.group }}
+          path: cov-reports
 
   sonarcloud:
     name: SonarCloud
