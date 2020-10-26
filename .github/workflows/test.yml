@@ -23,6 +23,7 @@ jobs:
       - name: Run lint script
         run: sh ./scripts/lint.sh
   test:
+    if: "!contains(github.event.head_commit.message, 'skip ci')"
     name: "Test with TF ${{ matrix.tensorflow_version }} - ${{ matrix.group }}"
     runs-on: ubuntu-latest
     strategy:
@@ -71,6 +72,7 @@ jobs:
           path: cov-reports
 
   sonarcloud:
+    if: "!contains(github.event.head_commit.message, 'skip ci')"
     name: SonarCloud
     runs-on: ubuntu-latest
     needs: test
