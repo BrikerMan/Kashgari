@@ -4,6 +4,7 @@ flake8-builtins
 mypy
 pytest>=5.4.3
 pytest-cov
+pytest-split
 coveralls
 
 # documents
