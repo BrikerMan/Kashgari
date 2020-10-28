@@ -17,6 +17,11 @@ pip show kashgari
 
 ## Current Release
 
+### [2.0.1] - 2020.10.28
+
+- ✨ Add `convert_to_saved_model` API for tf-serving use case.
+- ✨ Add tf-serving documents.
+
 ### [2.0.0] - 2020.09.10
 
 This is a fully re-implemented version with TF2.
