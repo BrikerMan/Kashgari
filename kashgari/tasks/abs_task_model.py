@@ -76,13 +76,7 @@ class ABCTaskModel(ABC):
         """
         raise NotImplementedError
 
-    def save(self, model_path: str, h5_weight: bool = False) -> str:
-        """
-        Save model
-        Args:
-            model_path: target model path
-            h5_weight: whether using original h5 format or new saved_model format
-        """
+    def save(self, model_path: str) -> str:
         pathlib.Path(model_path).mkdir(exist_ok=True, parents=True)
         model_path = os.path.abspath(model_path)
 
