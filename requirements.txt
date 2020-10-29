@@ -2,7 +2,9 @@ numpy>=1.18.1
 gensim>=3.8.1
 pandas>=1.0.1
 tqdm
-bert4keras>=0.7.9
+# Limit this version to avoid json serilization issue.
+# See https://github.com/bojone/bert4keras/issues/241
+bert4keras==0.7.9
 scikit-learn>=0.21.1
 tensorflow>=2.1.0
 tensorflow_addons
