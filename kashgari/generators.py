@@ -100,6 +100,15 @@ class BatchDataSet(Iterable):
                                                           max_position=self.max_position)
                 yield x_tensor, y_tensor
                 batch_x, batch_y = [], []
+        if batch_x:
+            x_tensor = self.text_processor.transform(batch_x,
+                                                     seq_length=self.seq_length,
+                                                     max_position=self.max_position,
+                                                     segment=self.segment)
+            y_tensor = self.label_processor.transform(batch_y,
+                                                      seq_length=self.seq_length,
+                                                      max_position=self.max_position)
+            yield x_tensor, y_tensor
 
     def take(self, batch_count: int = None) -> Any:
         """

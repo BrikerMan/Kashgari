@@ -25,6 +25,12 @@
   embeddings/transformer-embedding.rst
 
 .. toctree::
+  :maxdepth: 2
+  :caption: Advanced Use Cases
+
+  advance-use/tensorflow-serving.md
+
+.. toctree::
   :maxdepth: 3
   :caption: API
 

@@ -30,13 +30,12 @@ if TYPE_CHECKING:
 class ABCTaskModel(ABC):
 
     def __init__(self) -> None:
-        self.embedding: ABCEmbedding
+        self.tf_model: tf.keras.Model = None
+        self.embedding: ABCEmbedding = None
         self.hyper_parameters: Dict[str, Any]
         self.sequence_length: int
         self.text_processor: ABCProcessor
         self.label_processor: ABCProcessor
-
-        self.tf_model: tf.keras.Model
 
     def to_dict(self) -> Dict[str, Any]:
         model_json_str = self.tf_model.to_json()
@@ -48,6 +47,7 @@ class ABCTaskModel(ABC):
             '__module__': self.__class__.__module__,
             'config': {
                 'hyper_parameters': self.hyper_parameters,  # type: ignore
+                'sequence_length': self.sequence_length  # type: ignore
             },
             'embedding': self.embedding.to_dict(),  # type: ignore
             'text_processor': self.text_processor.to_dict(),
@@ -77,11 +77,6 @@ class ABCTaskModel(ABC):
         raise NotImplementedError
 
     def save(self, model_path: str) -> str:
-        """
-        Save model
-        Args:
-            model_path:
-        """
         pathlib.Path(model_path).mkdir(exist_ok=True, parents=True)
         model_path = os.path.abspath(model_path)
 
@@ -106,7 +101,6 @@ class ABCTaskModel(ABC):
 
         tf_model_str = json.dumps(model_config['tf_model'])
 
-        print(tf_model_str)
         model.tf_model = tf.keras.models.model_from_json(tf_model_str,
                                                          custom_objects=kashgari.custom_objects)
 
@@ -122,9 +116,3 @@ class ABCTaskModel(ABC):
                     x_data: Any,
                     y_data: Any) -> None:
         raise NotImplementedError
-
-
-if __name__ == "__main__":
-    path = '/var/folders/x3/_dg9_drj42l_cc70tsqkpqrw0000gn/T/1590915853.4571211'
-    m = ABCTaskModel.load_model(path)
-    m.tf_model.summary()

@@ -106,6 +106,11 @@ class SequenceProcessor(ABCProcessor):
                   max_position: int = None,
                   segment: bool = False) -> np.ndarray:
         seq_length_from = ""
+
+        # An ugly patch for tf-serving use case.
+        if seq_length is None and self._sequence_length_from_saved_model is not None:
+            seq_length = self._sequence_length_from_saved_model
+
         if seq_length is None:
             seq_length_from = "max length of the samples"
             seq_length = max([len(i) for i in samples]) + 2

@@ -42,6 +42,8 @@ class ABCProcessor(ABC):
         self.token_bos: str = kwargs.get('token_bos', '[CLS]')  # type: ignore
         self.token_eos: str = kwargs.get('token_eos', '[SEP]')  # type: ignore
 
+        self._sequence_length_from_saved_model: Optional[int] = None
+
     @property
     def vocab_size(self) -> int:
         return len(self.vocab2idx)

@@ -17,12 +17,12 @@ from tests.test_macros import TestMacros
 class TestUtils(unittest.TestCase):
 
     def test_jieba_tokenizer(self):
-        os.system("pip uninstall -y jieba")
+        os.system("pip3 uninstall -y jieba")
 
         with self.assertRaises(ModuleNotFoundError):
             _ = JiebaTokenizer()
 
-        os.system("pip install  jieba")
+        os.system("pip3 install  jieba")
         t = JiebaTokenizer()
         assert ['你好', '世界', '!', ' ', 'Hello', ' ', 'World'] == t.tokenize('你好世界! Hello World')
 

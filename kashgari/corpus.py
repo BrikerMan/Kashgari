@@ -176,7 +176,7 @@ class SMP2018ECDTCorpus:
                 raise ModuleNotFoundError(
                     "please install jieba, `$ pip install jieba`")
             x_data = [list(jieba.cut(item)) for item in df['query'].to_list()]
-        elif 'char':
+        elif cutter == 'char':
             x_data = [list(item) for item in df['query'].to_list()]
         y_data = df['label'].to_list()
 
