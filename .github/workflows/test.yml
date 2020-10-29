@@ -23,7 +23,7 @@ jobs:
       - name: Run lint script
         run: sh ./scripts/lint.sh
   test:
-    if: "!contains(github.event.head_commit.message, 'skip ci')"
+    if: always()
     name: "Test with TF ${{ matrix.tensorflow_version }} - ${{ matrix.group }}"
     runs-on: ubuntu-latest
     strategy:
@@ -55,9 +55,6 @@ jobs:
          --splits 6
          --group ${{ matrix.group }}
          tests/'
-
-      - name: Display structure of all files
-        run: ls -R
 
       - name: Upload unit test
         uses: actions/upload-artifact@v2
