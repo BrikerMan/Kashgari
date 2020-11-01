@@ -90,14 +90,21 @@ class ABCTaskModel(ABC):
         return model_path
 
     @classmethod
-    def load_model(cls, model_path: str) -> Union["ABCLabelingModel", "ABCClassificationModel"]:
+    def load_model(cls, model_path: str,
+                   custom_objects: Dict = None) -> Union["ABCLabelingModel", "ABCClassificationModel"]:
+        if custom_objects is None:
+            custom_objects = {}
+
+        if cls.__name__ not in custom_objects:
+            custom_objects[cls.__name__] = cls
+
         model_config_path = os.path.join(model_path, 'model_config.json')
         model_config = json.loads(open(model_config_path, 'r').read())
-        model = load_data_object(model_config)
+        model = load_data_object(model_config, custom_objects)
 
-        model.embedding = load_data_object(model_config['embedding'])
-        model.text_processor = load_data_object(model_config['text_processor'])
-        model.label_processor = load_data_object(model_config['label_processor'])
+        model.embedding = load_data_object(model_config['embedding'], custom_objects)
+        model.text_processor = load_data_object(model_config['text_processor'], custom_objects)
+        model.label_processor = load_data_object(model_config['label_processor'], custom_objects)
 
         tf_model_str = json.dumps(model_config['tf_model'])
 
