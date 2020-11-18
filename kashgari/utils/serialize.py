@@ -26,8 +26,9 @@ def load_data_object(data: Dict,
     """
     if custom_objects is None:
         custom_objects = {}
+
     if data['__class_name__'] in custom_objects:
-        obj: Any = custom_objects[data['__class_name__']](**kwargs)
+        obj: Any = custom_objects[data['__class_name__']](**data['config'], **kwargs)
     else:
         module_name = f"{data['__module__']}.{data['__class_name__']}"
         obj: Any = pydoc.locate(module_name)(**data['config'], **kwargs)  # type: ignore
