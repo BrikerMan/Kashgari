@@ -320,8 +320,8 @@ def sequence_labeling_report(y_true: List[List[str]],
     pred_entities = set(bulk_get_entities(y_pred, suffix=suffix))
 
     name_width = 0
-    d1 = defaultdict(set)
-    d2 = defaultdict(set)
+    d1: Dict = defaultdict(set)
+    d2: Dict = defaultdict(set)
     for e in true_entities:
         d1[e[0]].add((e[1], e[2]))
         name_width = max(name_width, len(e[0]))

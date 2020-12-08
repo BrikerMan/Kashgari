@@ -98,7 +98,7 @@ class BertTokenizer(Tokenizer):
                 spaced += ch
 
         if len(self._token_dict) > 0:
-            tokens = []
+            tokens: List[str] = []
             for word in spaced.strip().split():
                 tokens += self._word_piece_tokenize(word)
             return tokens

@@ -76,11 +76,11 @@ class ABCTaskModel(ABC):
         """
         raise NotImplementedError
 
-    def save(self, model_path: str) -> str:
+    def save(self, model_path: str, encoding: str = 'utf-8') -> str:
         pathlib.Path(model_path).mkdir(exist_ok=True, parents=True)
         model_path = os.path.abspath(model_path)
 
-        with open(os.path.join(model_path, 'model_config.json'), 'w') as f:
+        with open(os.path.join(model_path, 'model_config.json'), 'w', encoding=encoding) as f:
             f.write(json.dumps(self.to_dict(), indent=2, ensure_ascii=False))
             f.close()
 
@@ -91,7 +91,8 @@ class ABCTaskModel(ABC):
 
     @classmethod
     def load_model(cls, model_path: str,
-                   custom_objects: Dict = None) -> Union["ABCLabelingModel", "ABCClassificationModel"]:
+                   custom_objects: Dict = None,
+                   encoding: str = 'utf-8') -> Union["ABCLabelingModel", "ABCClassificationModel"]:
         if custom_objects is None:
             custom_objects = {}
 
@@ -99,7 +100,7 @@ class ABCTaskModel(ABC):
             custom_objects[cls.__name__] = cls
 
         model_config_path = os.path.join(model_path, 'model_config.json')
-        model_config = json.loads(open(model_config_path, 'r').read())
+        model_config = json.loads(open(model_config_path, 'r', encoding=encoding).read())
         model = load_data_object(model_config, custom_objects)
 
         model.embedding = load_data_object(model_config['embedding'], custom_objects)
@@ -112,7 +113,7 @@ class ABCTaskModel(ABC):
                                                          custom_objects=kashgari.custom_objects)
 
         if isinstance(model.tf_model.layers[-1], KConditionalRandomField):
-            model.layer_crf = model.tf_model.layers[-1]
+            model.crf_layer = model.tf_model.layers[-1]
 
         model.tf_model.load_weights(os.path.join(model_path, 'model_weights.h5'))
         model.embedding.embed_model.load_weights(os.path.join(model_path, 'embed_model_weights.h5'))
