@@ -80,7 +80,7 @@ class ABCTaskModel(ABC):
         pathlib.Path(model_path).mkdir(exist_ok=True, parents=True)
         model_path = os.path.abspath(model_path)
 
-        with open(os.path.join(model_path, 'model_config.json'), 'w') as f:
+        with open(os.path.join(model_path, 'model_config.json'), 'w', encoding='utf8') as f:
             f.write(json.dumps(self.to_dict(), indent=2, ensure_ascii=False))
             f.close()
 
