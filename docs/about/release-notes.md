@@ -17,6 +17,8 @@ pip show kashgari
 
 ## Current Release
 
+### [2.0.2] - 2020.11.18
+- 🐛 Fixed Custom Model load issue.
 ### [2.0.1] - 2020.10.28
 
 - ✨ Add `convert_to_saved_model` API for tf-serving use case.

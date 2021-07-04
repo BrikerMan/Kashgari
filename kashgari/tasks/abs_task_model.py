@@ -11,20 +11,20 @@ import json
 import os
 import pathlib
 from abc import ABC, abstractmethod
-from typing import Dict, Any, TYPE_CHECKING, Union
+from typing import TYPE_CHECKING, Any, Dict, Union
 
 import tensorflow as tf
 
 import kashgari
 from kashgari.embeddings import ABCEmbedding
+from kashgari.layers import KConditionalRandomField
 from kashgari.logger import logger
 from kashgari.processors.abc_processor import ABCProcessor
 from kashgari.utils import load_data_object
-from kashgari.layers import KConditionalRandomField
 
 if TYPE_CHECKING:
-    from kashgari.tasks.labeling import ABCLabelingModel
     from kashgari.tasks.classification import ABCClassificationModel
+    from kashgari.tasks.labeling import ABCLabelingModel
 
 
 class ABCTaskModel(ABC):
@@ -76,11 +76,11 @@ class ABCTaskModel(ABC):
         """
         raise NotImplementedError
 
-    def save(self, model_path: str) -> str:
+    def save(self, model_path: str, encoding: str = 'utf-8') -> str:
         pathlib.Path(model_path).mkdir(exist_ok=True, parents=True)
         model_path = os.path.abspath(model_path)
 
-        with open(os.path.join(model_path, 'model_config.json'), 'w', encoding='utf8') as f:
+        with open(os.path.join(model_path, 'model_config.json'), 'w', encoding=encoding) as f:
             f.write(json.dumps(self.to_dict(), indent=2, ensure_ascii=False))
             f.close()
 
@@ -90,14 +90,22 @@ class ABCTaskModel(ABC):
         return model_path
 
     @classmethod
-    def load_model(cls, model_path: str) -> Union["ABCLabelingModel", "ABCClassificationModel"]:
-        model_config_path = os.path.join(model_path, 'model_config.json')
-        model_config = json.loads(open(model_config_path, 'r').read())
-        model = load_data_object(model_config)
+    def load_model(cls, model_path: str,
+                   custom_objects: Dict = None,
+                   encoding: str = 'utf-8') -> Union["ABCLabelingModel", "ABCClassificationModel"]:
+        if custom_objects is None:
+            custom_objects = {}
 
-        model.embedding = load_data_object(model_config['embedding'])
-        model.text_processor = load_data_object(model_config['text_processor'])
-        model.label_processor = load_data_object(model_config['label_processor'])
+        if cls.__name__ not in custom_objects:
+            custom_objects[cls.__name__] = cls
+
+        model_config_path = os.path.join(model_path, 'model_config.json')
+        model_config = json.loads(open(model_config_path, 'r', encoding=encoding).read())
+        model = load_data_object(model_config, custom_objects)
+
+        model.embedding = load_data_object(model_config['embedding'], custom_objects)
+        model.text_processor = load_data_object(model_config['text_processor'], custom_objects)
+        model.label_processor = load_data_object(model_config['label_processor'], custom_objects)
 
         tf_model_str = json.dumps(model_config['tf_model'])
 
@@ -105,7 +113,7 @@ class ABCTaskModel(ABC):
                                                          custom_objects=kashgari.custom_objects)
 
         if isinstance(model.tf_model.layers[-1], KConditionalRandomField):
-            model.layer_crf = model.tf_model.layers[-1]
+            model.crf_layer = model.tf_model.layers[-1]
 
         model.tf_model.load_weights(os.path.join(model_path, 'model_weights.h5'))
         model.embedding.embed_model.load_weights(os.path.join(model_path, 'embed_model_weights.h5'))
