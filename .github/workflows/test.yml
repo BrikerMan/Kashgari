@@ -35,11 +35,7 @@ jobs:
     strategy:
       matrix:
         group: [ 1, 2, 3, 4, 5, 6 ]
-        tensorflow_version:
-        - tensorflow>=2.2.0,<2.3.0
-        - tensorflow>=2.3.0,<2.4.0
-        - tensorflow>=2.4.0,<2.5.0
-        - tensorflow>=2.5.0,<2.6.0
+        tensorflow_version: [2.2, 2.3, 2.4, 2.5]
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python 3.8
@@ -49,8 +45,8 @@ jobs:
       - name: Install deps
         run: |
           python -m pip install --upgrade pip
-          pip install '${{ matrix.tensorflow_version }}'
-          python scripts/install_addons.py
+          python scripts/install_tf.py '${{ matrix.tensorflow_version }}'
+          python scripts/install_addons.py '${{ matrix.tensorflow_version }}'
           pip install -r requirements.dev.txt
           pip install -r requirements.txt
 
