@@ -17,8 +17,13 @@ pip show kashgari
 
 ## Current Release
 
-### [2.0.2] - 2020.11.18
+### [2.0.2] - 2021.07.04
+
 - 🐛 Fixed Custom Model load issue.
+- 🐛 Fixed model save issue on Windows.
+- 🐛 Fixed multi-label model load issue.
+- 🐛 Fixed CRF model load issue.
+- 🐛 Fixed TensorFlow 2.3+ Support.
 ### [2.0.1] - 2020.10.28
 
 - ✨ Add `convert_to_saved_model` API for tf-serving use case.
