@@ -40,6 +40,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install tensorflow==${{ matrix.tensorflow_version }}
+          python scripts/install_addons.py
           pip install -r requirements.dev.txt
           pip install -r requirements.txt
 
