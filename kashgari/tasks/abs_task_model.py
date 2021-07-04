@@ -11,20 +11,20 @@ import json
 import os
 import pathlib
 from abc import ABC, abstractmethod
-from typing import Dict, Any, TYPE_CHECKING, Union
+from typing import TYPE_CHECKING, Any, Dict, Union
 
 import tensorflow as tf
 
 import kashgari
 from kashgari.embeddings import ABCEmbedding
+from kashgari.layers import KConditionalRandomField
 from kashgari.logger import logger
 from kashgari.processors.abc_processor import ABCProcessor
 from kashgari.utils import load_data_object
-from kashgari.layers import KConditionalRandomField
 
 if TYPE_CHECKING:
-    from kashgari.tasks.labeling import ABCLabelingModel
     from kashgari.tasks.classification import ABCClassificationModel
+    from kashgari.tasks.labeling import ABCLabelingModel
 
 
 class ABCTaskModel(ABC):
