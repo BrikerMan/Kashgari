@@ -35,7 +35,7 @@ jobs:
     strategy:
       matrix:
         group: [ 1, 2, 3 ]
-        tensorflow_version: [2.2, 2.3, 2.4, 2.5]
+        tensorflow_version: [2.1, 2.2, 2.3, 2.4, 2.5]
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python 3.8
