@@ -1,8 +1,8 @@
 # test & coverage
-flake8
+flake8==3.8.4
 flake8-builtins
-mypy
-pytest>=5.4.3
+mypy==0.790
+pytest==5.4.3
 pytest-cov
 pytest-split
 coveralls
