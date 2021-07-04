@@ -8,7 +8,7 @@
 # time: 10:48 上午
 
 import unittest
-import numpy as np
+import numpy as np 
 from kashgari.utils import unison_shuffled_copies
 from kashgari.utils import get_list_subset
 
