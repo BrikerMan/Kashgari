@@ -106,8 +106,8 @@ Here is a set of quick tutorials to get you started with the library:
 There are also articles and posts that illustrate how to use Kashgari:
 
 - [基于 Kashgari 2 的短文本分类: 数据分析和预处理](https://eliyar.biz/short_text_classificaion_with_kashgari_v2_part_1/index.html)
-- [基于 Kashgari 2 的短文本分类: 训练模型和调优](https://eliyar.biz/short_text_classificaion_with_kashgari_v2_part_2)
-- [基于 Kashgari 2 的短文本分类: 模型部署](https://eliyar.biz/short_text_classificaion_with_kashgari_v2_part_3)
+- [基于 Kashgari 2 的短文本分类: 训练模型和调优](https://eliyar.biz/nlp/short_text_classificaion_with_kashgari_v2_part_2/index.html)
+- [基于 Kashgari 2 的短文本分类: 模型部署](https://eliyar.biz/nlp/short_text_classificaion_with_kashgari_v2_part_3/index.html)
 - [15 分钟搭建中文文本分类模型](https://eliyar.biz/nlp_chinese_text_classification_in_15mins/)
 - [基于 BERT 的中文命名实体识别（NER)](https://eliyar.biz/nlp_chinese_bert_ner/)
 - [BERT/ERNIE 文本分类和部署](https://eliyar.biz/nlp_train_and_deploy_bert_text_classification/)
